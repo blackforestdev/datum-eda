@@ -1243,30 +1243,8 @@ pub(crate) fn execute_project_command(
         ProjectCommands::RotateBoardComponent(args) => args.run(format),
         ProjectCommands::SetBoardComponentLocked(args) => args.run(format),
         ProjectCommands::ClearBoardComponentLocked(args) => args.run(format),
-        ProjectCommands::BindComponentInstance(args) => {
-            let view = bind_native_project_component_instance(
-                &args.path,
-                args.component_instance,
-                args.symbols,
-                args.package,
-                args.part,
-                args.symbol_roles,
-                args.package_roles,
-            )?;
-            Ok((render_output(format, &view), 0))
-        }
-        ProjectCommands::SetComponentInstance(args) => {
-            let view = set_native_project_component_instance(
-                &args.path,
-                args.component_instance,
-                args.symbols,
-                args.package,
-                args.part,
-                args.symbol_roles,
-                args.package_roles,
-            )?;
-            Ok((render_output(format, &view), 0))
-        }
+        ProjectCommands::BindComponentInstance(args) => args.run(format),
+        ProjectCommands::SetComponentInstance(args) => args.run(format),
         ProjectCommands::DeleteComponentInstance(ProjectDeleteComponentInstanceArgs {
             path,
             component_instance,

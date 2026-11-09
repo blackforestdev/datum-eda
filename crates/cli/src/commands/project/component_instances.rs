@@ -77,6 +77,29 @@ pub(crate) fn bind_native_project_component_instance(
     symbol_roles: Vec<String>,
     package_roles: Vec<String>,
 ) -> Result<NativeProjectComponentInstanceMutationView> {
+    bind_native_project_component_instance_with_pin_pad_map(
+        root,
+        component_instance_id,
+        symbol_ids,
+        package_id,
+        part_id,
+        symbol_roles,
+        package_roles,
+        None,
+    )
+}
+
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn bind_native_project_component_instance_with_pin_pad_map(
+    root: &Path,
+    component_instance_id: Option<Uuid>,
+    symbol_ids: Vec<Uuid>,
+    package_id: Uuid,
+    part_id: Option<Uuid>,
+    symbol_roles: Vec<String>,
+    package_roles: Vec<String>,
+    pin_pad_map: Option<Uuid>,
+) -> Result<NativeProjectComponentInstanceMutationView> {
     let mut model = ProjectResolver::new(root).resolve()?;
     let spec = component_instance_spec(
         symbol_ids,
@@ -85,11 +108,12 @@ pub(crate) fn bind_native_project_component_instance(
         &symbol_roles,
         &package_roles,
     )?;
-    let (prepared, component_instance_id) = build_bind_component_instance(
+    let (prepared, component_instance_id) = eda_engine::api::native_write::component_instances::build_bind_component_instance_with_pin_pad_map(
         &model,
         cli_provenance("bind component instance")?,
         component_instance_id,
         &spec,
+        pin_pad_map,
     )?;
     let report = commit_prepared(&mut model, root, prepared)?;
     let instance = model
@@ -115,7 +139,45 @@ pub(crate) fn set_native_project_component_instance(
     symbol_roles: Vec<String>,
     package_roles: Vec<String>,
 ) -> Result<NativeProjectComponentInstanceMutationView> {
+    set_native_project_component_instance_with_pin_pad_map(
+        root,
+        component_instance_id,
+        symbol_ids,
+        package_id,
+        part_id,
+        symbol_roles,
+        package_roles,
+        None,
+    )
+}
+
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn set_native_project_component_instance_with_pin_pad_map(
+    root: &Path,
+    component_instance_id: Uuid,
+    symbol_ids: Vec<Uuid>,
+    package_id: Uuid,
+    part_id: Option<Uuid>,
+    symbol_roles: Vec<String>,
+    package_roles: Vec<String>,
+    pin_pad_map: Option<Uuid>,
+) -> Result<NativeProjectComponentInstanceMutationView> {
     let mut model = ProjectResolver::new(root).resolve()?;
+    let existing = model.component_instances.get(&component_instance_id);
+    let mapped = pin_pad_map.is_some()
+        || existing.is_some_and(|ci| {
+            ci.library_bindings.values().any(|binding| {
+                binding.binding_role == eda_engine::substrate::LibraryBindingRole::PinPadMap
+            })
+        });
+    // Omission is not an explicit replacement in the mapped path. The engine
+    // retains this declaration's actual Part pin, rather than following latest.
+    use eda_engine::api::native_write::component_instances::ComponentInstancePartChoice;
+    let part_choice = if mapped && part_id.is_none() {
+        ComponentInstancePartChoice::Preserve
+    } else {
+        ComponentInstancePartChoice::Selected
+    };
     let spec = component_instance_spec(
         symbol_ids,
         package_id,
@@ -123,11 +185,13 @@ pub(crate) fn set_native_project_component_instance(
         &symbol_roles,
         &package_roles,
     )?;
-    let prepared = build_set_component_instance(
+    let prepared = eda_engine::api::native_write::component_instances::build_set_component_instance_with_pin_pad_map(
         &model,
         cli_provenance("set component instance")?,
         component_instance_id,
         &spec,
+        pin_pad_map,
+        part_choice,
     )?;
     let report = commit_prepared(&mut model, root, prepared)?;
     let instance = model
@@ -472,5 +536,61 @@ impl ProposalDeleteComponentInstanceArgs {
             ),
             0,
         ))
+    }
+}
+
+impl crate::ProjectBindComponentInstanceArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        if self.pin_pad_map.is_none() {
+            let view = crate::bind_native_project_component_instance(
+                &self.path,
+                self.component_instance,
+                self.symbols,
+                self.package,
+                self.part,
+                self.symbol_roles,
+                self.package_roles,
+            )?;
+            return Ok((render_output(format, &view), 0));
+        }
+        let view = bind_native_project_component_instance_with_pin_pad_map(
+            &self.path,
+            self.component_instance,
+            self.symbols,
+            self.package,
+            self.part,
+            self.symbol_roles,
+            self.package_roles,
+            self.pin_pad_map,
+        )?;
+        Ok((render_output(format, &view), 0))
+    }
+}
+
+impl crate::ProjectSetComponentInstanceArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        if self.pin_pad_map.is_none() {
+            let view = crate::set_native_project_component_instance(
+                &self.path,
+                self.component_instance,
+                self.symbols,
+                self.package,
+                self.part,
+                self.symbol_roles,
+                self.package_roles,
+            )?;
+            return Ok((render_output(format, &view), 0));
+        }
+        let view = set_native_project_component_instance_with_pin_pad_map(
+            &self.path,
+            self.component_instance,
+            self.symbols,
+            self.package,
+            self.part,
+            self.symbol_roles,
+            self.package_roles,
+            self.pin_pad_map,
+        )?;
+        Ok((render_output(format, &view), 0))
     }
 }

@@ -337,7 +337,7 @@ The current-map public engine producer is separately exercised with a new
 component and explicit eight-pad materialization, a revised connected
 correspondence, and subsequent populated-pad rematerialization Undo/Redo; the old
 component and Net remain unchanged. This producer proof is not a manual App/CLI
-materialization action. That missing manual surface is separate intake
+materialization action. The bounded manual CLI follow-up is recorded below as
 `dat-manual-map-materialization-bxrt`. Initial materialization Undo with an absent
 prior pad collection failed in the original map-revision proof and was not
 credited there; its follow-up correction is recorded below. Forty-five focused
@@ -362,6 +362,31 @@ engine cases cover this correction and affected Map/Part/materialization
 regressions. This is public engine producer/history proof, without a manual
 map-aware surface, App/CLI action, physical/HUMAN or release-GUI execution claim;
 the original map-revision failure remains valid at its earlier candidate.
+
+Manual mapped-pad materialization (`dat-manual-map-materialization-bxrt`) uses
+the existing CLI Bind/Set ComponentInstance commands with an explicit
+`--pin-pad-map`, and `project set-board-component-package` with paired
+`--component-instance` and `--pin-pad-map` choices. The selected Map's exact
+Footprint reference supplies the land pattern; no Part default or inferred
+component/mapping substitutes for an absent choice. A Map without a Footprint
+refuses on this route. Mapped Set with an omitted `--part` preserves the authored
+Part reference, pinned revision and binding metadata. Existing placed Map target
+or revision replacements refuse here and retain the reviewed library-update
+boundary; absent pads do not make a component unplaced.
+
+Explicit `--pad-correspondence <placed-pad>=<library-pad>` values capture target
+pins through the public engine query and retain Pad identities through the
+existing materialization producer. Referenced pads require valid continuity;
+`--adopt-existing` retains the producer's explicit adoption rules. Profile 4 is
+a precondition, with separately reported preparation through the existing CLI
+placement path. Thirteen focused native cases and two actual CLI subprocess
+cases pass. The CLI proof covers first materialization, two initial Undo/Redo
+cycles and cold resolution, connected explicit refresh and its Undo/Redo,
+preservation of the other bound component/Complete Net, exact omission pins,
+new-component current-source selection, parameter help and no-write refusals.
+The earlier engine-only proofs retain their original scopes; this adds headless
+manual CLI evidence, without App, physical/HUMAN, release-GUI execution or full
+library-to-PCB qualification.
 
 The initial schematic handoff (`dat-explicit-part-gate-placement-b43w`) adds named
 project-local Part/gate choices to the existing Symbol picker. Distinct choices

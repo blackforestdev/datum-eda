@@ -1,3 +1,4 @@
+mod mapped_materialization;
 mod source_materialization;
 use crate::*;
 pub(crate) use source_materialization::{
@@ -549,24 +550,6 @@ impl SetBoardComponentPartArgs {
             part_uuid,
         } = self;
         let report = set_native_project_board_component_part(&path, component_uuid, part_uuid)?;
-        let output = render_report(
-            format,
-            &report,
-            render_native_project_board_component_mutation_text,
-        );
-        Ok((output, 0))
-    }
-}
-
-impl SetBoardComponentPackageArgs {
-    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
-        let Self {
-            path,
-            component_uuid,
-            package_uuid,
-        } = self;
-        let report =
-            set_native_project_board_component_package(&path, component_uuid, package_uuid)?;
         let output = render_report(
             format,
             &report,

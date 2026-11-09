@@ -48,56 +48,13 @@ pub struct ComponentInstanceSpec {
     pub package_roles: Vec<ComponentRoleAssignment>,
 }
 
-/// Build the batch that binds a new component instance.
-///
-/// When `component_instance_id` is `None` the id is derived deterministically
-/// via [`ids::derive_component_instance_id`]. Returns the prepared write and
-/// the (possibly derived) component-instance id.
-pub fn build_bind_component_instance(
-    model: &DesignModel,
-    provenance: WriteProvenance,
-    component_instance_id: Option<ComponentInstanceId>,
-    spec: &ComponentInstanceSpec,
-) -> Result<(PreparedWrite, ComponentInstanceId), EngineError> {
-    let component_instance_id = component_instance_id.unwrap_or_else(|| {
-        ids::derive_component_instance_id(
-            &model.project.project_id,
-            &spec.symbol_ids,
-            spec.package_id,
-        )
-    });
-    let payload = component_instance_payload(model, component_instance_id, 0, spec)?;
-    let prepared = BatchComposer::compose(model, provenance)
-        .push_op(Operation::CreateComponentInstance {
-            component_instance_id,
-            component_instance: payload,
-        })
-        .primary_object(component_instance_id)
-        .finish()?;
-    Ok((prepared, component_instance_id))
-}
-
-/// Build the batch that rewrites an existing authored component instance to
-/// the state described by `spec` (object revision advances by one).
-pub fn build_set_component_instance(
-    model: &DesignModel,
-    provenance: WriteProvenance,
-    component_instance_id: ComponentInstanceId,
-    spec: &ComponentInstanceSpec,
-) -> Result<PreparedWrite, EngineError> {
-    let previous = authored_component_instance(model, component_instance_id)?;
-    let previous_payload = component_instance_payload_from_instance(model, &previous)?;
-    let next_revision = previous.object_revision.0 + 1;
-    let payload = component_instance_payload(model, component_instance_id, next_revision, spec)?;
-    BatchComposer::compose(model, provenance)
-        .push_op(Operation::SetComponentInstance {
-            component_instance_id,
-            previous_component_instance: previous_payload,
-            component_instance: payload,
-        })
-        .primary_object(component_instance_id)
-        .finish()
-}
+#[path = "component_instance_library_bindings.rs"]
+mod library_bindings;
+pub use library_bindings::{
+    ComponentInstancePartChoice, build_bind_component_instance,
+    build_bind_component_instance_with_pin_pad_map, build_set_component_instance,
+    build_set_component_instance_with_pin_pad_map,
+};
 
 /// Build the batch that deletes an existing authored component instance.
 ///

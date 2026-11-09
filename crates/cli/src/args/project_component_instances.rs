@@ -16,6 +16,9 @@ pub(crate) struct ProjectBindComponentInstanceArgs {
     /// Optional native pool part UUID for this electrical-to-physical component identity
     #[arg(long = "part")]
     pub(crate) part: Option<Uuid>,
+    /// Explicit native PinPadMap UUID; never inferred from Part defaults
+    #[arg(long = "pin-pad-map", requires = "part")]
+    pub(crate) pin_pad_map: Option<Uuid>,
     /// Per-symbol role metadata as <symbol-uuid>=<role>[:label]
     #[arg(long = "symbol-role")]
     pub(crate) symbol_roles: Vec<String>,
@@ -37,9 +40,12 @@ pub(crate) struct ProjectSetComponentInstanceArgs {
     /// Replacement board package UUID
     #[arg(long = "package")]
     pub(crate) package: Uuid,
-    /// Replacement native pool part UUID; omitted preserves/clears no authored part reference
+    /// Replacement native Part; mapped instances preserve their Part when omitted
     #[arg(long = "part")]
     pub(crate) part: Option<Uuid>,
+    /// Explicit PinPadMap choice; omission preserves a compatible declaration
+    #[arg(long = "pin-pad-map")]
+    pub(crate) pin_pad_map: Option<Uuid>,
     /// Replacement per-symbol role metadata as <symbol-uuid>=<role>[:label]
     #[arg(long = "symbol-role")]
     pub(crate) symbol_roles: Vec<String>,

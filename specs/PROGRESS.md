@@ -700,8 +700,9 @@ forward/hash/epoch refusals and cold persistence. A separate new component uses
 the revised map through the public engine producer and populated-pad explicit
 rematerialization Undo/Redo while the old bound Net remains unchanged. This is
 engine-producer evidence; no manual map-aware materialization surface is claimed.
-That missing surface remains separate intake `dat-manual-map-materialization-bxrt`,
-and the initial empty-package Undo failure is retained as original map-revision
+That surface was absent from the map-edit increment; the bounded
+`dat-manual-map-materialization-bxrt` CLI follow-up is recorded below.
+The initial empty-package Undo failure is retained as original map-revision
 evidence; the follow-up below corrects it. Earlier test
 fixture and historical-Map validator failures retain their original logs and
 scopes. The isolated ordinary debug App passes 69 steps and six inspected captures:
@@ -722,6 +723,23 @@ writes. This engine producer/history correction supplies no manual map-aware
 surface, App/CLI action, physical/HUMAN, release-GUI execution or whole-goal
 qualification. The earlier je1j initial-Undo failure remains uncredited at its
 original candidate.
+
+Manual mapped-pad materialization (`dat-manual-map-materialization-bxrt`) now
+exposes explicit Map declaration through existing CLI Bind/Set and paired CI/Map
+choices on the existing package command. The Map's exact Footprint is required;
+no Part default, inferred CI or guessed pad continuity supplies authority.
+Mapped Set omission preserves the exact declared Part/Map pins and metadata.
+Direct replacement of an existing placed Map target/revision refuses and keeps
+the reviewed library-update boundary, including when pads are absent. Explicit
+pad-ID correspondence uses the public capture API and canonical producer;
+profile-4 preparation remains separately reported by the existing CLI path.
+Thirteen native cases and two actual CLI subprocess cases pass, including first
+materialization, repeated initial history/cold resolution, connected refresh and
+Undo/Redo, unchanged other bound component/Complete Net, new-component current
+source selection and byte-exact no-write refusals. Original fixture and compile
+failures remain recorded; previous engine/App claims retain their own candidates.
+This adds manual headless CLI behavior, not App/physical/HUMAN, release-GUI
+execution, reviewed update machinery or broad goal acceptance.
 
 ### Native File-Type Catalog — Owner-Requested Proposal
 
