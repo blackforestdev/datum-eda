@@ -767,6 +767,24 @@ existing empty/footprintless consumer refusals remain. No automatic Map binding,
 inferred consumer policy, placed update/ECO, relinking, approval, physical/HUMAN,
 release-GUI execution or broader goal acceptance is supplied.
 
+Saved Part Entity correction (`dat-saved-part-entity-lo01`) now supports explicit
+named compatible Entity choice with Package fixed and sparse raw preservation.
+All retained same-Part Maps and legacy mappings validate against the candidate;
+an incompatible mapped switch refuses without changing its connected eight-pad
+`Complete` certificate, including when the default Map is explicitly cleared.
+Old multi-gate operations and remaining-gate choices authenticate the CI's declared
+Part revision; new explicit initial choices use the corrected current Entity.
+Forty-one focused Rust cases and one ordinary isolated debug-App case pass. The
+App passes 86 stages and eight inspected captures: plain relink/Cancel/Part history
+preserve old CI/source bytes exactly; actual old child Move/history permits only
+qualified CI/member counters and intended coordinates, with the Part pin and
+bindings retained. Save/cold reopening and new explicit placement retain old
+root/child scenes and Nets. Known gate assertion `dat-2glp` remains a recorded
+failure, not a full-suite PASS; prior raw attempts and the corrected independent
+assertion-review finding remain recorded. No mapped migration, Package relink,
+implicit placed update/ECO, approval, physical/HUMAN, release-GUI execution,
+full qualification or broader-goal acceptance is supplied.
+
 Saved Package metadata editing (`dat-saved-package-metadata-edit-fztr`) now
 supports name, family, code and mounting text in the existing Library form,
 with dimensions and terminal/pad topology read-only. Canonical sparse patches

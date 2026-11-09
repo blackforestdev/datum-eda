@@ -61,10 +61,7 @@ pub(super) fn review(p: &mut Painter<'_>, raw: &Value) {
 }
 
 pub(super) fn saved_links(p: &mut Painter<'_>, raw: &Value) {
-    for (key, kind, label) in [
-        ("entity", "entities", "Entity"),
-        ("package", "packages", "Package"),
-    ] {
+    for (key, kind, label) in [("package", "packages", "Package")] {
         let value = if raw[key].is_null() {
             "Not assigned".into()
         } else {

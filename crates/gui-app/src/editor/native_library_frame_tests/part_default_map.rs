@@ -59,10 +59,10 @@ impl Fixture {
         if stage == 1 {
             let d = state.library.draft.as_ref().unwrap();
             assert!(!d.create);
-            assert_eq!(d.fields.len(), 8);
-            assert!(d.fields[7].selector);
+            assert_eq!(d.fields.len(), 9);
+            assert!(d.fields[8].selector);
             assert_eq!(d.part.original.as_ref(), Some(&entry.raw));
-            assert!(d.fields[7].choices.iter().any(|(id, label)| (id
+            assert!(d.fields[8].choices.iter().any(|(id, label)| (id
                 == intent["map_a"].as_str().unwrap()
                 || id == intent["map_b"].as_str().unwrap())
                 && label.starts_with("Part: ")

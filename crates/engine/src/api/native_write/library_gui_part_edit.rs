@@ -16,7 +16,9 @@ pub(super) fn build(
         "datasheet",
         "tags",
     ];
-    if !request.fields.contains_key("default_footprint")
+    let entity_edit = request.fields.contains_key("entity");
+    if !entity_edit
+        && !request.fields.contains_key("default_footprint")
         && !request.fields.contains_key("default_pin_pad_map")
     {
         return super::super::metadata_edit::build(
@@ -33,7 +35,13 @@ pub(super) fn build(
     }
     let (target, mut object) = saved_source::load(context.model, request.object_id, "parts")?;
     for (key, value) in request.fields {
-        if matches!(key.as_str(), "default_footprint" | "default_pin_pad_map") {
+        if key == "entity" {
+            let entity: Uuid = value
+                .as_str()
+                .and_then(|s| s.parse().ok())
+                .ok_or_else(|| refusal("Choose an existing named Entity"))?;
+            object["entity"] = json!(entity);
+        } else if matches!(key.as_str(), "default_footprint" | "default_pin_pad_map") {
             let label = if key == "default_footprint" {
                 "Footprint"
             } else {
@@ -60,7 +68,7 @@ pub(super) fn build(
         } else {
             if !METADATA.contains(&key.as_str()) {
                 return Err(refusal(
-                    "Saved Part editing refuses Entity, Package, Map payload, identity and policy changes",
+                    "Saved Part editing refuses Package, Map payload, identity and policy changes",
                 ));
             }
             if key == "tags" {
@@ -83,6 +91,56 @@ pub(super) fn build(
     let (mut graph, counts) = graph(context.model)?;
     for &(id, kind) in &references {
         qualify(context.model, &graph, &counts, id, kind)?;
+    }
+    if entity_edit {
+        let entity = &graph.entities[&part.entity];
+        if entity["name"]
+            .as_str()
+            .is_none_or(|name| name.trim().is_empty())
+        {
+            return Err(refusal("Choose an existing named Entity"));
+        }
+        let gates = entity["gates"]
+            .as_object()
+            .ok_or_else(|| refusal("Entity gates are unavailable"))?;
+        let mut seen = BTreeSet::new();
+        for (key, raw) in gates {
+            let gate: crate::pool::Gate = serde_json::from_value(raw.clone())?;
+            if key.parse::<Uuid>().ok() != Some(gate.uuid)
+                || !seen.insert(gate.uuid)
+                || context.model.objects.get(&gate.uuid).is_none_or(|owner| {
+                    owner.source_shard_id != context.model.objects[&part.entity].source_shard_id
+                })
+            {
+                return Err(refusal(
+                    "Entity Gate source identity is missing, foreign or ambiguous",
+                ));
+            }
+            for (id, kind) in [(gate.unit, "units"), (gate.symbol, "symbols")] {
+                qualify(context.model, &graph, &counts, id, kind)?;
+                references.insert((id, kind));
+            }
+            let symbol: crate::pool::Symbol =
+                serde_json::from_value(graph.symbols[&gate.symbol].clone())?;
+            if symbol.unit != gate.unit {
+                return Err(refusal(
+                    "Entity Gate Symbol must belong to its declared Unit",
+                ));
+            }
+        }
+        // Nondefault Maps retain authority too: clearing the default does not
+        // retarget their Gate references to the replacement Entity.
+        for (&id, raw) in &graph.pin_pad_maps {
+            if raw["part"].as_str().and_then(|s| s.parse::<Uuid>().ok()) == Some(part.uuid) {
+                qualify(context.model, &graph, &counts, id, "pin_pad_maps")?;
+                references.insert((id, "pin_pad_maps"));
+                let map: crate::pool::PinPadMap = serde_json::from_value(raw.clone())?;
+                if let Some(footprint) = map.footprint {
+                    qualify(context.model, &graph, &counts, footprint, "footprints")?;
+                    references.insert((footprint, "footprints"));
+                }
+            }
+        }
     }
     if let Some(map_id) = part.default_pin_pad_map {
         let map: crate::pool::PinPadMap =
@@ -121,13 +179,22 @@ pub(super) fn build(
         }
     }
     // Validate the actual candidate graph through existing effective default-map
-    // rules. Other objects and unrelated attachment/legacy diagnostics stay out
-    // of this relationship correction's authority.
+    // rules. Entity corrections also qualify retained legacy and nondefault
+    // mappings; unrelated objects remain outside this correction's authority.
     graph.parts.insert(part.uuid, object.clone());
     let part_subject = &graph.subjects[&part.uuid];
     let map_subject = part
         .default_pin_pad_map
         .and_then(|id| graph.subjects.get(&id));
+    let affected_maps: Vec<_> = graph
+        .pin_pad_maps
+        .iter()
+        .filter(|(_, raw)| {
+            entity_edit
+                && raw["part"].as_str().and_then(|s| s.parse::<Uuid>().ok()) == Some(part.uuid)
+        })
+        .filter_map(|(id, _)| graph.subjects.get(id))
+        .collect();
     let footprint_subjects: Vec<_> = references
         .iter()
         .filter(|(_, kind)| *kind == "footprints")
@@ -135,6 +202,14 @@ pub(super) fn build(
         .collect();
     for diagnostic in graph.dependency_diagnostics() {
         let related = diagnostic.subject == *part_subject
+            || (entity_edit
+                && diagnostic
+                    .subject
+                    .starts_with(&format!("{part_subject}#pad_map/")))
+            || affected_maps.iter().any(|s| {
+                diagnostic.subject == **s
+                    || diagnostic.subject.starts_with(&format!("{s}#mappings/"))
+            })
             || map_subject.is_some_and(|s| {
                 diagnostic.subject == *s
                     || diagnostic.subject.starts_with(&format!("{s}#mappings/"))
@@ -214,6 +289,7 @@ fn qualify(
         "footprints" => graph.footprints.get(&id),
         "pin_pad_maps" => graph.pin_pad_maps.get(&id),
         "units" => graph.units.get(&id),
+        "symbols" => graph.symbols.get(&id),
         _ => None,
     }
     .ok_or_else(|| refusal("Part relationship source ownership is unavailable"))?;
@@ -235,6 +311,9 @@ fn qualify(
         }
         "units" => {
             let _: crate::pool::Unit = serde_json::from_value(raw.clone())?;
+        }
+        "symbols" => {
+            let _: crate::pool::Symbol = serde_json::from_value(raw.clone())?;
         }
         _ => unreachable!(),
     }

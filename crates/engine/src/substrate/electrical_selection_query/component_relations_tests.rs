@@ -620,3 +620,6 @@ mod part_default_footprint_tests;
 
 #[path = "component_relations_part_default_map_tests.rs"]
 mod part_default_map_tests;
+
+#[path = "component_relations_part_entity_tests.rs"]
+mod part_entity_tests;

@@ -388,7 +388,7 @@ impl LibraryDraft {
         if self.kind == "parts"
             && matches!(
                 self.fields[self.focused].key,
-                "part_package" | "part_footprint"
+                "part_package" | "part_footprint" | "part_entity"
             )
         {
             self.refresh_part_maps();

@@ -4,6 +4,7 @@ use super::*;
 pub struct PartDraft {
     footprints: Vec<(Uuid, Uuid, String)>,
     maps: Vec<PartMapChoice>,
+    entities: BTreeSet<Uuid>,
     pub original: Option<Value>,
 }
 #[derive(Debug, Clone, PartialEq)]
@@ -12,6 +13,54 @@ struct PartMapChoice {
     footprint: Option<Uuid>,
     package: Uuid,
     label: String,
+    entities: BTreeSet<Uuid>,
+}
+fn map_entities(browser: &LibraryBrowser, raw: &Value) -> BTreeSet<Uuid> {
+    let rows = match raw.get("mappings") {
+        None => Vec::new(),
+        Some(Value::Object(rows)) => {
+            let Ok(rows) = rows
+                .values()
+                .cloned()
+                .map(serde_json::from_value::<eda_engine::pool::PadMapEntry>)
+                .collect::<Result<Vec<_>, _>>()
+            else {
+                return BTreeSet::new();
+            };
+            rows
+        }
+        _ => return BTreeSet::new(),
+    };
+    unique(browser, "entities")
+        .into_iter()
+        .filter_map(|(id, _)| {
+            let id = id.parse::<Uuid>().ok()?;
+            let source = browser
+                .entries
+                .iter()
+                .find(|e| e.kind == "entities" && e.id == id)?;
+            let entity: eda_engine::pool::Entity =
+                serde_json::from_value(source.raw.clone()).ok()?;
+            rows.iter()
+                .all(|row| {
+                    let Some(gate) = entity.gates.get(&row.gate) else {
+                        return false;
+                    };
+                    let units: Vec<_> = browser
+                        .entries
+                        .iter()
+                        .filter(|e| e.kind == "units" && e.id == gate.unit)
+                        .collect();
+                    let [unit] = units.as_slice() else {
+                        return false;
+                    };
+                    unit.warning.is_none()
+                        && serde_json::from_value::<eda_engine::pool::Unit>(unit.raw.clone())
+                            .is_ok_and(|u| u.pins.contains_key(&row.pin))
+                })
+                .then_some(id)
+        })
+        .collect()
 }
 fn unique(browser: &LibraryBrowser, kind: &str) -> Vec<(String, String)> {
     named(browser, kind)
@@ -60,6 +109,23 @@ impl LibraryDraft {
         }
         if !self.create {
             self.part.original = Some(raw.clone());
+            let choices = unique(browser, "entities");
+            self.part.entities = choices
+                .iter()
+                .filter_map(|(id, _)| id.parse().ok())
+                .collect();
+            let declared = raw["entity"]
+                .as_str()
+                .and_then(|s| s.parse::<Uuid>().ok())
+                .map(|id| json!(id));
+            self.field("part_entity", "Named Entity", declared.as_ref(), choices);
+            let field = self.fields.last_mut().unwrap();
+            if !field.choices.iter().any(|(id, _)| *id == field.text) {
+                field.choices.push((
+                    field.text.clone(),
+                    format!("Unavailable / ambiguous Entity: {}", field.text),
+                ));
+            }
         } else {
             self.field(
                 "part_entity",
@@ -140,6 +206,7 @@ impl LibraryDraft {
                         footprint,
                         package,
                         label,
+                        entities: map_entities(browser, raw),
                     })
                 })
                 .collect();
@@ -183,6 +250,12 @@ impl LibraryDraft {
     pub(super) fn refresh_part_maps(&mut self) {
         let footprint = self.value("part_footprint").parse::<Uuid>().ok();
         let package = self.part_package();
+        let entity = self.value("part_entity").parse::<Uuid>().ok();
+        let original_entity = self
+            .part
+            .original
+            .as_ref()
+            .and_then(|p| p["entity"].as_str()?.parse::<Uuid>().ok());
         if let Some(field) = self.fields.iter_mut().find(|f| f.key == "part_map") {
             field.choices = vec![(String::new(), "No default PinPadMap".into())];
             field.choices.extend(
@@ -191,6 +264,9 @@ impl LibraryDraft {
                     .iter()
                     .filter(|m| {
                         Some(m.package) == package
+                            && (entity.is_none()
+                                || entity == original_entity
+                                || entity.is_some_and(|e| m.entities.contains(&e)))
                             && (m.footprint.is_none()
                                 || footprint.is_none()
                                 || m.footprint == footprint)
@@ -207,6 +283,13 @@ impl LibraryDraft {
     }
     pub(super) fn part_request(&self, fields: &mut Map<String, Value>) -> Result<(), String> {
         if !self.create {
+            if self.dirty.contains("part_entity") {
+                let entity = self.uuid("part_entity")?;
+                if !self.part.entities.contains(&entity) {
+                    return Err("Choose an available, unique named Entity".into());
+                }
+                fields.insert("entity".into(), json!(entity));
+            }
             for key in [
                 "manufacturer",
                 "mpn",
@@ -238,7 +321,10 @@ impl LibraryDraft {
             if self.dirty.contains("part_footprint") {
                 fields.insert("default_footprint".into(), json!(self.part_footprint()?));
             }
-            if self.dirty.contains("part_map") || self.dirty.contains("part_footprint") {
+            if self.dirty.contains("part_map")
+                || self.dirty.contains("part_footprint")
+                || self.dirty.contains("part_entity")
+            {
                 let map = self.part_map()?;
                 if self.dirty.contains("part_map") {
                     fields.insert("default_pin_pad_map".into(), json!(map));
@@ -307,8 +393,15 @@ impl LibraryDraft {
         let id = self.uuid("part_map")?;
         let footprint = self.part_footprint()?;
         let package = self.part_package();
+        let entity = self.value("part_entity").parse::<Uuid>().ok();
+        let original_entity = self
+            .part
+            .original
+            .as_ref()
+            .and_then(|p| p["entity"].as_str()?.parse::<Uuid>().ok());
         if !self.part.maps.iter().any(|m| {
             m.id == id
+                && (entity == original_entity || entity.is_some_and(|e| m.entities.contains(&e)))
                 && Some(m.package) == package
                 && (m.footprint.is_none() || footprint.is_none() || m.footprint == footprint)
         }) {

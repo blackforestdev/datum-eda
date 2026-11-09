@@ -131,3 +131,7 @@ mod default_footprint_tests;
 #[cfg(test)]
 #[path = "library_gui_part_default_map_tests.rs"]
 mod default_map_tests;
+
+#[cfg(test)]
+#[path = "library_gui_part_entity_edit_tests.rs"]
+mod entity_edit_tests;

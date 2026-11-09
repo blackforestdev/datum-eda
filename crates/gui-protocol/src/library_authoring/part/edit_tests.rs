@@ -42,6 +42,7 @@ fn saved_part_exposes_metadata_and_default_footprint_with_changed_fields_only() 
             "description",
             "datasheet",
             "tags",
+            "part_entity",
             "part_footprint",
             "part_map"
         ]
@@ -49,6 +50,7 @@ fn saved_part_exposes_metadata_and_default_footprint_with_changed_fields_only() 
     assert!(d.fields.iter().take(6).all(|f| !f.selector));
     assert!(d.fields[6].selector);
     assert!(d.fields[7].selector);
+    assert!(d.fields[8].selector);
     assert_eq!(d.part.original.as_ref(), Some(&raw));
     assert_eq!(d.value("tags"), "z, a, z");
     assert!(d.request().unwrap().fields.is_empty());
@@ -66,6 +68,119 @@ fn saved_part_exposes_metadata_and_default_footprint_with_changed_fields_only() 
         .unwrap();
     d.change("".into());
     assert!(d.request().is_err());
+}
+
+#[test]
+fn saved_part_entity_is_explicit_unique_and_preserves_unedited_raw_declaration() {
+    let (mut browser, mut saved, _, _, _, _) = map_draft_fixture(2);
+    let original: Uuid = saved.raw["entity"].as_str().unwrap().parse().unwrap();
+    saved.raw["entity"] = json!(original.simple().to_string());
+    let replacement = Uuid::new_v4();
+    browser.entries.push(LibraryEntry {
+        id: replacement,
+        kind: "entities".into(),
+        name: "Replacement logic".into(),
+        source_path: format!("pool/entities/{replacement}.json"),
+        revision: Some(7),
+        raw: json!({}),
+        warning: None,
+    });
+    let mut d = LibraryDraft::begin(&browser, Some(&saved), "parts", "basis".into(), None).unwrap();
+    assert_eq!(d.value("part_entity"), original.to_string());
+    assert!(!d.fields.iter().any(|f| f.key == "part_package"));
+    assert!(d.request().unwrap().fields.is_empty());
+    change_part(&mut d, "description", "Metadata only".into());
+    assert_eq!(
+        d.request().unwrap().fields,
+        *json!({"description":"Metadata only"}).as_object().unwrap()
+    );
+    change_part(&mut d, "part_entity", replacement.to_string());
+    assert_eq!(
+        d.request().unwrap().fields,
+        *json!({"description":"Metadata only","entity":replacement})
+            .as_object()
+            .unwrap()
+    );
+    assert_eq!(d.part.original.as_ref(), Some(&saved.raw));
+    let mut alias = browser.entries.last().unwrap().clone();
+    alias.name = "Ambiguous replacement".into();
+    browser.entries.push(alias);
+    let mut d = LibraryDraft::begin(&browser, Some(&saved), "parts", "basis".into(), None).unwrap();
+    change_part(&mut d, "part_entity", replacement.to_string());
+    assert!(d.request().is_err());
+    change_part(&mut d, "part_entity", String::new());
+    assert!(d.request().is_err());
+    change_part(&mut d, "part_entity", original.to_string());
+    assert!(
+        d.request().is_err(),
+        "unavailable declared source is visible but cannot be explicitly resubmitted"
+    );
+}
+
+#[test]
+fn saved_entity_choice_keeps_incompatible_map_visible_until_explicit_correction() {
+    use eda_engine::api::native_write::library;
+    let (mut browser, saved, _, _, a, _) = map_draft_fixture(0);
+    let entity: Uuid = saved.raw["entity"].as_str().unwrap().parse().unwrap();
+    let (other, old_gate, new_gate, unit, symbol, pin, pad) = (
+        Uuid::new_v4(),
+        Uuid::new_v4(),
+        Uuid::new_v4(),
+        Uuid::new_v4(),
+        Uuid::new_v4(),
+        Uuid::new_v4(),
+        Uuid::new_v4(),
+    );
+    let entry = |kind: &str, id: Uuid, name: &str, raw: Value| LibraryEntry {
+        id,
+        kind: kind.into(),
+        name: name.into(),
+        raw,
+        revision: Some(0),
+        warning: None,
+        source_path: format!("pool/{kind}/{id}.json"),
+    };
+    let mut logical = library::pool_unit_payload(unit, "Shared logical Unit", "");
+    logical["pins"][pin.to_string()] =
+        json!({"uuid":pin,"name":"P","direction":"Passive","swap_group":0,"alternates":[]});
+    browser.entries.extend([
+        entry("units", unit, "Shared Unit", logical),
+        entry(
+            "entities",
+            entity,
+            "Old logic",
+            library::pool_entity_payload(entity, old_gate, unit, symbol, "Old logic", "U", "", "A"),
+        ),
+        entry(
+            "entities",
+            other,
+            "New logic",
+            library::pool_entity_payload(other, new_gate, unit, symbol, "New logic", "U", "", "A"),
+        ),
+    ]);
+    browser.entries.iter_mut().find(|e| e.id == a).unwrap().raw["mappings"] =
+        json!({pad.to_string():{"gate":old_gate,"pin":pin}});
+    let mut d = LibraryDraft::begin(&browser, Some(&saved), "parts", "basis".into(), None).unwrap();
+    change_part(&mut d, "part_entity", other.to_string());
+    assert_eq!(d.value("part_map"), a.to_string());
+    let field = d.fields.iter().find(|f| f.key == "part_map").unwrap();
+    assert!(
+        field
+            .choices
+            .iter()
+            .any(|(id, label)| id == &a.to_string() && label.contains("incompatible"))
+    );
+    assert!(d.request().is_err());
+    change_part(&mut d, "part_map", String::new());
+    assert_eq!(
+        d.request().unwrap().fields,
+        *json!({"entity":other,"default_pin_pad_map":null})
+            .as_object()
+            .unwrap()
+    );
+    assert_eq!(d.part.original.as_ref(), Some(&saved.raw));
+    // The engine still validates all retained Maps, including this now nondefault
+    // map. A well-formed draft request is not a graph-admission certificate.
 }
 
 #[test]
@@ -119,11 +234,7 @@ fn saved_default_footprint_uses_fixed_package_and_preserves_untouched_optional_s
         let mut d =
             LibraryDraft::begin(&browser, Some(&saved), "parts", "basis".into(), None).unwrap();
         assert!(d.request().unwrap().fields.is_empty());
-        assert!(
-            !d.fields
-                .iter()
-                .any(|f| matches!(f.key, "part_entity" | "part_package"))
-        );
+        assert!(!d.fields.iter().any(|f| f.key == "part_package"));
         let i = d
             .fields
             .iter()
@@ -297,8 +408,8 @@ fn saved_map_choices_preserve_optional_raw_states_and_compose_without_autoclear(
         let (browser, saved, fa, fb, a, b) = map_draft_fixture(state);
         let mut d =
             LibraryDraft::begin(&browser, Some(&saved), "parts", "basis".into(), None).unwrap();
-        assert_eq!(d.fields.len(), 8);
-        assert!(d.fields[7].selector);
+        assert_eq!(d.fields.len(), 9);
+        assert!(d.fields[8].selector);
         assert!(d.request().unwrap().fields.is_empty());
         assert_eq!(d.value("part_footprint"), fa.to_string());
         assert_eq!(
@@ -310,13 +421,13 @@ fn saved_map_choices_preserve_optional_raw_states_and_compose_without_autoclear(
             }
         );
         assert!(
-            d.fields[7]
+            d.fields[8]
                 .choices
                 .iter()
                 .any(|(id, label)| id == &a.to_string() && label.contains("Map A"))
         );
         assert!(
-            !d.fields[7]
+            !d.fields[8]
                 .choices
                 .iter()
                 .any(|(id, _)| id == &b.to_string())
@@ -335,7 +446,7 @@ fn saved_map_choices_preserve_optional_raw_states_and_compose_without_autoclear(
                 "Footprint choice must not author a Map clear"
             );
             assert!(
-                d.fields[7]
+                d.fields[8]
                     .choices
                     .iter()
                     .any(|(id, label)| id == &a.to_string() && label.contains("Unavailable"))
@@ -383,7 +494,7 @@ fn saved_map_without_default_footprint_never_infers_one_and_creation_has_no_map_
         .remove("default_footprint");
     let mut d = LibraryDraft::begin(&browser, Some(&saved), "parts", "basis".into(), None).unwrap();
     assert!(
-        d.fields[7]
+        d.fields[8]
             .choices
             .iter()
             .any(|(id, _)| id == &b.to_string())
@@ -425,7 +536,7 @@ fn saved_unavailable_duplicate_or_foreign_map_declaration_is_not_silently_cleare
             LibraryDraft::begin(&browser, Some(&saved), "parts", "basis".into(), None).unwrap();
         assert_eq!(d.value("part_map"), a.to_string());
         assert!(
-            d.fields[7]
+            d.fields[8]
                 .choices
                 .iter()
                 .any(|(id, label)| id == &a.to_string() && label.contains("Unavailable"))

@@ -384,6 +384,35 @@ CLI fixture run lacked a sheet; its failed log is retained, and the fixture now
 creates one canonically. This supplies no placed update/ECO, Entity/Package
 relinking, approval, physical/HUMAN, release-GUI or full library qualification.
 
+Saved Part Entity correction (`dat-saved-part-entity-lo01`) adds a named existing
+Entity choice to the shared form while keeping Package fixed. Explicit Entity,
+Footprint and default-Map choices compose only when the resulting candidate passes
+the existing graph rules. The engine qualifies unique typed Entity gates and their
+Unit/Symbol sources, with consumed-source revision guards. Part identity, unedited
+raw fields and Map definitions remain intact. Every retained same-Part Map,
+including nondefault Maps, and legacy `pad_map` rows remain relevant. Incompatible
+gate references refuse atomically even when the default Map is explicitly cleared;
+this supplies no successful mapped-Part Entity migration.
+
+Existing schematic components retain the Entity named by their declared Part
+revision. Old multi-gate move, rotate, delete and remaining-gate choices use that
+authenticated chain; later explicit initial Part/gate choices use the corrected
+current Entity. Plain source correction, Cancel and Part Undo/Redo preserve all
+old root/child source and CI bytes exactly. The App's subsequent child Move and
+its history qualify actual CI/member revision counters only after the real Move
+phase, preserving the declared Part pin, library bindings, roles and other data.
+
+Forty-one focused Rust checks and one ordinary isolated debug-App case pass. The
+App completes 86 stages with eight inspected captures, covering Preview/Cancel,
+canonical Undo/Redo, Save/cold reopening, old component editing and new explicit
+Entity placement. A connected eight-pad `Complete` certificate remains unchanged
+on incompatible mapped-switch refusal. The gate regression batch retains the
+known `dat-2glp` annotation assertion failure, with six other cases passing;
+earlier fixture, shortcut, capture and assertion-review attempts retain their
+original results. Package relinking, implicit placed updates/ECO, approval,
+physical/HUMAN, release-GUI execution and full library qualification remain outside
+this increment.
+
 The creation-only PinPadMap GUI increment (`dat-pin-pad-map-gui-create-emck`)
 adds named Part and compatible explicit Footprint choices and a table assigning
 Footprint pads to gate-qualified Unit pins. Unmapped pads remain visible;

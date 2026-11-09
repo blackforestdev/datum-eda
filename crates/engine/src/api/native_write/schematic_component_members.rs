@@ -64,8 +64,25 @@ fn capture(
                 .get(&r.object_id)
                 .is_some_and(|o| o.object_revision == r.object_revision)
         };
+        let declared_part = ci
+            .part_ref
+            .as_ref()
+            .map(|reference| {
+                if ci.library_bindings.values().any(|binding| {
+                    binding.binding_role == LibraryBindingRole::Part
+                        && (binding.target_object_id != reference.object_id
+                            || binding.pinned_object_revision != reference.object_revision)
+                }) {
+                    return Err(invalid("Component Part declarations disagree"));
+                }
+                model.materialized_pool_object_revision(
+                    reference.object_id,
+                    "parts",
+                    reference.object_revision,
+                )
+            })
+            .transpose()?;
         if !ci.placed_symbol_refs.iter().all(current)
-            || !ci.part_ref.as_ref().is_none_or(current)
             || model
                 .objects
                 .get(&ci.uuid)
@@ -111,9 +128,10 @@ fn capture(
         let part = ci
             .part_ref
             .as_ref()
-            .ok_or_else(|| invalid("Multiple Gates require a complete current Part binding"))?
+            .ok_or_else(|| invalid("Multiple Gates require a complete declared Part binding"))?
             .object_id;
-        let part_raw = materialized_pool_object(model, part, "parts")?;
+        let part_raw =
+            declared_part.ok_or_else(|| invalid("Declared Part source is unavailable"))?;
         let entity = id(&part_raw, "entity")?;
         let entity_raw = materialized_pool_object(model, entity, "entities")?;
         let mut sheet = None;

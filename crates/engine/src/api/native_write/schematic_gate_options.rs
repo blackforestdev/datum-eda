@@ -40,8 +40,13 @@ pub fn options(
         .remove(&selected_symbol)
         .ok_or_else(|| invalid("Select an assigned schematic-only Symbol"))?;
     let ci = id(&raw, "uuid")?;
-    let part = id(&raw["part_ref"], "object_id")?;
-    let part_raw = materialized_pool_object(model, part, "parts")?;
+    // gate_set has authenticated the actual owner and agreement of its Part
+    // declarations. Additional members extend that chain, not today's Part.
+    let reference: crate::substrate::RevisionedRef =
+        serde_json::from_value(raw["part_ref"].clone())?;
+    let part = reference.object_id;
+    let part_raw =
+        model.materialized_pool_object_revision(part, "parts", reference.object_revision)?;
     let entity = id(&part_raw, "entity")?;
     let entity_raw = materialized_pool_object(model, entity, "entities")?;
     let source = source(model)?;
