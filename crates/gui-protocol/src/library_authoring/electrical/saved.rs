@@ -165,10 +165,10 @@ impl LibraryDraft {
             return Err("Select an existing logical pin before editing its metadata".into());
         }
         if let Some(id) = self.electrical.pin_id {
+            let key = pin_key(&pins, id)?;
             let pin = pins
-                .iter_mut()
-                .find(|(key, _)| Uuid::parse_str(key).ok() == Some(id))
-                .and_then(|(_, value)| value.as_object_mut())
+                .get_mut(&key)
+                .and_then(Value::as_object_mut)
                 .ok_or("Select an existing logical pin")?;
             let name = self.value("pin_name");
             if pin.get("name").and_then(Value::as_str) != Some(name) {
@@ -285,9 +285,24 @@ impl LibraryDraft {
             .as_ref()
             .ok_or("Saved definition basis unavailable")?;
         if self.kind == "units" {
-            let pins = Value::Object(self.saved_pins()?);
-            if original.get("pins") != Some(&pins) {
-                fields.insert("pins".into(), pins);
+            let pins = self.electrical_pins()?;
+            let old = original["pins"]
+                .as_object()
+                .ok_or("Saved Unit pins are unavailable")?;
+            let retained: Map<_, _> = pins
+                .iter()
+                .filter(|(key, _)| old.contains_key(*key))
+                .map(|(key, value)| (key.clone(), value.clone()))
+                .collect();
+            if &retained != old {
+                fields.insert("pins".into(), retained.into());
+            }
+            let additions: Map<_, _> = pins
+                .into_iter()
+                .filter(|(key, _)| !old.contains_key(key))
+                .collect();
+            if !additions.is_empty() {
+                fields.insert("pin_additions".into(), additions.into());
             }
         } else {
             if let Some(drawings) = self.saved_drawings()? {

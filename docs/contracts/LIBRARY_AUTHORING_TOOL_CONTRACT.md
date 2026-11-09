@@ -198,6 +198,44 @@ not physical/HUMAN qualification or release-GUI execution. General graphics and
 pin-topology authoring, relinking, Package/Entity/Part/PinPadMap editing, approval,
 models and placed-definition updates remain outside this increment.
 
+Saved Unit pin addition (`dat-saved-unit-add-pin-g2dm`) now exposes Add pin in
+the shared form. Each explicit new row retains one fresh UUID, a name and an
+explicit electrical type across selection and invalid input. Remove draft pin
+discards only a new row; existing saved pins cannot be deleted. Pin controls on
+other Library kinds refuse before changing the draft. Sparse
+`pin_additions` compose after supported old-pin metadata edits, authenticate the
+original raw membership and source, and reject nil, owned, duplicate or aliased
+identity collisions. The existing creation builder supplies new-pin defaults;
+untouched original keys, values, unknown metadata and child revisions remain exact.
+No new minimum-pin or unique-caption policy is introduced.
+
+Preview/Cancel, canonical nested-Pin registration, Undo/Redo and Save/cold reopen
+use the existing writer. Old placed names, types, positions and membership remain
+in their actual authored SymbolPin records; this does not invent a placed Unit
+binding or a new history reader. An actual connected eight-pad Complete certificate
+and held/fresh membership survive successful addition/history/cold, with existing
+logical-pin counters and mapping sources unchanged.
+
+Twenty-three unique focused Rust cases and one ordinary isolated debug-App case pass:
+110 stages, 22.55 seconds and nine inspected captures. The App uses the original
+22-source/20-transaction circuit without setup writes. Unit addition, Undo and Redo
+each contain only Set Unit and create/delete/restore the new nested Pin; all other
+21 sources, old root/child scenes, CIs, pins, references, Maps and Nets remain exact.
+A later shared Symbol creation selects the added pin by name, previews and commits
+its explicit body/anchor, then survives cold reopen. That separate transaction adds
+only one Symbol definition, ending at 23 sources and 24 transactions.
+
+The initial engine test's empty Symbol body was correctly refused by the existing
+one-rectangle creation rule; only that test fixture changed. The new wrong-kind
+test first needed a named Unit in its fixture; that setup was corrected. The
+pre-landing Symbol-control regression is fixed by the early Unit-kind check,
+with direct Add/Remove/select refusal tested without draft mutation. Earlier
+App proof remains at its own candidate; the final corrected build supplies the
+current captures. The existing ignored rectangle case remains uncredited. App controls and logical input are programmatic
+in owned Wayland. No saved-pin removal/rekeying, Symbol-topology edit, implicit
+placed update, new reader/schema/controller, approval, physical/HUMAN observation,
+release-GUI execution, full qualification or broader-goal acceptance is supplied.
+
 Saved Symbol rectangle correction (`dat-saved-symbol-rectangle-iltr`) exposes the
 five existing body min/max coordinate and stroke fields for exactly one existing
 raw Rect, at its retained array position. Other known graphics can coexist. Only

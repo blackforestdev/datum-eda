@@ -454,8 +454,9 @@ impl Runtime {
                     }
                     if d.kind == "units" {
                         controls.extend((0..d.electrical.pins.len()).map(C::Pin));
-                        if d.create {
-                            controls.extend([C::AddPin, C::RemovePin]);
+                        controls.push(C::AddPin);
+                        if d.create || d.electrical.selected_new_pin() {
+                            controls.push(C::RemovePin);
                         }
                     }
                     if d.kind == "symbols" {

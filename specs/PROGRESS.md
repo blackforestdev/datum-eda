@@ -583,6 +583,28 @@ SURFACE-S01–S04 and the combined planning review are accepted. SURFACE-S05 dis
 
 Routine saved Unit/Symbol property editing (`dat-saved-unit-symbol-edit-qwni`) adds shared-form name/pin-metadata and existing-anchor pose edits with preview/cancel, canonical history and Save/cold reopen. Actual isolated App and focused raw/geometry/binding checks preserve UUIDs, raw sibling data and existing placed users. This bounded increment leaves general graphics, saved topology/relinking, Package/Entity/Part/PinPadMap editing and the larger native-library goal open; it does not select or complete a successor milestone or full qualification.
 
+Saved Unit Add pin (`dat-saved-unit-add-pin-g2dm`) now supports explicit named
+new pins and electrical types in the shared form, stable row IDs and new-row-only
+discard, Preview/Cancel, canonical Undo/Redo and Save/cold reopening. Sparse additions
+reuse creation defaults after old metadata edits and preserve original raw keys,
+pin data and child revisions. Existing placed SymbolPin records retain their own
+metadata and membership; no placed Unit binding or new history mechanism is added.
+
+Twenty-three unique focused Rust cases plus one ordinary isolated App case pass:
+110 stages, 22.55 seconds and nine inspected captures. Actual connected eight-pad
+Complete and held/fresh membership survive addition/history/cold. The original
+22-source/20-transaction App circuit needs no setup: three sole-Set-Unit history
+transactions preserve all other 21 source/CI/pin/Map/Net files and old root/child
+scenes. A later ordinary Symbol creation selects the new pin by name and adds only
+its definition; final cold state has 23 files and 24 transactions. The raw invalid
+empty-body engine fixture failure is retained; only the test was corrected to the
+existing required rectangle. A direct wrong-kind regression was corrected before
+landing: Symbol pin controls now refuse without changing the draft. Its new test
+first lacked a named Unit fixture; that setup failure is retained and corrected.
+Earlier App proof retains its original candidate. Existing ignored17ld remains separate. Programmatic
+controls supply no physical/HUMAN, release-GUI execution, saved-pin removal/rekey,
+implicit placed update, approval, full qualification or broader-goal acceptance.
+
 Saved Symbol rectangle correction (`dat-saved-symbol-rectangle-iltr`) enables the
 existing five min/max/stroke numeric fields for one unambiguous Rect, preserving
 its raw array position, other graphics, unknown metadata, Unit/UUID, anchors and

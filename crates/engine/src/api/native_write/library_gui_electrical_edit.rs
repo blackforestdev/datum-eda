@@ -8,8 +8,9 @@ pub(super) fn build(
     request: LibraryDefinitionRequest,
 ) -> Result<PreparedWrite, EngineError> {
     let body_edit = request.kind == "symbols" && request.fields.contains_key("drawings");
-    let (target, mut object) = if body_edit {
-        super::super::saved_source::load(context.model, request.object_id, "symbols")?
+    let adding = request.kind == "units" && request.fields.contains_key("pin_additions");
+    let (target, mut object) = if body_edit || adding {
+        super::super::saved_source::load(context.model, request.object_id, &request.kind)?
     } else {
         let target = PoolLibraryObjectTarget::new("pool", &request.kind, request.object_id);
         let object = library::pool_library_object_payload(
@@ -33,6 +34,7 @@ pub(super) fn build(
                 validate_pins(&object["pins"], value)?;
                 object["pins"] = value.clone();
             }
+            ("units", "pin_additions") => {} // Composed after existing-pin metadata.
             ("symbols", "drawings") => {
                 validate_rectangle(&object["drawings"], value)?;
                 object["drawings"] = value.clone();
@@ -47,6 +49,9 @@ pub(super) fn build(
                 ));
             }
         }
+    }
+    if adding {
+        add_pins(context.model, &request, &mut object)?;
     }
     // Use the same typed definition admission and reference gate as generic Set.
     match request.kind.as_str() {
@@ -72,7 +77,7 @@ pub(super) fn build(
         Some("pool"),
         vec![PoolLibraryOperationSpec::Set { target, object }],
     )?;
-    if body_edit {
+    if body_edit || adding {
         prepared.batch.operations.insert(
             0,
             crate::substrate::Operation::GuardObjectRevision {
@@ -82,6 +87,55 @@ pub(super) fn build(
         );
     }
     Ok(prepared)
+}
+
+// New rows use the existing creation builder; retained raw pins are never serialized.
+fn add_pins(
+    model: &crate::substrate::DesignModel,
+    request: &LibraryDefinitionRequest,
+    object: &mut Value,
+) -> Result<(), EngineError> {
+    let original = object["pins"]
+        .as_object()
+        .ok_or_else(|| refusal("Unit pins are unavailable"))?;
+    let mut identities = HashSet::new();
+    for (key, value) in original {
+        let id: Uuid = key
+            .parse()
+            .map_err(|_| refusal("Saved logical pin identity is invalid"))?;
+        let pin: crate::pool::Pin = serde_json::from_value(value.clone())?;
+        if id.is_nil()
+            || pin.uuid != id
+            || !identities.insert(id)
+            || model.objects.get(&id).is_none_or(|p| {
+                p.source_shard_id != model.objects[&request.object_id].source_shard_id
+            })
+        {
+            return Err(refusal(
+                "Saved logical pin membership is missing or ambiguous",
+            ));
+        }
+    }
+    let rows = request.fields["pin_additions"]
+        .as_object()
+        .filter(|m| !m.is_empty())
+        .ok_or_else(|| refusal("Add an explicit named logical pin"))?;
+    for key in rows.keys() {
+        let id: Uuid = key
+            .parse()
+            .map_err(|_| refusal("New pin identity is invalid"))?;
+        if id.is_nil() || !identities.insert(id) || model.objects.contains_key(&id) {
+            return Err(refusal("New pin requires a fresh unowned identity"));
+        }
+    }
+    let mut creation = request.clone();
+    creation.fields = json!({"pins":rows}).as_object().unwrap().clone();
+    let payload = super::unit_payload(&creation, object["name"].as_str().unwrap_or(""))?;
+    object["pins"]
+        .as_object_mut()
+        .unwrap()
+        .extend(payload["pins"].as_object().unwrap().clone());
+    Ok(())
 }
 
 /// The array is captured intent, not authority to rewrite other graphics or metadata.
@@ -292,3 +346,7 @@ fn without_fields(value: &Value, fields: &[&str]) -> Value {
 #[cfg(test)]
 #[path = "library_gui_electrical_edit_tests.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "library_gui_unit_add_pin_tests.rs"]
+mod add_pin_tests;

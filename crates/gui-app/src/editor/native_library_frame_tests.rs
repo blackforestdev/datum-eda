@@ -51,6 +51,8 @@ mod proof_assertions;
 mod symbol_rectangle;
 #[path = "native_library_frame_tests/text_fields.rs"]
 mod text_fields;
+#[path = "native_library_frame_tests/unit_add_pin.rs"]
+mod unit_add_pin;
 use proof_assertions::source_bytes;
 #[path = "native_library_frame_tests/scenario.rs"]
 mod scenario;
@@ -113,6 +115,7 @@ impl Fixture {
                         | Step::EntityGateUnit(_)
                         | Step::EntityAddGate(_)
                         | Step::EntityRemoveGate(_)
+                        | Step::UnitAddPin(_)
                         | Step::PackageEdit(_)
                         | Step::PartEdit(_)
                         | Step::MapEdit(_)
@@ -233,6 +236,7 @@ impl Fixture {
             Step::EntityGateUnit(stage) => self.entity_gate_unit(events, stage),
             Step::EntityAddGate(stage) => self.entity_add_gate(events, stage),
             Step::EntityRemoveGate(stage) => self.entity_remove_gate(events, stage),
+            Step::UnitAddPin(stage) => self.unit_add_pin(events, stage),
             Step::PackageEdit(stage) => self.check_package_edit(stage),
             Step::Part(stage, footprint) => self.check_part(stage, footprint),
             Step::PartEdit(stage) => self.part_edit_stage(events, stage),

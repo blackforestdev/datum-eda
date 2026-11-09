@@ -15,6 +15,31 @@ pub struct ElectricalDraft {
     pub unit_pins: BTreeMap<String, Vec<(String, String)>>,
 }
 
+impl ElectricalDraft {
+    pub fn selected_new_pin(&self) -> bool {
+        self.pin_id.is_some_and(|id| {
+            self.pins
+                .keys()
+                .any(|key| key.parse::<Uuid>().ok() == Some(id))
+                && self
+                    .original
+                    .as_ref()
+                    .and_then(|raw| raw["pins"].as_object())
+                    .is_some_and(|pins| !pins.keys().any(|k| k.parse::<Uuid>().ok() == Some(id)))
+        })
+    }
+}
+fn pin_key(pins: &Map<String, Value>, id: Uuid) -> Result<String, String> {
+    let matches: Vec<_> = pins
+        .keys()
+        .filter(|k| k.parse::<Uuid>().ok() == Some(id))
+        .collect();
+    if matches.len() != 1 {
+        return Err("Logical pin identity is missing or ambiguous".into());
+    }
+    Ok(matches[0].clone())
+}
+
 impl LibraryDraft {
     pub(super) fn electrical_fields(&mut self, browser: &LibraryBrowser) {
         if self.kind == "units" {
@@ -99,7 +124,7 @@ impl LibraryDraft {
     }
 
     pub fn electrical_pins(&self) -> Result<Map<String, Value>, String> {
-        if !self.create {
+        if !self.create && !self.electrical.selected_new_pin() {
             return self.saved_pins();
         }
         let mut pins = self.electrical.pins.clone();
@@ -198,12 +223,24 @@ impl LibraryDraft {
     }
 
     pub fn switch_pin(&mut self, index: Option<usize>, remove: bool) -> Result<(), String> {
-        if !self.create && (remove || index.is_none()) {
-            return Err("Saved edits preserve logical pin identities".into());
+        if self.kind != "units" {
+            return Err("Logical pin authoring requires a Unit draft".into());
         }
-        let selected = index
-            .and_then(|i| self.electrical.pins.keys().nth(i))
-            .cloned();
+        if !self.create && remove && !self.electrical.selected_new_pin() {
+            return Err("Saved edits preserve existing logical pin identities".into());
+        }
+        let selected = if let Some(index) = index {
+            let key = self
+                .electrical
+                .pins
+                .keys()
+                .nth(index)
+                .ok_or("Choose an existing logical pin")?;
+            let id = key.parse().map_err(|_| "Logical pin identity is invalid")?;
+            Some(pin_key(&self.electrical.pins, id)?)
+        } else {
+            None
+        };
         if remove {
             if let Some(id) = self.electrical.pin_id {
                 self.electrical.pins.remove(&id.to_string());
@@ -218,6 +255,14 @@ impl LibraryDraft {
         self.electrical.pin_id = selected
             .and_then(|id| id.parse().ok())
             .or_else(|| (!remove).then(Uuid::new_v4));
+        if !self.create && index.is_none() && !remove {
+            // The explicit Add action owns this disposable row immediately.
+            // Merely typing with no selection cannot create a saved pin.
+            self.electrical.pins.insert(
+                self.electrical.pin_id.unwrap().to_string(),
+                json!({"name":"","electrical_type":""}),
+            );
+        }
         for (key, target) in [("pin_name", "name"), ("pin_type", "electrical_type")] {
             let value = raw
                 .as_ref()
@@ -295,3 +340,6 @@ impl LibraryDraft {
 
 #[cfg(test)]
 mod tests;
+
+#[cfg(test)]
+mod add_pin_tests;

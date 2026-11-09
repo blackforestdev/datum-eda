@@ -244,7 +244,11 @@ fn saved_unit_form_edits_existing_metadata_without_defaults_or_raw_row_loss() {
         json!({"pins":expected}).as_object().unwrap().clone()
     );
     assert_eq!(draft.electrical.original, Some(original));
-    assert!(draft.switch_pin(None, false).is_err());
+    let mut adding = draft.clone();
+    adding.switch_pin(None, false).unwrap();
+    assert!(adding.request().is_err());
+    adding.switch_pin(None, true).unwrap();
+    assert_eq!(adding.request().unwrap().fields, request.fields);
     assert!(draft.switch_pin(None, true).is_err());
 }
 

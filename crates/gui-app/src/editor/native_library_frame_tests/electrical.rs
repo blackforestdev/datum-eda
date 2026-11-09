@@ -44,12 +44,22 @@ impl Fixture {
         for _ in 0..80 {
             self.key(Key::Named(NamedKey::Tab));
             let focus = &self.app.runtime.as_ref().unwrap().workspace().library.focus;
+            let draft = self
+                .app
+                .runtime
+                .as_ref()
+                .unwrap()
+                .workspace()
+                .library
+                .draft
+                .as_ref()
+                .unwrap();
             assert!(
-                !matches!(
-                    focus,
-                    Some(C::AddPin | C::RemovePin | C::AddAnchor | C::RemoveAnchor)
-                ),
-                "hidden topology controls must not receive Tab"
+                !matches!(focus, Some(C::AddAnchor | C::RemoveAnchor))
+                    && (!matches!(focus, Some(C::AddPin)) || draft.kind == "units")
+                    && (!matches!(focus, Some(C::RemovePin))
+                        || (draft.kind == "units" && draft.electrical.selected_new_pin())),
+                "only backed saved-Unit Add and genuine new-row discard may receive Tab"
             );
         }
     }

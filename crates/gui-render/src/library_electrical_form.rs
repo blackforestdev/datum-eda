@@ -28,7 +28,7 @@ pub(super) fn table(p: &mut Painter<'_>, d: &LibraryDraft, rect: RectPx) {
             let active = d
                 .electrical
                 .pin_id
-                .is_some_and(|pin| pin.to_string() == *id);
+                .is_some_and(|pin| id.parse().ok() == Some(pin));
             let name = if active {
                 d.value("pin_name")
             } else {
@@ -45,10 +45,12 @@ pub(super) fn table(p: &mut Painter<'_>, d: &LibraryDraft, rect: RectPx) {
             };
             pin_row(p, rect, name, kind, C::Pin(index), active);
         }
-        if d.electrical
-            .pin_id
-            .is_some_and(|id| !d.electrical.pins.contains_key(&id.to_string()))
-        {
+        if d.electrical.pin_id.is_some_and(|id| {
+            !d.electrical
+                .pins
+                .keys()
+                .any(|key| key.parse().ok() == Some(id))
+        }) {
             let field = d.fields.iter().position(|f| f.key == "pin_name").unwrap();
             pin_row(
                 p,
@@ -59,10 +61,11 @@ pub(super) fn table(p: &mut Painter<'_>, d: &LibraryDraft, rect: RectPx) {
                 true,
             );
         }
-        if d.create {
-            p.button("Add pin", C::AddPin);
+        p.button("Add pin", C::AddPin);
+        if d.create || d.electrical.selected_new_pin() {
             p.button("Remove draft pin", C::RemovePin);
-        } else {
+        }
+        if !d.create {
             p.line("Existing logical pin identities retained");
         }
     } else {
