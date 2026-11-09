@@ -8,10 +8,14 @@ pub(super) fn apply_operations(
     operations: &[Operation],
     diff: &mut CommitDiff,
 ) -> Result<(), EngineError> {
-    if model
-        .source_shards
-        .iter()
-        .any(|s| s.kind == super::SourceShardKind::SchematicRoot)
+    let package_change = operations.iter().any(|op| {
+        super::component_instance::pool_history::package_revision_target(model, op).is_some()
+    });
+    if package_change
+        || model
+            .source_shards
+            .iter()
+            .any(|s| s.kind == super::SourceShardKind::SchematicRoot)
         || !model.electrical_identities.is_empty()
         || operations
             .iter()
@@ -25,7 +29,15 @@ pub(super) fn apply_operations(
                 apply_operation(&mut candidate, operation, diff)?;
             }
         }
-        super::electrical_identity_validation::validate_operations(&candidate, operations)?;
+        super::component_instance::pool_history::PoolHistoryBasis {
+            model,
+            operations,
+            applied_operations: operations,
+        }
+        .preserve_package_revisions(&candidate)?;
+        super::electrical_identity_validation::validate_operations_with_package_basis(
+            &candidate, operations, model,
+        )?;
         *model = candidate;
     } else {
         for operation in operations {

@@ -15,6 +15,8 @@ mod map_edit;
 mod map_labels;
 #[path = "native_library_frame_tests/package.rs"]
 mod package;
+#[path = "native_library_frame_tests/package_edit.rs"]
+mod package_edit;
 #[path = "native_library_frame_tests/pane_context.rs"]
 mod pane_context;
 #[path = "native_library_frame_tests/part.rs"]
@@ -45,6 +47,7 @@ enum Step {
     MapEdit(usize),
     PartEdit(usize),
     EntityEdit(usize),
+    PackageEdit(usize),
     TextFields(usize),
     MapLabels(usize),
     PaneContext(pane_context::Action),
@@ -126,6 +129,7 @@ impl Fixture {
                         | Step::MapLabels(_)
                         | Step::TextFields(_)
                         | Step::EntityEdit(_)
+                        | Step::PackageEdit(_)
                         | Step::PartEdit(_)
                         | Step::MapEdit(_)
                 )
@@ -236,6 +240,7 @@ impl Fixture {
             Step::Entity(stage) => self.check_entity(stage),
             Step::MapEdit(stage) => self.check_map_edit(stage),
             Step::EntityEdit(stage) => self.check_entity_edit(stage),
+            Step::PackageEdit(stage) => self.check_package_edit(stage),
             Step::Part(stage, footprint) => self.check_part(stage, footprint),
             Step::PartEdit(stage) => self.part_edit_stage(events, stage),
             Step::Mapping(stage, assigned) => self.check_mapping(stage, assigned),

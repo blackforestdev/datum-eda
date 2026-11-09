@@ -1,12 +1,19 @@
-//! Disposable Package body and terminal drafts; no persistence or placed updates.
+//! Package creation and saved descriptive drafts; no persistence or placed updates.
 use super::*;
 
 impl LibraryDraft {
-    pub(super) fn package_fields(&mut self) {
+    pub(super) fn package_fields(&mut self, raw: &Value) {
         for (key, label) in [
             ("package_family", "Family (optional text)"),
             ("package_code", "Code (optional text)"),
             ("mounting_type", "Mounting (optional text)"),
+        ] {
+            self.field(key, label, raw.get(key), vec![]);
+        }
+        if !self.create {
+            return;
+        }
+        for (key, label) in [
             ("body_x", "Nominal body X (nm; blank = absent)"),
             ("body_y", "Nominal body Y (nm; blank = absent)"),
             ("body_z", "Nominal body Z (nm; blank = absent)"),
@@ -24,9 +31,14 @@ impl LibraryDraft {
 
     pub(super) fn package_request(&self, fields: &mut Map<String, Value>) -> Result<(), String> {
         for key in ["package_family", "package_code", "mounting_type"] {
-            if !self.value(key).is_empty() {
+            if (self.create && !self.value(key).is_empty())
+                || (!self.create && self.dirty.contains(key))
+            {
                 fields.insert(key.into(), json!(self.value(key)));
             }
+        }
+        if !self.create {
+            return Ok(());
         }
         let mut dimensions = Map::new();
         for (key, target) in [("body_x", "x_nm"), ("body_y", "y_nm"), ("body_z", "z_nm")] {
@@ -72,6 +84,9 @@ impl LibraryDraft {
     }
 
     pub fn switch_terminal(&mut self, index: Option<usize>, remove: bool) -> Result<(), String> {
+        if !self.create {
+            return Err("Saved Package edits support descriptive fields only".into());
+        }
         let selected_id = index.and_then(|i| self.terminals.keys().nth(i)).cloned();
         if remove {
             if let Some(id) = self.terminal_id {

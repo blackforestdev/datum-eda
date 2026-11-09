@@ -98,6 +98,7 @@ impl LibraryEntry {
                     | "symbols"
                     | "entities"
                     | "parts"
+                    | "packages"
                     | "pin_pad_maps"
             )
     }

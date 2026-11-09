@@ -90,9 +90,6 @@ impl LibraryDraft {
                     .into(),
             );
         }
-        if kind == "packages" && entry.is_some() {
-            return Err("Saved Package editing is unavailable in this increment".into());
-        }
         if kind == "symbols" && browser.choices("units").is_empty() {
             return Err("Create a named Unit before creating its Symbol".into());
         }
@@ -149,7 +146,7 @@ impl LibraryDraft {
         } else if kind == "entities" {
             draft.entity_fields(browser, raw)?;
         } else if kind == "packages" {
-            draft.package_fields();
+            draft.package_fields(raw);
         } else if kind == "padstacks" {
             let aperture = raw.get("aperture").unwrap_or(&Value::Null);
             let shape = if aperture.get("circle").is_some() {

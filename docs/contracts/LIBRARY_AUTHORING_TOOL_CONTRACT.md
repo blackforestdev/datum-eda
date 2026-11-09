@@ -150,8 +150,25 @@ malformed-input refusal, Undo/Redo, Save/reopen and normal/narrow keyboard contr
 Source pins, execution and distinct review receipts are recorded in
 `docs/reviews/workflow-delivery-rollout/package-gui-creation.json`.
 The preview is a dimensional envelope; terminal positions and exact outline are
-unavailable. Saved-Package editing, tolerance/model authoring, placed updates and
-broader qualification remain open.
+unavailable. Saved-Package geometry/topology editing, tolerance/model authoring,
+placed updates and broader qualification remain open.
+
+Saved Package metadata editing (`dat-saved-package-metadata-edit-fztr`) adds name,
+family, code and mounting text to the same Library form. Dimensions and terminal/
+pad topology remain read-only. Only changed text fields enter the canonical raw
+patch; identity, unedited fields, optional absence and unknown metadata survive.
+Existing Package-role bindings and frozen legacy/Footprint pad users retain their
+exact historical definitions, source pins, geometry and connected Nets. The
+existing authenticated history qualifies those revisions. Counter reuse that
+would make a retained revision ambiguous, including metadata Undo/Redo collisions,
+refuses before publication. Preview and
+Cancel leave canonical sources and journal unchanged. Seventeen focused engine/
+form checks and the ordinary debug App's 67 stages and six inspected captures
+cover explicit commit, history, Save/cold persistence and unchanged placed root/
+child rendered identity. The App uses a body-only Package; engine cases supply
+the nonempty frozen-pad and historical-binding proof. Presented controls and
+logical keys supply no physical/HUMAN, release-GUI execution, full Package
+geometry/topology authoring or broader library qualification claim.
 
 The creation-only Unit and Symbol GUI increment uses the same canonical writer
 and shared library form. A Unit has named logical pins and electrical types; a

@@ -237,6 +237,7 @@ impl ElectricalSelectionSnapshot {
             && source.library_bindings.values().all(|b| {
                 if let Some(kind) = match b.binding_role {
                     crate::substrate::LibraryBindingRole::Part => Some("parts"),
+                    crate::substrate::LibraryBindingRole::Package => Some("packages"),
                     crate::substrate::LibraryBindingRole::PinPadMap => Some("pin_pad_maps"),
                     _ => None,
                 } {

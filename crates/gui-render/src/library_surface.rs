@@ -129,7 +129,7 @@ pub(crate) fn render(
         if rect.height > 420. {
             p.line("Tab: field / action · arrows: caret / choices · Esc: cancel");
         }
-        if d.kind == "packages" {
+        if d.kind == "packages" && d.create {
             p.line("Physical body / terminals · no Footprint lands");
             p.line("Tolerances, terminal positions and governed models unavailable");
         }
@@ -149,7 +149,7 @@ pub(crate) fn render(
         if d.kind == "pin_pad_maps" {
             pin_pad_map_form::table(&mut p, d);
         }
-        if matches!(d.kind.as_str(), "footprints" | "packages") {
+        if d.kind == "footprints" || (d.kind == "packages" && d.create) {
             let package = d.kind == "packages";
             let records = if package { &d.terminals } else { &d.pads };
             let focused = match state.library.focus {

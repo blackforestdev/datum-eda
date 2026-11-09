@@ -15,7 +15,8 @@ mod validation;
 pub(crate) use pins::{capture_pad, capture_root, check_pin, continuity, source_value};
 pub use projection::{ComponentPadProjection, component_pad_projection};
 pub(crate) use projection::{
-    project_value, projection_with_operations, projection_with_part_basis, validate_library_basis,
+    project_value, projection_with_operations, projection_with_package_basis,
+    projection_with_part_basis, validate_library_basis,
 };
 pub(crate) use validation::{touches, touches_batch, validate_batch, validate_native};
 
@@ -159,6 +160,16 @@ impl ComponentPadSource {
         part: Uuid,
         package: Uuid,
     ) -> ComponentPadMaterializationStatus {
+        self.materialization_status_with_library_basis(model, part_basis, None, part, package)
+    }
+    fn materialization_status_with_library_basis(
+        &self,
+        model: &DesignModel,
+        part_basis: &DesignModel,
+        package_basis: Option<&DesignModel>,
+        part: Uuid,
+        package: Uuid,
+    ) -> ComponentPadMaterializationStatus {
         let Some(b) = &self.source_binding else {
             return ComponentPadMaterializationStatus::Unverified;
         };
@@ -182,7 +193,12 @@ impl ComponentPadSource {
             || check_pin(part_basis, &b.part).is_err()
             || [&b.package, &b.land_pattern, &b.library_pad, &b.padstack]
                 .into_iter()
-                .any(|p| check_pin(model, p).is_err())
+                .any(|p| match package_basis {
+                    Some(accepted) => {
+                        pins::check_pin_with_package_basis(model, accepted, p).is_err()
+                    }
+                    None => check_pin(model, p).is_err(),
+                })
             || b.pin_pad_map.as_ref().is_some_and(|pin| {
                 model.objects.get(&pin.owner_id) != part_basis.objects.get(&pin.owner_id)
                     || model

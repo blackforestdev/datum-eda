@@ -132,7 +132,7 @@ fn package_create_refuses_unsupported_shape_target_and_saved_edit_without_writes
         )
         .unwrap_err()
         .to_string()
-        .contains("Saved Package editing")
+        .contains("missing or ambiguous source candidates")
     );
     assert!(!root.join("pool/packages").exists());
     assert!(!crate::substrate::transaction_journal_path(&root).exists());

@@ -441,7 +441,7 @@ impl Runtime {
                         controls.extend((0..d.pads.len()).map(C::Pad));
                         controls.extend([C::AddPad, C::RemovePad]);
                     }
-                    if d.kind == "packages" {
+                    if d.kind == "packages" && d.create {
                         controls.extend((0..d.terminals.len()).map(C::Terminal));
                         controls.extend([C::AddTerminal, C::RemoveTerminal]);
                     }

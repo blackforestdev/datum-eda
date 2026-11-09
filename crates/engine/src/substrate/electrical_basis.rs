@@ -32,10 +32,31 @@ impl ElectricalBasis<'static> {
         operations: &[Operation],
         read: &impl Fn(&super::SourceShardRef) -> Result<Value, EngineError>,
     ) -> Result<Self, EngineError> {
-        Self::capture(model, operations, read, None)
+        Self::capture(model, operations, read, None, None)
     }
 }
 impl<'basis> ElectricalBasis<'basis> {
+    pub(super) fn with_package_basis(
+        model: &DesignModel,
+        operations: &[Operation],
+        accepted: &DesignModel,
+    ) -> Result<Self, EngineError> {
+        let history = super::component_instance::pool_history::PoolHistoryBasis {
+            model: accepted,
+            operations,
+            applied_operations: operations,
+        };
+        let package_basis = history
+            .package_metadata_frame_matches(model)?
+            .then_some(accepted);
+        Self::capture(
+            model,
+            operations,
+            &|shard| super::journal::materialized_shard_value(model, shard),
+            None,
+            package_basis,
+        )
+    }
     pub(super) fn with_part_basis(
         model: &DesignModel,
         part_basis: &'basis DesignModel,
@@ -46,6 +67,7 @@ impl<'basis> ElectricalBasis<'basis> {
             operations,
             &|shard| super::journal::materialized_shard_value(model, shard),
             Some(part_basis),
+            None,
         )
     }
     fn capture(
@@ -53,6 +75,7 @@ impl<'basis> ElectricalBasis<'basis> {
         operations: &[Operation],
         read: &impl Fn(&super::SourceShardRef) -> Result<Value, EngineError>,
         part_basis: Option<&'basis DesignModel>,
+        package_basis: Option<&DesignModel>,
     ) -> Result<Self, EngineError> {
         if let Some(accepted) = part_basis {
             super::component_pad_source::validate_library_basis(model, accepted, operations)?;
@@ -169,6 +192,23 @@ impl<'basis> ElectricalBasis<'basis> {
                             board_pass.apply(operation)?;
                         }
                         SourceShardKind::Pool => {
+                            let path = match operation {
+                                Operation::CreatePoolPackage { relative_path, .. }
+                                | Operation::CreatePoolPadstack { relative_path, .. }
+                                | Operation::CreatePoolLibraryObject { relative_path, .. }
+                                | Operation::SetPoolLibraryObject { relative_path, .. }
+                                | Operation::DeletePoolPackage { relative_path, .. }
+                                | Operation::DeletePoolPadstack { relative_path, .. }
+                                | Operation::DeletePoolLibraryObject { relative_path, .. }
+                                | Operation::AttachPoolPartModel { relative_path, .. }
+                                | Operation::DetachPoolPartModel { relative_path, .. } => {
+                                    relative_path
+                                }
+                                _ => continue,
+                            };
+                            if *path != shard.relative_path {
+                                continue;
+                            }
                             super::pool_journal_ops::apply_pool_shard_operation(
                                 &shard.kind,
                                 board_pass.board_mut(),
@@ -207,6 +247,10 @@ impl<'basis> ElectricalBasis<'basis> {
             if shard.kind == SourceShardKind::BoardRoot {
                 let projection = if let Some(accepted) = part_basis {
                     super::component_pad_source::projection_with_part_basis(
+                        model, accepted, &value, operations,
+                    )?
+                } else if let Some(accepted) = package_basis {
+                    super::component_pad_source::projection_with_package_basis(
                         model, accepted, &value, operations,
                     )?
                 } else {

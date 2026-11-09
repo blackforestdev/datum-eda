@@ -1,4 +1,4 @@
-//! Creation-only physical Package intent over the existing canonical pool writer.
+//! Physical Package creation and saved metadata over the canonical pool writer.
 use super::*;
 
 pub(super) fn build(
@@ -8,9 +8,14 @@ pub(super) fn build(
     create: bool,
 ) -> Result<PreparedWrite, EngineError> {
     if !create {
-        return Err(refusal(
-            "Saved Package editing is unavailable in this increment",
-        ));
+        return metadata_edit::build(
+            context,
+            provenance,
+            request,
+            "packages",
+            &["name", "package_family", "package_code", "mounting_type"],
+            &["name"],
+        );
     }
     const FIELDS: &[&str] = &[
         "name",
@@ -86,3 +91,7 @@ pub(super) fn build(
         }],
     )
 }
+
+#[cfg(test)]
+#[path = "library_gui_package_edit_tests.rs"]
+mod edit_tests;

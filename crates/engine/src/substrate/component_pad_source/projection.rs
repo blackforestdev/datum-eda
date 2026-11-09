@@ -57,7 +57,7 @@ pub(crate) fn projection_with_operations(
     board: &Value,
     pending: &[Operation],
 ) -> Result<ComponentPadProjection, EngineError> {
-    project_with_part_basis(model, model, board, pending)
+    project_with_part_basis(model, model, None, board, pending)
 }
 
 /// Compensation stages no pool edits. Its accepted Part basis stays immutable
@@ -69,13 +69,53 @@ pub(crate) fn projection_with_part_basis(
     pending: &[Operation],
 ) -> Result<ComponentPadProjection, EngineError> {
     validate_library_basis(model, part_basis, pending)?;
-    project_with_part_basis(model, part_basis, board, pending)
+    // The compensation gate proves there are no pool edits. Package roots
+    // therefore use that same accepted journal while leaves stay on candidate.
+    project_with_part_basis(model, part_basis, Some(part_basis), board, pending)
 }
+/// Precommit descriptive Package edits retain their accepted root payloads.
+/// The strict Part compensation basis above remains a separate unchanged gate.
+pub(crate) fn projection_with_package_basis(
+    model: &DesignModel,
+    accepted: &DesignModel,
+    board: &Value,
+    pending: &[Operation],
+) -> Result<ComponentPadProjection, EngineError> {
+    let history = crate::substrate::component_instance::pool_history::PoolHistoryBasis {
+        model: accepted,
+        operations: pending,
+        applied_operations: pending,
+    };
+    if !history.package_metadata_frame_matches(model)? {
+        return Err(invalid("unqualified Package metadata source basis"));
+    }
+    project_with_part_basis(model, model, Some(accepted), board, pending)
+}
+
 pub(crate) fn validate_library_basis(
     model: &DesignModel,
     part_basis: &DesignModel,
     pending: &[Operation],
 ) -> Result<(), EngineError> {
+    let same_packages = |a: &DesignModel, b: &DesignModel| {
+        a.objects
+            .iter()
+            .filter(|(_, o)| o.domain == "pool" && o.kind == "packages")
+            .all(|(id, o)| {
+                b.objects.get(id) == Some(o)
+                    && a.source_shards
+                        .iter()
+                        .find(|s| {
+                            s.shard_id == o.source_shard_id && s.kind == SourceShardKind::Pool
+                        })
+                        .is_some_and(|source| b.source_shards.iter().any(|other| other == source))
+            })
+    };
+    if !same_packages(model, part_basis) || !same_packages(part_basis, model) {
+        return Err(invalid(
+            "prospective Part basis requires unchanged Package source owners, counters and shards",
+        ));
+    }
     let count = part_basis.journal.len();
     if part_basis.journal_cursor.applied_transaction_count != count
         || model.journal_cursor != part_basis.journal_cursor
@@ -113,6 +153,7 @@ pub(crate) fn validate_library_basis(
 fn project_with_part_basis(
     model: &DesignModel,
     part_basis: &DesignModel,
+    package_basis: Option<&DesignModel>,
     board: &Value,
     pending: &[Operation],
 ) -> Result<ComponentPadProjection, EngineError> {
@@ -168,9 +209,10 @@ fn project_with_part_basis(
                 }) {
                     return Err(invalid("missing placed Pad source registration"));
                 }
-                let status = pad.materialization_status_with_part_basis(
+                let status = pad.materialization_status_with_library_basis(
                     model,
                     part_basis,
+                    package_basis,
                     package.part,
                     package.package,
                 );
@@ -471,4 +513,68 @@ pub(crate) fn project_value(
     // dependent physical membership must not advertise a partial result.
     value["component_pad_unavailable"] = serde_json::to_value(&projection.unavailable)?;
     Ok(value)
+}
+
+#[cfg(test)]
+mod package_basis_tests {
+    use super::*;
+    use crate::api::native_write::{self as native, WriteProvenance, commit_prepared, library::*};
+    use crate::substrate::{CommitSource, ProjectResolver};
+    use serde_json::json;
+
+    #[test]
+    fn prospective_part_rejects_changed_package_shard_with_unchanged_owner() {
+        let root =
+            std::env::temp_dir().join(format!("datum_package_source_guard_{}", Uuid::new_v4()));
+        native::genesis::bootstrap_native_project(
+            &root,
+            native::genesis::GenesisSpec {
+                project_name: "Package source guard".into(),
+                existing_ids: None,
+            },
+        )
+        .unwrap();
+        let mut accepted = ProjectResolver::new(&root).resolve().unwrap();
+        let id = Uuid::new_v4();
+        let prepared = build_pool_library_write(
+            &accepted,
+            WriteProvenance::new(
+                "package-source-test",
+                CommitSource::Test,
+                "Retain exact Package source",
+            ),
+            Some("pool"),
+            vec![PoolLibraryOperationSpec::Create {
+                target: PoolLibraryObjectTarget::new("pool", "packages", id),
+                object: pool_package_payload(id, "Body", json!({})),
+            }],
+        )
+        .unwrap();
+        commit_prepared(&mut accepted, &root, prepared).unwrap();
+        let owner = accepted.objects[&id].source_shard_id;
+        // Fault inputs only: no synthetic staged journal or successful
+        // compensation is claimed. Actual positive compensation is covered by
+        // the retained physical/connected-Net ordinary history regressions.
+        for hash in [true, false] {
+            let mut candidate = accepted.clone();
+            let source = candidate
+                .source_shards
+                .iter_mut()
+                .find(|s| s.shard_id == owner)
+                .unwrap();
+            if hash {
+                source.content_hash = "foreign body payload".into();
+            } else {
+                source.path = source.path.with_file_name("foreign-package.json");
+            }
+            assert_eq!(candidate.objects, accepted.objects);
+            assert!(
+                validate_library_basis(&candidate, &accepted, &[])
+                    .unwrap_err()
+                    .to_string()
+                    .contains("unchanged Package source owners, counters and shards")
+            );
+        }
+        std::fs::remove_dir_all(root).unwrap();
+    }
 }

@@ -9,8 +9,10 @@ pub(super) fn build(
     allowed: &[&str],
     required_text: &[&str],
 ) -> Result<PreparedWrite, EngineError> {
-    if request.kind != kind || !matches!(kind, "entities" | "parts") {
-        return Err(refusal("Expected a saved Entity or Part metadata request"));
+    if request.kind != kind || !matches!(kind, "entities" | "parts" | "packages") {
+        return Err(refusal(
+            "Expected a saved Entity, Part or Package metadata request",
+        ));
     }
     let (target, mut object) = saved_source::load(context.model, request.object_id, kind)?;
     for (key, value) in request.fields {
@@ -37,6 +39,15 @@ pub(super) fn build(
     match kind {
         "entities" => {
             let _: crate::pool::Entity = serde_json::from_value(object.clone())?;
+        }
+        "packages" => {
+            let _: crate::pool::Package = serde_json::from_value(object.clone())?;
+            saved_source::preserve_pinned_revision(
+                context.model,
+                request.object_id,
+                kind,
+                &object,
+            )?;
         }
         "parts" => {
             let _: crate::pool::Part = serde_json::from_value(object.clone())?;

@@ -46,10 +46,7 @@ impl Fixture {
             self.expected_terminals = Some(raw["terminals"].clone());
         }
         assert!(raw["pads"].as_object().unwrap().is_empty());
-        assert!(
-            !entry.editable(),
-            "saved Package editing remains unavailable"
-        );
+        assert!(entry.editable(), "saved Package metadata can be corrected");
         assert!(raw.get("approval_status").is_none());
         assert!(raw.get("standards_basis").is_none());
     }

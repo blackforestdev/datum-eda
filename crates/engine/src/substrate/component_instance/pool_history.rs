@@ -14,6 +14,188 @@ pub(in crate::substrate) struct PoolHistoryBasis<'a> {
 }
 
 impl PoolHistoryBasis<'_> {
+    /// Compensation is also a source edit: a reused counter must not change
+    /// a retained Package binding, even when no electrical identity is present.
+    pub(in crate::substrate) fn preserve_package_revisions(
+        &self,
+        staged: &DesignModel,
+    ) -> Result<(), EngineError> {
+        let affected: std::collections::BTreeSet<_> = self
+            .operations
+            .iter()
+            .filter_map(|op| package_revision_target(self.model, op))
+            .collect();
+        if affected.is_empty() {
+            return Ok(());
+        }
+        let check = |id, revision| {
+            if affected.contains(&id)
+                && !self.definition_ref_matches(&staged.objects, id, revision, "packages")
+            {
+                Err(invalid(
+                    "Package source edit or compensation would make a retained revision ambiguous",
+                ))
+            } else {
+                Ok(())
+            }
+        };
+        for ci in staged.component_instances.values() {
+            for binding in ci
+                .library_bindings
+                .values()
+                .filter(|b| b.binding_role == LibraryBindingRole::Package)
+            {
+                check(binding.target_object_id, binding.pinned_object_revision)?;
+                for pin in &binding.local_override_refs {
+                    check(pin.object_id, pin.object_revision)?;
+                }
+            }
+        }
+        for shard in self
+            .model
+            .source_shards
+            .iter()
+            .filter(|s| s.kind == SourceShardKind::BoardRoot)
+        {
+            let mut board = self
+                .model
+                .materialized_source_shard_value_by_relative_path(&shard.relative_path)?;
+            {
+                let mut pass = super::super::board_list_journal_ops::BoardPass::new(&mut board);
+                for op in self.operations {
+                    pass.apply(op)?;
+                }
+            }
+            if let Some(placements) = board.get("component_pads").and_then(Value::as_object) {
+                for pad in placements.values().filter_map(Value::as_array).flatten() {
+                    for field in ["package", "land_pattern"] {
+                        if let Some(pin) = pad
+                            .get("source_binding")
+                            .and_then(|b| b.get(field))
+                            .filter(|p| !p.is_null())
+                        {
+                            let pin: super::super::component_pad_source::PinnedPadLibrarySource =
+                                serde_json::from_value(pin.clone())?;
+                            if pin.object_id == pin.owner_id {
+                                check(pin.object_id, pin.object_revision)?;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        Ok(())
+    }
+
+    /// Qualify the actual precommit frame for descriptive Package edits only.
+    /// The accepted journal is never extended to manufacture a source revision.
+    pub(in crate::substrate) fn package_metadata_frame_matches(
+        &self,
+        staged: &DesignModel,
+    ) -> Result<bool, EngineError> {
+        // Ordinary board/schematic edits do not need a Package source basis.
+        if !self.operations.iter().any(|op| matches!(op, Operation::SetPoolLibraryObject { object_kind, .. } if object_kind == "packages")) {
+            return Ok(false);
+        }
+        if self.applied_operations != self.operations
+            || staged.project.project_id != self.model.project.project_id
+            || staged.model_revision != self.model.model_revision
+            || staged.journal != self.model.journal
+            || staged.journal_cursor != self.model.journal_cursor
+            || staged.source_shards != self.model.source_shards
+            || staged.component_instances != self.model.component_instances
+            || staged.electrical_identities != self.model.electrical_identities
+            || staged.objects.len() != self.model.objects.len()
+        {
+            return Ok(false);
+        }
+        let mut advances = BTreeMap::<ObjectId, u64>::new();
+        for op in self.operations {
+            let Operation::SetPoolLibraryObject {
+                object_id,
+                relative_path,
+                object_kind,
+                previous_object,
+                object,
+            } = op
+            else {
+                if matches!(op, Operation::GuardObjectRevision { .. }) {
+                    continue;
+                }
+                return Ok(false);
+            };
+            if object_kind != "packages" {
+                return Ok(false);
+            }
+            let Some(owner) = self
+                .model
+                .objects
+                .get(object_id)
+                .filter(|o| o.domain == "pool" && o.kind == "packages")
+            else {
+                return Ok(false);
+            };
+            let Some(shard) = self.model.source_shards.iter().find(|s| {
+                s.shard_id == owner.source_shard_id
+                    && s.kind == SourceShardKind::Pool
+                    && s.relative_path == *relative_path
+            }) else {
+                return Ok(false);
+            };
+            // A single edit per root keeps the accepted preimage explicit.
+            if advances.insert(*object_id, 1).is_some() {
+                return Ok(false);
+            }
+            if self
+                .model
+                .materialized_source_shard_value_by_relative_path(&shard.relative_path)?
+                != *previous_object
+            {
+                return Err(invalid("Package metadata precommit preimage differs"));
+            }
+            if serde_json::from_value::<crate::pool::Package>(object.clone()).is_err() {
+                return Ok(false);
+            }
+            let mut old = previous_object.clone();
+            let mut new = object.clone();
+            for key in ["name", "package_family", "package_code", "mounting_type"] {
+                let (Some(old), Some(new)) = (old.as_object_mut(), new.as_object_mut()) else {
+                    return Ok(false);
+                };
+                old.remove(key);
+                new.remove(key);
+            }
+            if old != new
+                || !self.definition_ref_matches(
+                    &staged.objects,
+                    *object_id,
+                    owner.object_revision,
+                    "packages",
+                )
+            {
+                return Ok(false);
+            }
+        }
+        if advances.is_empty() {
+            return Ok(false);
+        }
+        for (id, old) in &self.model.objects {
+            let Some(new) = staged.objects.get(id) else {
+                return Ok(false);
+            };
+            let mut expected = old.clone();
+            expected.object_revision.0 = expected
+                .object_revision
+                .0
+                .checked_add(advances.get(id).copied().unwrap_or(0))
+                .ok_or_else(|| invalid("Package metadata revision overflow"))?;
+            if *new != expected {
+                return Ok(false);
+            }
+        }
+        Ok(true)
+    }
+
     pub(in crate::substrate) fn definition_ref_matches(
         &self,
         staged: &BTreeMap<ObjectId, DomainObject>,
@@ -21,7 +203,7 @@ impl PoolHistoryBasis<'_> {
         revision: ObjectRevision,
         kind: &str,
     ) -> bool {
-        if !matches!(kind, "symbols" | "parts" | "pin_pad_maps") {
+        if !matches!(kind, "symbols" | "parts" | "packages" | "pin_pad_maps") {
             return false;
         }
         self.projected_definition_ref_matches(staged, id, revision, kind)
@@ -118,6 +300,33 @@ impl PoolHistoryBasis<'_> {
         }
         Ok(available)
     }
+}
+
+/// Existing Package roots whose revision/epoch this pending batch can change.
+pub(in crate::substrate) fn package_revision_target(
+    model: &DesignModel,
+    op: &Operation,
+) -> Option<ObjectId> {
+    let (id, kind) = match op {
+        Operation::SetPoolLibraryObject {
+            object_id,
+            object_kind,
+            ..
+        }
+        | Operation::DeletePoolLibraryObject {
+            object_id,
+            object_kind,
+            ..
+        } => (*object_id, object_kind.as_str()),
+        Operation::BumpObjectRevision { object_id } => (*object_id, ""),
+        _ => return None,
+    };
+    (kind == "packages"
+        || model
+            .objects
+            .get(&id)
+            .is_some_and(|o| o.domain == "pool" && o.kind == "packages"))
+    .then_some(id)
 }
 
 #[derive(Clone, Copy)]
@@ -268,7 +477,7 @@ impl PoolHistory<'_> {
         revision: ObjectRevision,
         kind: &str,
     ) -> bool {
-        if !matches!(kind, "symbols" | "parts" | "pin_pad_maps") {
+        if !matches!(kind, "symbols" | "parts" | "packages" | "pin_pad_maps") {
             return false;
         }
         objects
@@ -347,7 +556,10 @@ impl DesignModel {
             )?;
             return Ok(value);
         }
-        if !matches!(kind, "units" | "symbols" | "parts" | "pin_pad_maps") {
+        if !matches!(
+            kind,
+            "units" | "symbols" | "parts" | "packages" | "pin_pad_maps"
+        ) {
             return Err(invalid(
                 "historical reads for this definition kind are unavailable",
             ));
@@ -364,3 +576,134 @@ impl DesignModel {
 #[cfg(test)]
 #[path = "pool_history_tests.rs"]
 mod tests;
+
+#[cfg(test)]
+mod package_frame_tests {
+    use super::*;
+    use crate::api::native_write::{self as native, WriteProvenance, commit_prepared, library::*};
+    use crate::substrate::{CommitSource, ProjectResolver};
+    use serde_json::json;
+
+    #[test]
+    fn package_metadata_frame_requires_exact_accepted_source_prefix_and_candidate() {
+        let root = std::env::temp_dir().join(format!("datum_package_frame_{}", Uuid::new_v4()));
+        native::genesis::bootstrap_native_project(
+            &root,
+            native::genesis::GenesisSpec {
+                project_name: "Package pending source".into(),
+                existing_ids: None,
+            },
+        )
+        .unwrap();
+        let provenance = || {
+            WriteProvenance::new(
+                "package-frame-test",
+                CommitSource::Test,
+                "Qualify actual precommit Package source",
+            )
+        };
+        let mut before = ProjectResolver::new(&root).resolve().unwrap();
+        let id = Uuid::new_v4();
+        let terminal = Uuid::new_v4();
+        let target = PoolLibraryObjectTarget::new("pool", "packages", id);
+        let mut raw = pool_package_payload(id, "Original", json!({}));
+        raw["terminals"] = json!({terminal.to_string():{"uuid":terminal,"name":"1"}});
+        let prepared = build_pool_library_write(
+            &before,
+            provenance(),
+            Some("pool"),
+            vec![PoolLibraryOperationSpec::Create {
+                target: target.clone(),
+                object: raw.clone(),
+            }],
+        )
+        .unwrap();
+        commit_prepared(&mut before, &root, prepared).unwrap();
+        raw["name"] = json!("Corrected");
+        let prepared = build_pool_library_write(
+            &before,
+            provenance(),
+            Some("pool"),
+            vec![PoolLibraryOperationSpec::Set {
+                target,
+                object: raw,
+            }],
+        )
+        .unwrap();
+        let operations = &prepared.batch.operations;
+        let mut candidate = before.clone();
+        crate::substrate::operation_application_batch::apply_operations(
+            &mut candidate,
+            operations,
+            &mut crate::substrate::CommitDiff::default(),
+        )
+        .unwrap();
+        let basis = PoolHistoryBasis {
+            model: &before,
+            operations,
+            applied_operations: operations,
+        };
+        assert!(basis.package_metadata_frame_matches(&candidate).unwrap());
+        // Fault clones exercise the private guard only, never durable admission.
+        let mut bad = candidate.clone();
+        bad.project.project_id = Uuid::new_v4();
+        assert!(!basis.package_metadata_frame_matches(&bad).unwrap());
+        let mut bad = candidate.clone();
+        bad.journal_cursor.applied_transaction_count += 1;
+        assert!(!basis.package_metadata_frame_matches(&bad).unwrap());
+        let mut bad = candidate.clone();
+        bad.journal.clear();
+        assert!(!basis.package_metadata_frame_matches(&bad).unwrap());
+        let mut bad = candidate.clone();
+        bad.objects.get_mut(&terminal).unwrap().object_revision.0 += 1;
+        assert!(!basis.package_metadata_frame_matches(&bad).unwrap());
+        let mut bad = candidate.clone();
+        bad.objects.get_mut(&id).unwrap().object_revision.0 += 1;
+        assert!(!basis.package_metadata_frame_matches(&bad).unwrap());
+        let unapplied = PoolHistoryBasis {
+            model: &before,
+            operations,
+            applied_operations: &[],
+        };
+        assert!(
+            !unapplied
+                .package_metadata_frame_matches(&candidate)
+                .unwrap()
+        );
+        for fault in 0..4 {
+            let mut bad = operations.clone();
+            for operation in &mut bad {
+                if let Operation::SetPoolLibraryObject {
+                    previous_object,
+                    object,
+                    object_kind,
+                    ..
+                } = operation
+                {
+                    match fault {
+                        0 => previous_object["name"] = json!("Foreign preimage"),
+                        1 => object["body_dimensions"] = json!({"x_nm":5000000}),
+                        2 => *object_kind = "parts".into(),
+                        _ => object["name"] = json!(17),
+                    }
+                }
+            }
+            let bad = PoolHistoryBasis {
+                model: &before,
+                operations: &bad,
+                applied_operations: &bad,
+            };
+            if fault == 0 {
+                assert!(
+                    bad.package_metadata_frame_matches(&candidate)
+                        .unwrap_err()
+                        .to_string()
+                        .contains("preimage differs")
+                );
+            } else {
+                assert!(!bad.package_metadata_frame_matches(&candidate).unwrap());
+            }
+        }
+        std::fs::remove_dir_all(root).unwrap();
+    }
+}

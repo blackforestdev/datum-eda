@@ -14,11 +14,31 @@ pub(super) fn validate_operations(
     model: &DesignModel,
     operations: &[super::Operation],
 ) -> Result<(), EngineError> {
+    validate_frame(model, operations, None)
+}
+
+pub(super) fn validate_operations_with_package_basis(
+    model: &DesignModel,
+    operations: &[super::Operation],
+    accepted: &DesignModel,
+) -> Result<(), EngineError> {
+    validate_frame(model, operations, Some(accepted))
+}
+
+fn validate_frame(
+    model: &DesignModel,
+    operations: &[super::Operation],
+    accepted: Option<&DesignModel>,
+) -> Result<(), EngineError> {
     super::schematic_net_declarations::validate(model, operations)?;
     if model.electrical_identities.is_empty() {
         return Ok(());
     }
-    let basis = super::electrical_basis::ElectricalBasis::new(model, operations)?;
+    let basis = if let Some(accepted) = accepted {
+        super::electrical_basis::ElectricalBasis::with_package_basis(model, operations, accepted)?
+    } else {
+        super::electrical_basis::ElectricalBasis::new(model, operations)?
+    };
     let membership = super::electrical_net_membership::index(model, operations)?;
     let mut owners = BTreeMap::new();
     let mut net_anchors = BTreeMap::new();

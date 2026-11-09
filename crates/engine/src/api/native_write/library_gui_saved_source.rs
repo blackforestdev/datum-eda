@@ -54,10 +54,11 @@ pub(super) fn preserve_pinned_revision(
 ) -> Result<(), EngineError> {
     let role = match kind {
         "parts" => crate::substrate::LibraryBindingRole::Part,
+        "packages" => crate::substrate::LibraryBindingRole::Package,
         "pin_pad_maps" => crate::substrate::LibraryBindingRole::PinPadMap,
         _ => {
             return Err(refusal(
-                "Pinned revision guard requires a Part or PinPadMap",
+                "Pinned revision guard requires a Part, Package or PinPadMap",
             ));
         }
     };
@@ -77,6 +78,33 @@ pub(super) fn preserve_pinned_revision(
                         .iter()
                         .any(|r| r.object_id == id && r.object_revision.0 == next))
         });
+    // Frozen BoardRoot Package pins remain users even without a CI binding.
+    if kind == "packages" {
+        for shard in model
+            .source_shards
+            .iter()
+            .filter(|s| s.kind == SourceShardKind::BoardRoot)
+        {
+            let board =
+                model.materialized_source_shard_value_by_relative_path(&shard.relative_path)?;
+            if let Some(placements) = board.get("component_pads").and_then(Value::as_object) {
+                for pad in placements.values().filter_map(Value::as_array).flatten() {
+                    for field in ["package", "land_pattern"] {
+                        if let Some(pin) = pad
+                            .get("source_binding")
+                            .and_then(|b| b.get(field))
+                            .filter(|p| !p.is_null())
+                        {
+                            let pin: crate::substrate::component_pad_source::PinnedPadLibrarySource = serde_json::from_value(pin.clone())?;
+                            pinned |= pin.object_id == id
+                                && pin.owner_id == id
+                                && pin.object_revision.0 == next;
+                        }
+                    }
+                }
+            }
+        }
+    }
     // Legacy authored CIs can declare only part_ref. Its revision is retained in
     // the canonical shard, while the resolved CI carries only the Part UUID.
     for ci in model.component_instances.values().filter(|ci| {

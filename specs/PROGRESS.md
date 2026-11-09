@@ -695,6 +695,21 @@ basis failure and the App capture-label failure retain their actual logs and
 scope. No automatic placed update, relinking, approval, readable-Greek repair,
 physical/HUMAN, release-GUI execution or broad goal acceptance is claimed.
 
+Saved Package metadata editing (`dat-saved-package-metadata-edit-fztr`) now
+supports name, family, code and mounting text in the existing Library form,
+with dimensions and terminal/pad topology read-only. Canonical sparse patches
+preserve UUIDs, raw siblings, optional absence and existing users' pinned
+Package definitions, geometry and Nets. Revision reuse that would change a
+retained binding, including Undo/Redo compensation, refuses atomically. Seventeen focused engine/form checks
+pass, including nonempty legacy/Footprint users, connected Nets, source-frame
+and restored-counter guards, plus retained Part/Map physical-history controls.
+The ordinary isolated debug App passes 67 stages and six inspected captures:
+preview/cancel, explicit commit, Undo/Redo and Save/cold reopening preserve all
+other authored files and placed root/child rendered identity. The App's body-only
+Package complements the engine's frozen-pad/binding cases. No topology editing,
+implicit placed update, physical/HUMAN, release-GUI execution, full qualification
+or broader native-library goal acceptance is claimed.
+
 Saved Footprint-bound map revision (`dat-saved-pin-pad-map-edit-je1j`) adds
 assignment and explicit unmap edits in the existing Library form, with fixed
 Part/Footprint references and no default or approval change. Canonical sparse

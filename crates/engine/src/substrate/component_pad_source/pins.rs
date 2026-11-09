@@ -11,6 +11,7 @@ pub(crate) fn hash_value(value: &Value) -> Result<String, EngineError> {
 fn historical_root_kind(model: &DesignModel, pin: &PinnedPadLibrarySource) -> Option<&'static str> {
     let kind = |name: &str| match name {
         "parts" => Some("parts"),
+        "packages" if pin.object_id == pin.owner_id => Some("packages"),
         "pin_pad_maps" => Some("pin_pad_maps"),
         _ => None,
     };
@@ -232,13 +233,116 @@ pub(crate) fn check_pin(
     if now.owner_id != pin.owner_id
         || now.source_shard_id != pin.source_shard_id
         || now.object_revision != pin.object_revision
-        || now.owner_value_hash != pin.owner_value_hash
         || now.record_hash != pin.record_hash
         || now.incarnation != pin.incarnation
     {
         return Err(invalid("stale library source pin"));
     }
+    if now.owner_value_hash != pin.owner_value_hash {
+        unchanged_package_pad_owner(model, pin)?;
+    }
     Ok(())
+}
+
+/// A legacy pad retains its own revision. Authenticate its old Package root
+/// separately; only the four descriptive fields may differ from today's root.
+fn unchanged_package_pad_owner(
+    model: &DesignModel,
+    pin: &PinnedPadLibrarySource,
+) -> Result<(), EngineError> {
+    let owner = model
+        .objects
+        .get(&pin.owner_id)
+        .filter(|o| {
+            o.domain == "pool"
+                && o.kind == "packages"
+                && o.source_shard_id == pin.source_shard_id
+                && pin.object_id != pin.owner_id
+        })
+        .ok_or_else(|| invalid("stale library source pin"))?;
+    // None is the valid source basis before the first canonical transaction.
+    let start = match pin.journal_tip {
+        None => 0,
+        Some(id) => model
+            .journal
+            .iter()
+            .position(|t| t.transaction_id == id)
+            .map(|i| i + 1)
+            .ok_or_else(|| invalid("missing Package pad history anchor"))?,
+    };
+    let mut revision = owner.object_revision.0;
+    for op in model.journal[start..].iter().flat_map(|t| &t.operations) {
+        match op {
+            Operation::SetPoolLibraryObject { object_id, .. }
+            | Operation::BumpObjectRevision { object_id }
+                if *object_id == pin.owner_id =>
+            {
+                revision = revision
+                    .checked_sub(1)
+                    .ok_or_else(|| invalid("Package pad history counter differs"))?;
+            }
+            Operation::CreatePoolLibraryObject { object_id, .. }
+            | Operation::DeletePoolLibraryObject { object_id, .. }
+                if *object_id == pin.owner_id =>
+            {
+                return Err(invalid("Package pad history crosses a definition epoch"));
+            }
+            _ => {}
+        }
+    }
+    let mut historical = model.materialized_pool_object_revision(
+        pin.owner_id,
+        "packages",
+        ObjectRevision(revision),
+    )?;
+    if hash_value(&historical)? != pin.owner_value_hash {
+        return Err(invalid(
+            "Package pad owner differs from authenticated history",
+        ));
+    }
+    let mut current = model.materialized_source_shard_value_by_relative_path(&pin.relative_path)?;
+    for key in ["name", "package_family", "package_code", "mounting_type"] {
+        historical
+            .as_object_mut()
+            .ok_or_else(|| invalid("missing Package object"))?
+            .remove(key);
+        current
+            .as_object_mut()
+            .ok_or_else(|| invalid("missing Package object"))?
+            .remove(key);
+    }
+    if historical != current {
+        return Err(invalid("Package pad owner has structural changes"));
+    }
+    Ok(())
+}
+
+/// Only the parent snapshot may borrow the qualified precommit Package basis.
+/// The candidate's actual child identity, revision and geometry remain current.
+pub(super) fn check_pin_with_package_basis(
+    model: &DesignModel,
+    accepted: &DesignModel,
+    pin: &PinnedPadLibrarySource,
+) -> Result<(), EngineError> {
+    if !model
+        .objects
+        .get(&pin.owner_id)
+        .is_some_and(|o| o.domain == "pool" && o.kind == "packages")
+    {
+        return check_pin(model, pin);
+    }
+    let now = capture(model, &pin.relative_path, pin.object_id)?;
+    if now.owner_id != pin.owner_id
+        || now.source_shard_id != pin.source_shard_id
+        || now.incarnation != pin.incarnation
+        || (pin.object_id != pin.owner_id
+            && (now.object_revision != pin.object_revision || now.record_hash != pin.record_hash))
+    {
+        return Err(invalid(
+            "candidate Package pad differs from its frozen source",
+        ));
+    }
+    check_pin(accepted, pin)
 }
 
 pub(crate) fn recorded_pin(
