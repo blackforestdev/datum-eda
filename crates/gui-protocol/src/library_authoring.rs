@@ -370,7 +370,8 @@ impl LibraryDraft {
         {
             self.pad_id = Some(Uuid::new_v4());
         }
-        if self.fields[self.focused].key == "gate_name"
+        if self.create
+            && self.fields[self.focused].key == "gate_name"
             && self.entity.gate_id.is_none()
             && !text.trim().is_empty()
         {

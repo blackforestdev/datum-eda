@@ -626,3 +626,6 @@ mod part_entity_tests;
 
 #[path = "component_relations_part_package_tests.rs"]
 mod part_package_tests;
+
+#[path = "component_relations_entity_gate_name_tests.rs"]
+mod entity_gate_name_tests;

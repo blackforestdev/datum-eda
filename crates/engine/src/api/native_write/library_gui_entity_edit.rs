@@ -1,4 +1,4 @@
-//! Saved Entity corrections preserve raw gates; only their Symbol link may change.
+//! Saved Entity corrections preserve raw gates; only requested names and Symbol links change.
 use super::*;
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -7,7 +7,7 @@ pub(super) fn build(
     provenance: WriteProvenance,
     request: LibraryDefinitionRequest,
 ) -> Result<PreparedWrite, EngineError> {
-    if !request.fields.contains_key("gate_symbols") {
+    if !request.fields.contains_key("gate_symbols") && !request.fields.contains_key("gate_names") {
         return super::super::metadata_edit::build(
             context,
             provenance,
@@ -29,9 +29,6 @@ pub(super) fn build(
                 if changes.is_empty() {
                     return Err(refusal("Choose an existing gate Symbol to correct"));
                 }
-                let gates = object["gates"]
-                    .as_object_mut()
-                    .ok_or_else(|| refusal("Saved Entity gates are unavailable"))?;
                 let mut seen = BTreeSet::new();
                 for (key, replacement) in changes {
                     let gate: Uuid = key
@@ -40,19 +37,7 @@ pub(super) fn build(
                     if !seen.insert(gate) {
                         return Err(refusal("Gate correction identity is ambiguous"));
                     }
-                    let matches: Vec<_> = gates
-                        .keys()
-                        .filter(|k| k.parse::<Uuid>().ok() == Some(gate))
-                        .cloned()
-                        .collect();
-                    if matches.len() != 1 {
-                        return Err(refusal("Choose one existing unambiguous gate"));
-                    }
-                    let raw = gates.get_mut(&matches[0]).unwrap();
-                    let parsed: crate::pool::Gate = serde_json::from_value(raw.clone())?;
-                    if parsed.uuid != gate {
-                        return Err(refusal("Saved gate membership and identity differ"));
-                    }
+                    let (raw, parsed) = gate_mut(&mut object, gate)?;
                     reference(context.model, parsed.unit, "units")?;
                     for symbol in [parsed.symbol, replacement] {
                         let body = reference(context.model, symbol, "symbols")?;
@@ -70,6 +55,38 @@ pub(super) fn build(
                     raw.as_object_mut()
                         .unwrap()
                         .insert("symbol".into(), json!(replacement));
+                }
+            }
+            "gate_names" => {
+                let changes: BTreeMap<String, String> = serde_json::from_value(value)?;
+                if changes.is_empty() {
+                    return Err(refusal("Choose an existing gate name to correct"));
+                }
+                let mut seen = BTreeSet::new();
+                for (key, name) in changes {
+                    let id: Uuid = key
+                        .parse()
+                        .map_err(|_| refusal("Gate identity is malformed"))?;
+                    if !seen.insert(id) {
+                        return Err(refusal("Gate correction identity is ambiguous"));
+                    }
+                    if name.trim().is_empty() {
+                        return Err(refusal("Enter a gate name"));
+                    }
+                    let (raw, gate) = gate_mut(&mut object, id)?;
+                    reference(context.model, gate.unit, "units")?;
+                    let symbol = reference(context.model, gate.symbol, "symbols")?;
+                    if symbol["unit"].as_str().and_then(|s| s.parse::<Uuid>().ok())
+                        != Some(gate.unit)
+                    {
+                        return Err(refusal(
+                            "Saved gate Symbol must belong to its unchanged Unit",
+                        ));
+                    }
+                    references.extend([gate.unit, gate.symbol]);
+                    raw.as_object_mut()
+                        .unwrap()
+                        .insert("name".into(), json!(name));
                 }
             }
             "name" | "prefix" | "manufacturer" => {
@@ -109,6 +126,26 @@ pub(super) fn build(
         );
     }
     Ok(prepared)
+}
+
+fn gate_mut(object: &mut Value, id: Uuid) -> Result<(&mut Value, crate::pool::Gate), EngineError> {
+    let gates = object["gates"]
+        .as_object_mut()
+        .ok_or_else(|| refusal("Saved Entity gates are unavailable"))?;
+    let matches: Vec<_> = gates
+        .keys()
+        .filter(|k| k.parse::<Uuid>().ok() == Some(id))
+        .cloned()
+        .collect();
+    if matches.len() != 1 {
+        return Err(refusal("Choose one existing unambiguous gate"));
+    }
+    let raw = gates.get_mut(&matches[0]).unwrap();
+    let gate: crate::pool::Gate = serde_json::from_value(raw.clone())?;
+    if gate.uuid != id {
+        return Err(refusal("Saved gate membership and identity differ"));
+    }
+    Ok((raw, gate))
 }
 
 // Reference reads do not require ownership of the referenced pool's write path.

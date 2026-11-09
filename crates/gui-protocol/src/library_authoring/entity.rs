@@ -71,6 +71,7 @@ impl LibraryDraft {
                 .ok_or("Saved Entity gate data is unavailable")?
                 .clone();
             self.entity.saved_gates = self.entity.gates.clone();
+            self.field("gate_name", "Gate name", None, vec![]);
             self.field("gate_symbol", "Compatible named Symbol", None, vec![]);
             return Ok(());
         }
@@ -116,6 +117,19 @@ impl LibraryDraft {
     pub fn entity_gates(&self) -> Result<Map<String, Value>, String> {
         let mut gates = self.entity.gates.clone();
         if !self.create {
+            if self.dirty.contains("gate_name") {
+                let gate = self.entity.gate_id.ok_or("Choose an existing gate")?;
+                let key = gate_key(&gates, gate)?;
+                let name = self.value("gate_name");
+                if name.trim().is_empty() {
+                    return Err("Enter a gate name".into());
+                }
+                gates
+                    .get_mut(&key)
+                    .and_then(Value::as_object_mut)
+                    .ok_or("Saved gate is malformed")?
+                    .insert("name".into(), json!(name));
+            }
             if self.dirty.contains("gate_symbol") {
                 let gate = self.entity.gate_id.ok_or("Choose an existing gate")?;
                 let key = gate_key(&gates, gate)?;
@@ -193,13 +207,15 @@ impl LibraryDraft {
         }
         if !self.create {
             let gates = self.entity_gates()?;
-            let changes: Map<_, _> = gates
-                .iter()
-                .filter(|(id, g)| self.entity.saved_gates[*id]["symbol"] != g["symbol"])
-                .map(|(id, g)| (id.clone(), g["symbol"].clone()))
-                .collect();
-            if !changes.is_empty() {
-                fields.insert("gate_symbols".into(), changes.into());
+            for (property, field) in [("name", "gate_names"), ("symbol", "gate_symbols")] {
+                let changes: Map<_, _> = gates
+                    .iter()
+                    .filter(|(id, g)| self.entity.saved_gates[*id][property] != g[property])
+                    .map(|(id, g)| (id.clone(), g[property].clone()))
+                    .collect();
+                if !changes.is_empty() {
+                    fields.insert(field.into(), changes.into());
+                }
             }
             return Ok(());
         }
@@ -235,6 +251,16 @@ impl LibraryDraft {
                 .as_str()
                 .unwrap_or("")
                 .to_string();
+            let name = self.entity.gates[&key]["name"]
+                .as_str()
+                .unwrap_or("")
+                .to_string();
+            self.fields
+                .iter_mut()
+                .find(|f| f.key == "gate_name")
+                .unwrap()
+                .set_text(name);
+            self.dirty.remove("gate_name");
             self.refresh_entity_symbols();
             self.fields
                 .iter_mut()

@@ -717,6 +717,23 @@ prerequisite nor a passing qualification claim. Gate topology/Unit relinking,
 implicit placed updates/ECO, physical/HUMAN, release-GUI execution and broader goal
 acceptance remain open.
 
+Saved Entity gate-name correction (`dat-saved-entity-gate-name-8tdk`) now exposes
+a nonempty name for a selected existing gate, retains explicit edits across rows
+and supports Preview/Cancel, canonical history and Save/cold reopening. Sparse
+alias-safe raw patches preserve membership, UUIDs, Unit/Symbol links and all
+untouched fields; no name uniqueness or normalization policy is added. Current
+gate-choice captions reflect the revised names. Nineteen focused Rust cases and
+one ordinary isolated debug-App case pass: 82 stages, 17.39 seconds and seven
+inspected captures. All old root/child placed sources, CIs, Maps and Nets remain
+byte-exact without Move/new-placement compensation. A real connected eight-pad
+`Complete` certificate survives successful rename/history/cold, including held
+and fresh membership. Raw compile and negative-fixture failures remain recorded
+at their original scopes. Separate Inspector name-path labeling debt
+`dat-library-gate-inspector-path-06xw` remains; source/table/choices are correct.
+No topology editing, implicit placed update/ECO, approval, physical/HUMAN,
+release-GUI execution, full Inspector/library qualification or broader-goal
+acceptance is supplied.
+
 Saved Part metadata editing (`dat-saved-part-metadata-edit-8xfy`) now supports
 manufacturer, MPN, value, description, datasheet reference and tags through the
 shared Library form. That metadata-only increment kept relationships and lifecycle

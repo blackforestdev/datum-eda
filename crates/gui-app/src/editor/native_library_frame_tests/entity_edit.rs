@@ -115,12 +115,7 @@ impl Fixture {
                     .iter()
                     .any(|h| matches!(h.target, HitTarget::Library(C::AddGate | C::RemoveGate)))
             );
-            assert!(
-                !draft
-                    .fields
-                    .iter()
-                    .any(|f| matches!(f.key, "gate_name" | "gate_unit"))
-            );
+            assert!(!draft.fields.iter().any(|f| f.key == "gate_unit"));
             assert_eq!(
                 self.app
                     .runtime

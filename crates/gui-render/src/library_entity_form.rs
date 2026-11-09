@@ -84,6 +84,9 @@ fn pending_gate(d: &LibraryDraft) -> Value {
     if !d.create {
         let mut gate = d.entity.selected_gate().cloned().unwrap_or(Value::Null);
         if let Some(raw) = gate.as_object_mut() {
+            if d.dirty.contains("gate_name") {
+                raw.insert("name".into(), Value::String(d.value("gate_name").into()));
+            }
             raw.insert(
                 "symbol".into(),
                 Value::String(d.value("gate_symbol").into()),

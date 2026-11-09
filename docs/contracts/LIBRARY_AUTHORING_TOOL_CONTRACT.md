@@ -306,6 +306,35 @@ Generic raw Part/Footprint pair validation is separate intake
 `dat-part-raw-footprint-pair-yjc4`; this increment supplies no universal raw-write
 integrity claim.
 
+Saved Entity gate-name correction (`dat-saved-entity-gate-name-8tdk`) adds the
+nonempty display-name field for an existing selected gate. Explicit changes remain
+available when navigating between gate rows, and Preview/Cancel, canonical
+Undo/Redo and Save/cold reopening preserve that intent. Sparse `gate_names`
+patches authenticate unique parsed UUID membership, retain original raw key
+spelling and unknown data, and guard the actual Unit/Symbol sources. Only requested
+name leaves change; gate UUIDs, membership and Unit/Symbol links stay intact.
+Creation's nonempty-name semantics apply without a new uniqueness or normalization
+policy. Saved gate Symbol correction and Entity metadata/creation remain supported.
+
+Nineteen focused Rust cases and one ordinary isolated debug-App case pass.
+The App completes 82 stages in 17.39 seconds with seven inspected captures,
+including two-row editing, back-navigation, Preview/Cancel, history, cold reopening
+and revised current gate-choice captions followed by Cancel. All existing
+root/child bodies, pins, references, CIs, Maps and electrical source bytes remain
+exact, with no Move or new-placement compensation. An actual connected eight-pad
+`Complete` certificate and held/fresh membership remain unchanged through
+successful rename, Undo/Redo and cold reopening.
+
+The original test-index borrow compile error, duplicate-alias negative-fixture
+assumption and App-test UUID parse-type compile error remain recorded. The general
+writer can retain legacy gate-key aliases; the saved editor refuses ambiguous
+parsed membership without rewriting that source. Separate Inspector path-label
+debt `dat-library-gate-inspector-path-06xw` remains: one second-gate name path uses
+the first gate's caption, while source, editable table and named choices remain
+correct. This does not supply gate add/remove or Unit relinking, inferred placed
+updates/ECO, approval, physical/HUMAN observation, release-GUI execution, complete
+Inspector labeling, full library qualification or broader-goal acceptance.
+
 Saved Part metadata editing (`dat-saved-part-metadata-edit-8xfy`) uses the same
 Library form for manufacturer, MPN, value, description, datasheet reference and
 tags. That metadata-only increment kept Entity, Package, default Footprint,
