@@ -1,5 +1,5 @@
 //! Saved electrical definitions retain source data; this adapter edits only
-//! names, existing logical-pin metadata and existing anchor poses.
+//! names, existing logical-pin metadata, anchor poses and one rectangular body.
 use super::*;
 
 pub(super) fn build(
@@ -7,12 +7,18 @@ pub(super) fn build(
     provenance: WriteProvenance,
     request: LibraryDefinitionRequest,
 ) -> Result<PreparedWrite, EngineError> {
-    let target = PoolLibraryObjectTarget::new("pool", &request.kind, request.object_id);
-    let mut object = library::pool_library_object_payload(
-        context.model,
-        &target.relative_path,
-        request.object_id,
-    )?;
+    let body_edit = request.kind == "symbols" && request.fields.contains_key("drawings");
+    let (target, mut object) = if body_edit {
+        super::super::saved_source::load(context.model, request.object_id, "symbols")?
+    } else {
+        let target = PoolLibraryObjectTarget::new("pool", &request.kind, request.object_id);
+        let object = library::pool_library_object_payload(
+            context.model,
+            &target.relative_path,
+            request.object_id,
+        )?;
+        (target, object)
+    };
     let previous = object.clone();
     for (key, value) in &request.fields {
         match (request.kind.as_str(), key.as_str()) {
@@ -27,13 +33,17 @@ pub(super) fn build(
                 validate_pins(&object["pins"], value)?;
                 object["pins"] = value.clone();
             }
+            ("symbols", "drawings") => {
+                validate_rectangle(&object["drawings"], value)?;
+                object["drawings"] = value.clone();
+            }
             ("symbols", "pin_anchors") => {
                 validate_anchors(&object["pin_anchors"], value)?;
                 object["pin_anchors"] = value.clone();
             }
             _ => {
                 return Err(refusal(
-                    "Saved electrical edits support names, existing pin metadata and existing anchor geometry only",
+                    "Saved electrical edits support names, existing pin metadata, anchor geometry and one existing rectangular body only",
                 ));
             }
         }
@@ -56,12 +66,73 @@ pub(super) fn build(
         }
         _ => return Err(refusal("Expected a saved Unit or Symbol")),
     }
-    library::build_pool_library_write(
+    let mut prepared = library::build_pool_library_write(
         context.model,
         provenance,
         Some("pool"),
         vec![PoolLibraryOperationSpec::Set { target, object }],
-    )
+    )?;
+    if body_edit {
+        prepared.batch.operations.insert(
+            0,
+            crate::substrate::Operation::GuardObjectRevision {
+                object_id: request.object_id,
+                expected_object_revision: context.model.objects[&request.object_id].object_revision,
+            },
+        );
+    }
+    Ok(prepared)
+}
+
+/// The array is captured intent, not authority to rewrite other graphics or metadata.
+fn validate_rectangle(previous: &Value, next: &Value) -> Result<(), EngineError> {
+    let (Some(previous), Some(next)) = (previous.as_array(), next.as_array()) else {
+        return Err(refusal("Symbol drawings must remain an ordered array"));
+    };
+    if previous.len() != next.len() {
+        return Err(refusal(
+            "Body correction preserves every graphic and its array position",
+        ));
+    }
+    let indices: Vec<_> = previous
+        .iter()
+        .enumerate()
+        .filter(|(_, graphic)| graphic.get("Rect").is_some())
+        .map(|(i, _)| i)
+        .collect();
+    let [index] = indices.as_slice() else {
+        return Err(refusal(
+            "Body correction requires exactly one existing rectangle",
+        ));
+    };
+    let _: crate::pool::Primitive = serde_json::from_value(previous[*index].clone())?;
+    let crate::pool::Primitive::Rect { min, max, width } =
+        serde_json::from_value(next[*index].clone())?
+    else {
+        return Err(refusal(
+            "Body correction preserves the existing rectangle kind",
+        ));
+    };
+    if min.x >= max.x || min.y >= max.y || width <= 0 {
+        return Err(refusal(
+            "Symbol body requires ordered corners and positive line width",
+        ));
+    }
+    // Patch only scalar leaves in the original raw graphic. In particular, Point
+    // and Rect payloads may carry unknown data that typed serialization would lose.
+    let mut permitted = previous.clone();
+    let rectangle = &mut permitted[*index]["Rect"];
+    rectangle["min"]["x"] = json!(min.x);
+    rectangle["min"]["y"] = json!(min.y);
+    rectangle["max"]["x"] = json!(max.x);
+    rectangle["max"]["y"] = json!(max.y);
+    rectangle["width"] = json!(width);
+    if &permitted != next {
+        return Err(refusal(
+            "Body correction preserves other graphics, order and unrelated raw rectangle data",
+        ));
+    }
+    Ok(())
 }
 
 fn require_frozen_placed_sources(

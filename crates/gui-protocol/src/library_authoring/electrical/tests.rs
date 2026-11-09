@@ -396,3 +396,6 @@ fn saved_electrical_forms_refuse_alias_identities_and_preserve_unique_spelling()
     };
     assert!(LibraryDraft::begin(&browser, Some(&graphic), "symbols", "r".into(), None).is_err());
 }
+
+#[path = "rectangle_tests.rs"]
+mod rectangle_tests;

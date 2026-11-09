@@ -7,7 +7,7 @@ use serde_json::Value;
 mod restore;
 #[path = "pool_history_retained_revisions.rs"]
 mod retained_revisions;
-pub(in crate::substrate) use retained_revisions::part_revision_target;
+pub(in crate::substrate) use retained_revisions::{part_revision_target, symbol_revision_target};
 
 #[derive(Clone, Copy)]
 pub(in crate::substrate) struct PoolHistoryBasis<'a> {

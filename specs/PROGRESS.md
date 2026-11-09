@@ -583,6 +583,25 @@ SURFACE-S01–S04 and the combined planning review are accepted. SURFACE-S05 dis
 
 Routine saved Unit/Symbol property editing (`dat-saved-unit-symbol-edit-qwni`) adds shared-form name/pin-metadata and existing-anchor pose edits with preview/cancel, canonical history and Save/cold reopen. Actual isolated App and focused raw/geometry/binding checks preserve UUIDs, raw sibling data and existing placed users. This bounded increment leaves general graphics, saved topology/relinking, Package/Entity/Part/PinPadMap editing and the larger native-library goal open; it does not select or complete a successor milestone or full qualification.
 
+Saved Symbol rectangle correction (`dat-saved-symbol-rectangle-iltr`) enables the
+existing five min/max/stroke numeric fields for one unambiguous Rect, preserving
+its raw array position, other graphics, unknown metadata, Unit/UUID, anchors and
+fields. Zero/multiple-Rect sources show body editing unavailable; existing metadata
+and anchor flows retain their scope. Existing Symbol binding/birth readers freeze
+old bodies/pins/CI/Nets, and the final retained-root guard now rejects conflicting
+Symbol counter reuse atomically without changing Part/Package safeguards.
+Forty-one unique focused Rust checks pass; the existing unrelated `dat-17ld` case
+remains ignored. The ordinary isolated debug App passes 110 stages and eight
+inspected captures: numeric edit/cancel/history/cold, unavailable forms, old root/
+child rendering and a new explicit Part/gate placement using the corrected body
+with current source guards. Actual pre-setup old bodies are retained. Core edits
+preserve old circuit sources and identities; after separate new placement only
+the known canonical initial Net-lineage transition is qualified, with membership
+unchanged. Raw failed attempts and the zero-match non-proof remain recorded;
+`dat-f43w` preview affordances remain separate. No general graphics editor, source
+relink, placed update/ECO, approval, physical/HUMAN, release-GUI execution, full
+qualification or broader goal completion is claimed.
+
 The bounded Entity creation increment (`dat-entity-gate-gui-create-zcp0`) adds a
 shared form for explicit Entity fields and named gates with compatible existing
 Unit/Symbol pairs. Engine/form tests and the ordinary App create/cancel/commit,

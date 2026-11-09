@@ -198,6 +198,40 @@ not physical/HUMAN qualification or release-GUI execution. General graphics and
 pin-topology authoring, relinking, Package/Entity/Part/PinPadMap editing, approval,
 models and placed-definition updates remain outside this increment.
 
+Saved Symbol rectangle correction (`dat-saved-symbol-rectangle-iltr`) exposes the
+five existing body min/max coordinate and stroke fields for exactly one existing
+raw Rect, at its retained array position. Other known graphics can coexist. Only
+those five integer leaves change: all other graphics, nested unknown metadata,
+Unit/UUID, anchors and fields remain intact. Ordered corners and positive stroke
+retain the creation validation. Zero or multiple Rects visibly disable body
+correction while existing metadata/anchor flows remain available; no primitive is
+guessed, added, removed or reordered. Unknown primitive variants retain the
+existing typed refusal rather than being dropped or adopted.
+
+The body request qualifies its unique canonical source and captured revision
+before the existing Set writer. Authenticated declared Symbol revisions and
+unique placement birth before-models keep old bodies, pins, CI and Nets frozen.
+The existing final retained-root guard now includes Symbol bindings and override
+root references: different payloads at a retained counter, including Undo/Redo,
+refuse atomically; equal authenticated payloads retain their admission. Symbol-only
+checks avoid unrelated physical-pad scans. Part/Package guards and their strict
+prospective-source rules remain unchanged.
+
+Forty-one unique focused Rust checks pass, with the existing unrelated `dat-17ld`
+case still ignored. The ordinary isolated debug App passes 110 stages and eight
+inspected captures for five-field editing, Cancel, history, Save/cold reopening,
+visible zero/multiple-Rect forms and later explicit Part/gate placement using the
+corrected mixed body with current source guards. The actual pre-setup old bodies
+remain authenticated; setup is not relabelled as old placement evidence. Core
+correction leaves old circuit sources and Net identities exact. After the separate
+new placement, old membership stays exact and only the existing canonically
+recorded initial Net-lineage transition is qualified. Earlier compile, fixture,
+source-guard assertion and redundant post-placement Cancel failures are retained;
+a zero-match invocation supplies no proof. The plain Symbol producer is unchanged.
+Existing preview-affordance issue `dat-f43w` remains open separately. This supplies
+no general graphics canvas/picker, topology/relinking, placed update/ECO, approval,
+physical/HUMAN, release-GUI execution, full qualification or broader goal acceptance.
+
 The new Entity GUI increment (`dat-entity-gate-gui-create-zcp0`) adds project-local
 creation in the shared Library form: explicit name, reference prefix,
 manufacturer, tags and one or more named gates. Each gate selects an existing

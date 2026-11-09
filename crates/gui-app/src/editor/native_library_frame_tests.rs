@@ -35,6 +35,8 @@ mod part_placement;
 mod pin_pad_map;
 #[path = "native_library_frame_tests/proof_assertions.rs"]
 mod proof_assertions;
+#[path = "native_library_frame_tests/symbol_rectangle.rs"]
+mod symbol_rectangle;
 #[path = "native_library_frame_tests/text_fields.rs"]
 mod text_fields;
 use proof_assertions::source_bytes;
@@ -54,6 +56,7 @@ enum Step {
     PartEdit(usize),
     PartDefaultFootprint(usize),
     PartDefaultMap(usize),
+    SymbolRectangle(usize),
     EntityEdit(usize),
     EntityGateEdit(usize),
     PackageEdit(usize),
@@ -136,6 +139,7 @@ impl Fixture {
                     Step::Placement(_)
                         | Step::PartDefaultFootprint(_)
                         | Step::PartDefaultMap(_)
+                        | Step::SymbolRectangle(_)
                         | Step::PaneContext(_)
                         | Step::MapLabels(_)
                         | Step::TextFields(_)
@@ -258,6 +262,7 @@ impl Fixture {
             Step::PartEdit(stage) => self.part_edit_stage(events, stage),
             Step::PartDefaultFootprint(stage) => self.part_default_footprint(events, stage),
             Step::PartDefaultMap(stage) => self.part_default_map(events, stage),
+            Step::SymbolRectangle(stage) => self.symbol_rectangle(events, stage),
             Step::Mapping(stage, assigned) => self.check_mapping(stage, assigned),
             Step::Placement(stage) => self.placement_stage(events, stage),
             Step::PaneContext(action) => self.pane_context_action(events, action),

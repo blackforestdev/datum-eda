@@ -323,3 +323,6 @@ fn historical_symbol_revisions_count_each_set_and_bump_after_cold_reopen() {
         middle
     );
 }
+
+#[path = "library_gui_symbol_rectangle_edit_tests.rs"]
+mod rectangle_tests;

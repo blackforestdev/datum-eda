@@ -1,4 +1,4 @@
-//! Unit pin table, Symbol anchor list and readable create review.
+//! Unit pin table, Symbol anchor/body properties and readable source review.
 use super::*;
 use datum_gui_protocol::library_authoring::LibraryDraft;
 
@@ -75,6 +75,9 @@ pub(super) fn table(p: &mut Painter<'_>, d: &LibraryDraft, rect: RectPx) {
             p.button("Remove draft anchor", C::RemoveAnchor);
         } else {
             p.line("Existing pin links and Unit retained");
+            if d.saved_rectangle_index().is_none() {
+                p.line("Body correction unavailable · exactly one existing rectangle required");
+            }
         }
     }
 }
@@ -164,17 +167,28 @@ pub(super) fn review(p: &mut Painter<'_>, d: &LibraryDraft) {
                 .map(physical)
                 .unwrap_or_else(|| "Unavailable".into())
         };
-        if d.create {
+        let rectangle = if d.create {
+            Some(0)
+        } else {
+            d.saved_rectangle_index()
+        };
+        if let Some(index) = rectangle {
+            let base = format!("/drawings/{index}/Rect");
             p.line(&format!(
                 "Rectangle: ({}, {}) to ({}, {}); stroke {}",
-                coordinate("/drawings/0/Rect/min/x"),
-                coordinate("/drawings/0/Rect/min/y"),
-                coordinate("/drawings/0/Rect/max/x"),
-                coordinate("/drawings/0/Rect/max/y"),
-                coordinate("/drawings/0/Rect/width")
+                coordinate(&format!("{base}/min/x")),
+                coordinate(&format!("{base}/min/y")),
+                coordinate(&format!("{base}/max/x")),
+                coordinate(&format!("{base}/max/y")),
+                coordinate(&format!("{base}/width"))
             ));
-        } else {
-            p.line("Graphics and fields retained · placed users stay frozen");
+        }
+        if !d.create {
+            p.line(if rectangle.is_some() {
+                "Other graphics and fields retained · placed users stay frozen"
+            } else {
+                "Body correction unavailable · exactly one existing rectangle required"
+            });
         }
         for anchor in raw
             .get("pin_anchors")

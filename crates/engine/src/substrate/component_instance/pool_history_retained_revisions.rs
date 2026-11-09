@@ -1,4 +1,4 @@
-//! Retained Part/Package root revisions are checked before atomic publication.
+//! Retained Part/Package/Symbol root revisions are checked before atomic publication.
 use super::*;
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -28,6 +28,32 @@ pub(in crate::substrate) fn part_revision_target(
     .then_some(id)
 }
 
+pub(in crate::substrate) fn symbol_revision_target(
+    model: &DesignModel,
+    op: &Operation,
+) -> Option<ObjectId> {
+    let (id, kind) = match op {
+        Operation::SetPoolLibraryObject {
+            object_id,
+            object_kind,
+            ..
+        }
+        | Operation::DeletePoolLibraryObject {
+            object_id,
+            object_kind,
+            ..
+        } => (*object_id, object_kind.as_str()),
+        Operation::BumpObjectRevision { object_id } => (*object_id, ""),
+        _ => return None,
+    };
+    (kind == "symbols"
+        || model
+            .objects
+            .get(&id)
+            .is_some_and(|o| o.domain == "pool" && o.kind == "symbols"))
+    .then_some(id)
+}
+
 impl PoolHistoryBasis<'_> {
     /// Compensation must not assign different payloads to retained root counters,
     /// including legacy Part references without electrical or role bindings.
@@ -45,11 +71,20 @@ impl PoolHistoryBasis<'_> {
             .iter()
             .filter_map(|op| part_revision_target(self.model, op))
             .collect();
-        if packages.is_empty() && parts.is_empty() {
+        let symbols: BTreeSet<_> = self
+            .operations
+            .iter()
+            .filter_map(|op| symbol_revision_target(self.model, op))
+            .collect();
+        if packages.is_empty() && parts.is_empty() && symbols.is_empty() {
             return Ok(());
         }
         let check = |id, revision, kind| {
-            let affected = if kind == "parts" { &parts } else { &packages };
+            let affected = match kind {
+                "parts" => &parts,
+                "symbols" => &symbols,
+                _ => &packages,
+            };
             if affected.contains(&id)
                 && !self.definition_ref_matches(&staged.objects, id, revision, kind)
             {
@@ -65,6 +100,7 @@ impl PoolHistoryBasis<'_> {
                 let kind = match binding.binding_role {
                     LibraryBindingRole::Package => "packages",
                     LibraryBindingRole::Part => "parts",
+                    LibraryBindingRole::Symbol => "symbols",
                     _ => continue,
                 };
                 check(
@@ -137,12 +173,9 @@ impl PoolHistoryBasis<'_> {
                 check(part, ci.part_ref.unwrap().object_revision, "parts")?;
             }
         }
-        for shard in self
-            .model
-            .source_shards
-            .iter()
-            .filter(|s| s.kind == SourceShardKind::BoardRoot)
-        {
+        for shard in self.model.source_shards.iter().filter(|s| {
+            s.kind == SourceShardKind::BoardRoot && (!parts.is_empty() || !packages.is_empty())
+        }) {
             let mut board = self
                 .model
                 .materialized_source_shard_value_by_relative_path(&shard.relative_path)?;

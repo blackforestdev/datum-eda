@@ -564,3 +564,6 @@ fn restored_counter_collision_refuses_before_existing_pinned_user_loses_its_sour
     );
     std::fs::remove_dir_all(root).unwrap();
 }
+
+#[path = "native_library_frozen_rectangle_tests.rs"]
+mod rectangle_tests;

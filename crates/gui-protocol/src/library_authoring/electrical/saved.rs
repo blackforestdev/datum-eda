@@ -1,6 +1,14 @@
 //! A saved form carries a disposable, revision-qualified raw basis. Only the
-//! supported properties change; source graphics and binding identity stay put.
+//! supported properties change; other raw graphics and binding identity stay put.
 use super::*;
+
+const RECTANGLE_FIELDS: &[(&str, &str)] = &[
+    ("rect_min_x", "/Rect/min/x"),
+    ("rect_min_y", "/Rect/min/y"),
+    ("rect_max_x", "/Rect/max/x"),
+    ("rect_max_y", "/Rect/max/y"),
+    ("rect_width", "/Rect/width"),
+];
 
 impl LibraryDraft {
     pub(in crate::library_authoring) fn hydrate_saved(
@@ -34,9 +42,22 @@ impl LibraryDraft {
                     })
                 })
                 .map(|(_, name)| name.clone());
+            let rectangle = self.saved_rectangle_index();
             self.fields.retain(|f| {
-                f.key != "unit" && f.key != "anchor_pin" && !f.key.starts_with("rect_")
+                f.key != "unit"
+                    && f.key != "anchor_pin"
+                    && (!f.key.starts_with("rect_") || rectangle.is_some())
             });
+            if let Some(index) = rectangle {
+                for &(key, pointer) in RECTANGLE_FIELDS {
+                    let text = raw["drawings"][index].pointer(pointer).unwrap().to_string();
+                    self.fields
+                        .iter_mut()
+                        .find(|f| f.key == key)
+                        .unwrap()
+                        .set_text(text);
+                }
+            }
             let empty = Vec::new();
             let anchors = match raw.get("pin_anchors") {
                 None => &empty,
@@ -68,6 +89,60 @@ impl LibraryDraft {
             }
         }
         Ok(())
+    }
+
+    /// The source index is disposable identity under this draft's captured revision.
+    /// Zero/multiple rectangles and unavailable numeric data never select a body.
+    pub fn saved_rectangle_index(&self) -> Option<usize> {
+        let drawings = self
+            .electrical
+            .original
+            .as_ref()?
+            .get("drawings")?
+            .as_array()?;
+        let mut rectangles = drawings
+            .iter()
+            .enumerate()
+            .filter(|(_, graphic)| graphic.get("Rect").is_some());
+        let (index, graphic) = rectangles.next()?;
+        if rectangles.next().is_some()
+            || RECTANGLE_FIELDS
+                .iter()
+                .any(|(_, p)| graphic.pointer(p).and_then(Value::as_i64).is_none())
+        {
+            return None;
+        }
+        Some(index)
+    }
+
+    fn saved_drawings(&self) -> Result<Option<Value>, String> {
+        if !RECTANGLE_FIELDS
+            .iter()
+            .any(|(key, _)| self.dirty.contains(key))
+        {
+            return Ok(None);
+        }
+        let index = self
+            .saved_rectangle_index()
+            .ok_or("Body correction requires exactly one existing rectangle")?;
+        let original = &self.electrical.original.as_ref().unwrap()["drawings"];
+        let mut drawings = original.clone();
+        for &(key, pointer) in RECTANGLE_FIELDS {
+            let next = self.length(key)?;
+            if drawings[index].pointer(pointer).and_then(Value::as_i64) != Some(next) {
+                *drawings[index].pointer_mut(pointer).unwrap() = json!(next);
+            }
+        }
+        let eda_engine::pool::Primitive::Rect { min, max, width } =
+            serde_json::from_value(drawings[index].clone())
+                .map_err(|_| "Saved rectangle data is unavailable")?
+        else {
+            return Err("Saved rectangle data is unavailable".into());
+        };
+        if min.x >= max.x || min.y >= max.y || width <= 0 {
+            return Err("Body corners must be ordered and stroke width positive".into());
+        }
+        Ok((drawings != *original).then_some(drawings))
     }
 
     /// Named pin labels share the captured source Unit; saved edits never relink it.
@@ -215,6 +290,9 @@ impl LibraryDraft {
                 fields.insert("pins".into(), pins);
             }
         } else {
+            if let Some(drawings) = self.saved_drawings()? {
+                fields.insert("drawings".into(), drawings);
+            }
             let anchors = self.saved_anchors()?;
             let mut ordered = original
                 .get("pin_anchors")

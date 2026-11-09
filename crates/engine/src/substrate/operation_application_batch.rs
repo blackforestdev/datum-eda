@@ -11,6 +11,7 @@ pub(super) fn apply_operations(
     let retained_source_change = operations.iter().any(|op| {
         super::component_instance::pool_history::package_revision_target(model, op).is_some()
             || super::component_instance::pool_history::part_revision_target(model, op).is_some()
+            || super::component_instance::pool_history::symbol_revision_target(model, op).is_some()
     });
     if retained_source_change
         || model
