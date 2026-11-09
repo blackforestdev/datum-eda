@@ -199,6 +199,55 @@ fn project_read_cache_preserves_join_diagnostics_and_validated_journal_reuse() {
 }
 
 #[test]
+fn project_read_cache_reuses_large_evidence_and_invalidates_changed_tail() {
+    use std::io::{Seek, SeekFrom, Write};
+    let fixture = Fixture::new();
+    let root = &fixture.0;
+    // Ordinary project inputs can exceed the old retention bound. A caller-held
+    // model must still be reusable, including evidence beyond that old prefix.
+    let path = root.join("large-local-input");
+    let mut file = std::fs::File::create(&path).unwrap();
+    file.set_len(9 * 1024 * 1024).unwrap();
+    let mut cache = ProjectReadCache::nonretaining();
+    let first = cache.resolve(root).unwrap();
+    assert!(first.diagnostics.is_empty());
+    let reused = cache
+        .resolve_with_engine_reader(root, || {
+            panic!("unchanged complete large input must reuse the caller-held model")
+        })
+        .unwrap();
+    assert!(Arc::ptr_eq(&first, &reused));
+    drop(reused);
+
+    let metadata = file.metadata().unwrap();
+    file.seek(SeekFrom::End(-1)).unwrap();
+    file.write_all(&[1]).unwrap();
+    file.set_times(std::fs::FileTimes::new().set_modified(metadata.modified().unwrap()))
+        .unwrap();
+    let canonical_read = std::cell::Cell::new(false);
+    let changed = cache
+        .resolve_with_engine_reader(root, || {
+            canonical_read.set(true);
+            ProjectResolver::new(root).resolve()
+        })
+        .unwrap();
+    assert!(
+        canonical_read.get(),
+        "a changed tail requires canonical resolution"
+    );
+    assert!(!Arc::ptr_eq(&first, &changed));
+    assert_eq!(*changed, ProjectResolver::new(root).resolve().unwrap());
+    assert!(Arc::ptr_eq(&changed, &cache.resolve(root).unwrap()));
+    let weak = Arc::downgrade(&changed);
+    drop(first);
+    drop(changed);
+    assert!(
+        weak.upgrade().is_none(),
+        "evidence must not retain the model"
+    );
+}
+
+#[test]
 fn project_read_cache_bypasses_input_retention_overflow_without_rejecting_project() {
     let fixture = Fixture::new();
     let root = &fixture.0;
@@ -207,7 +256,7 @@ fn project_read_cache_bypasses_input_retention_overflow_without_rejecting_projec
     let extra = root.join("large-unrelated-input");
     std::fs::File::create(&extra)
         .unwrap()
-        .set_len(8 * 1024 * 1024)
+        .set_len(17 * 1024 * 1024)
         .unwrap();
     let a = cache.resolve(root).unwrap();
     let b = cache.resolve(root).unwrap();

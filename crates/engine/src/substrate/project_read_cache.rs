@@ -178,7 +178,7 @@ fn local_relative(path: &Path) -> bool {
 // acceptance. Exceeding either bound falls back to the ordinary full resolver.
 const MAX_ENTRIES: usize = 4096;
 const MAX_BYTES: u64 = 32 * 1024 * 1024;
-const MAX_RETAINED_INPUT: usize = 8 * 1024 * 1024;
+const MAX_RETAINED_INPUT: usize = 16 * 1024 * 1024;
 
 fn capture(root: &Path, lease: Option<&crate::revision::ProjectWriteLease>) -> Option<Vec<u8>> {
     let mut input = Input::Capture(Vec::new());
