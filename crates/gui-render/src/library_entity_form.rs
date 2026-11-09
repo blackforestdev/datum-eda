@@ -68,21 +68,17 @@ pub(super) fn table(p: &mut Painter<'_>, d: &LibraryDraft) {
         let gate = if active { pending_gate(d) } else { raw.clone() };
         gate_row(p, d, &gate, Some(C::Gate(i)), active);
     }
-    if d.create
-        && d.entity
-            .gate_id
-            .is_some_and(|id| !d.entity.gates.contains_key(&id.to_string()))
-    {
+    if d.entity.gate_id.is_some() && d.entity.selected_gate().is_none() {
         let i = d.fields.iter().position(|f| f.key == "gate_name").unwrap();
         gate_row(p, d, &pending_gate(d), Some(C::Field(i)), true);
     }
+    p.button("Add gate", C::AddGate);
     if d.create {
-        p.button("Add gate", C::AddGate);
         p.button("Remove draft gate", C::RemoveGate);
     }
 }
 fn pending_gate(d: &LibraryDraft) -> Value {
-    if !d.create {
+    if !d.create && d.entity.selected_gate().is_some() {
         let mut gate = d.entity.selected_gate().cloned().unwrap_or(Value::Null);
         if let Some(raw) = gate.as_object_mut() {
             if d.dirty.contains("gate_name") {

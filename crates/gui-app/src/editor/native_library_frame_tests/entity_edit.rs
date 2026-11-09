@@ -121,7 +121,7 @@ impl Fixture {
                     .presented_hits
                     .regions()
                     .iter()
-                    .any(|h| matches!(h.target, HitTarget::Library(C::AddGate | C::RemoveGate)))
+                    .any(|h| matches!(h.target, HitTarget::Library(C::RemoveGate)))
             );
             assert!(draft.fields.iter().any(|f| f.key == "gate_unit"));
             assert_eq!(

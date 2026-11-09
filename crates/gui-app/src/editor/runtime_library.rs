@@ -238,7 +238,12 @@ impl Runtime {
                     match d.switch_gate(index, control == C::RemoveGate) {
                         Ok(()) => {
                             if let Some(i) = d.fields.iter().position(|f| {
-                                f.key == if d.create { "gate_name" } else { "gate_symbol" }
+                                f.key
+                                    == if d.create || control == C::AddGate {
+                                        "gate_name"
+                                    } else {
+                                        "gate_symbol"
+                                    }
                             }) {
                                 d.focused = i;
                                 d.offset = i;
@@ -461,8 +466,9 @@ impl Runtime {
                     }
                     if d.kind == "entities" {
                         controls.extend((0..d.entity.gates.len()).map(C::Gate));
+                        controls.push(C::AddGate);
                         if d.create {
-                            controls.extend([C::AddGate, C::RemoveGate]);
+                            controls.push(C::RemoveGate);
                         }
                     }
                     if d.kind == "pin_pad_maps" {

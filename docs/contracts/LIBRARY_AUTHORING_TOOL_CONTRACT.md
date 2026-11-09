@@ -374,6 +374,41 @@ supplies no gate membership editing, placed migration/ECO, approval, physical/HU
 observation, release-GUI execution, full library qualification or broader-goal
 acceptance.
 
+Saved Entity gate addition (`dat-saved-entity-add-gate-3pjh`) exposes Add gate in
+the existing shared form. A new draft gate has a stable fresh UUID and explicit
+name, named Unit and compatible named Symbol. Intent persists across old/new row
+selection; Preview/Cancel, canonical Undo/Redo and Save/cold reopening retain it.
+The sparse `gate_additions` patch rejects globally owned, duplicate or aliased
+collisions, preserves every existing raw gate and other untouched field, and uses
+the canonical Set registration for new nested IDs. Existing name/Unit/Symbol edits,
+creation and shared keyboard focus/reveal remain supported. This increment does
+not enable removal of existing saved gates.
+
+The complete candidate uses the existing materialized graph and revision guards;
+old default/nondefault and legacy mappings retain authority. A successful addition
+preserves an actual connected eight-pad Complete certificate and held/fresh old
+membership through history and cold reopening. Twenty-six focused Rust cases and
+one ordinary isolated debug-App case pass: 102 stages, 23.21 seconds and nine
+inspected captures. The original 22-source/20-transaction circuit needs no setup.
+During the library addition, only one new Gate enters the Entity and all other 21
+source/CI/Map/Net paths, old gate links, pins and references stay byte-exact.
+
+The new gate is then placed on an existing child component through the actual
+marking-menu More action, remaining-gate picker, reference field, ghost and
+Proposal review/acceptance. Three separate canonical transactions record Proposal
+creation, acceptance and application; they add the child Symbol, Net identity and
+applied Proposal while extending the existing CI. Old members, roles and Part
+bindings remain exact; the sole old Net change is its actual canonical initial
+lineage transition. There is no implicit placed update or Map/default migration.
+
+The first App run remains a recorded failure: its test input incorrectly marked
+fresh key presses as held-key focus replay, which production intentionally ignores.
+The corrected test preserves the captured F6 template's fresh-event semantics and
+asserts the entered reference; the production replay guard is unchanged. F6 proves
+only a native template, and subsequent public WindowEvent dispatch is programmatic.
+No physical/HUMAN observation, release-GUI execution, new controller/history binding,
+full qualification or broader native-library acceptance is supplied.
+
 Saved Part metadata editing (`dat-saved-part-metadata-edit-8xfy`) uses the same
 Library form for manufacturer, MPN, value, description, datasheet reference and
 tags. That metadata-only increment kept Entity, Package, default Footprint,

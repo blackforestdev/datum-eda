@@ -110,7 +110,13 @@ impl LibraryDraft {
     }
     pub fn entity_gates(&self) -> Result<Map<String, Value>, String> {
         let mut gates = self.entity.gates.clone();
-        if !self.create {
+        let existing = self.entity.gate_id.is_none_or(|id| {
+            self.entity
+                .saved_gates
+                .keys()
+                .any(|key| key.parse::<Uuid>().ok() == Some(id))
+        });
+        if !self.create && existing {
             if self.dirty.contains("gate_name") {
                 let gate = self.entity.gate_id.ok_or("Choose an existing gate")?;
                 let key = gate_key(&gates, gate)?;
@@ -230,12 +236,24 @@ impl LibraryDraft {
             ] {
                 let changes: Map<_, _> = gates
                     .iter()
-                    .filter(|(id, g)| self.entity.saved_gates[*id][property] != g[property])
+                    .filter(|(id, g)| {
+                        self.entity
+                            .saved_gates
+                            .get(*id)
+                            .is_some_and(|old| old[property] != g[property])
+                    })
                     .map(|(id, g)| (id.clone(), g[property].clone()))
                     .collect();
                 if !changes.is_empty() {
                     fields.insert(field.into(), changes.into());
                 }
+            }
+            let additions: Map<_, _> = gates
+                .into_iter()
+                .filter(|(id, _)| !self.entity.saved_gates.contains_key(id))
+                .collect();
+            if !additions.is_empty() {
+                fields.insert("gate_additions".into(), additions.into());
             }
             return Ok(());
         }
@@ -250,58 +268,20 @@ impl LibraryDraft {
         if self.kind != "entities" {
             return Err("Gate authoring requires an Entity draft".into());
         }
-        if !self.create {
-            if remove || index.is_none() {
-                return Err("Saved gate membership is fixed".into());
-            }
+        if !self.create && remove {
+            return Err("Existing saved gates cannot be removed".into());
+        }
+        if let Some(index) = index {
             let key = self
                 .entity
                 .gates
                 .keys()
-                .nth(index.unwrap())
-                .cloned()
+                .nth(index)
                 .ok_or("Choose an existing gate")?;
-            let gate = key
+            let id = key
                 .parse()
                 .map_err(|_| "Saved gate identity is malformed")?;
-            gate_key(&self.entity.gates, gate)?;
-            self.entity.gates = self.entity_gates()?;
-            self.entity.gate_id = Some(gate);
-            let symbol = self.entity.gates[&key]["symbol"]
-                .as_str()
-                .unwrap_or("")
-                .to_string();
-            let name = self.entity.gates[&key]["name"]
-                .as_str()
-                .unwrap_or("")
-                .to_string();
-            self.fields
-                .iter_mut()
-                .find(|f| f.key == "gate_name")
-                .unwrap()
-                .set_text(name);
-            self.dirty.remove("gate_name");
-            self.fields
-                .iter_mut()
-                .find(|f| f.key == "gate_unit")
-                .unwrap()
-                .set_text(
-                    self.entity.gates[&key]["unit"]
-                        .as_str()
-                        .unwrap_or("")
-                        .into(),
-                );
-            self.dirty.remove("gate_unit");
-            self.refresh_entity_symbols();
-            self.fields
-                .iter_mut()
-                .find(|f| f.key == "gate_symbol")
-                .unwrap()
-                .set_text(symbol);
-            self.dirty.remove("gate_symbol");
-            self.preview = None;
-            self.refusal = None;
-            return Ok(());
+            gate_key(&self.entity.gates, id)?;
         }
         let selected = index.and_then(|i| self.entity.gates.keys().nth(i)).cloned();
         if remove {
@@ -341,6 +321,11 @@ impl LibraryDraft {
                     .unwrap_or("")
                     .into(),
             );
+        if !self.create {
+            for key in ["gate_name", "gate_unit", "gate_symbol"] {
+                self.dirty.remove(key);
+            }
+        }
         self.preview = None;
         self.refusal = None;
         Ok(())
@@ -355,3 +340,6 @@ mod edit_tests;
 
 #[cfg(test)]
 mod unit_edit_tests;
+
+#[cfg(test)]
+mod add_gate_tests;

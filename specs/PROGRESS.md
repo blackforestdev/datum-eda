@@ -762,6 +762,32 @@ No gate membership change, pin migration, implicit placed update/ECO, approval,
 physical/HUMAN, release-GUI execution, full qualification or broader-goal acceptance
 is supplied.
 
+Saved Entity Add gate (`dat-saved-entity-add-gate-3pjh`) now uses the shared form
+for an explicit named gate and compatible existing Unit/Symbol pair, with stable
+fresh identity, row persistence, Preview/Cancel, Undo/Redo and Save/cold reopening.
+Sparse additions retain existing raw gates and references; global and parsed-alias
+collisions refuse. Existing name/Unit/Symbol edits and creation remain supported;
+existing saved-gate removal is not enabled. Candidate graph validation preserves
+old mapping authority without defaults clearing or pin migration.
+
+Twenty-six focused Rust cases and one ordinary isolated debug-App case pass:
+102 stages, 23.21 seconds and nine inspected captures. The existing 22-source,
+20-transaction circuit requires no setup; one fresh Gate is the library phase's
+sole data addition, with all other 21 source/CI/Map/Net paths byte-exact. An actual
+connected eight-pad Complete certificate and held/fresh membership survive
+Add/history/cold. The actual child component's marking-menu remaining-gate flow
+then places the new gate through picker/reference/ghost/Proposal review and Tab
+acceptance. Its three later transactions separately account for Proposal records,
+new Symbol/Net, existing-CI membership/counter and exact old initial Net lineage;
+old members, roles and Part bindings stay intact.
+
+Raw App-a failure remains recorded: a test focus-replay flag caused production to
+ignore reference input. The corrected paired public WindowEvents retain native
+F6 template semantics and verify the reference, without changing the replay guard.
+These are programmatic controls, not physical/HUMAN proof. No implicit placed
+update/ECO, existing-gate removal, approval, release-GUI execution, full qualification
+or broader-goal acceptance is supplied.
+
 Saved Part metadata editing (`dat-saved-part-metadata-edit-8xfy`) now supports
 manufacturer, MPN, value, description, datasheet reference and tags through the
 shared Library form. That metadata-only increment kept relationships and lifecycle

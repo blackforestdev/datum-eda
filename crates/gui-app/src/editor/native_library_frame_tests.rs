@@ -5,6 +5,8 @@ use super::*;
 mod electrical;
 #[path = "native_library_frame_tests/entity.rs"]
 mod entity;
+#[path = "native_library_frame_tests/entity_add_gate.rs"]
+mod entity_add_gate;
 #[path = "native_library_frame_tests/entity_edit.rs"]
 mod entity_edit;
 #[path = "native_library_frame_tests/entity_gate_edit.rs"]
@@ -71,6 +73,7 @@ enum Step {
     EntityGateEdit(usize),
     EntityGateName(usize),
     EntityGateUnit(usize),
+    EntityAddGate(usize),
     PackageEdit(usize),
     TextFields(usize),
     MapLabels(usize),
@@ -161,6 +164,7 @@ impl Fixture {
                         | Step::EntityGateEdit(_)
                         | Step::EntityGateName(_)
                         | Step::EntityGateUnit(_)
+                        | Step::EntityAddGate(_)
                         | Step::PackageEdit(_)
                         | Step::PartEdit(_)
                         | Step::MapEdit(_)
@@ -173,7 +177,11 @@ impl Fixture {
             return;
         }
         assert!(!r.native_edit.blocked, "writer reconciliation must qualify");
-        if matches!(self.steps.first(), Some(Step::TextFields(_))) && self.wait_for_key_template() {
+        if matches!(
+            self.steps.first(),
+            Some(Step::TextFields(_) | Step::EntityAddGate(_))
+        ) && self.wait_for_key_template()
+        {
             return;
         }
         if self.stage >= self.steps.len() {
@@ -275,6 +283,7 @@ impl Fixture {
             Step::EntityGateEdit(stage) => self.entity_gate_edit(events, stage),
             Step::EntityGateName(stage) => self.entity_gate_name(events, stage),
             Step::EntityGateUnit(stage) => self.entity_gate_unit(events, stage),
+            Step::EntityAddGate(stage) => self.entity_add_gate(events, stage),
             Step::PackageEdit(stage) => self.check_package_edit(stage),
             Step::Part(stage, footprint) => self.check_part(stage, footprint),
             Step::PartEdit(stage) => self.part_edit_stage(events, stage),

@@ -73,10 +73,9 @@ impl Fixture {
                     2
                 );
                 assert!(
-                    !hits.iter().any(|h| matches!(
-                        h.target,
-                        HitTarget::Library(C::AddGate | C::RemoveGate)
-                    ))
+                    !hits
+                        .iter()
+                        .any(|h| matches!(h.target, HitTarget::Library(C::RemoveGate)))
                 );
                 if stage == 2 {
                     assert_eq!(draft.preview.as_ref(), Some(&self.gate_expected(true)));

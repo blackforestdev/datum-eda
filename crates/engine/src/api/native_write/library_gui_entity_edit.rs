@@ -7,7 +7,7 @@ pub(super) fn build(
     provenance: WriteProvenance,
     request: LibraryDefinitionRequest,
 ) -> Result<PreparedWrite, EngineError> {
-    if !["gate_symbols", "gate_names", "gate_units"]
+    if !["gate_symbols", "gate_names", "gate_units", "gate_additions"]
         .iter()
         .any(|key| request.fields.contains_key(*key))
     {
@@ -26,6 +26,47 @@ pub(super) fn build(
     let (target, mut object) = saved_source::load(context.model, request.object_id, "entities")?;
     let mut references = BTreeSet::new();
     let mut original = object.clone();
+    let adding = request.fields.contains_key("gate_additions");
+    if let Some(value) = request.fields.get("gate_additions") {
+        let rows = value
+            .as_object()
+            .filter(|m| !m.is_empty())
+            .ok_or_else(|| refusal("Add an explicit named gate"))?;
+        let gates = object["gates"]
+            .as_object_mut()
+            .ok_or_else(|| refusal("Saved gates are unavailable"))?;
+        let mut fresh = BTreeSet::new();
+        for (key, value) in rows {
+            let id: Uuid = key
+                .parse()
+                .map_err(|_| refusal("New gate identity is malformed"))?;
+            let gate: GateIntent = serde_json::from_value(value.clone())?;
+            if id.is_nil()
+                || gate.uuid != id
+                || !fresh.insert(id)
+                || context.model.objects.contains_key(&id)
+                || gates.keys().any(|key| key.parse::<Uuid>().ok() == Some(id))
+            {
+                return Err(refusal("New gate requires a fresh unowned identity"));
+            }
+            if gate.name.trim().is_empty() {
+                return Err(refusal("Enter a gate name"));
+            }
+            let unit = reference(context.model, gate.unit, "units")?;
+            let symbol = reference(context.model, gate.symbol, "symbols")?;
+            if symbol["unit"].as_str().and_then(|s| s.parse::<Uuid>().ok()) != Some(gate.unit)
+                || [unit, symbol]
+                    .iter()
+                    .any(|raw| raw["name"].as_str().is_none_or(|s| s.trim().is_empty()))
+            {
+                return Err(refusal(
+                    "Choose an existing named Unit and compatible named Symbol",
+                ));
+            }
+            references.extend([gate.unit, gate.symbol]);
+            gates.insert(key.clone(), value.clone());
+        }
+    }
     let mut touched = BTreeSet::new();
     // Stage all requested leaves first: compatibility belongs to the candidate
     // pair, independent of request field ordering.
@@ -101,7 +142,7 @@ pub(super) fn build(
     let unit_edit = request.fields.contains_key("gate_units");
     for (key, value) in request.fields {
         match key.as_str() {
-            "gate_names" | "gate_units" | "gate_symbols" => {}
+            "gate_names" | "gate_units" | "gate_symbols" | "gate_additions" => {}
             "name" | "prefix" | "manufacturer" => {
                 let text = value
                     .as_str()
@@ -123,7 +164,7 @@ pub(super) fn build(
         }
     }
     let _: crate::pool::Entity = serde_json::from_value(object.clone())?;
-    if unit_edit {
+    if unit_edit || adding {
         validate_parts(context.model, request.object_id, &object, &mut references)?;
     }
     let mut prepared = library::build_pool_library_write(
