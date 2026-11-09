@@ -113,8 +113,7 @@ impl Fixture {
             assert_eq!(draft.entity.gates, *entry.raw["gates"].as_object().unwrap());
             assert!(draft.entity.gate_id.is_none());
             assert!(
-                !self
-                    .app
+                self.app
                     .runtime
                     .as_ref()
                     .unwrap()

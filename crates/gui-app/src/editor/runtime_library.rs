@@ -467,9 +467,7 @@ impl Runtime {
                     if d.kind == "entities" {
                         controls.extend((0..d.entity.gates.len()).map(C::Gate));
                         controls.push(C::AddGate);
-                        if d.create {
-                            controls.push(C::RemoveGate);
-                        }
+                        controls.push(C::RemoveGate);
                     }
                     if d.kind == "pin_pad_maps" {
                         controls.extend((0..d.pin_pad_map.pads.len()).map(C::MappingPad));

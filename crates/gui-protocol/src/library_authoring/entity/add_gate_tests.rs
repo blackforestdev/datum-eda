@@ -61,7 +61,9 @@ fn saved_new_gate_keeps_stable_identity_and_sparse_row_intent() {
     assert_eq!(d.value("gate_symbol"), symbol.to_string());
     assert!(d.request().is_err());
     assert!(d.switch_gate(None, false).is_err());
-    assert!(d.switch_gate(Some(new_index), true).is_err());
+    let mut discarded = d.clone();
+    discarded.switch_gate(None, true).unwrap();
+    assert!(discarded.request().unwrap().fields.is_empty());
     set(&mut d, "gate_unit", unit.to_string());
     assert_eq!(json!(d.request().unwrap().fields), expected);
     assert_eq!(json!(d.entity.saved_gates), raw["gates"]);

@@ -788,6 +788,26 @@ These are programmatic controls, not physical/HUMAN proof. No implicit placed
 update/ECO, existing-gate removal, approval, release-GUI execution, full qualification
 or broader-goal acceptance is supplied.
 
+Saved Entity Remove gate (`dat-saved-entity-remove-gate-azc3`) now supports
+selected unused saved-gate removal and new-row discard through the shared form,
+with Preview/Cancel, Undo/Redo and Save/cold reopening. Sparse original-key removal
+preserves other gates and raw metadata. Actual placements refuse even after Part
+relinking; default, nondefault and legacy mapped use refuses atomically. The
+complete manual removal candidate requires at least one gate, while an empty
+draft remains editable and a distinct explicit replacement can be composed.
+Generic schema, legacy empty data and metadata behavior remain unchanged.
+
+Thirty-three unique focused Rust cases plus one isolated ordinary App case pass:
+73 stages, 16.92 seconds, seven inspected captures. Successful unused removal and
+history/cold preserve actual connected eight-pad Complete and held/fresh membership.
+The App separately records one canonical Add Gate fixture transaction after the
+original 22 files/20-transaction prefix, then three sole-Set-Entity removal/history
+transactions. All other 21 canonical files, old root/child scenes, CIs, pins,
+references, Maps and Nets remain exact; cold reopening retains the two old gates.
+Existing creation/name/Unit/Symbol/Add workflows remain supported. Programmatic
+shared controls in owned Wayland supply no physical/HUMAN, release-GUI execution,
+implicit placed update, approval, full qualification or broader-goal acceptance.
+
 Saved Part metadata editing (`dat-saved-part-metadata-edit-8xfy`) now supports
 manufacturer, MPN, value, description, datasheet reference and tags through the
 shared Library form. That metadata-only increment kept relationships and lifecycle

@@ -15,6 +15,8 @@ mod entity_gate_edit;
 mod entity_gate_name;
 #[path = "native_library_frame_tests/entity_gate_unit.rs"]
 mod entity_gate_unit;
+#[path = "native_library_frame_tests/entity_remove_gate.rs"]
+mod entity_remove_gate;
 #[path = "native_library_frame_tests/input.rs"]
 mod input;
 #[path = "native_library_frame_tests/map_edit.rs"]
@@ -61,65 +63,10 @@ use std::{
 };
 use winit::platform::wayland::EventLoopBuilderExtWayland;
 
-enum Step {
-    MapEdit(usize),
-    PartEdit(usize),
-    PartDefaultFootprint(usize),
-    PartDefaultMap(usize),
-    PartEntity(usize),
-    PartPackage(usize),
-    SymbolRectangle(usize),
-    EntityEdit(usize),
-    EntityGateEdit(usize),
-    EntityGateName(usize),
-    EntityGateUnit(usize),
-    EntityAddGate(usize),
-    PackageEdit(usize),
-    TextFields(usize),
-    MapLabels(usize),
-    PaneContext(pane_context::Action),
-    Placement(usize),
-    Electrical(usize),
-    Entity(usize),
-    Part(usize, bool),
-    Mapping(usize, bool),
-    SelectMapping,
-    SavedTabCycle,
-    Open,
-    Kind(usize),
-    First,
-    Search(String),
-    Select(String),
-    Control(C),
-    Field(&'static str, String),
-    Choice(&'static str, String),
-    Capture(&'static str),
-    Snapshot,
-    Invariant,
-    History(bool),
-    Save,
-    CheckFootprint(usize),
-    CheckFrozen,
-    CheckPackage(bool),
-    Resize,
-    Narrow,
-    CheckNarrow,
-    Tile,
-    Focus(C),
-    MissingGeometry,
-    RecordPlaced(bool),
-    CheckPlaced(bool),
-    CheckProcess(usize),
-    CheckRemovedPreview,
-    VerifyReopen,
-    RecordFootprint,
-    CheckFootprintValue(bool),
-    Reopen,
-    KeyControl(C),
-    Relationship,
-    Refusal,
-    RefusalNotice,
-}
+#[path = "native_library_frame_tests/steps.rs"]
+mod steps;
+use steps::Step;
+
 struct Fixture {
     key_template: Option<winit::event::KeyEvent>,
     key_host_focused: bool,
@@ -165,6 +112,7 @@ impl Fixture {
                         | Step::EntityGateName(_)
                         | Step::EntityGateUnit(_)
                         | Step::EntityAddGate(_)
+                        | Step::EntityRemoveGate(_)
                         | Step::PackageEdit(_)
                         | Step::PartEdit(_)
                         | Step::MapEdit(_)
@@ -284,6 +232,7 @@ impl Fixture {
             Step::EntityGateName(stage) => self.entity_gate_name(events, stage),
             Step::EntityGateUnit(stage) => self.entity_gate_unit(events, stage),
             Step::EntityAddGate(stage) => self.entity_add_gate(events, stage),
+            Step::EntityRemoveGate(stage) => self.entity_remove_gate(events, stage),
             Step::PackageEdit(stage) => self.check_package_edit(stage),
             Step::Part(stage, footprint) => self.check_part(stage, footprint),
             Step::PartEdit(stage) => self.part_edit_stage(events, stage),

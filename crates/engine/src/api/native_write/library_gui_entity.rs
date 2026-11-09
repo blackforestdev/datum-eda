@@ -147,3 +147,7 @@ mod gate_unit_tests;
 #[cfg(test)]
 #[path = "library_gui_entity_add_gate_tests.rs"]
 mod add_gate_tests;
+
+#[cfg(test)]
+#[path = "library_gui_entity_remove_gate_tests.rs"]
+mod remove_gate_tests;

@@ -7,9 +7,15 @@ pub(super) fn build(
     provenance: WriteProvenance,
     request: LibraryDefinitionRequest,
 ) -> Result<PreparedWrite, EngineError> {
-    if !["gate_symbols", "gate_names", "gate_units", "gate_additions"]
-        .iter()
-        .any(|key| request.fields.contains_key(*key))
+    if ![
+        "gate_symbols",
+        "gate_names",
+        "gate_units",
+        "gate_additions",
+        "gate_removals",
+    ]
+    .iter()
+    .any(|key| request.fields.contains_key(*key))
     {
         return super::super::metadata_edit::build(
             context,
@@ -26,6 +32,31 @@ pub(super) fn build(
     let (target, mut object) = saved_source::load(context.model, request.object_id, "entities")?;
     let mut references = BTreeSet::new();
     let mut original = object.clone();
+    let removing = request.fields.contains_key("gate_removals");
+    if let Some(value) = request.fields.get("gate_removals") {
+        let ids: Vec<Uuid> = serde_json::from_value(value.clone())?;
+        let mut seen = BTreeSet::new();
+        if ids.is_empty() {
+            return Err(refusal("Choose an existing gate to remove"));
+        }
+        for id in ids {
+            if !seen.insert(id) {
+                return Err(refusal("Gate removal identity is ambiguous"));
+            }
+            let (_, gate) = gate_mut(&mut object, id)?;
+            reference(context.model, gate.unit, "units")?;
+            reference(context.model, gate.symbol, "symbols")?;
+            references.extend([gate.unit, gate.symbol]);
+            preserve_users(context.model, request.object_id, id, true)?;
+            let gates = object["gates"].as_object_mut().unwrap();
+            let key = gates
+                .keys()
+                .find(|k| k.parse::<Uuid>().ok() == Some(id))
+                .unwrap()
+                .clone();
+            gates.remove(&key);
+        }
+    }
     let adding = request.fields.contains_key("gate_additions");
     if let Some(value) = request.fields.get("gate_additions") {
         let rows = value
@@ -136,13 +167,13 @@ pub(super) fn build(
         }
         references.extend([gate.unit, gate.symbol]);
         if old.unit != gate.unit || old.symbol != gate.symbol {
-            preserve_users(context.model, request.object_id, id)?;
+            preserve_users(context.model, request.object_id, id, false)?;
         }
     }
     let unit_edit = request.fields.contains_key("gate_units");
     for (key, value) in request.fields {
         match key.as_str() {
-            "gate_names" | "gate_units" | "gate_symbols" | "gate_additions" => {}
+            "gate_names" | "gate_units" | "gate_symbols" | "gate_additions" | "gate_removals" => {}
             "name" | "prefix" | "manufacturer" => {
                 let text = value
                     .as_str()
@@ -163,8 +194,11 @@ pub(super) fn build(
             }
         }
     }
+    if removing && object["gates"].as_object().is_some_and(|g| g.is_empty()) {
+        return Err(refusal("Add one or more named gates"));
+    }
     let _: crate::pool::Entity = serde_json::from_value(object.clone())?;
-    if unit_edit || adding {
+    if unit_edit || adding || removing {
         validate_parts(context.model, request.object_id, &object, &mut references)?;
     }
     let mut prepared = library::build_pool_library_write(
@@ -249,6 +283,7 @@ fn preserve_users(
     model: &crate::substrate::DesignModel,
     entity: Uuid,
     gate: Uuid,
+    removing: bool,
 ) -> Result<(), EngineError> {
     for shard in model.source_shards.iter().filter(|s| {
         matches!(
@@ -274,6 +309,9 @@ fn preserve_users(
             {
                 let id = |field: &str| placed[field].as_str().and_then(|s| s.parse::<Uuid>().ok());
                 if id("entity") == Some(entity) && id("gate") == Some(gate) {
+                    if removing {
+                        return Err(refusal("Gate is used by an existing schematic placement"));
+                    }
                     let placed_id: Uuid = key
                         .parse()
                         .map_err(|_| refusal("Placed identity is malformed"))?;

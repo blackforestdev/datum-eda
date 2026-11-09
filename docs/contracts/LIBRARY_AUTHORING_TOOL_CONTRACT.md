@@ -409,6 +409,37 @@ only a native template, and subsequent public WindowEvent dispatch is programmat
 No physical/HUMAN observation, release-GUI execution, new controller/history binding,
 full qualification or broader native-library acceptance is supplied.
 
+Saved Entity gate removal (`dat-saved-entity-remove-gate-azc3`) now uses the
+shared form to remove a selected unused saved gate or discard a new draft row.
+Sparse `gate_removals` resolve one unique parsed UUID to its original raw key and
+embedded identity, preserving all remaining raw gates, links and unknown fields.
+Missing, duplicate or ambiguous identities refuse. Actual authored placements
+refuse removal even after the current Part is relinked to another Entity; retained
+default, nondefault and legacy mappings also refuse without writes. The existing
+materialized source scan and graph validation supply these checks and revision
+guards; authenticated history is never used to bypass a placed reference.
+
+A draft may temporarily contain no gates, but removal Preview/Commit requires the
+existing manual-authoring minimum in the complete prospective candidate. Explicit
+removal and a distinct valid addition can compose a replacement. This does not
+change the generic Entity schema, legacy empty data, raw Set or metadata editing.
+Preview/Cancel, canonical nested-ID deletion/restoration, Undo/Redo and Save/cold
+reopening preserve the other gates and circuit. Creation, name, Unit/Symbol and
+Add gate workflows remain supported.
+
+Thirty-three unique focused Rust cases and one ordinary isolated debug-App case
+pass: 73 stages, 16.92 seconds and seven inspected captures. An actual connected
+eight-pad Complete certificate and held/fresh membership survive successful unused
+removal/history/cold; independent mapping refusals preserve the same authority.
+The App circuit retains its original 22 files and 20-transaction prefix. One
+separate canonical Add Gate fixture transaction supplies an unused gate; removal,
+Undo and Redo then each contain only Set Entity, ending at 24 transactions. All
+other 21 source/CI/Map/Net files remain byte-exact, with old root/child scenes
+unchanged and the removed row absent after cold reopening. Presented controls and
+the existing logical-key handler provide programmatic proof in owned Wayland.
+No physical/HUMAN observation, release-GUI execution, implicit placed update, pin
+migration, approval, full qualification or broader-goal acceptance is supplied.
+
 Saved Part metadata editing (`dat-saved-part-metadata-edit-8xfy`) uses the same
 Library form for manufacturer, MPN, value, description, datasheet reference and
 tags. That metadata-only increment kept Entity, Package, default Footprint,

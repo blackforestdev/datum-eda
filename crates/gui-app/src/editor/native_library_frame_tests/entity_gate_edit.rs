@@ -73,8 +73,7 @@ impl Fixture {
                     2
                 );
                 assert!(
-                    !hits
-                        .iter()
+                    hits.iter()
                         .any(|h| matches!(h.target, HitTarget::Library(C::RemoveGate)))
                 );
                 if stage == 2 {

@@ -73,9 +73,14 @@ pub(super) fn table(p: &mut Painter<'_>, d: &LibraryDraft) {
         gate_row(p, d, &pending_gate(d), Some(C::Field(i)), true);
     }
     p.button("Add gate", C::AddGate);
-    if d.create {
-        p.button("Remove draft gate", C::RemoveGate);
-    }
+    p.button(
+        if d.create {
+            "Remove draft gate"
+        } else {
+            "Remove gate"
+        },
+        C::RemoveGate,
+    );
 }
 fn pending_gate(d: &LibraryDraft) -> Value {
     if !d.create && d.entity.selected_gate().is_some() {

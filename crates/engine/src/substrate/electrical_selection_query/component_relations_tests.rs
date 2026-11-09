@@ -635,3 +635,6 @@ mod entity_gate_unit_tests;
 
 #[path = "component_relations_entity_add_gate_tests.rs"]
 mod entity_add_gate_tests;
+
+#[path = "component_relations_entity_remove_gate_tests.rs"]
+mod entity_remove_gate_tests;

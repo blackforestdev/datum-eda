@@ -229,6 +229,22 @@ impl LibraryDraft {
         }
         if !self.create {
             let gates = self.entity_gates()?;
+            let removals: Vec<_> = self
+                .entity
+                .saved_gates
+                .keys()
+                .filter(|key| !gates.contains_key(*key))
+                .map(|key| {
+                    key.parse::<Uuid>()
+                        .map_err(|_| "Saved gate identity is malformed")
+                })
+                .collect::<Result<_, _>>()?;
+            if !removals.is_empty() {
+                if gates.is_empty() {
+                    return Err("Add one or more named gates".into());
+                }
+                fields.insert("gate_removals".into(), json!(removals));
+            }
             for (property, field) in [
                 ("name", "gate_names"),
                 ("unit", "gate_units"),
@@ -268,8 +284,8 @@ impl LibraryDraft {
         if self.kind != "entities" {
             return Err("Gate authoring requires an Entity draft".into());
         }
-        if !self.create && remove {
-            return Err("Existing saved gates cannot be removed".into());
+        if !self.create && remove && self.entity.gate_id.is_none() {
+            return Err("Choose an existing gate to remove".into());
         }
         if let Some(index) = index {
             let key = self
@@ -286,7 +302,25 @@ impl LibraryDraft {
         let selected = index.and_then(|i| self.entity.gates.keys().nth(i)).cloned();
         if remove {
             if let Some(id) = self.entity.gate_id {
-                self.entity.gates.remove(&id.to_string());
+                // Resolve the original raw key; saved UUID spellings are retained.
+                let key = gate_key(&self.entity.gates, id).or_else(|error| {
+                    if !self
+                        .entity
+                        .gates
+                        .keys()
+                        .any(|key| key.parse::<Uuid>().ok() == Some(id))
+                        && !self
+                            .entity
+                            .saved_gates
+                            .keys()
+                            .any(|key| key.parse::<Uuid>().ok() == Some(id))
+                    {
+                        Ok(id.to_string()) // Discard an unbuffered new row.
+                    } else {
+                        Err(error)
+                    }
+                })?;
+                self.entity.gates.remove(&key);
             }
         } else {
             self.entity.gates = self.entity_gates()?;
@@ -343,3 +377,6 @@ mod unit_edit_tests;
 
 #[cfg(test)]
 mod add_gate_tests;
+
+#[cfg(test)]
+mod remove_gate_tests;

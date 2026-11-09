@@ -48,9 +48,10 @@ fn saved_fields_patch_only_dirty_metadata_and_topology_controls_refuse() {
     assert_eq!(d.entity.gate_id, Some(gate));
     assert_eq!(d.value("gate_symbol"), symbol.to_string());
     assert!(d.fields.iter().any(|f| f.key == "gate_unit"));
-    for (index, remove) in [(None, true)] {
-        assert!(d.switch_gate(index, remove).is_err());
-    }
+    let mut removed = d.clone();
+    removed.switch_gate(None, true).unwrap();
+    assert!(removed.entity.gates.is_empty());
+    assert!(removed.request().is_err());
     assert!(d.dirty.is_empty());
     d.focused = d.fields.iter().position(|f| f.key == "prefix").unwrap();
     d.change("IC".into());
@@ -169,7 +170,7 @@ fn saved_gate_symbol_changes_are_compatible_dirty_only_and_survive_row_navigatio
     assert_eq!(Value::Object(d.entity_gates().unwrap()), expected);
     assert_eq!(Value::Object(d.entity.saved_gates.clone()), raw["gates"]);
     d.switch_gate(None, false).unwrap();
-    assert!(d.switch_gate(Some(index), true).is_err());
+    d.switch_gate(None, true).unwrap();
 }
 
 #[test]
