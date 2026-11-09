@@ -100,7 +100,15 @@ impl Fixture {
             assert!(!draft.create);
             assert_eq!(
                 draft.fields.iter().map(|f| f.key).collect::<Vec<_>>(),
-                ["name", "prefix", "manufacturer", "tags", "gate_symbol"]
+                [
+                    "name",
+                    "prefix",
+                    "manufacturer",
+                    "tags",
+                    "gate_name",
+                    "gate_unit",
+                    "gate_symbol"
+                ]
             );
             assert_eq!(draft.entity.gates, *entry.raw["gates"].as_object().unwrap());
             assert!(draft.entity.gate_id.is_none());
@@ -115,7 +123,7 @@ impl Fixture {
                     .iter()
                     .any(|h| matches!(h.target, HitTarget::Library(C::AddGate | C::RemoveGate)))
             );
-            assert!(!draft.fields.iter().any(|f| f.key == "gate_unit"));
+            assert!(draft.fields.iter().any(|f| f.key == "gate_unit"));
             assert_eq!(
                 self.app
                     .runtime

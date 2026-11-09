@@ -736,6 +736,32 @@ No topology editing, implicit placed update/ECO, approval, physical/HUMAN,
 release-GUI execution, full Inspector/library qualification or broader-goal
 acceptance is supplied.
 
+Saved Entity gate Unit/Symbol correction (`dat-saved-entity-gate-unit-glgy`) now
+supports explicit named paired links for an existing saved gate, row persistence,
+Preview/Cancel, canonical Undo/Redo and Save/cold reopening. An incompatible old
+Symbol stays visible after Unit selection until explicit correction. Sparse raw
+patches preserve untouched UUID spellings and unknown data; the counterpart-alias
+review finding is fixed and covered. Existing names, Symbol-only edits and creation
+remain supported. Every affected Part's default/nondefault/legacy Map authority
+validates against the complete candidate; incompatible pins refuse, while mappings
+on unchanged gates remain valid. Old users keep their authenticated original pair
+and editability; later explicit placement uses the revised Unit pins and body.
+
+Twenty-three focused Rust cases and one isolated ordinary debug-App case pass:
+96 stages, 20.06 seconds and eight inspected captures. Five canonical setup
+transactions add a distinct map-free Entity/Part, original root/child placements
+and compatible Unit/Symbol, preserving the original 20-transaction journal prefix.
+Before/after inventories distinguish original 22 sources from the protected 30.
+The correction changes only two gate leaves; the other 29 paths stay byte-exact.
+Later placement separately adds its actual Symbol/CI/Net and canonical initial
+lineage transition. Actual connected eight-pad Complete refusal and repeated old
+member Move/Undo have focused engine proof. Raw failed attempts remain recorded,
+including the original mapped baseline's legitimate no-write refusal and test-only
+capture-label failure. Shared keyboard focus/reveal supports Commit reachability.
+No gate membership change, pin migration, implicit placed update/ECO, approval,
+physical/HUMAN, release-GUI execution, full qualification or broader-goal acceptance
+is supplied.
+
 Saved Part metadata editing (`dat-saved-part-metadata-edit-8xfy`) now supports
 manufacturer, MPN, value, description, datasheet reference and tags through the
 shared Library form. That metadata-only increment kept relationships and lifecycle

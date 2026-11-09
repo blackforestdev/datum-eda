@@ -64,7 +64,7 @@ impl Fixture {
             1 | 2 => {
                 let draft = s.library.draft.as_ref().unwrap();
                 assert!(!draft.create);
-                assert!(!draft.fields.iter().any(|f| f.key == "gate_unit"));
+                assert!(draft.fields.iter().any(|f| f.key == "gate_unit"));
                 let hits = self.app.runtime.as_ref().unwrap().presented_hits.regions();
                 assert_eq!(
                     hits.iter()

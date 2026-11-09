@@ -39,10 +39,11 @@ fn gate_row(p: &mut Painter<'_>, d: &LibraryDraft, gate: &Value, control: Option
             &unit,
             &symbol,
             if !d.create
-                && d.entity
-                    .saved_gates
-                    .values()
-                    .any(|g| g["uuid"] == gate["uuid"] && g["symbol"] == gate["symbol"])
+                && d.entity.saved_gates.values().any(|g| {
+                    g["uuid"] == gate["uuid"]
+                        && g["symbol"] == gate["symbol"]
+                        && g["unit"] == gate["unit"]
+                })
             {
                 "Retained saved link"
             } else if d.preview.is_some() {
@@ -87,6 +88,7 @@ fn pending_gate(d: &LibraryDraft) -> Value {
             if d.dirty.contains("gate_name") {
                 raw.insert("name".into(), Value::String(d.value("gate_name").into()));
             }
+            raw.insert("unit".into(), Value::String(d.value("gate_unit").into()));
             raw.insert(
                 "symbol".into(),
                 Value::String(d.value("gate_symbol").into()),

@@ -332,9 +332,47 @@ parsed membership without rewriting that source. The Inspector path-label
 report `dat-library-gate-inspector-path-06xw` was retracted after actual metadata,
 shared-font and raster diagnostics: both original name rows are pixel-identical
 to independent cold renders of their correct text. The original visual reading
-was wrong; no production fix or renderer workaround was needed. This does not supply gate add/remove or Unit relinking, inferred placed
+was wrong; no production fix or renderer workaround was needed. That name-only
+increment does not supply gate add/remove or Unit relinking, inferred placed
 updates/ECO, approval, physical/HUMAN observation, release-GUI execution, complete
 Inspector labeling, full library qualification or broader-goal acceptance.
+
+Saved Entity gate Unit/Symbol correction (`dat-saved-entity-gate-unit-glgy`)
+adds an explicit named Unit choice beside the compatible named Symbol choice for
+an existing gate. Changing Unit retains the old Symbol visibly until the designer
+chooses a compatible pair. Edits persist across rows; preview and the pending table
+reflect both links. The engine composes the complete candidate before validation,
+then applies sparse raw leaves with actual source revision guards. Untouched UUID
+spellings, gate identity/membership and unknown data remain intact; a reviewed
+counterpart-normalization defect is corrected with two alias-preservation controls.
+Existing metadata, gate-name, Symbol-only and creation behavior remains supported.
+
+The existing materialized graph validates every affected Part's retained default,
+nondefault and legacy mappings against candidate Unit pins. Incompatible mappings
+refuse atomically; compatible mappings on unchanged gates remain valid. Old placed
+users retain their authenticated original Unit/Symbol chain across repeated relinks
+and remain editable. Later explicit placement uses the revised pair. There is no
+pin migration, implicit placed update, Map/default clearing, new writer, controller,
+schema or historical Entity binding.
+
+Twenty-three focused Rust cases and one ordinary isolated debug-App case pass.
+The App completes 96 stages in 20.06 seconds with eight inspected captures. Its
+canonical setup adds a distinct map-free Entity/Part, real original root/child
+placements and a fresh compatible Unit/Symbol; before/after setup inventories and
+journals distinguish the original 22 sources from the protected 30-source baseline.
+During correction, Cancel, Undo/Redo and cold reopening, only the existing gate's
+Unit/Symbol leaves change and the other 29 source/CI/pin/reference/Map/Net paths stay
+byte-exact. A later explicit placement adds its actual Symbol/CI/Net and exact
+canonical initial lineage transition separately. Real connected eight-pad Complete
+refusals and repeated old-member editability have their focused engine proof.
+
+Raw zero-match, obsolete/mapped-target fixture, pre-GUI missing-freeze and invalid
+capture-label failures remain recorded; the mapped baseline App attempt correctly
+refuses without changing its original 22 sources. Shared focus/reveal makes Commit
+reachable, although the Preview-focused capture does not show that button. This
+supplies no gate membership editing, placed migration/ECO, approval, physical/HUMAN
+observation, release-GUI execution, full library qualification or broader-goal
+acceptance.
 
 Saved Part metadata editing (`dat-saved-part-metadata-edit-8xfy`) uses the same
 Library form for manufacturer, MPN, value, description, datasheet reference and

@@ -139,3 +139,7 @@ mod gate_edit_tests;
 #[cfg(test)]
 #[path = "library_gui_entity_gate_name_tests.rs"]
 mod gate_name_tests;
+
+#[cfg(test)]
+#[path = "library_gui_entity_gate_unit_tests.rs"]
+mod gate_unit_tests;

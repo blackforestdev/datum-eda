@@ -11,6 +11,8 @@ mod entity_edit;
 mod entity_gate_edit;
 #[path = "native_library_frame_tests/entity_gate_name.rs"]
 mod entity_gate_name;
+#[path = "native_library_frame_tests/entity_gate_unit.rs"]
+mod entity_gate_unit;
 #[path = "native_library_frame_tests/input.rs"]
 mod input;
 #[path = "native_library_frame_tests/map_edit.rs"]
@@ -68,6 +70,7 @@ enum Step {
     EntityEdit(usize),
     EntityGateEdit(usize),
     EntityGateName(usize),
+    EntityGateUnit(usize),
     PackageEdit(usize),
     TextFields(usize),
     MapLabels(usize),
@@ -157,6 +160,7 @@ impl Fixture {
                         | Step::EntityEdit(_)
                         | Step::EntityGateEdit(_)
                         | Step::EntityGateName(_)
+                        | Step::EntityGateUnit(_)
                         | Step::PackageEdit(_)
                         | Step::PartEdit(_)
                         | Step::MapEdit(_)
@@ -270,6 +274,7 @@ impl Fixture {
             Step::EntityEdit(stage) => self.check_entity_edit(stage),
             Step::EntityGateEdit(stage) => self.entity_gate_edit(events, stage),
             Step::EntityGateName(stage) => self.entity_gate_name(events, stage),
+            Step::EntityGateUnit(stage) => self.entity_gate_unit(events, stage),
             Step::PackageEdit(stage) => self.check_package_edit(stage),
             Step::Part(stage, footprint) => self.check_part(stage, footprint),
             Step::PartEdit(stage) => self.part_edit_stage(events, stage),

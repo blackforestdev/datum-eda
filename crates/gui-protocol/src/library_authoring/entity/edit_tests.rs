@@ -36,6 +36,7 @@ fn saved_fields_patch_only_dirty_metadata_and_topology_controls_refuse() {
             "manufacturer",
             "tags",
             "gate_name",
+            "gate_unit",
             "gate_symbol"
         ]
     );
@@ -46,7 +47,7 @@ fn saved_fields_patch_only_dirty_metadata_and_topology_controls_refuse() {
     d.switch_gate(Some(0), false).unwrap();
     assert_eq!(d.entity.gate_id, Some(gate));
     assert_eq!(d.value("gate_symbol"), symbol.to_string());
-    assert!(!d.fields.iter().any(|f| f.key == "gate_unit"));
+    assert!(d.fields.iter().any(|f| f.key == "gate_unit"));
     for (index, remove) in [(None, false), (None, true)] {
         assert!(d.switch_gate(index, remove).is_err());
     }

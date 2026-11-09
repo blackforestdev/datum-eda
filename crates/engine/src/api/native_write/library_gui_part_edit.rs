@@ -300,7 +300,7 @@ pub(super) fn build(
     Ok(prepared)
 }
 
-fn graph(
+pub(in crate::api::native_write::library_gui) fn graph(
     model: &DesignModel,
 ) -> Result<(crate::pool::LibraryGraph, BTreeMap<Uuid, usize>), EngineError> {
     let mut graph = crate::pool::LibraryGraph::default();
@@ -328,7 +328,7 @@ fn graph(
     }
     Ok((graph, counts))
 }
-fn qualify(
+pub(in crate::api::native_write::library_gui) fn qualify(
     model: &DesignModel,
     graph: &crate::pool::LibraryGraph,
     counts: &BTreeMap<Uuid, usize>,
@@ -343,6 +343,7 @@ fn qualify(
     }
     let raw = match kind {
         "entities" => graph.entities.get(&id),
+        "parts" => graph.parts.get(&id),
         "packages" => graph.packages.get(&id),
         "footprints" => graph.footprints.get(&id),
         "pin_pad_maps" => graph.pin_pad_maps.get(&id),
@@ -355,6 +356,9 @@ fn qualify(
         return Err(refusal("Part relationship source schema is unsupported"));
     }
     match kind {
+        "parts" => {
+            let _: crate::pool::Part = serde_json::from_value(raw.clone())?;
+        }
         "entities" => {
             let _: crate::pool::Entity = serde_json::from_value(raw.clone())?;
         }

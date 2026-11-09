@@ -3,6 +3,7 @@ use super::*;
 use crate::substrate::Operation;
 #[path = "library_gui_part_edit.rs"]
 mod edit;
+pub(super) use edit::{graph, qualify};
 
 pub(super) fn build(
     context: &NativeWriteContext<'_>,

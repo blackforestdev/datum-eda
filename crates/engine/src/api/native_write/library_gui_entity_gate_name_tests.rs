@@ -146,7 +146,7 @@ fn saved_gate_names_invalid_missing_alias_and_topology_intents_refuse_without_wr
         json!({"gate_names":{"malformed":"No"}}),
         json!({"gate_names":{gate.to_string():"A",gate.simple().to_string():"B"}}),
         json!({"gate_names":{gate.to_string():"Renamed"},"gates":{}}),
-        json!({"gate_names":{gate.to_string():"Renamed"},"gate_units":{gate.to_string():unit}}),
+        json!({"gate_names":{gate.to_string():"Renamed"},"gate_units":{gate.to_string():Uuid::new_v4()}}),
     ] {
         assert!(edit(&model, &root, entity, fields).is_err());
         assert_eq!(std::fs::read(&journal).unwrap(), bytes);

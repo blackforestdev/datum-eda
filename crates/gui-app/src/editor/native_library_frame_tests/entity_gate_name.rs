@@ -108,7 +108,7 @@ impl Fixture {
                 let d = state.library.draft.as_ref().unwrap();
                 assert!(!d.create);
                 assert!(d.fields.iter().any(|f| f.key == "gate_name" && !f.selector));
-                assert!(!d.fields.iter().any(|f| f.key == "gate_unit"));
+                assert!(d.fields.iter().any(|f| f.key == "gate_unit"));
                 assert!(d.request().unwrap().fields.is_empty());
             }
             2 | 3 => {

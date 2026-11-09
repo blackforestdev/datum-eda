@@ -1,13 +1,16 @@
-//! Saved Entity corrections preserve raw gates; only requested names and Symbol links change.
+//! Saved Entity corrections preserve raw gates; only requested names and Unit/Symbol links change.
 use super::*;
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeSet;
 
 pub(super) fn build(
     context: &NativeWriteContext<'_>,
     provenance: WriteProvenance,
     request: LibraryDefinitionRequest,
 ) -> Result<PreparedWrite, EngineError> {
-    if !request.fields.contains_key("gate_symbols") && !request.fields.contains_key("gate_names") {
+    if !["gate_symbols", "gate_names", "gate_units"]
+        .iter()
+        .any(|key| request.fields.contains_key(*key))
+    {
         return super::super::metadata_edit::build(
             context,
             provenance,
@@ -22,73 +25,83 @@ pub(super) fn build(
     }
     let (target, mut object) = saved_source::load(context.model, request.object_id, "entities")?;
     let mut references = BTreeSet::new();
+    let mut original = object.clone();
+    let mut touched = BTreeSet::new();
+    // Stage all requested leaves first: compatibility belongs to the candidate
+    // pair, independent of request field ordering.
+    for (field, property) in [
+        ("gate_names", "name"),
+        ("gate_units", "unit"),
+        ("gate_symbols", "symbol"),
+    ] {
+        if let Some(value) = request.fields.get(field) {
+            let changes = value
+                .as_object()
+                .filter(|m| !m.is_empty())
+                .ok_or_else(|| refusal("Choose an existing gate to correct"))?;
+            let mut seen = BTreeSet::new();
+            for (key, value) in changes {
+                let id: Uuid = key
+                    .parse()
+                    .map_err(|_| refusal("Gate identity is malformed"))?;
+                if !seen.insert(id) {
+                    return Err(refusal("Gate correction identity is ambiguous"));
+                }
+                let (raw, _) = gate_mut(&mut object, id)?;
+                let replacement = if property == "name" {
+                    let text = value
+                        .as_str()
+                        .filter(|s| !s.trim().is_empty())
+                        .ok_or_else(|| refusal("Enter a gate name"))?;
+                    json!(text)
+                } else {
+                    json!(serde_json::from_value::<Uuid>(value.clone())?)
+                };
+                raw.as_object_mut()
+                    .unwrap()
+                    .insert(property.into(), replacement);
+                touched.insert(id);
+            }
+        }
+    }
+    for id in touched {
+        let (_, old) = gate_mut(&mut original, id)?;
+        reference(context.model, old.unit, "units")?;
+        let old_symbol = reference(context.model, old.symbol, "symbols")?;
+        if old_symbol["unit"]
+            .as_str()
+            .and_then(|s| s.parse::<Uuid>().ok())
+            != Some(old.unit)
+        {
+            return Err(refusal("Saved gate pair is incompatible"));
+        }
+        references.extend([old.unit, old.symbol]);
+        let (_, gate) = gate_mut(&mut object, id)?;
+        let unit = reference(context.model, gate.unit, "units")?;
+        let symbol = reference(context.model, gate.symbol, "symbols")?;
+        if symbol["unit"].as_str().and_then(|s| s.parse::<Uuid>().ok()) != Some(gate.unit) {
+            return Err(refusal(
+                "Choose a Symbol belonging to the selected gate Unit",
+            ));
+        }
+        if request.fields.contains_key("gate_units")
+            && [unit, symbol]
+                .iter()
+                .any(|raw| raw["name"].as_str().is_none_or(|s| s.trim().is_empty()))
+        {
+            return Err(refusal(
+                "Choose an existing named Unit and compatible named Symbol",
+            ));
+        }
+        references.extend([gate.unit, gate.symbol]);
+        if old.unit != gate.unit || old.symbol != gate.symbol {
+            preserve_users(context.model, request.object_id, id)?;
+        }
+    }
+    let unit_edit = request.fields.contains_key("gate_units");
     for (key, value) in request.fields {
         match key.as_str() {
-            "gate_symbols" => {
-                let changes: BTreeMap<String, Uuid> = serde_json::from_value(value)?;
-                if changes.is_empty() {
-                    return Err(refusal("Choose an existing gate Symbol to correct"));
-                }
-                let mut seen = BTreeSet::new();
-                for (key, replacement) in changes {
-                    let gate: Uuid = key
-                        .parse()
-                        .map_err(|_| refusal("Gate identity is malformed"))?;
-                    if !seen.insert(gate) {
-                        return Err(refusal("Gate correction identity is ambiguous"));
-                    }
-                    let (raw, parsed) = gate_mut(&mut object, gate)?;
-                    reference(context.model, parsed.unit, "units")?;
-                    for symbol in [parsed.symbol, replacement] {
-                        let body = reference(context.model, symbol, "symbols")?;
-                        if body["unit"].as_str().and_then(|s| s.parse::<Uuid>().ok())
-                            != Some(parsed.unit)
-                        {
-                            return Err(refusal("Choose a Symbol for this gate's unchanged Unit"));
-                        }
-                        references.insert(symbol);
-                    }
-                    references.insert(parsed.unit);
-                    if replacement != parsed.symbol {
-                        preserve_users(context.model, request.object_id, gate, parsed.unit)?;
-                    }
-                    raw.as_object_mut()
-                        .unwrap()
-                        .insert("symbol".into(), json!(replacement));
-                }
-            }
-            "gate_names" => {
-                let changes: BTreeMap<String, String> = serde_json::from_value(value)?;
-                if changes.is_empty() {
-                    return Err(refusal("Choose an existing gate name to correct"));
-                }
-                let mut seen = BTreeSet::new();
-                for (key, name) in changes {
-                    let id: Uuid = key
-                        .parse()
-                        .map_err(|_| refusal("Gate identity is malformed"))?;
-                    if !seen.insert(id) {
-                        return Err(refusal("Gate correction identity is ambiguous"));
-                    }
-                    if name.trim().is_empty() {
-                        return Err(refusal("Enter a gate name"));
-                    }
-                    let (raw, gate) = gate_mut(&mut object, id)?;
-                    reference(context.model, gate.unit, "units")?;
-                    let symbol = reference(context.model, gate.symbol, "symbols")?;
-                    if symbol["unit"].as_str().and_then(|s| s.parse::<Uuid>().ok())
-                        != Some(gate.unit)
-                    {
-                        return Err(refusal(
-                            "Saved gate Symbol must belong to its unchanged Unit",
-                        ));
-                    }
-                    references.extend([gate.unit, gate.symbol]);
-                    raw.as_object_mut()
-                        .unwrap()
-                        .insert("name".into(), json!(name));
-                }
-            }
+            "gate_names" | "gate_units" | "gate_symbols" => {}
             "name" | "prefix" | "manufacturer" => {
                 let text = value
                     .as_str()
@@ -110,6 +123,9 @@ pub(super) fn build(
         }
     }
     let _: crate::pool::Entity = serde_json::from_value(object.clone())?;
+    if unit_edit {
+        validate_parts(context.model, request.object_id, &object, &mut references)?;
+    }
     let mut prepared = library::build_pool_library_write(
         context.model,
         provenance,
@@ -192,7 +208,6 @@ fn preserve_users(
     model: &crate::substrate::DesignModel,
     entity: Uuid,
     gate: Uuid,
-    unit: Uuid,
 ) -> Result<(), EngineError> {
     for shard in model.source_shards.iter().filter(|s| {
         matches!(
@@ -239,9 +254,13 @@ fn preserve_users(
                         .ok_or_else(|| refusal("Captured gate is unavailable"))?;
                     let captured_gate: crate::pool::Gate =
                         serde_json::from_value(captured_raw.clone())?;
+                    let body = model
+                        .materialized_placed_symbol_definition(placed_id, symbol)?
+                        .ok_or_else(|| refusal("Captured placed Symbol is unavailable"))?;
                     if captured_gate.uuid != gate
                         || captured_gate.symbol != symbol
-                        || captured_gate.unit != unit
+                        || body["unit"].as_str().and_then(|s| s.parse::<Uuid>().ok())
+                            != Some(captured_gate.unit)
                     {
                         return Err(refusal(
                             "Existing placed gate has no compatible captured chain",
@@ -249,6 +268,100 @@ fn preserve_users(
                     }
                 }
             }
+        }
+    }
+    Ok(())
+}
+
+// Reuse the Part adapter's materialized graph; all validation is prospective.
+fn validate_parts(
+    model: &crate::substrate::DesignModel,
+    entity: Uuid,
+    candidate: &Value,
+    references: &mut BTreeSet<Uuid>,
+) -> Result<(), EngineError> {
+    let (mut graph, counts) = super::super::part::graph(model)?;
+    graph.entities.insert(entity, candidate.clone());
+    let mut subjects = BTreeSet::from([graph.subjects[&entity].clone()]);
+    let mut qualify = |id, kind| -> Result<(), EngineError> {
+        super::super::part::qualify(model, &graph, &counts, id, kind)?;
+        references.insert(id);
+        Ok(())
+    };
+    for (id, raw) in &graph.parts {
+        if raw["entity"].as_str().and_then(|s| s.parse::<Uuid>().ok()) != Some(entity) {
+            continue;
+        }
+        qualify(*id, "parts")?;
+        let part: crate::pool::Part = serde_json::from_value(raw.clone())?;
+        qualify(part.package, "packages")?;
+        subjects.insert(graph.subjects[id].clone());
+        let mut maps: BTreeSet<_> = part.default_pin_pad_map.into_iter().collect();
+        maps.extend(
+            graph
+                .pin_pad_maps
+                .iter()
+                .filter(|(_, raw)| {
+                    raw["part"].as_str().and_then(|s| s.parse::<Uuid>().ok()) == Some(*id)
+                })
+                .map(|(id, _)| *id),
+        );
+        let mut rows: Vec<&Value> = raw
+            .get("pad_map")
+            .and_then(Value::as_object)
+            .into_iter()
+            .flat_map(|m| m.values())
+            .collect();
+        if let Some(footprint) = part.default_footprint {
+            qualify(footprint, "footprints")?;
+            subjects.insert(graph.subjects[&footprint].clone());
+        }
+        for map_id in maps {
+            qualify(map_id, "pin_pad_maps")?;
+            subjects.insert(graph.subjects[&map_id].clone());
+            let map_raw = &graph.pin_pad_maps[&map_id];
+            let map: crate::pool::PinPadMap = serde_json::from_value(map_raw.clone())?;
+            if map.part != *id {
+                return Err(refusal("Retained Map belongs to another Part"));
+            }
+            if let Some(footprint) = map.footprint {
+                qualify(footprint, "footprints")?;
+                subjects.insert(graph.subjects[&footprint].clone());
+            }
+            rows.extend(
+                map_raw
+                    .get("mappings")
+                    .and_then(Value::as_object)
+                    .into_iter()
+                    .flat_map(|m| m.values()),
+            );
+        }
+        for row in rows {
+            let mapped: crate::pool::PadMapEntry = serde_json::from_value(row.clone())?;
+            let gates = candidate["gates"]
+                .as_object()
+                .ok_or_else(|| refusal("Entity gates unavailable"))?;
+            let matches: Vec<_> = gates
+                .iter()
+                .filter(|(k, _)| k.parse::<Uuid>().ok() == Some(mapped.gate))
+                .collect();
+            if matches.len() != 1 {
+                return Err(refusal("Mapped Gate is missing or ambiguous"));
+            }
+            let gate: crate::pool::Gate = serde_json::from_value(matches[0].1.clone())?;
+            if gate.uuid != mapped.gate {
+                return Err(refusal("Mapped Gate identity differs"));
+            }
+            qualify(gate.unit, "units")?;
+        }
+    }
+    for diagnostic in graph.dependency_diagnostics() {
+        if diagnostic.severity == "error"
+            && subjects.iter().any(|s| {
+                diagnostic.subject == *s || diagnostic.subject.starts_with(&format!("{s}#"))
+            })
+        {
+            return Err(refusal(diagnostic.message));
         }
     }
     Ok(())
