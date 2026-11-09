@@ -57,7 +57,7 @@ impl Fixture {
             1 => {
                 let draft = state.library.draft.as_ref().unwrap();
                 assert!(!draft.create);
-                assert_eq!(draft.fields.len(), 7);
+                assert_eq!(draft.fields.len(), 8);
                 assert!(draft.fields[6].selector);
                 assert_eq!(draft.part.original.as_ref(), Some(&entry.raw));
                 assert!(

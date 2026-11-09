@@ -186,7 +186,6 @@ fn retained_default_map_uses_existing_effective_footprint_then_package_rules() {
         json!({"default_footprint":Uuid::new_v4()}),
         json!({"default_footprint":""}),
         json!({"default_footprint":3}),
-        json!({"default_footprint":null,"default_pin_pad_map":null}),
         json!({"default_footprint":first,"package":other}),
     ] {
         let before = std::fs::read(&journal).unwrap();

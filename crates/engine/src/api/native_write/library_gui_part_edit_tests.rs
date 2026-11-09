@@ -309,7 +309,6 @@ fn saved_part_patch_preserves_unedited_optional_ordered_unknown_metadata_and_ref
         json!({"uuid":id}),
         json!({"entity":entity}),
         json!({"package":package}),
-        json!({"default_pin_pad_map":null}),
         json!({"pad_map":{}}),
         json!({"lifecycle":"Active"}),
         json!({"approval_status":"approved"}),

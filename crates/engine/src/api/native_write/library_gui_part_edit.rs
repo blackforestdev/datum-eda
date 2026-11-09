@@ -16,7 +16,9 @@ pub(super) fn build(
         "datasheet",
         "tags",
     ];
-    if !request.fields.contains_key("default_footprint") {
+    if !request.fields.contains_key("default_footprint")
+        && !request.fields.contains_key("default_pin_pad_map")
+    {
         return super::super::metadata_edit::build(
             context,
             provenance,
@@ -31,27 +33,34 @@ pub(super) fn build(
     }
     let (target, mut object) = saved_source::load(context.model, request.object_id, "parts")?;
     for (key, value) in request.fields {
-        if key == "default_footprint" {
+        if matches!(key.as_str(), "default_footprint" | "default_pin_pad_map") {
+            let label = if key == "default_footprint" {
+                "Footprint"
+            } else {
+                "PinPadMap"
+            };
             match value {
                 Value::Null => {
                     object.as_object_mut().unwrap().remove(&key);
                 }
                 Value::String(text) => {
                     let id: Uuid = text.parse().map_err(|_| {
-                        refusal("Choose a named Footprint or explicitly clear the default")
+                        refusal(format!(
+                            "Choose a named {label} or explicitly clear the default"
+                        ))
                     })?;
                     object.as_object_mut().unwrap().insert(key, json!(id));
                 }
                 _ => {
-                    return Err(refusal(
-                        "Default Footprint must be an existing identity or an explicit empty choice",
-                    ));
+                    return Err(refusal(format!(
+                        "Default {label} must be an existing identity or an explicit empty choice",
+                    )));
                 }
             }
         } else {
             if !METADATA.contains(&key.as_str()) {
                 return Err(refusal(
-                    "Saved Part editing refuses Entity, Package, Map, identity and policy changes",
+                    "Saved Part editing refuses Entity, Package, Map payload, identity and policy changes",
                 ));
             }
             if key == "tags" {

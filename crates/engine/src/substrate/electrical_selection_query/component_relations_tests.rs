@@ -617,3 +617,6 @@ mod physical_fixture;
 
 #[path = "component_relations_part_default_footprint_tests.rs"]
 mod part_default_footprint_tests;
+
+#[path = "component_relations_part_default_map_tests.rs"]
+mod part_default_map_tests;

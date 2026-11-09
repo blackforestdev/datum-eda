@@ -731,6 +731,23 @@ test/fixture/validation failures and the App choice-label assertion failure rema
 recorded. No Entity/Package relink, Map edit, implicit placed update, approval,
 physical/HUMAN, release-GUI or broader goal acceptance is supplied.
 
+Saved Part default Map correction (`dat-saved-part-default-map-j4cc`) supports
+named same-Part Map choice, explicit clear and a compatible composed Footprint/Map
+draft in the shared form. Unavailable declarations remain visible; untouched raw
+optional states, other Part fields, Map definitions and all old users remain
+fixed. Existing source guards, full Part/Map history and atomic counter checks
+apply without changing Map creation's unplaced-assignment restriction. Thirty-five
+unique focused Rust checks pass, including connected eight-pad/Net preservation
+and actual current-Part compatibility followed by explicit CI/Map CLI use.
+The ordinary isolated debug App passes 123 stages and five inspected captures:
+all three Cancel paths, selection/composed defaults/clear, Undo/Redo and Save/cold
+reopening preserve old root/child sources and rendered identity. The first CLI
+fixture's missing-sheet failure remains recorded; canonical sheet creation fixes
+the fixture. Initial placement remains Part-only; legacy mapping precedence and
+existing empty/footprintless consumer refusals remain. No automatic Map binding,
+inferred consumer policy, placed update/ECO, relinking, approval, physical/HUMAN,
+release-GUI execution or broader goal acceptance is supplied.
+
 Saved Package metadata editing (`dat-saved-package-metadata-edit-fztr`) now
 supports name, family, code and mounting text in the existing Library form,
 with dimensions and terminal/pad topology read-only. Canonical sparse patches

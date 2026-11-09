@@ -346,3 +346,5 @@ mod main_tests_query_surface;
 mod main_tests_units;
 
 mod main_tests_erc_disposition;
+
+mod main_tests_saved_part_default_map;

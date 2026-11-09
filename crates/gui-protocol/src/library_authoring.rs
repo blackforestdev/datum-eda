@@ -320,6 +320,7 @@ impl LibraryDraft {
                     | "part_entity"
                     | "part_package"
                     | "part_footprint"
+                    | "part_map"
                     | "map_part"
                     | "map_footprint"
                     | "map_pad"
@@ -383,6 +384,14 @@ impl LibraryDraft {
         }
         if self.kind == "parts" && self.fields[self.focused].key == "part_package" {
             self.refresh_part_footprints();
+        }
+        if self.kind == "parts"
+            && matches!(
+                self.fields[self.focused].key,
+                "part_package" | "part_footprint"
+            )
+        {
+            self.refresh_part_maps();
         }
         if self.kind == "pin_pad_maps" {
             self.after_map_change(self.fields[self.focused].key);

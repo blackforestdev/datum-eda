@@ -323,6 +323,33 @@ validation, revision-collision and App label-assertion failures retain their raw
 results. This supplies no Entity/Package relinking, default-Map edit, implicit
 placed update, approval, physical/HUMAN, release-GUI or full library qualification.
 
+Saved Part default PinPadMap correction (`dat-saved-part-default-map-j4cc`)
+adds named existing same-Part Map selection and explicit clear to the shared form.
+A draft can change Footprint and Map together when their resulting effective
+Footprint/Package pair passes the existing graph rules. Unavailable or incompatible
+declared selections stay visible until explicitly corrected; neither selector
+silently clears or infers the other. Clear removes only `default_pin_pad_map`;
+omitted fields retain their raw absent, null or declared representation. Entity,
+Package, UUIDs, Map payloads and every other unedited field remain fixed.
+Mapped Gate/Unit and source revision guards, retained Part/Map history and atomic
+counter-collision refusals protect existing users. Map creation's separate
+assignment-on-creation restriction to unplaced Parts remains unchanged.
+
+Thirty-five unique focused Rust checks pass, including eight connected frozen
+pads, CI/mapping/source identity, Nets, history, cold reads and current-default
+consumer coverage. The ordinary isolated debug App passes 123 stages with five
+inspected captures for selection, composed defaults, all three Cancel paths,
+Undo/Redo, Save/cold reopening and exact old root/child sources and scenes.
+The CLI case captures the current Part, checks actual gate compatibility, then
+explicitly declares that selected Map through existing CI authority and the mapped
+materialization command; A/B/clear preserve earlier users and Map payloads.
+Initial Part placement remains Part-only, with no automatic Map binding. Legacy
+mapping precedence and consumer-specific empty/footprintless Map refusals remain;
+no consumer inference or universal materialization guarantee is added. The first
+CLI fixture run lacked a sheet; its failed log is retained, and the fixture now
+creates one canonically. This supplies no placed update/ECO, Entity/Package
+relinking, approval, physical/HUMAN, release-GUI or full library qualification.
+
 The creation-only PinPadMap GUI increment (`dat-pin-pad-map-gui-create-emck`)
 adds named Part and compatible explicit Footprint choices and a table assigning
 Footprint pads to gate-qualified Unit pins. Unmapped pads remain visible;
