@@ -4,8 +4,24 @@ use super::*;
 #[derive(Debug, Clone, Default, PartialEq)]
 pub struct EntityDraft {
     pub gates: Map<String, Value>,
+    pub saved_gates: Map<String, Value>,
     pub gate_id: Option<Uuid>,
     symbols: Vec<(Uuid, Uuid, String)>,
+}
+fn gate_key(gates: &Map<String, Value>, id: Uuid) -> Result<String, String> {
+    let keys: Vec<_> = gates
+        .keys()
+        .filter(|k| k.parse::<Uuid>().ok() == Some(id))
+        .collect();
+    if keys.len() != 1 {
+        return Err("Saved gate identity is missing or ambiguous".into());
+    }
+    Ok(keys[0].clone())
+}
+impl EntityDraft {
+    pub fn selected_gate(&self) -> Option<&Value> {
+        self.gates.get(&gate_key(&self.gates, self.gate_id?).ok()?)
+    }
 }
 impl LibraryDraft {
     pub(super) fn entity_fields(
@@ -27,29 +43,6 @@ impl LibraryDraft {
                 .join(", "),
         };
         self.field("tags", "Tags (comma separated)", Some(&json!(tags)), vec![]);
-        if !self.create {
-            self.entity.gates = raw
-                .get("gates")
-                .and_then(Value::as_object)
-                .ok_or("Saved Entity gate data is unavailable")?
-                .clone();
-            return Ok(());
-        }
-        self.entity.gate_id = Some(Uuid::new_v4());
-        self.field("gate_name", "Gate name", None, vec![]);
-        let units = named(browser, "units")
-            .into_iter()
-            .filter(|(id, _)| {
-                browser
-                    .entries
-                    .iter()
-                    .filter(|e| e.kind == "units" && e.id.to_string() == *id)
-                    .count()
-                    == 1
-            })
-            .collect();
-        self.field("gate_unit", "Named Unit", None, units);
-        self.field("gate_symbol", "Compatible named Symbol", None, vec![]);
         self.entity.symbols = browser
             .entries
             .iter()
@@ -71,10 +64,42 @@ impl LibraryDraft {
                 ))
             })
             .collect();
+        if !self.create {
+            self.entity.gates = raw
+                .get("gates")
+                .and_then(Value::as_object)
+                .ok_or("Saved Entity gate data is unavailable")?
+                .clone();
+            self.entity.saved_gates = self.entity.gates.clone();
+            self.field("gate_symbol", "Compatible named Symbol", None, vec![]);
+            return Ok(());
+        }
+        self.entity.gate_id = Some(Uuid::new_v4());
+        self.field("gate_name", "Gate name", None, vec![]);
+        let units = named(browser, "units")
+            .into_iter()
+            .filter(|(id, _)| {
+                browser
+                    .entries
+                    .iter()
+                    .filter(|e| e.kind == "units" && e.id.to_string() == *id)
+                    .count()
+                    == 1
+            })
+            .collect();
+        self.field("gate_unit", "Named Unit", None, units);
+        self.field("gate_symbol", "Compatible named Symbol", None, vec![]);
         Ok(())
     }
     pub(super) fn refresh_entity_symbols(&mut self) {
-        let unit = self.value("gate_unit").parse::<Uuid>().ok();
+        let unit = if self.create {
+            self.value("gate_unit").parse::<Uuid>().ok()
+        } else {
+            self.entity
+                .selected_gate()
+                .and_then(|g| g["unit"].as_str())
+                .and_then(|u| u.parse::<Uuid>().ok())
+        };
         if let Some(field) = self.fields.iter_mut().find(|f| f.key == "gate_symbol") {
             field.choices = self
                 .entity
@@ -90,6 +115,31 @@ impl LibraryDraft {
     }
     pub fn entity_gates(&self) -> Result<Map<String, Value>, String> {
         let mut gates = self.entity.gates.clone();
+        if !self.create {
+            if self.dirty.contains("gate_symbol") {
+                let gate = self.entity.gate_id.ok_or("Choose an existing gate")?;
+                let key = gate_key(&gates, gate)?;
+                let raw = gates.get_mut(&key).ok_or("Saved gate is unavailable")?;
+                let unit: Uuid = raw["unit"]
+                    .as_str()
+                    .ok_or("Saved Unit is unavailable")?
+                    .parse()
+                    .map_err(|_| "Saved Unit is malformed")?;
+                let symbol = self.uuid("gate_symbol")?;
+                if !self
+                    .entity
+                    .symbols
+                    .iter()
+                    .any(|(s, u, _)| *s == symbol && *u == unit)
+                {
+                    return Err("Choose an available Symbol for this gate's unchanged Unit".into());
+                }
+                raw.as_object_mut()
+                    .ok_or("Saved gate is malformed")?
+                    .insert("symbol".into(), json!(symbol));
+            }
+            return Ok(gates);
+        }
         let name = self.value("gate_name");
         if !name.trim().is_empty() {
             let id = self.entity.gate_id.ok_or("Start a named gate")?;
@@ -142,6 +192,15 @@ impl LibraryDraft {
             fields.insert("tags".into(), json!(tags));
         }
         if !self.create {
+            let gates = self.entity_gates()?;
+            let changes: Map<_, _> = gates
+                .iter()
+                .filter(|(id, g)| self.entity.saved_gates[*id]["symbol"] != g["symbol"])
+                .map(|(id, g)| (id.clone(), g["symbol"].clone()))
+                .collect();
+            if !changes.is_empty() {
+                fields.insert("gate_symbols".into(), changes.into());
+            }
             return Ok(());
         }
         let gates = self.entity_gates()?;
@@ -152,8 +211,40 @@ impl LibraryDraft {
         Ok(())
     }
     pub fn switch_gate(&mut self, index: Option<usize>, remove: bool) -> Result<(), String> {
-        if !self.create || self.kind != "entities" {
-            return Err("Gate authoring requires a new Entity draft".into());
+        if self.kind != "entities" {
+            return Err("Gate authoring requires an Entity draft".into());
+        }
+        if !self.create {
+            if remove || index.is_none() {
+                return Err("Saved gates and their Units are fixed".into());
+            }
+            let key = self
+                .entity
+                .gates
+                .keys()
+                .nth(index.unwrap())
+                .cloned()
+                .ok_or("Choose an existing gate")?;
+            let gate = key
+                .parse()
+                .map_err(|_| "Saved gate identity is malformed")?;
+            gate_key(&self.entity.gates, gate)?;
+            self.entity.gates = self.entity_gates()?;
+            self.entity.gate_id = Some(gate);
+            let symbol = self.entity.gates[&key]["symbol"]
+                .as_str()
+                .unwrap_or("")
+                .to_string();
+            self.refresh_entity_symbols();
+            self.fields
+                .iter_mut()
+                .find(|f| f.key == "gate_symbol")
+                .unwrap()
+                .set_text(symbol);
+            self.dirty.remove("gate_symbol");
+            self.preview = None;
+            self.refusal = None;
+            return Ok(());
         }
         let selected = index.and_then(|i| self.entity.gates.keys().nth(i)).cloned();
         if remove {

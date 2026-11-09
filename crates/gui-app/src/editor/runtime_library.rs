@@ -237,7 +237,9 @@ impl Runtime {
                     };
                     match d.switch_gate(index, control == C::RemoveGate) {
                         Ok(()) => {
-                            if let Some(i) = d.fields.iter().position(|f| f.key == "gate_name") {
+                            if let Some(i) = d.fields.iter().position(|f| {
+                                f.key == if d.create { "gate_name" } else { "gate_symbol" }
+                            }) {
                                 d.focused = i;
                                 d.offset = i;
                                 browser.focus = Some(C::Field(i));
@@ -457,9 +459,11 @@ impl Runtime {
                             controls.extend([C::AddAnchor, C::RemoveAnchor]);
                         }
                     }
-                    if d.kind == "entities" && d.create {
+                    if d.kind == "entities" {
                         controls.extend((0..d.entity.gates.len()).map(C::Gate));
-                        controls.extend([C::AddGate, C::RemoveGate]);
+                        if d.create {
+                            controls.extend([C::AddGate, C::RemoveGate]);
+                        }
                     }
                     if d.kind == "pin_pad_maps" {
                         controls.extend((0..d.pin_pad_map.pads.len()).map(C::MappingPad));

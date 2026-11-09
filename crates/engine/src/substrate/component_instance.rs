@@ -12,6 +12,7 @@ use super::{
     source_shard_ref_builders::source_shard_ref_for_bytes,
 };
 
+mod placed_entity_source;
 mod placed_symbol_source;
 pub(super) mod pool_history;
 

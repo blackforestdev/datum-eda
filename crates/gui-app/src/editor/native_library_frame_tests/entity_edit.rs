@@ -100,7 +100,7 @@ impl Fixture {
             assert!(!draft.create);
             assert_eq!(
                 draft.fields.iter().map(|f| f.key).collect::<Vec<_>>(),
-                ["name", "prefix", "manufacturer", "tags"]
+                ["name", "prefix", "manufacturer", "tags", "gate_symbol"]
             );
             assert_eq!(draft.entity.gates, *entry.raw["gates"].as_object().unwrap());
             assert!(draft.entity.gate_id.is_none());
@@ -113,10 +113,34 @@ impl Fixture {
                     .presented_hits
                     .regions()
                     .iter()
-                    .any(|h| matches!(
-                        h.target,
-                        HitTarget::Library(C::Gate(_) | C::AddGate | C::RemoveGate)
-                    ))
+                    .any(|h| matches!(h.target, HitTarget::Library(C::AddGate | C::RemoveGate)))
+            );
+            assert!(
+                !draft
+                    .fields
+                    .iter()
+                    .any(|f| matches!(f.key, "gate_name" | "gate_unit"))
+            );
+            assert_eq!(
+                self.app
+                    .runtime
+                    .as_ref()
+                    .unwrap()
+                    .presented_hits
+                    .regions()
+                    .iter()
+                    .filter(|h| matches!(h.target, HitTarget::Library(C::Gate(_))))
+                    .count(),
+                2
+            );
+            assert!(
+                draft
+                    .fields
+                    .iter()
+                    .find(|f| f.key == "gate_symbol")
+                    .unwrap()
+                    .choices
+                    .is_empty()
             );
             if stage == 2 {
                 assert_eq!(

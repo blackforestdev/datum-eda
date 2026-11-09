@@ -1,4 +1,4 @@
-//! Logical gate rows and explicit named reference review for new Entities.
+//! Logical gate rows and explicit named reference review.
 use super::definition_table::row;
 use super::*;
 use datum_gui_protocol::library_authoring::LibraryDraft;
@@ -38,7 +38,12 @@ fn gate_row(p: &mut Painter<'_>, d: &LibraryDraft, gate: &Value, control: Option
                 .unwrap_or("Name required"),
             &unit,
             &symbol,
-            if !d.create {
+            if !d.create
+                && d.entity
+                    .saved_gates
+                    .values()
+                    .any(|g| g["uuid"] == gate["uuid"] && g["symbol"] == gate["symbol"])
+            {
                 "Retained saved link"
             } else if d.preview.is_some() {
                 "Validated preview"
@@ -58,13 +63,14 @@ pub(super) fn table(p: &mut Painter<'_>, d: &LibraryDraft) {
         false,
     );
     for (i, (id, raw)) in d.entity.gates.iter().enumerate() {
-        let active = d.entity.gate_id.is_some_and(|v| v.to_string() == *id);
+        let active = d.entity.gate_id.is_some_and(|v| id.parse().ok() == Some(v));
         let gate = if active { pending_gate(d) } else { raw.clone() };
-        gate_row(p, d, &gate, d.create.then_some(C::Gate(i)), active);
+        gate_row(p, d, &gate, Some(C::Gate(i)), active);
     }
-    if d.entity
-        .gate_id
-        .is_some_and(|id| !d.entity.gates.contains_key(&id.to_string()))
+    if d.create
+        && d.entity
+            .gate_id
+            .is_some_and(|id| !d.entity.gates.contains_key(&id.to_string()))
     {
         let i = d.fields.iter().position(|f| f.key == "gate_name").unwrap();
         gate_row(p, d, &pending_gate(d), Some(C::Field(i)), true);
@@ -75,6 +81,16 @@ pub(super) fn table(p: &mut Painter<'_>, d: &LibraryDraft) {
     }
 }
 fn pending_gate(d: &LibraryDraft) -> Value {
+    if !d.create {
+        let mut gate = d.entity.selected_gate().cloned().unwrap_or(Value::Null);
+        if let Some(raw) = gate.as_object_mut() {
+            raw.insert(
+                "symbol".into(),
+                Value::String(d.value("gate_symbol").into()),
+            );
+        }
+        return gate;
+    }
     let mut gate = Value::Object(Default::default());
     for (key, field) in [
         ("name", "gate_name"),

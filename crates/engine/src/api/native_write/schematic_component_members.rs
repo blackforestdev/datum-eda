@@ -156,7 +156,28 @@ fn capture(
             let gate = original
                 .gate
                 .ok_or_else(|| invalid("Component Gate identity is unavailable"))?;
-            let declared = &entity_raw["gates"][gate.to_string()];
+            // Current exact chains retain their established admission. A changed
+            // gate link requires the member's authenticated original Entity;
+            // never compare an old placed body against an unrelated latest link.
+            let captured;
+            let declared = if entity_raw["gates"][gate.to_string()]["symbol"] == json!(library) {
+                &entity_raw["gates"][gate.to_string()]
+            } else {
+                let definition =
+                    model.materialized_placed_entity_definition(symbol, entity, gate, library)?;
+                let raw = definition["gates"]
+                    .as_object()
+                    .and_then(|gates| {
+                        gates
+                            .iter()
+                            .find(|(key, _)| key.parse::<Uuid>().ok() == Some(gate))
+                    })
+                    .map(|(_, raw)| raw)
+                    .ok_or_else(|| invalid("Captured Gate is unavailable"))?;
+                let logical: crate::pool::Gate = serde_json::from_value(raw.clone())?;
+                captured = serde_json::to_value(logical)?;
+                &captured
+            };
             if original.part != Some(part)
                 || original.entity != Some(entity)
                 || !gates.insert(gate)

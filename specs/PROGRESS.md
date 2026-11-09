@@ -668,16 +668,35 @@ physical/HUMAN, release-GUI execution or full qualification is claimed.
 
 Saved Entity metadata editing (`dat-saved-entity-metadata-edit-3y3v`) now supports
 name, reference prefix, manufacturer and tags in the shared Library form, with
-saved gates read-only. Only changed fields patch the raw Entity through the
+saved gate/link identities retained. Only changed fields patch the raw Entity through the
 canonical writer; the engine rejects structural/identity edits and wrong or
 ambiguous source ownership. Twenty-two focused checks pass. The isolated debug
 App passes 67 steps with six inspected captures: Cancel preserves files/journal;
 metadata-only commit, Undo/Redo and Save/cold retain exact gates, links, Part,
 all other authored files and placed root/child rendered identity. The initial
 fixture's incorrect PCB-component assertion is retained and corrected to the
-qualified schematic scene and actual placed-symbol graphics. No gate relinking,
+qualified schematic scene and actual placed-symbol graphics. This metadata-only
+increment claims no gate relinking,
 prefix-driven renumbering, physical/HUMAN, release-GUI execution or broad goal
 acceptance is claimed.
+
+Saved Entity gate Symbol correction (`dat-saved-entity-gate-symbol-0bmd`) now
+supports another compatible named Symbol for an existing gate's fixed Unit through
+the shared Library table. The canonical patch retains raw siblings, gate/Unit IDs,
+Part/PinPadMap definitions and old placed circuitry. Effective placement/assignment
+history, including supported deletion Undo, authenticates old users; unique UUID
+key spelling is preserved and incompatible, ambiguous or stale sources refuse.
+Eight engine and five protocol checks pass. The ordinary debug App passes 80 steps
+with seven inspected captures: keyboard Cancel, preview/commit, Undo/Redo, Save/cold,
+exact prior canonical circuitry and root/child geometry, and later explicit placement
+using the corrected 5 by 3 mm body. That isolated case keeps old Net IDs/membership and
+old graphics exact; its existing one-time canonical lineage initialization is
+qualified separately from the correction's strict byte preservation. Original
+failed attempts remain recorded. The stale annotation-refusal assertion is separate
+intake `dat-2glp`; additional native pool-path ownership is `dat-yvgx`, neither a new
+prerequisite nor a passing qualification claim. Gate topology/Unit relinking,
+implicit placed updates/ECO, physical/HUMAN, release-GUI execution and broader goal
+acceptance remain open.
 
 Saved Part metadata editing (`dat-saved-part-metadata-edit-8xfy`) now supports
 manufacturer, MPN, value, description, datasheet reference and tags through the
