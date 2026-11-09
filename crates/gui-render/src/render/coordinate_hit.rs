@@ -21,6 +21,9 @@
 
 use super::*;
 
+#[path = "coordinate_hit_symbol_outlines.rs"]
+pub(super) mod symbol_outlines;
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct PreparedSurfacePass {
     pub pane_id: datum_gui_protocol::PaneId,
@@ -356,7 +359,7 @@ pub(crate) fn schematic_hit_regions(
     use super::hit_construction::{Region, Shape};
     hit_construction::build(
         |emit| {
-            for graphic in &scene.board_graphics {
+            for (index, graphic) in scene.board_graphics.iter().enumerate() {
                 let Some(kind) = graphic.schematic_hit_kind() else {
                     continue;
                 };
@@ -375,6 +378,15 @@ pub(crate) fn schematic_hit_regions(
                             outer: &graphic.path,
                             holes: &graphic.holes,
                         },
+                    })?;
+                }
+                if let Some(outline) =
+                    symbol_outlines::Outline::ending_at(&scene.board_graphics, index)
+                {
+                    emit(Region {
+                        target: &graphic.object_id,
+                        layer_id: None,
+                        shape: Shape::SymbolOutline(outline),
                     })?;
                 }
                 let shape = match kind {

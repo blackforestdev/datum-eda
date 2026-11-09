@@ -615,3 +615,6 @@ fn explicit_local_overlap_inventory_exceeds_first_hit_budget_without_truncation(
     let eligible = retained.authored_overlap_world(point, &state, |t| t == &hits[4_999]);
     assert_eq!(eligible, vec![hits[4_999].clone()]);
 }
+
+#[path = "coordinate_hit_tests/closed_symbol_outlines.rs"]
+mod closed_symbol_outlines;
