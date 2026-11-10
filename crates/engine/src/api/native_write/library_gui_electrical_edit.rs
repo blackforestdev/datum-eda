@@ -22,6 +22,8 @@ pub(super) fn build(
             "rect_edits",
             "rect_removals",
             "graphic_additions",
+            "text_edits",
+            "text_removals",
         ]
         .iter()
         .any(|key| request.fields.contains_key(*key));
@@ -97,7 +99,7 @@ pub(super) fn build(
             (
                 "symbols",
                 "line_edits" | "line_removals" | "line_additions" | "rect_edits" | "rect_removals"
-                | "graphic_additions",
+                | "graphic_additions" | "text_edits" | "text_removals",
             ) => {}
             ("symbols", "drawings") => {
                 validate_rectangle(&object["drawings"], value)?;
@@ -127,7 +129,7 @@ pub(super) fn build(
             }
             _ => {
                 return Err(refusal(
-                    "Saved electrical edits support names, explicit pin, anchor, Line and Rect edits only",
+                    "Saved electrical edits support names, explicit pin, anchor, Line, Rect and Text edits only",
                 ));
             }
         }
@@ -613,3 +615,7 @@ mod line_tests;
 #[cfg(test)]
 #[path = "library_gui_symbol_rect_tests.rs"]
 mod rect_tests;
+
+#[cfg(test)]
+#[path = "library_gui_symbol_text_tests.rs"]
+mod text_tests;

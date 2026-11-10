@@ -573,3 +573,6 @@ mod line_tests;
 
 #[path = "native_library_frozen_rect_lifecycle_tests.rs"]
 mod rect_lifecycle_tests;
+
+#[path = "native_library_frozen_text_tests.rs"]
+mod text_graphics_tests;

@@ -59,6 +59,8 @@ mod symbol_rectangle;
 mod symbol_relink_anchor;
 #[path = "native_library_frame_tests/symbol_remove_anchor.rs"]
 mod symbol_remove_anchor;
+#[path = "native_library_frame_tests/symbol_text.rs"]
+mod symbol_text;
 #[path = "native_library_frame_tests/text_fields.rs"]
 mod text_fields;
 #[path = "native_library_frame_tests/unit_add_pin.rs"]
@@ -134,6 +136,7 @@ impl Fixture {
                         | Step::SymbolRelinkAnchor(_)
                         | Step::SymbolLine(_)
                         | Step::SymbolRect(_)
+                        | Step::SymbolText(_)
                         | Step::PackageEdit(_)
                         | Step::PartEdit(_)
                         | Step::MapEdit(_)
@@ -261,6 +264,7 @@ impl Fixture {
             Step::SymbolRelinkAnchor(stage) => self.symbol_relink_anchor(events, stage),
             Step::SymbolLine(stage) => self.symbol_line(events, stage),
             Step::SymbolRect(stage) => self.symbol_rect(events, stage),
+            Step::SymbolText(stage) => self.symbol_text(events, stage),
             Step::PackageEdit(stage) => self.check_package_edit(stage),
             Step::Part(stage, footprint) => self.check_part(stage, footprint),
             Step::PartEdit(stage) => self.part_edit_stage(events, stage),

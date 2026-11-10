@@ -20,26 +20,41 @@ fn original<'a>(rows: &'a [Value], row: &Row, kind: &str) -> Result<&'a Value, E
 }
 fn corrected(raw: &Value, edited: &Value, kind: &str) -> Result<Value, EngineError> {
     let primitive: crate::pool::Primitive = serde_json::from_value(edited.clone())?;
-    let (first, second, a, b, width) = match primitive {
-        crate::pool::Primitive::Line { from, to, width } if kind == "Line" => {
-            ("from", "to", from, to, width)
-        }
-        crate::pool::Primitive::Rect { min, max, width } if kind == "Rect" => {
-            if edited != raw && (min.x >= max.x || min.y >= max.y || width <= 0) {
-                return Err(refusal(
-                    "Rectangle requires ordered corners and positive stroke width",
-                ));
-            }
-            ("min", "max", min, max, width)
-        }
-        _ => return Err(refusal("Correction retains the captured graphic kind")),
-    };
     let mut permitted = raw.clone();
-    for (point, value) in [(first, a), (second, b)] {
-        permitted[kind][point]["x"] = json!(value.x);
-        permitted[kind][point]["y"] = json!(value.y);
+    if let crate::pool::Primitive::Text {
+        text,
+        position,
+        rotation,
+    } = &primitive
+    {
+        if kind != "Text" {
+            return Err(refusal("Correction retains the captured graphic kind"));
+        }
+        permitted["Text"]["text"] = json!(text);
+        permitted["Text"]["position"]["x"] = json!(position.x);
+        permitted["Text"]["position"]["y"] = json!(position.y);
+        permitted["Text"]["rotation"] = json!(rotation);
+    } else {
+        let (first, second, a, b, width) = match primitive {
+            crate::pool::Primitive::Line { from, to, width } if kind == "Line" => {
+                ("from", "to", from, to, width)
+            }
+            crate::pool::Primitive::Rect { min, max, width } if kind == "Rect" => {
+                if edited != raw && (min.x >= max.x || min.y >= max.y || width <= 0) {
+                    return Err(refusal(
+                        "Rectangle requires ordered corners and positive stroke width",
+                    ));
+                }
+                ("min", "max", min, max, width)
+            }
+            _ => return Err(refusal("Correction retains the captured graphic kind")),
+        };
+        for (point, value) in [(first, a), (second, b)] {
+            permitted[kind][point]["x"] = json!(value.x);
+            permitted[kind][point]["y"] = json!(value.y);
+        }
+        permitted[kind]["width"] = json!(width);
     }
-    permitted[kind]["width"] = json!(width);
     if &permitted != edited {
         return Err(refusal(
             "Graphic correction preserves unrelated raw row and Point metadata",
@@ -69,6 +84,7 @@ pub(super) fn apply(
     for (kind, edits, removals, payload) in [
         ("Line", "line_edits", "line_removals", "line"),
         ("Rect", "rect_edits", "rect_removals", "rect"),
+        ("Text", "text_edits", "text_removals", "text"),
     ] {
         if let Some(value) = request.fields.get(edits) {
             for edit in value
@@ -128,7 +144,7 @@ pub(super) fn apply(
             .as_array()
             .ok_or_else(|| refusal("New graphics must be an ordered array"))?
         {
-            let primitive: crate::pool::Primitive = serde_json::from_value(raw.clone())?;
+            let mut primitive: crate::pool::Primitive = serde_json::from_value(raw.clone())?;
             match &primitive {
                 crate::pool::Primitive::Line { from, to, width } => {
                     if from == to || *width <= 0 {
@@ -146,11 +162,21 @@ pub(super) fn apply(
                         ));
                     }
                 }
+                crate::pool::Primitive::Text { text, .. }
+                    if !request.fields.contains_key("line_additions") =>
+                {
+                    if text.trim().is_empty() {
+                        return Err(refusal("New Symbol Text must not be empty"));
+                    }
+                }
                 _ => {
                     return Err(refusal(
-                        "Add graphic accepts only supported native Line/Rect graphics",
+                        "Add graphic accepts only supported native Line/Rect/Text graphics",
                     ));
                 }
+            }
+            if let crate::pool::Primitive::Text { text, .. } = &mut primitive {
+                *text = text.trim().to_owned();
             }
             next.push(serde_json::to_value(primitive)?);
         }

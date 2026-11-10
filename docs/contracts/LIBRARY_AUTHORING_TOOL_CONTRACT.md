@@ -369,6 +369,30 @@ release-GUI or full-qualification result. A broader test filter also selected an
 unresolved board-track failure (`dat-exact30-track-ci-lg26`); that batch is not a
 PASS and does not widen this increment's scope.
 
+Saved Symbol literal Text graphics (`dat-saved-symbol-text-graphics-w0k9`) share
+the Line and Rect form. Designers can add, select, edit and remove text, including
+its position and rotation, then preview, cancel, commit, undo, redo, save and reopen.
+Captured indices and raw preimages identify saved rows. New text follows the
+existing CLI trim and nonempty rule. Saved text preserves literal spelling and
+the existing signed 32-bit rotation range. Edits preserve other raw graphics,
+Point metadata, anchors and old placements. Typed appends retain insertion order.
+
+Library preview bounds include the recorded world text layout and available
+legacy fill and stroke extents. The first run exposed clipped Inspector labels
+and an occluded placement ghost. In the corrected isolated App run, REMOVE and
+READY fit in the preview. READY is readable on the placement ghost after View
+Zoom Out at the same world pose and after reopening. Rotated DRAFT crosses the
+body at its authored position. The cold form shows the literal and shared
+controls, and the workflow asserts position and rotation.
+
+The 142-stage App run passes in 35.69 seconds, with eight inspected captures.
+The original 54 transactions remain byte-exact. Six sole Set Symbol operations
+preserve the other 30 core sources, followed by a separate U8 placement with the
+revised label. The final project has 32 sources and 61 transactions. There are
+82 unique scoped Rust passes, including actual rotated text projection and
+preview bounds. The GUI evidence comes from programmatic controls in an isolated
+Wayland session.
+
 Saved Symbol rectangle lifecycle (`dat-saved-symbol-rect-lifecycle-6ksv`) extends
 the shared graphics form to add, select, correct and remove individual Rects,
 including multiple identical rectangles. Lines and Rects share one captured row

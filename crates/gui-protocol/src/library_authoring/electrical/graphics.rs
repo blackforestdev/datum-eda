@@ -1,4 +1,4 @@
-//! One disposable selection and numeric buffer for captured Line and Rect rows.
+//! One disposable selection and configured field buffer for captured graphics rows.
 use super::*;
 
 const LINE: &[(&str, &str, &str)] = &[
@@ -15,8 +15,16 @@ const RECT: &[(&str, &str, &str)] = &[
     ("rect_max_y", "Rectangle maximum Y (nm)", "/Rect/max/y"),
     ("rect_width", "Rectangle stroke width (nm)", "/Rect/width"),
 ];
+const TEXT: &[(&str, &str, &str)] = &[
+    ("text_literal", "Literal text", "/Text/text"),
+    ("text_x", "Text X (nm)", "/Text/position/x"),
+    ("text_y", "Text Y (nm)", "/Text/position/y"),
+    ("text_rotation", "Text rotation (degrees)", "/Text/rotation"),
+];
 fn fields(raw: &Value) -> &'static [(&'static str, &'static str, &'static str)] {
-    if raw.get("Rect").is_some() {
+    if raw.get("Text").is_some() {
+        TEXT
+    } else if raw.get("Rect").is_some() {
         RECT
     } else {
         LINE
@@ -29,6 +37,12 @@ pub struct GraphicDraft {
     next: usize,
 }
 impl GraphicDraft {
+    pub fn focus_key(&self) -> &'static str {
+        self.selected
+            .and_then(|i| self.rows.get(&i))
+            .map_or("name", |raw| fields(raw)[0].0)
+    }
+
     /// The painter and keyboard traversal expose the same ordered actions.
     pub fn controls(&self) -> Vec<crate::library_browser::LibraryControl> {
         use crate::library_browser::LibraryControl as C;
@@ -36,16 +50,20 @@ impl GraphicDraft {
             .rows
             .iter()
             .map(|(i, raw)| {
-                if raw.get("Rect").is_some() {
+                if raw.get("Text").is_some() {
+                    C::Text(*i)
+                } else if raw.get("Rect").is_some() {
                     C::Rect(*i)
                 } else {
                     C::Line(*i)
                 }
             })
             .collect();
-        controls.extend([C::AddLine, C::AddRect]);
+        controls.extend([C::AddLine, C::AddRect, C::AddText]);
         if let Some(raw) = self.selected.and_then(|i| self.rows.get(&i)) {
-            controls.push(if raw.get("Rect").is_some() {
+            controls.push(if raw.get("Text").is_some() {
+                C::RemoveText
+            } else if raw.get("Rect").is_some() {
                 C::RemoveRect
             } else {
                 C::RemoveLine
@@ -66,7 +84,11 @@ impl LibraryDraft {
                 .into_iter()
                 .flatten()
                 .enumerate()
-                .filter(|(_, raw)| raw.get("Line").is_some() || raw.get("Rect").is_some())
+                .filter(|(_, raw)| {
+                    raw.get("Line").is_some()
+                        || raw.get("Rect").is_some()
+                        || raw.get("Text").is_some()
+                })
                 .map(|(i, raw)| (i, raw.clone()))
                 .collect(),
             selected: self.saved_rectangle_index(),
@@ -95,12 +117,21 @@ impl LibraryDraft {
                 .cloned()
                 .unwrap_or_else(|| row.clone());
             for &(key, _, pointer) in fields(row) {
-                let value = self.length(key)?;
+                let value = match key {
+                    "text_literal" => json!(self.value(key)),
+                    "text_rotation" => json!(
+                        self.value(key)
+                            .trim()
+                            .parse::<i32>()
+                            .map_err(|_| "Enter a signed 32-bit rotation in degrees")?
+                    ),
+                    _ => json!(self.length(key)?),
+                };
                 let leaf = row
                     .pointer_mut(pointer)
                     .ok_or("Selected graphic coordinates are unavailable")?;
-                if leaf.as_i64() != Some(value) {
-                    *leaf = json!(value);
+                if *leaf != value {
+                    *leaf = value;
                 }
             }
             let new = index >= self.original_graphic_count();
@@ -122,16 +153,26 @@ impl LibraryDraft {
                         "Rectangle requires ordered corners and positive stroke width".into(),
                     );
                 }
+                eda_engine::pool::Primitive::Text { text, .. } if new => {
+                    if text.trim().is_empty() {
+                        return Err("New Symbol Text must not be empty".into());
+                    }
+                    row["Text"]["text"] = json!(text.trim());
+                }
                 _ => {}
             }
         }
         Ok(rows)
     }
     fn bind_graphic_fields(&mut self) {
-        self.fields
-            .retain(|f| !f.key.starts_with("line_") && !f.key.starts_with("rect_"));
-        self.dirty
-            .retain(|key| !key.starts_with("line_") && !key.starts_with("rect_"));
+        self.fields.retain(|f| {
+            !f.key.starts_with("line_")
+                && !f.key.starts_with("rect_")
+                && !f.key.starts_with("text_")
+        });
+        self.dirty.retain(|key| {
+            !key.starts_with("line_") && !key.starts_with("rect_") && !key.starts_with("text_")
+        });
         if let Some(raw) = self
             .electrical
             .graphics
@@ -151,6 +192,28 @@ impl LibraryDraft {
     }
     pub fn switch_rect(&mut self, index: Option<usize>, remove: bool) -> Result<(), String> {
         self.switch_graphic("Rect", index, remove)
+    }
+    pub fn switch_text(&mut self, index: Option<usize>, remove: bool) -> Result<(), String> {
+        self.switch_graphic("Text", index, remove)
+    }
+    pub fn switch_graphic_control(
+        &mut self,
+        control: &crate::library_browser::LibraryControl,
+    ) -> Option<Result<(), String>> {
+        use crate::library_browser::LibraryControl as C;
+        let (kind, index, remove) = match *control {
+            C::Line(i) => ("Line", Some(i), false),
+            C::AddLine => ("Line", None, false),
+            C::RemoveLine => ("Line", None, true),
+            C::Rect(i) => ("Rect", Some(i), false),
+            C::AddRect => ("Rect", None, false),
+            C::RemoveRect => ("Rect", None, true),
+            C::Text(i) => ("Text", Some(i), false),
+            C::AddText => ("Text", None, false),
+            C::RemoveText => ("Text", None, true),
+            _ => return None,
+        };
+        Some(self.switch_graphic(kind, index, remove))
     }
     fn switch_graphic(
         &mut self,
@@ -193,7 +256,9 @@ impl LibraryDraft {
             } else {
                 let index = self.electrical.graphics.next;
                 let next = index.checked_add(1).ok_or("Too many draft graphics")?;
-                let raw = if kind == "Rect" {
+                let raw = if kind == "Text" {
+                    json!({"Text":{"text":"","position":{"x":0,"y":0},"rotation":0}})
+                } else if kind == "Rect" {
                     json!({"Rect":{"min":{"x":-1000000,"y":-1000000},"max":{"x":1000000,"y":1000000},"width":100000}})
                 } else {
                     json!({"Line":{"from":{"x":0,"y":0},"to":{"x":1000000,"y":0},"width":100000}})
@@ -220,6 +285,7 @@ impl LibraryDraft {
         for (kind, edit_key, remove_key, payload) in [
             ("Line", "line_edits", "line_removals", "line"),
             ("Rect", "rect_edits", "rect_removals", "rect"),
+            ("Text", "text_edits", "text_removals", "text"),
         ] {
             let mut edits = Vec::new();
             let mut removals = Vec::new();
@@ -257,7 +323,7 @@ impl LibraryDraft {
             .map(|(_, raw)| raw)
             .collect();
         if !additions.is_empty() {
-            let key = if additions.iter().any(|r| r.get("Rect").is_some()) {
+            let key = if additions.iter().any(|r| r.get("Line").is_none()) {
                 "graphic_additions"
             } else {
                 "line_additions"

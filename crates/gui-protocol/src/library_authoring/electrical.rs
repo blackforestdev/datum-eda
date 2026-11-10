@@ -471,3 +471,6 @@ mod line_tests;
 
 #[cfg(test)]
 mod rect_tests;
+
+#[cfg(test)]
+mod text_tests;

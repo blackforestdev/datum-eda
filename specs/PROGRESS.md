@@ -699,6 +699,18 @@ reopen. The broader selected board-track failure remains unresolved under
 `dat-exact30-track-ci-lg26`, not an overall batch PASS. This supplies no physical/
 HUMAN, release-GUI, full-qualification or broader-goal acceptance.
 
+Saved Symbol literal Text (`dat-saved-symbol-text-graphics-w0k9`) supports add,
+selection, content/position/rotation editing and removal in the shared graphics
+form. Existing text layout determines the preview envelope. The corrected
+isolated App passes 142 stages in 35.69 seconds with eight inspected captures.
+The original 54-transaction prefix and other 30 core sources stay byte-exact
+through six sole Set Symbol history operations. A later U8 placement displays
+READY while old body, pin, text and glyph geometry stays exact. The final project
+has 32 sources and 61 transactions. There are 82 scoped Rust passes. The first
+App run retains its data assertions and its visual clipping and occlusion
+findings. The corrected captures show full labels in preview and READY on the
+ghost after View Zoom Out and after reopening.
+
 Saved Symbol rectangle lifecycle (`dat-saved-symbol-rect-lifecycle-6ksv`) now
 supports Add/select/correct/remove for individual saved Rects, including multiple
 rectangles, through the same Line/Rect collection, numeric buffer and controls.

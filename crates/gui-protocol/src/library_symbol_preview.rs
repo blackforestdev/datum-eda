@@ -51,11 +51,54 @@ pub fn project(raw: &Value, unit: Option<&Value>) -> Result<BoardReviewSceneV1> 
     };
     let mut scene = ReviewWorkspaceState::unopened().scene;
     crate::schematic_scene_import::native_library::replace_body(&mut scene, &placed, &symbol)?;
+    // Reuse captured world layout, including rotated bearings and advances.
+    // Anchor positions alone do not describe the visible text envelope.
+    let mut text_extents = Vec::new();
+    for geometry in &scene.board_text_geometries {
+        if let Some(corners) = crate::selection_geometry_catalog::layout_polygon(geometry) {
+            for [x, y] in corners {
+                let outward = |value: crate::selection_geometry::Rational| -> Result<(i64, i64)> {
+                    let floor = value.numerator.div_euclid(value.denominator);
+                    let ceil =
+                        floor + i128::from(value.numerator.rem_euclid(value.denominator) != 0);
+                    Ok((
+                        i64::try_from(floor).context("Preview bounds overflow")?,
+                        i64::try_from(ceil).context("Preview bounds overflow")?,
+                    ))
+                };
+                let (min_x, max_x) = outward(x)?;
+                let (min_y, max_y) = outward(y)?;
+                text_extents.extend([
+                    crate::PointNm { x: min_x, y: min_y },
+                    crate::PointNm { x: max_x, y: max_y },
+                ]);
+            }
+        }
+        // Legacy fragments can coexist with an empty mesh layout basis.
+        for fill in &geometry.fills {
+            text_extents.extend(fill.outer.iter().copied());
+            text_extents.extend(fill.holes.iter().flatten().copied());
+        }
+        for stroke in &geometry.strokes {
+            let radius = (i128::from(stroke.width_nm).abs() + 1) / 2;
+            for point in [stroke.from, stroke.to] {
+                for sign in [-1i128, 1] {
+                    text_extents.push(crate::PointNm {
+                        x: i64::try_from(i128::from(point.x) + sign * radius)
+                            .context("Preview bounds overflow")?,
+                        y: i64::try_from(i128::from(point.y) + sign * radius)
+                            .context("Preview bounds overflow")?,
+                    });
+                }
+            }
+        }
+    }
     let points = scene
         .board_graphics
         .iter()
         .flat_map(|g| g.path.iter())
         .chain(scene.board_texts.iter().map(|t| &t.position))
+        .chain(text_extents.iter())
         .collect::<Vec<_>>();
     let min_x = points.iter().map(|p| p.x).min().unwrap_or(-1);
     let min_y = points.iter().map(|p| p.y).min().unwrap_or(-1);

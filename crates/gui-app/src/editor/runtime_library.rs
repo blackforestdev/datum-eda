@@ -6,6 +6,8 @@ use datum_gui_protocol::{
 };
 #[path = "runtime_library_acquisition.rs"]
 pub(crate) mod acquisition;
+#[path = "runtime_library_electrical.rs"]
+mod electrical;
 #[path = "runtime_library_text.rs"]
 mod text_input;
 impl Runtime {
@@ -339,54 +341,10 @@ impl Runtime {
             | C::RemoveLine
             | C::Rect(_)
             | C::AddRect
-            | C::RemoveRect => {
-                let browser = &mut self.session.workspace_mut().library;
-                if let Some(d) = &mut browser.draft {
-                    let pin = matches!(control, C::Pin(_) | C::AddPin | C::RemovePin);
-                    let line = matches!(control, C::Line(_) | C::AddLine | C::RemoveLine);
-                    let rect = matches!(control, C::Rect(_) | C::AddRect | C::RemoveRect);
-                    let index = match control {
-                        C::Pin(i) | C::Anchor(i) | C::Line(i) | C::Rect(i) => Some(i),
-                        _ => None,
-                    };
-                    let result = if line {
-                        d.switch_line(index, control == C::RemoveLine)
-                    } else if rect {
-                        d.switch_rect(index, control == C::RemoveRect)
-                    } else if pin {
-                        d.switch_pin(index, control == C::RemovePin)
-                    } else {
-                        d.switch_anchor(index, control == C::RemoveAnchor)
-                    };
-                    match result {
-                        Ok(()) => {
-                            let key = if (line || rect) && d.electrical.graphics.selected.is_none()
-                            {
-                                "name"
-                            } else if rect {
-                                "rect_min_x"
-                            } else if line {
-                                "line_from_x"
-                            } else if pin {
-                                "pin_name"
-                            } else if d.create
-                                || d.electrical.new_anchor
-                                || d.electrical.anchor_id.is_some()
-                            {
-                                "anchor_pin"
-                            } else {
-                                "anchor_x"
-                            };
-                            if let Some(focused) = d.fields.iter().position(|f| f.key == key) {
-                                d.focused = focused;
-                                d.offset = focused;
-                                browser.focus = Some(C::Field(focused));
-                            }
-                        }
-                        Err(error) => d.refusal = Some(error),
-                    }
-                }
-            }
+            | C::RemoveRect
+            | C::Text(_)
+            | C::AddText
+            | C::RemoveText => self.activate_electrical(control),
         }
         self.invalidate_frame();
         true
