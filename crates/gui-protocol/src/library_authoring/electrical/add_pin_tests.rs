@@ -72,7 +72,12 @@ fn saved_new_pin_preserves_raw_alias_and_dirty_rows_and_discards_only_new_intent
     assert!(d.electrical.pin_id.is_none());
     assert_eq!(json!(d.request().unwrap().fields), json!({"pins":expected}));
     d.switch_pin(Some(0), false).unwrap();
-    assert!(d.switch_pin(None, true).is_err());
+    let mut removing = d.clone();
+    removing.switch_pin(None, true).unwrap();
+    assert_eq!(
+        removing.request().unwrap().fields["pin_removals"],
+        json!([old])
+    );
     assert_eq!(d.electrical.original, Some(raw));
 }
 #[test]

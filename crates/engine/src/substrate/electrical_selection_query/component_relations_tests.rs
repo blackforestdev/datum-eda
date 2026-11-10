@@ -647,3 +647,6 @@ mod symbol_add_anchor_tests;
 
 #[path = "component_relations_symbol_remove_anchor_tests.rs"]
 mod symbol_remove_anchor_tests;
+
+#[path = "component_relations_unit_remove_pin_tests.rs"]
+mod unit_remove_pin_tests;

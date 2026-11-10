@@ -64,7 +64,7 @@ impl LibraryGraph {
         report
     }
 
-    pub(super) fn resolve_pin_pad_map_mapping(
+    pub(crate) fn resolve_pin_pad_map_mapping(
         &self,
         mapping_key: &str,
         entry: &serde_json::Value,

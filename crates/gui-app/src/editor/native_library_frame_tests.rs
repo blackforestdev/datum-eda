@@ -57,6 +57,8 @@ mod symbol_remove_anchor;
 mod text_fields;
 #[path = "native_library_frame_tests/unit_add_pin.rs"]
 mod unit_add_pin;
+#[path = "native_library_frame_tests/unit_remove_pin.rs"]
+mod unit_remove_pin;
 use proof_assertions::source_bytes;
 #[path = "native_library_frame_tests/scenario.rs"]
 mod scenario;
@@ -120,6 +122,7 @@ impl Fixture {
                         | Step::EntityAddGate(_)
                         | Step::EntityRemoveGate(_)
                         | Step::UnitAddPin(_)
+                        | Step::UnitRemovePin(_)
                         | Step::SymbolAddAnchor(_)
                         | Step::SymbolRemoveAnchor(_)
                         | Step::PackageEdit(_)
@@ -243,6 +246,7 @@ impl Fixture {
             Step::EntityAddGate(stage) => self.entity_add_gate(events, stage),
             Step::EntityRemoveGate(stage) => self.entity_remove_gate(events, stage),
             Step::UnitAddPin(stage) => self.unit_add_pin(events, stage),
+            Step::UnitRemovePin(stage) => self.unit_remove_pin(events, stage),
             Step::SymbolAddAnchor(stage) => self.symbol_add_anchor(events, stage),
             Step::SymbolRemoveAnchor(stage) => self.symbol_remove_anchor(events, stage),
             Step::PackageEdit(stage) => self.check_package_edit(stage),

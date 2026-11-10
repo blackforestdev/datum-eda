@@ -1,6 +1,8 @@
 //! Saved electrical edits retain raw siblings while composing supported pin,
 //! anchor, metadata and rectangular-body intent through the canonical writer.
 use super::*;
+#[path = "library_gui_unit_pin_usage.rs"]
+mod unit_pin_usage;
 
 pub(super) fn build(
     context: &NativeWriteContext<'_>,
@@ -9,9 +11,10 @@ pub(super) fn build(
 ) -> Result<PreparedWrite, EngineError> {
     let body_edit = request.kind == "symbols" && request.fields.contains_key("drawings");
     let adding = request.kind == "units" && request.fields.contains_key("pin_additions");
+    let pin_remove = request.kind == "units" && request.fields.contains_key("pin_removals");
     let anchor_add = request.kind == "symbols" && request.fields.contains_key("anchor_additions");
     let anchor_remove = request.kind == "symbols" && request.fields.contains_key("anchor_removals");
-    let (target, mut object) = if body_edit || adding || anchor_add || anchor_remove {
+    let (target, mut object) = if body_edit || adding || pin_remove || anchor_add || anchor_remove {
         super::super::saved_source::load(context.model, request.object_id, &request.kind)?
     } else {
         let target = PoolLibraryObjectTarget::new("pool", &request.kind, request.object_id);
@@ -23,6 +26,11 @@ pub(super) fn build(
         (target, object)
     };
     let previous = object.clone();
+    let pin_removals = if pin_remove {
+        unit_pin_usage::removals(context.model, &request, &previous)?
+    } else {
+        HashSet::new()
+    };
     let removals = if anchor_remove {
         anchor_removals(&request, &previous)?
     } else {
@@ -38,10 +46,31 @@ pub(super) fn build(
                 object["name"] = json!(name);
             }
             ("units", "pins") => {
-                validate_pins(&object["pins"], value)?;
-                object["pins"] = value.clone();
+                let mut edited = value.clone();
+                if let (Some(before), Some(after)) =
+                    (previous["pins"].as_object(), edited.as_object_mut())
+                {
+                    for (key, raw) in before.iter().filter(|(key, _)| {
+                        key.parse::<Uuid>()
+                            .ok()
+                            .is_some_and(|id| pin_removals.contains(&id))
+                    }) {
+                        if let Some(pending) = after.get(key) {
+                            if without_fields(pending, &["name", "direction", "electrical_type"])
+                                != without_fields(raw, &["name", "direction", "electrical_type"])
+                            {
+                                return Err(refusal(
+                                    "Removed pin still requires its original identity and raw metadata",
+                                ));
+                            }
+                            after.insert(key.clone(), raw.clone());
+                        }
+                    }
+                }
+                validate_pins(&object["pins"], &edited)?;
+                object["pins"] = edited;
             }
-            ("units", "pin_additions") => {} // Composed after existing-pin metadata.
+            ("units", "pin_additions" | "pin_removals") => {} // Compose after metadata.
             ("symbols", "drawings") => {
                 validate_rectangle(&object["drawings"], value)?;
                 object["drawings"] = value.clone();
@@ -70,19 +99,31 @@ pub(super) fn build(
             }
             _ => {
                 return Err(refusal(
-                    "Saved electrical edits support names, existing pin metadata, anchor geometry and one existing rectangular body only",
+                    "Saved electrical edits support names, explicit pin/anchor edits and one existing rectangular body only",
                 ));
             }
         }
     }
-    if adding {
-        add_pins(context.model, &request, &mut object)?;
-    }
-    let references = if anchor_add || anchor_remove {
+    let mut references = if anchor_add || anchor_remove {
         edit_anchors(context.model, &request, &mut object, &removals)?
     } else {
         HashSet::new()
     };
+    if pin_remove {
+        references.extend(unit_pin_usage::require_unused(
+            context.model,
+            request.object_id,
+            &pin_removals,
+        )?);
+        object["pins"].as_object_mut().unwrap().retain(|key, _| {
+            key.parse::<Uuid>()
+                .ok()
+                .is_none_or(|id| !pin_removals.contains(&id))
+        });
+    }
+    if adding {
+        add_pins(context.model, &request, &mut object)?;
+    }
     // Use the same typed definition admission and reference gate as generic Set.
     match request.kind.as_str() {
         "units" => {
@@ -118,7 +159,7 @@ pub(super) fn build(
             },
         );
     }
-    if body_edit || adding || anchor_add || anchor_remove {
+    if body_edit || adding || pin_remove || anchor_add || anchor_remove {
         prepared.batch.operations.insert(
             0,
             crate::substrate::Operation::GuardObjectRevision {
@@ -536,3 +577,7 @@ mod add_anchor_tests;
 #[cfg(test)]
 #[path = "library_gui_symbol_remove_anchor_tests.rs"]
 mod remove_anchor_tests;
+
+#[cfg(test)]
+#[path = "library_gui_unit_remove_pin_tests.rs"]
+mod remove_pin_tests;

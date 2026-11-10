@@ -249,7 +249,13 @@ fn saved_unit_form_edits_existing_metadata_without_defaults_or_raw_row_loss() {
     assert!(adding.request().is_err());
     adding.switch_pin(None, true).unwrap();
     assert_eq!(adding.request().unwrap().fields, request.fields);
-    assert!(draft.switch_pin(None, true).is_err());
+    let mut removing = draft.clone();
+    removing.switch_pin(None, true).unwrap();
+    assert_eq!(
+        removing.request().unwrap().fields["pin_removals"],
+        json!([second])
+    );
+    assert_eq!(draft.request().unwrap().fields, request.fields);
 }
 
 #[test]

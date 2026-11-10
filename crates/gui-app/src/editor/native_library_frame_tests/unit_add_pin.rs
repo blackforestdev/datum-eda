@@ -202,8 +202,7 @@ impl Fixture {
                         + 1
                 );
                 assert!(
-                    !self
-                        .app
+                    self.app
                         .runtime
                         .as_ref()
                         .unwrap()

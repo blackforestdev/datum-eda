@@ -601,9 +601,32 @@ empty-body engine fixture failure is retained; only the test was corrected to th
 existing required rectangle. A direct wrong-kind regression was corrected before
 landing: Symbol pin controls now refuse without changing the draft. Its new test
 first lacked a named Unit fixture; that setup failure is retained and corrected.
-Earlier App proof retains its original candidate. Existing ignored17ld remains separate. Programmatic
-controls supply no physical/HUMAN, release-GUI execution, saved-pin removal/rekey,
+Earlier App proof retains its original candidate. Existing ignored17ld remains separate. That addition
+proof supplies no physical/HUMAN, release-GUI execution, saved-pin removal/rekey,
 implicit placed update, approval, full qualification or broader-goal acceptance.
+
+Saved unused Unit Remove pin (`dat-saved-unit-remove-pin-bu3g`) now supports
+selected saved-row removal through the shared form, Preview/Cancel, canonical
+Undo/Redo and Save/cold reopening. Sparse authenticated removals preserve remaining
+raw identities, metadata and child counters, compose distinct edits and discard
+only the removed row's pending name/type. Existing zero-pin semantics remain.
+Current anchors, retained modern/default/nondefault/legacy mappings and actual
+placed pins refuse removal; unavailable or ambiguous relevant authority also
+refuses. Distinct historical Part contexts and registered unresolved declarations
+remain protected through existing revision readers. Unrelated duplicate sources
+permit unused removal; exact hidden references and wrong mapped-pin owners refuse.
+
+Thirty-two unique focused Rust cases pass (13 engine, 19 protocol), including
+successful connected eight-pad Complete/history/cold with held/fresh membership.
+The ordinary isolated debug App passes 85 stages, 16.62 seconds and eight inspected
+captures. Its 28-source/32-transaction circuit receives one canonical AddPin setup;
+sole Set Unit removal/Undo/Redo ends at 36 transactions, all other 27 files byte-exact.
+The final Unit raw payload equals its pre-setup original. Root/child scenes remain
+exact after cold reopen; later Symbol choice assertions exclude the retired pin
+and retain original names, then Cancel creates no Symbol. The choices PNG does
+not show an expanded list. Earlier fixture, validation-stage and QA setup failures
+remain uncredited. Programmatic controls establish no physical/HUMAN, release-GUI
+execution, implicit ECO, rekeying, approval, full qualification or whole-goal acceptance.
 
 Saved Symbol Add anchor (`dat-saved-symbol-add-anchor-b6o1`) now supports an
 existing named pin of the retained Unit, physical position/direction/stub length,

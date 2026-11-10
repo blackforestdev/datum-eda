@@ -62,11 +62,18 @@ pub(super) fn table(p: &mut Painter<'_>, d: &LibraryDraft, rect: RectPx) {
             );
         }
         p.button("Add pin", C::AddPin);
-        if d.create || d.electrical.selected_new_pin() {
-            p.button("Remove draft pin", C::RemovePin);
+        if d.create || d.electrical.pin_id.is_some() {
+            p.button(
+                if !d.create && !d.electrical.selected_new_pin() {
+                    "Remove pin"
+                } else {
+                    "Remove draft pin"
+                },
+                C::RemovePin,
+            );
         }
         if !d.create {
-            p.line("Existing logical pin identities retained");
+            p.line("Referenced pins cannot be removed");
         }
     } else {
         p.line("Pin anchors · coordinates and stub lengths have physical units");

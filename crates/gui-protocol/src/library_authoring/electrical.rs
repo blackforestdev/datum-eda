@@ -249,8 +249,8 @@ impl LibraryDraft {
         if self.kind != "units" {
             return Err("Logical pin authoring requires a Unit draft".into());
         }
-        if !self.create && remove && !self.electrical.selected_new_pin() {
-            return Err("Saved edits preserve existing logical pin identities".into());
+        if !self.create && remove && self.electrical.pin_id.is_none() {
+            return Err("Select an existing logical pin to remove".into());
         }
         let selected = if let Some(index) = index {
             let key = self
@@ -266,7 +266,11 @@ impl LibraryDraft {
         };
         if remove {
             if let Some(id) = self.electrical.pin_id {
-                self.electrical.pins.remove(&id.to_string());
+                if let Ok(key) = pin_key(&self.electrical.pins, id) {
+                    self.electrical.pins.remove(&key);
+                } else if !self.create {
+                    return Err("Select an existing logical pin to remove".into());
+                }
             }
         } else {
             self.electrical.pins = self.electrical_pins()?;
@@ -427,3 +431,6 @@ mod add_anchor_tests;
 
 #[cfg(test)]
 mod remove_anchor_tests;
+
+#[cfg(test)]
+mod remove_pin_tests;

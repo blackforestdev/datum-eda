@@ -62,8 +62,8 @@ impl Fixture {
                                 || draft.electrical.anchor_id.is_some())))
                     && (!matches!(focus, Some(C::AddPin)) || draft.kind == "units")
                     && (!matches!(focus, Some(C::RemovePin))
-                        || (draft.kind == "units" && draft.electrical.selected_new_pin())),
-                "only backed per-kind Add and genuine new-row discard may receive Tab"
+                        || (draft.kind == "units" && draft.electrical.pin_id.is_some())),
+                "only backed per-kind Add and selected saved/new-row Remove may receive Tab"
             );
         }
     }

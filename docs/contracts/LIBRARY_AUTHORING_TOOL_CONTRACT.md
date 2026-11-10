@@ -201,7 +201,7 @@ models and placed-definition updates remain outside this increment.
 Saved Unit pin addition (`dat-saved-unit-add-pin-g2dm`) now exposes Add pin in
 the shared form. Each explicit new row retains one fresh UUID, a name and an
 explicit electrical type across selection and invalid input. Remove draft pin
-discards only a new row; existing saved pins cannot be deleted. Pin controls on
+discards only a new row; that addition increment preserved existing saved pins. Pin controls on
 other Library kinds refuse before changing the draft. Sparse
 `pin_additions` compose after supported old-pin metadata edits, authenticate the
 original raw membership and source, and reject nil, owned, duplicate or aliased
@@ -232,9 +232,45 @@ pre-landing Symbol-control regression is fixed by the early Unit-kind check,
 with direct Add/Remove/select refusal tested without draft mutation. Earlier
 App proof remains at its own candidate; the final corrected build supplies the
 current captures. The existing ignored rectangle case remains uncredited. App controls and logical input are programmatic
-in owned Wayland. No saved-pin removal/rekeying, Symbol-topology edit, implicit
-placed update, new reader/schema/controller, approval, physical/HUMAN observation,
-release-GUI execution, full qualification or broader-goal acceptance is supplied.
+in owned Wayland. That addition proof supplied no saved-pin removal/rekeying,
+Symbol-topology edit, implicit placed update, new reader/schema/controller, approval,
+physical/HUMAN observation, release-GUI execution, full qualification or broader-goal
+acceptance.
+
+Saved unused Unit pin removal (`dat-saved-unit-remove-pin-bu3g`) now exposes
+Remove pin for a selected saved row in the shared form. Preview/Cancel, canonical
+Undo/Redo and Save/cold reopening use the existing writer. Sparse `pin_removals`
+authenticate original parsed raw identities, embedded UUIDs and registered source
+ownership, including the existing `pins` kind fallback. Only selected raw rows
+are deleted; remaining spellings, metadata, unknowns and child counters stay exact.
+Removal discards only the removed row's pending name/type. Other metadata and
+distinct additions compose; adding the same original ID in that draft refuses.
+New-row discard remains separate, with existing zero-pin and caption semantics.
+
+Current Symbol anchors, default/nondefault and legacy mappings, actual placed
+pins and mappings retained by authored component declarations prevent removal.
+Existing authenticated revision reads preserve distinct historical Part contexts,
+including registered declarations omitted from the resolved component projection.
+Relevant unavailable or ambiguous membership refuses, including duplicate sources
+that hide an exact pin reference; unrelated duplicate sources do not blanket-block
+an unused pin. Mapped pins must belong to their authenticated Unit source. A new
+canonical anchor or mapping after preparation invalidates the stale removal.
+
+Thirteen engine and nineteen protocol cases pass, including successful removal
+through connected eight-pad Complete/history/cold and held/fresh membership.
+The ordinary isolated debug App passes 85 stages in 16.62 seconds with eight
+inspected captures: readable used-pin refusal/Cancel, unused Preview/Cancel,
+commit/history/cold, and unchanged root/child rendered scenes after cold reopen.
+Starting from 28 sources and 32 transactions, one canonical AddPin fixture supplies
+the unused pin. Three sole Set Unit history transactions end at 36 transactions;
+all other 27 canonical files remain byte-exact and the final Unit raw payload
+matches its pre-setup original. Actual App assertions retain original named pins
+and exclude the retired pin from later Symbol choices; that creation form is
+canceled, with no Symbol transaction. The choices capture is not an expanded list.
+Earlier fixture, validation-stage and QA setup failures remain uncredited at their
+recorded candidates. Programmatic controls establish no physical/HUMAN or release
+GUI execution, implicit placed update, rekeying, new reader/schema/controller,
+approval, full qualification or broader-goal acceptance.
 
 Saved Symbol anchor addition (`dat-saved-symbol-add-anchor-b6o1`) uses the same
 form to select an existing named pin of the retained Unit and set physical

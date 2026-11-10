@@ -289,11 +289,25 @@ impl LibraryDraft {
             let old = original["pins"]
                 .as_object()
                 .ok_or("Saved Unit pins are unavailable")?;
-            let retained: Map<_, _> = pins
-                .iter()
-                .filter(|(key, _)| old.contains_key(*key))
-                .map(|(key, value)| (key.clone(), value.clone()))
-                .collect();
+            let mut removals = Vec::new();
+            let mut retained = Map::new();
+            for (key, original) in old {
+                let value = if let Some(current) = pins.get(key) {
+                    current.clone()
+                } else {
+                    let id: Uuid = key
+                        .parse()
+                        .map_err(|_| "Saved logical pin identity is invalid")?;
+                    removals.push(json!(id));
+                    // Removal owns only this row. Keep its raw preimage in the
+                    // old-metadata payload so other buffered edits compose.
+                    original.clone()
+                };
+                retained.insert(key.clone(), value);
+            }
+            if !removals.is_empty() {
+                fields.insert("pin_removals".into(), removals.into());
+            }
             if &retained != old {
                 fields.insert("pins".into(), retained.into());
             }
