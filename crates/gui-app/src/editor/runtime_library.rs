@@ -462,7 +462,7 @@ impl Runtime {
                     if d.kind == "symbols" {
                         controls.extend((0..d.electrical.anchors.len()).map(C::Anchor));
                         controls.push(C::AddAnchor);
-                        if d.create || d.electrical.new_anchor {
+                        if d.create || d.electrical.new_anchor || d.electrical.anchor_id.is_some() {
                             controls.push(C::RemoveAnchor);
                         }
                     }

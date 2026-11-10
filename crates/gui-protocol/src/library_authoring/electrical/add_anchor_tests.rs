@@ -54,7 +54,12 @@ fn saved_add_anchor_composes_old_pose_preserves_raw_and_discards_only_new_rows()
     d.switch_anchor(Some(0), false).unwrap();
     assert!(!d.electrical.new_anchor);
     assert!(!d.fields.iter().any(|f| f.key == "anchor_pin"));
-    assert!(d.switch_anchor(None, true).is_err());
+    let mut removing = d.clone();
+    removing.switch_anchor(None, true).unwrap();
+    assert_eq!(
+        removing.request().unwrap().fields["anchor_removals"],
+        json!([old])
+    );
     set(&mut d, "anchor_x", "-3 mm");
     d.switch_anchor(None, false).unwrap();
     assert!(d.electrical.new_anchor);
@@ -93,7 +98,19 @@ fn saved_add_anchor_composes_old_pose_preserves_raw_and_discards_only_new_rows()
     set(&mut d, "anchor_x", "2 mm");
     d.switch_anchor(Some(old_index), false).unwrap();
     assert!(!d.electrical.new_anchor);
-    assert!(d.switch_anchor(None, true).is_err());
+    let mut removing = d.clone();
+    removing.switch_anchor(None, true).unwrap();
+    assert_eq!(
+        removing.request().unwrap().fields["anchor_removals"],
+        json!([old])
+    );
+    assert_eq!(
+        removing.request().unwrap().fields["anchor_additions"]
+            .as_array()
+            .unwrap()
+            .len(),
+        1
+    );
     let index = d
         .electrical
         .anchors

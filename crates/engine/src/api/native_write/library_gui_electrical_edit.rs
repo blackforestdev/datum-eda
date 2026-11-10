@@ -1,5 +1,5 @@
-//! Saved electrical definitions retain source data; this adapter edits only
-//! names, existing logical-pin metadata, anchor poses and one rectangular body.
+//! Saved electrical edits retain raw siblings while composing supported pin,
+//! anchor, metadata and rectangular-body intent through the canonical writer.
 use super::*;
 
 pub(super) fn build(
@@ -10,7 +10,8 @@ pub(super) fn build(
     let body_edit = request.kind == "symbols" && request.fields.contains_key("drawings");
     let adding = request.kind == "units" && request.fields.contains_key("pin_additions");
     let anchor_add = request.kind == "symbols" && request.fields.contains_key("anchor_additions");
-    let (target, mut object) = if body_edit || adding || anchor_add {
+    let anchor_remove = request.kind == "symbols" && request.fields.contains_key("anchor_removals");
+    let (target, mut object) = if body_edit || adding || anchor_add || anchor_remove {
         super::super::saved_source::load(context.model, request.object_id, &request.kind)?
     } else {
         let target = PoolLibraryObjectTarget::new("pool", &request.kind, request.object_id);
@@ -22,6 +23,11 @@ pub(super) fn build(
         (target, object)
     };
     let previous = object.clone();
+    let removals = if anchor_remove {
+        anchor_removals(&request, &previous)?
+    } else {
+        HashSet::new()
+    };
     for (key, value) in &request.fields {
         match (request.kind.as_str(), key.as_str()) {
             (_, "name") => {
@@ -40,10 +46,27 @@ pub(super) fn build(
                 validate_rectangle(&object["drawings"], value)?;
                 object["drawings"] = value.clone();
             }
-            ("symbols", "anchor_additions") => {} // Append after retained poses are composed.
+            ("symbols", "anchor_additions" | "anchor_removals") => {} // Compose after poses.
             ("symbols", "pin_anchors") => {
-                validate_anchors(&object["pin_anchors"], value)?;
-                object["pin_anchors"] = value.clone();
+                let mut posed = value.clone();
+                if let (Some(before), Some(after)) =
+                    (previous["pin_anchors"].as_array(), posed.as_array_mut())
+                {
+                    if before.len() == after.len() {
+                        for (old, new) in before.iter().zip(after) {
+                            let removed = old["pin"]
+                                .as_str()
+                                .and_then(|s| s.parse::<Uuid>().ok())
+                                .is_some_and(|id| removals.contains(&id));
+                            // Explicit removal discards only this row's pending pose.
+                            if removed && old.get("pin") == new.get("pin") {
+                                *new = old.clone();
+                            }
+                        }
+                    }
+                }
+                validate_anchors(&object["pin_anchors"], &posed)?;
+                object["pin_anchors"] = posed;
             }
             _ => {
                 return Err(refusal(
@@ -55,8 +78,8 @@ pub(super) fn build(
     if adding {
         add_pins(context.model, &request, &mut object)?;
     }
-    let references = if anchor_add {
-        add_anchors(context.model, &request, &mut object)?
+    let references = if anchor_add || anchor_remove {
+        edit_anchors(context.model, &request, &mut object, &removals)?
     } else {
         HashSet::new()
     };
@@ -95,7 +118,7 @@ pub(super) fn build(
             },
         );
     }
-    if body_edit || adding || anchor_add {
+    if body_edit || adding || anchor_add || anchor_remove {
         prepared.batch.operations.insert(
             0,
             crate::substrate::Operation::GuardObjectRevision {
@@ -107,11 +130,45 @@ pub(super) fn build(
     Ok(prepared)
 }
 
-// Append typed new rows; existing ordered raw anchors and mixed graphics remain intact.
-fn add_anchors(
+// Resolve identities against the original ordered source, before disposable poses.
+fn anchor_removals(
+    request: &LibraryDefinitionRequest,
+    object: &Value,
+) -> Result<HashSet<Uuid>, EngineError> {
+    let rows = request.fields["anchor_removals"]
+        .as_array()
+        .filter(|a| !a.is_empty())
+        .ok_or_else(|| refusal("Select an existing anchor to remove"))?;
+    let mut original = HashSet::new();
+    if let Some(raw) = object.get("pin_anchors") {
+        for row in raw
+            .as_array()
+            .ok_or_else(|| refusal("Symbol anchors must remain an ordered array"))?
+        {
+            let anchor: crate::pool::SymbolPinAnchor = serde_json::from_value(row.clone())?;
+            if !original.insert(anchor.pin) {
+                return Err(refusal("Existing Symbol anchor identity is ambiguous"));
+            }
+        }
+    }
+    let mut removed = HashSet::new();
+    for value in rows {
+        let id: Uuid = serde_json::from_value(value.clone())?;
+        if !removed.insert(id) || !original.contains(&id) {
+            return Err(refusal(
+                "Anchor removal requires one unique existing source anchor",
+            ));
+        }
+    }
+    Ok(removed)
+}
+
+// Preserve old ordered raw rows; only genuinely new anchors are serialized.
+fn edit_anchors(
     model: &crate::substrate::DesignModel,
     request: &LibraryDefinitionRequest,
     object: &mut Value,
+    removals: &HashSet<Uuid>,
 ) -> Result<HashSet<Uuid>, EngineError> {
     let unit: Uuid = serde_json::from_value(object["unit"].clone())?;
     let (_, raw_unit) = super::super::saved_source::reference(model, unit, "units")?;
@@ -153,14 +210,35 @@ fn add_anchors(
             }
         }
     }
-    let additions = request.fields["anchor_additions"]
-        .as_array()
-        .filter(|a| !a.is_empty())
-        .ok_or_else(|| refusal("Add an explicit named pin anchor"))?;
+    if !removals.is_empty() && anchored.iter().any(|id| !members.contains(id)) {
+        return Err(refusal(
+            "Existing anchor links are not members of the retained Unit",
+        ));
+    }
     let mut references = HashSet::from([unit]);
+    for id in removals {
+        crate::api::native_write::schematic_library::unit_pin(pins, *id)?;
+        if !anchored.remove(id) {
+            return Err(refusal("Original anchor removal membership changed"));
+        }
+        references.insert(*id);
+    }
+    let additions = match request.fields.get("anchor_additions") {
+        Some(rows) => rows
+            .as_array()
+            .filter(|a| !a.is_empty())
+            .ok_or_else(|| refusal("Add an explicit named pin anchor"))?
+            .as_slice(),
+        None => &[],
+    };
     let mut appended = Vec::new();
     for raw in additions {
         let anchor: crate::pool::SymbolPinAnchor = serde_json::from_value(raw.clone())?;
+        if removals.contains(&anchor.pin) {
+            return Err(refusal(
+                "An anchor cannot be removed and added for the same Unit pin in one change",
+            ));
+        }
         let pin = crate::api::native_write::schematic_library::unit_pin(pins, anchor.pin)?;
         if pin["name"].as_str().is_none_or(|s| s.trim().is_empty()) {
             return Err(refusal("Choose an existing named Unit pin"));
@@ -176,10 +254,16 @@ fn add_anchors(
         .unwrap()
         .entry("pin_anchors")
         .or_insert_with(|| json!([]));
-    anchors
+    let anchors = anchors
         .as_array_mut()
-        .ok_or_else(|| refusal("Symbol anchors must remain an ordered array"))?
-        .extend(appended);
+        .ok_or_else(|| refusal("Symbol anchors must remain an ordered array"))?;
+    anchors.retain(|raw| {
+        raw["pin"]
+            .as_str()
+            .and_then(|s| s.parse::<Uuid>().ok())
+            .is_none_or(|id| !removals.contains(&id))
+    });
+    anchors.extend(appended);
     Ok(references)
 }
 
@@ -448,3 +532,7 @@ mod add_pin_tests;
 #[cfg(test)]
 #[path = "library_gui_symbol_add_anchor_tests.rs"]
 mod add_anchor_tests;
+
+#[cfg(test)]
+#[path = "library_gui_symbol_remove_anchor_tests.rs"]
+mod remove_anchor_tests;

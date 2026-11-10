@@ -51,6 +51,8 @@ mod proof_assertions;
 mod symbol_add_anchor;
 #[path = "native_library_frame_tests/symbol_rectangle.rs"]
 mod symbol_rectangle;
+#[path = "native_library_frame_tests/symbol_remove_anchor.rs"]
+mod symbol_remove_anchor;
 #[path = "native_library_frame_tests/text_fields.rs"]
 mod text_fields;
 #[path = "native_library_frame_tests/unit_add_pin.rs"]
@@ -119,6 +121,7 @@ impl Fixture {
                         | Step::EntityRemoveGate(_)
                         | Step::UnitAddPin(_)
                         | Step::SymbolAddAnchor(_)
+                        | Step::SymbolRemoveAnchor(_)
                         | Step::PackageEdit(_)
                         | Step::PartEdit(_)
                         | Step::MapEdit(_)
@@ -241,6 +244,7 @@ impl Fixture {
             Step::EntityRemoveGate(stage) => self.entity_remove_gate(events, stage),
             Step::UnitAddPin(stage) => self.unit_add_pin(events, stage),
             Step::SymbolAddAnchor(stage) => self.symbol_add_anchor(events, stage),
+            Step::SymbolRemoveAnchor(stage) => self.symbol_remove_anchor(events, stage),
             Step::PackageEdit(stage) => self.check_package_edit(stage),
             Step::Part(stage, footprint) => self.check_part(stage, footprint),
             Step::PartEdit(stage) => self.part_edit_stage(events, stage),

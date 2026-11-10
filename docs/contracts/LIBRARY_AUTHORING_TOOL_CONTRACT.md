@@ -239,8 +239,8 @@ release-GUI execution, full qualification or broader-goal acceptance is supplied
 Saved Symbol anchor addition (`dat-saved-symbol-add-anchor-b6o1`) uses the same
 form to select an existing named pin of the retained Unit and set physical
 position, direction and stub length. Old/new row selection retains intent and
-invalid text; Remove draft anchor discards only a new row. Existing saved anchors
-cannot be removed or relinked. Sparse `anchor_additions` compose after supported
+invalid text; Remove draft anchor discards only a new row. This addition increment
+did not remove or relink saved anchors. Sparse `anchor_additions` compose after supported
 old-pose edits and append to the ordered raw array. Old anchors, mixed graphics,
 fields and unknown metadata remain exact. The existing creation admission and
 unique parsed-UUID pin lookup are shared with later materialization; ambiguous
@@ -266,8 +266,39 @@ The corrected guard admits that legitimate class under the same identity/source
 checks; append, materialization, history and cold regression cover it. The 13
 unchanged protocol cases retain their prior proof; the corrected engine and App
 supply matching current checks. Original candidate artifacts retain their own scope.
-This supplies no saved-anchor removal, automatic
+This addition proof supplies no saved-anchor removal, automatic
 placed update, new history reader/schema/controller, physical/HUMAN observation,
+release-GUI execution, full qualification or broader-goal acceptance.
+
+Saved Symbol anchor removal (`dat-saved-symbol-remove-anchor-6pf0`) uses the
+selected saved row's existing Remove anchor control; Remove draft anchor still
+discards only a pending new row. Sparse removals authenticate original parsed
+Pin UUIDs and their retained Unit membership, preserve remaining raw anchor order,
+graphics, fields and unknown metadata, and leave the logical Unit pin intact.
+Selected removed-row invalid pose text is discarded with that row; other invalid
+buffered intent still refuses. Distinct additions, removals, old poses and metadata
+compose. Re-adding the same original Pin removed in this draft refuses clearly
+without normalizing its typed choice or implicitly restoring the row. Cancel
+discards the draft. Zero anchors remain allowed under existing source semantics.
+
+Thirty-eight focused Rust cases and the ordinary App proof pass: 99 stages,
+22.11 seconds and nine inspected captures. Engine cases include successful
+removal with connected eight-pad Complete, held/fresh membership and counters,
+and removal of all five authentic bound anchors followed by a new zero-pin
+explicit Part placement and cold reopen. The App starts from the prior
+26-source/28-transaction circuit without setup writes. Three sole Set Symbol
+removal/Undo/Redo transactions preserve the other 25 sources, logical Unit pin,
+independent Supply Symbol and old users. Four old placements retain their exact
+captured definitions and pin counts of one, one, one and two. A later separate
+explicit Part/Gate B placement consumes the revised Symbol with one retained
+Input pin, creates one CI and one Net, and permits only the two existing Nets'
+exact recorded initial-lineage transitions. Final Save/cold state has 28 sources
+and 32 transactions. All four private process owners stop, with no cleanup errors.
+The raw initial fixture failure assumed one anchor in a real five-anchor fixture;
+only that test assumption was corrected. Existing ignored17ld remains uncredited.
+Controls and shared logical input are programmatic in owned Wayland. This proof
+supplies no logical-pin removal/rekey, anchor relinking, implicit placed update,
+new schema/reader/controller/minimum policy, physical/HUMAN observation,
 release-GUI execution, full qualification or broader-goal acceptance.
 
 Saved Symbol rectangle correction (`dat-saved-symbol-rectangle-iltr`) exposes the

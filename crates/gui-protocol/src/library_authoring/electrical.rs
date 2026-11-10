@@ -174,6 +174,12 @@ impl LibraryDraft {
             if matches > 1 {
                 return Err("Symbol anchor identity is ambiguous".into());
             }
+            if !self.create && matches == 0 && self.original_anchor(pin) {
+                return Err(
+                    "This anchor was removed in this draft; choose a different Unit pin or cancel"
+                        .into(),
+                );
+            }
             if matches == 1 && self.electrical.anchor_id != Some(pin) {
                 return Err(
                     "This Unit pin already has an anchor; select that anchor to edit it".into(),
@@ -334,8 +340,12 @@ impl LibraryDraft {
         if self.kind != "symbols" {
             return Err("Pin anchor authoring requires a Symbol draft".into());
         }
-        if !self.create && remove && !self.electrical.new_anchor {
-            return Err("Saved edits preserve existing anchor identities and pin links".into());
+        if !self.create
+            && remove
+            && self.electrical.anchor_id.is_none()
+            && !self.electrical.new_anchor
+        {
+            return Err("Select an existing anchor to remove".into());
         }
         let selected = if let Some(index) = index {
             let key = self
@@ -353,9 +363,6 @@ impl LibraryDraft {
         };
         if remove {
             if let Some(id) = self.electrical.anchor_id {
-                if !self.create && self.original_anchor(id) {
-                    return Err("Existing saved anchors cannot be removed".into());
-                }
                 let key = pin_key(&self.electrical.anchors, id)?;
                 self.electrical.anchors.remove(&key);
             }
@@ -417,3 +424,6 @@ mod add_pin_tests;
 
 #[cfg(test)]
 mod add_anchor_tests;
+
+#[cfg(test)]
+mod remove_anchor_tests;

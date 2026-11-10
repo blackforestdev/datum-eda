@@ -629,7 +629,30 @@ cold regressions. Thirteen unchanged protocol cases reuse prior proof; corrected
 engine and matching App checks supply current evidence. Original artifacts remain
 at their recorded candidate.
 Programmatic controls establish no physical/HUMAN or release-GUI execution, saved
-anchor removal/relinking, implicit ECO, full qualification or broader-goal acceptance.
+anchor removal/relinking, implicit ECO, full qualification or broader-goal acceptance
+for that addition increment.
+
+Saved Symbol Remove anchor (`dat-saved-symbol-remove-anchor-6pf0`) now removes the
+selected saved anchor through the shared form while retaining its logical Unit
+pin, remaining ordered raw anchors, graphics, fields and old placed captures.
+Pending new-row discard remains separate. Distinct draft edits compose; adding
+the same original Pin removed in that draft refuses without restoring it or
+normalizing typed intent. Preview/Cancel, canonical Undo/Redo and Save/cold use
+the existing writer. Zero-anchor definitions retain existing source semantics.
+
+Thirty-eight focused Rust cases and the ordinary owned App case pass: 99 stages,
+22.11 seconds, nine inspected captures and clean private-owner shutdown. Engine
+proof covers connected Complete and actual all-five-anchor removal with later
+zero-pin explicit placement/cold. The prior 26-file/28-transaction circuit needs
+no setup. Three sole Set Symbol history transactions preserve all other 25 files;
+four old placements retain one/one/one/two pins and their own frozen definitions.
+Later explicit Part/Gate B placement creates one CI and one Net with one retained
+Input pin; only two old Nets' exact initial-lineage transitions change. Final
+cold state has 28 files/32 transactions. The raw wrong fixture-cardinality failure
+is retained; the test was corrected without changing production semantics.
+Ignored17ld stays uncredited. Programmatic controls supply no physical/HUMAN,
+release-GUI execution, logical-pin removal/rekey, anchor relinking, implicit ECO,
+new minimum/schema/reader/controller, full qualification or broader-goal acceptance.
 
 Saved Symbol rectangle correction (`dat-saved-symbol-rectangle-iltr`) enables the
 existing five min/max/stroke numeric fields for one unambiguous Rect, preserving

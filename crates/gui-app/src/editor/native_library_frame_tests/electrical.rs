@@ -57,7 +57,9 @@ impl Fixture {
             assert!(
                 (!matches!(focus, Some(C::AddAnchor)) || draft.kind == "symbols")
                     && (!matches!(focus, Some(C::RemoveAnchor))
-                        || (draft.kind == "symbols" && draft.electrical.new_anchor))
+                        || (draft.kind == "symbols"
+                            && (draft.electrical.new_anchor
+                                || draft.electrical.anchor_id.is_some())))
                     && (!matches!(focus, Some(C::AddPin)) || draft.kind == "units")
                     && (!matches!(focus, Some(C::RemovePin))
                         || (draft.kind == "units" && draft.electrical.selected_new_pin())),

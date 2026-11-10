@@ -314,15 +314,23 @@ impl LibraryDraft {
                 .and_then(Value::as_array)
                 .cloned()
                 .unwrap_or_default();
+            let mut removals = Vec::new();
             for anchor in &mut ordered {
                 let pin = anchor
                     .get("pin")
                     .and_then(Value::as_str)
                     .ok_or("Saved anchor identity unavailable")?;
-                *anchor = anchors
-                    .get(pin)
-                    .ok_or("Saved anchor identity changed")?
-                    .clone();
+                if let Some(current) = anchors.get(pin) {
+                    *anchor = current.clone();
+                } else {
+                    // Keep the original in the old-pose payload: removal discards
+                    // this row's pending pose without affecting another row.
+                    let id: Uuid = pin.parse().map_err(|_| "Saved anchor identity invalid")?;
+                    removals.push(json!(id));
+                }
+            }
+            if !removals.is_empty() {
+                fields.insert("anchor_removals".into(), removals.into());
             }
             let additions: Vec<_> = anchors
                 .iter()

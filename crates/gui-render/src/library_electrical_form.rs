@@ -74,11 +74,18 @@ pub(super) fn table(p: &mut Painter<'_>, d: &LibraryDraft, rect: RectPx) {
             p.button(&anchor_label(d, anchor), C::Anchor(index));
         }
         p.button("Add anchor", C::AddAnchor);
-        if d.create || d.electrical.new_anchor {
-            p.button("Remove draft anchor", C::RemoveAnchor);
+        if d.create || d.electrical.new_anchor || d.electrical.anchor_id.is_some() {
+            p.button(
+                if !d.create && !d.electrical.new_anchor {
+                    "Remove anchor"
+                } else {
+                    "Remove draft anchor"
+                },
+                C::RemoveAnchor,
+            );
         }
         if !d.create {
-            p.line("Existing pin links and Unit retained");
+            p.line("Unit and logical pins retained");
             if d.saved_rectangle_index().is_none() {
                 p.line("Body correction unavailable · exactly one existing rectangle required");
             }
