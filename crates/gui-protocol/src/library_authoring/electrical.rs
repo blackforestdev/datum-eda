@@ -3,6 +3,7 @@ use super::*;
 use std::collections::BTreeMap;
 
 mod graphics;
+mod pin_metadata;
 mod saved;
 mod symbol_fields;
 pub use graphics::GraphicDraft;
@@ -14,6 +15,7 @@ pub struct ElectricalDraft {
     pub symbol_fields: symbol_fields::SymbolFieldDraft,
     pub unit_label: Option<String>,
     pub pin_id: Option<Uuid>,
+    pin_metadata: BTreeMap<Uuid, pin_metadata::PinMetadataDraft>,
     pub pins: Map<String, Value>,
     pub anchors: Map<String, Value>,
     pub anchor_id: Option<Uuid>,
@@ -277,6 +279,12 @@ impl LibraryDraft {
         } else {
             None
         };
+        let pins = if remove {
+            None
+        } else {
+            Some(self.electrical_pins()?)
+        };
+        self.leave_pin_metadata(remove)?;
         if remove {
             if let Some(id) = self.electrical.pin_id {
                 if let Ok(key) = pin_key(&self.electrical.pins, id) {
@@ -285,8 +293,8 @@ impl LibraryDraft {
                     return Err("Select an existing logical pin to remove".into());
                 }
             }
-        } else {
-            self.electrical.pins = self.electrical_pins()?;
+        } else if let Some(pins) = pins {
+            self.electrical.pins = pins;
         }
         let raw = selected
             .as_ref()
@@ -320,6 +328,7 @@ impl LibraryDraft {
                 .unwrap()
                 .set_text(value.into());
         }
+        self.bind_pin_metadata();
         self.preview = None;
         self.refusal = None;
         Ok(())
@@ -479,3 +488,6 @@ mod text_tests;
 
 #[cfg(test)]
 mod symbol_field_tests;
+
+#[cfg(test)]
+mod pin_metadata_tests;

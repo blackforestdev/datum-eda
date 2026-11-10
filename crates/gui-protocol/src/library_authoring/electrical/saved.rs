@@ -292,6 +292,7 @@ impl LibraryDraft {
             .ok_or("Saved definition basis unavailable")?;
         if self.kind == "units" {
             let pins = self.electrical_pins()?;
+            self.pin_metadata_request(original, fields)?;
             let old = original["pins"]
                 .as_object()
                 .ok_or("Saved Unit pins are unavailable")?;

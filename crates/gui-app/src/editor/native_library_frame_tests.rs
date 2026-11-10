@@ -67,6 +67,8 @@ mod symbol_text;
 mod text_fields;
 #[path = "native_library_frame_tests/unit_add_pin.rs"]
 mod unit_add_pin;
+#[path = "native_library_frame_tests/unit_pin_metadata.rs"]
+mod unit_pin_metadata;
 #[path = "native_library_frame_tests/unit_remove_pin.rs"]
 mod unit_remove_pin;
 use proof_assertions::source_bytes;
@@ -268,6 +270,7 @@ impl Fixture {
             Step::SymbolRect(stage) => self.symbol_rect(events, stage),
             Step::SymbolText(stage) => self.symbol_text(events, stage),
             Step::SymbolFields(stage) => self.symbol_fields(events, stage),
+            Step::UnitPinMetadata(stage) => self.unit_pin_metadata(stage),
             Step::PackageEdit(stage) => self.check_package_edit(stage),
             Step::Part(stage, footprint) => self.check_part(stage, footprint),
             Step::PartEdit(stage) => self.part_edit_stage(events, stage),

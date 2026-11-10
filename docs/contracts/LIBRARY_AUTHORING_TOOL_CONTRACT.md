@@ -198,6 +198,29 @@ not physical/HUMAN qualification or release-GUI execution. General graphics and
 pin-topology authoring, relinking, Package/Entity/Part/PinPadMap editing, approval,
 models and placed-definition updates remain outside this increment.
 
+Saved Unit pin alternate names and swap group
+(`dat-saved-unit-pin-alternates-swap-i57e`) use the shared Library form.
+Designers can add, select, edit and remove alternate names of a selected
+saved pin and edit its swap group, with preview, cancel, canonical
+Undo/Redo and Save/cold reopening. Alternate names retain their ordered
+literal name and kind strings, including duplicates. Captured indices and
+exact raw preimages identify the original rows. Edits preserve the pin
+UUID, unrelated row metadata and other pins. The existing unsigned
+32-bit swap group uses zero for no group. This increment stores authored
+metadata and leaves pin swapping, alternate-function use and placed ECO
+to their existing separate authority.
+
+The isolated native App passed 79 stages in 24.40 seconds with three
+inspected captures. Add preview showed two alternate names and group 7.
+Edit preview and the reopened form showed one alternate and group 12.
+Six sole Set Unit operations preserved the original 72 journal transactions
+byte-for-byte. Their diffs identify only the Unit and selected nested pin
+as modified. The other 32 canonical sources stayed byte-for-byte identical,
+including placed circuit and mapping data. The final project had 33 sources
+and 78 transactions. There were 86 scoped Rust passes, with existing
+`dat-17ld` ignored. The App evidence comes from programmatic controls
+in an isolated Wayland session.
+
 Saved Unit pin addition (`dat-saved-unit-add-pin-g2dm`) now exposes Add pin in
 the shared form. Each explicit new row retains one fresh UUID, a name and an
 explicit electrical type across selection and invalid input. Remove draft pin

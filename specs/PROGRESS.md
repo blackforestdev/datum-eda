@@ -583,6 +583,18 @@ SURFACE-S01–S04 and the combined planning review are accepted. SURFACE-S05 dis
 
 Routine saved Unit/Symbol property editing (`dat-saved-unit-symbol-edit-qwni`) adds shared-form name/pin-metadata and existing-anchor pose edits with preview/cancel, canonical history and Save/cold reopen. Actual isolated App and focused raw/geometry/binding checks preserve UUIDs, raw sibling data and existing placed users. This bounded increment leaves general graphics, saved topology/relinking, Package/Entity/Part/PinPadMap editing and the larger native-library goal open; it does not select or complete a successor milestone or full qualification.
 
+Saved Unit alternate names and swap group
+(`dat-saved-unit-pin-alternates-swap-i57e`) use the shared form for selecting
+a saved pin, adding, editing and removing its literal alternate rows and
+editing its swap group. The isolated App passed 79 stages in 24.40 seconds
+with three inspected captures. Preview and cancel preserved the source.
+Canonical history and cold reopening retained the edited row and group.
+The original 72 journal transactions and the other 32 canonical sources
+stayed byte-for-byte identical through six sole Set Unit operations. Each
+operation modified the Unit and selected nested pin. There were 86 scoped
+Rust passes, with the existing `dat-17ld` case ignored. This increment
+stores metadata under the existing pin identity.
+
 Saved Unit Add pin (`dat-saved-unit-add-pin-g2dm`) now supports explicit named
 new pins and electrical types in the shared form, stable row IDs and new-row-only
 discard, Preview/Cancel, canonical Undo/Redo and Save/cold reopening. Sparse additions

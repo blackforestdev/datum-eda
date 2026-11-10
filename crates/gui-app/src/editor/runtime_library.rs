@@ -333,6 +333,9 @@ impl Runtime {
             C::Pin(_)
             | C::AddPin
             | C::RemovePin
+            | C::PinAlternate(_)
+            | C::AddPinAlternate
+            | C::RemovePinAlternate
             | C::Anchor(_)
             | C::AddAnchor
             | C::RemoveAnchor
@@ -441,6 +444,9 @@ impl Runtime {
                         controls.push(C::AddPin);
                         if d.create || d.electrical.pin_id.is_some() {
                             controls.push(C::RemovePin);
+                        }
+                        if let Some(metadata) = d.selected_pin_metadata() {
+                            controls.extend(metadata.controls());
                         }
                     }
                     if d.kind == "symbols" {

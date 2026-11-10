@@ -17,6 +17,7 @@ pub(super) enum Step {
     EntityRemoveGate(usize),
     UnitAddPin(usize),
     UnitRemovePin(usize),
+    UnitPinMetadata(usize),
     SymbolAddAnchor(usize),
     SymbolRemoveAnchor(usize),
     SymbolRelinkAnchor(usize),

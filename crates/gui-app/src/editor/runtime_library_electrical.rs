@@ -12,6 +12,8 @@ impl Runtime {
             let graphic = d.switch_graphic_control(&control);
             let result = if let Some(result) = d.switch_symbol_field_control(&control) {
                 result
+            } else if let Some(result) = d.switch_pin_alternate_control(&control) {
+                result
             } else if let Some(result) = graphic {
                 result.map(|()| d.electrical.graphics.focus_key())
             } else if pin {

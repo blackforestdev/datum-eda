@@ -3,6 +3,8 @@ use super::*;
 use datum_gui_protocol::library_authoring::LibraryDraft;
 #[path = "library_graphic_form.rs"]
 mod graphics;
+#[path = "library_pin_metadata_form.rs"]
+mod pin_metadata;
 #[path = "library_symbol_fields_form.rs"]
 mod symbol_fields;
 
@@ -78,6 +80,7 @@ pub(super) fn table(p: &mut Painter<'_>, d: &LibraryDraft, rect: RectPx) {
         }
         if !d.create {
             p.line("Referenced pins cannot be removed");
+            pin_metadata::table(p, d);
         }
     } else {
         p.line("Pin anchors · coordinates and stub lengths have physical units");
@@ -165,6 +168,21 @@ pub(super) fn review(p: &mut Painter<'_>, d: &LibraryDraft) {
                     .and_then(Value::as_str)
                     .unwrap_or("")
             ));
+        }
+        if let Some(old) = &d.electrical.original {
+            for (key, pin) in pins.into_iter().flat_map(|pins| pins.iter()) {
+                let before = &old["pins"][key];
+                let selected = d
+                    .electrical
+                    .pin_id
+                    .is_some_and(|id| key.parse().ok() == Some(id));
+                if selected
+                    || before.get("alternates") != pin.get("alternates")
+                    || before.get("swap_group") != pin.get("swap_group")
+                {
+                    pin_metadata::review(p, pin);
+                }
+            }
         }
     } else {
         let unit = d
