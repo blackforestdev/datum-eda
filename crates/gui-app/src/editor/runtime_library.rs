@@ -336,17 +336,23 @@ impl Runtime {
             | C::RemoveAnchor
             | C::Line(_)
             | C::AddLine
-            | C::RemoveLine => {
+            | C::RemoveLine
+            | C::Rect(_)
+            | C::AddRect
+            | C::RemoveRect => {
                 let browser = &mut self.session.workspace_mut().library;
                 if let Some(d) = &mut browser.draft {
                     let pin = matches!(control, C::Pin(_) | C::AddPin | C::RemovePin);
                     let line = matches!(control, C::Line(_) | C::AddLine | C::RemoveLine);
+                    let rect = matches!(control, C::Rect(_) | C::AddRect | C::RemoveRect);
                     let index = match control {
-                        C::Pin(i) | C::Anchor(i) | C::Line(i) => Some(i),
+                        C::Pin(i) | C::Anchor(i) | C::Line(i) | C::Rect(i) => Some(i),
                         _ => None,
                     };
                     let result = if line {
                         d.switch_line(index, control == C::RemoveLine)
+                    } else if rect {
+                        d.switch_rect(index, control == C::RemoveRect)
                     } else if pin {
                         d.switch_pin(index, control == C::RemovePin)
                     } else {
@@ -354,8 +360,11 @@ impl Runtime {
                     };
                     match result {
                         Ok(()) => {
-                            let key = if line && d.electrical.lines.selected.is_none() {
+                            let key = if (line || rect) && d.electrical.graphics.selected.is_none()
+                            {
                                 "name"
+                            } else if rect {
+                                "rect_min_x"
                             } else if line {
                                 "line_from_x"
                             } else if pin {
@@ -480,11 +489,7 @@ impl Runtime {
                         }
                     }
                     if d.kind == "symbols" && !d.create {
-                        controls.extend(d.electrical.lines.rows.keys().copied().map(C::Line));
-                        controls.push(C::AddLine);
-                        if d.electrical.lines.selected.is_some() {
-                            controls.push(C::RemoveLine);
-                        }
+                        controls.extend(d.electrical.graphics.controls());
                     }
                     if d.kind == "entities" {
                         controls.extend((0..d.entity.gates.len()).map(C::Gate));

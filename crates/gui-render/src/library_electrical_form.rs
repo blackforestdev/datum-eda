@@ -1,8 +1,8 @@
 //! Unit pin table, Symbol anchor/body properties and readable source review.
 use super::*;
 use datum_gui_protocol::library_authoring::LibraryDraft;
-#[path = "library_line_form.rs"]
-mod lines;
+#[path = "library_graphic_form.rs"]
+mod graphics;
 
 pub(super) fn table(p: &mut Painter<'_>, d: &LibraryDraft, rect: RectPx) {
     if d.kind == "units" {
@@ -95,11 +95,8 @@ pub(super) fn table(p: &mut Painter<'_>, d: &LibraryDraft, rect: RectPx) {
         }
         if !d.create {
             p.line("Unit and logical pins retained");
-            if d.saved_rectangle_index().is_none() {
-                p.line("Body correction unavailable · exactly one existing rectangle required");
-            }
         }
-        lines::table(p, d);
+        graphics::table(p, d);
     }
 }
 
@@ -182,48 +179,10 @@ pub(super) fn review(p: &mut Painter<'_>, d: &LibraryDraft) {
         p.line(&format!(
             "Review: {action} Symbol {name} linked to Unit {unit}"
         ));
-        let coordinate = |pointer: &str| {
-            raw.pointer(pointer)
-                .and_then(Value::as_i64)
-                .map(physical)
-                .unwrap_or_else(|| "Unavailable".into())
-        };
-        let rectangle = if d.create {
-            Some(0)
-        } else {
-            let rectangles: Vec<_> = raw["drawings"]
-                .as_array()
-                .into_iter()
-                .flatten()
-                .enumerate()
-                .filter(|(_, row)| row.get("Rect").is_some())
-                .map(|(index, _)| index)
-                .collect();
-            if rectangles.len() == 1 {
-                Some(rectangles[0])
-            } else {
-                None
-            }
-        };
-        if let Some(index) = rectangle {
-            let base = format!("/drawings/{index}/Rect");
-            p.line(&format!(
-                "Rectangle: ({}, {}) to ({}, {}); stroke {}",
-                coordinate(&format!("{base}/min/x")),
-                coordinate(&format!("{base}/min/y")),
-                coordinate(&format!("{base}/max/x")),
-                coordinate(&format!("{base}/max/y")),
-                coordinate(&format!("{base}/width"))
-            ));
-        }
         if !d.create {
-            p.line(if rectangle.is_some() {
-                "Other raw graphics and fields retained · placed users stay frozen"
-            } else {
-                "Body correction unavailable · exactly one existing rectangle required"
-            });
+            p.line("Other raw graphics and fields retained · placed users stay frozen");
         }
-        lines::review(p, raw);
+        graphics::review(p, raw);
         for anchor in raw
             .get("pin_anchors")
             .and_then(Value::as_array)

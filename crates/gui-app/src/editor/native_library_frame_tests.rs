@@ -51,6 +51,8 @@ mod proof_assertions;
 mod symbol_add_anchor;
 #[path = "native_library_frame_tests/symbol_line.rs"]
 mod symbol_line;
+#[path = "native_library_frame_tests/symbol_rect.rs"]
+mod symbol_rect;
 #[path = "native_library_frame_tests/symbol_rectangle.rs"]
 mod symbol_rectangle;
 #[path = "native_library_frame_tests/symbol_relink_anchor.rs"]
@@ -131,6 +133,7 @@ impl Fixture {
                         | Step::SymbolRemoveAnchor(_)
                         | Step::SymbolRelinkAnchor(_)
                         | Step::SymbolLine(_)
+                        | Step::SymbolRect(_)
                         | Step::PackageEdit(_)
                         | Step::PartEdit(_)
                         | Step::MapEdit(_)
@@ -257,6 +260,7 @@ impl Fixture {
             Step::SymbolRemoveAnchor(stage) => self.symbol_remove_anchor(events, stage),
             Step::SymbolRelinkAnchor(stage) => self.symbol_relink_anchor(events, stage),
             Step::SymbolLine(stage) => self.symbol_line(events, stage),
+            Step::SymbolRect(stage) => self.symbol_rect(events, stage),
             Step::PackageEdit(stage) => self.check_package_edit(stage),
             Step::Part(stage, footprint) => self.check_part(stage, footprint),
             Step::PartEdit(stage) => self.part_edit_stage(events, stage),

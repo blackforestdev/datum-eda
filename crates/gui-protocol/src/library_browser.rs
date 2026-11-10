@@ -74,6 +74,9 @@ pub enum LibraryControl {
     Line(usize),
     AddLine,
     RemoveLine,
+    Rect(usize),
+    AddRect,
+    RemoveRect,
 }
 
 #[derive(Debug, Clone, PartialEq)]

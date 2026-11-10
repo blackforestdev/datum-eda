@@ -40,8 +40,13 @@ fn set(d: &mut LibraryDraft, key: &str, text: &str) {
 fn duplicate_lines_use_original_indices_and_compose_raw_edits_removals_additions_and_body() {
     let (mut d, raw, _) = fixture();
     assert_eq!(
-        d.electrical.lines.rows.keys().copied().collect::<Vec<_>>(),
-        [1, 3]
+        d.electrical
+            .graphics
+            .rows
+            .keys()
+            .copied()
+            .collect::<Vec<_>>(),
+        [1, 2, 3]
     );
     assert!(d.request().unwrap().fields.is_empty());
     d.switch_line(Some(3), false).unwrap();
@@ -54,15 +59,16 @@ fn duplicate_lines_use_original_indices_and_compose_raw_edits_removals_additions
     assert_eq!(fields["line_edits"][1]["index"], 3);
     assert_eq!(fields["line_edits"][1]["line"]["Line"]["to"]["x"], 7000000);
     d.switch_line(None, false).unwrap();
-    let new = d.electrical.lines.selected.unwrap();
+    let new = d.electrical.graphics.selected.unwrap();
     assert_eq!(new, 4);
     set(&mut d, "line_to_y", "2mm");
     d.switch_line(Some(3), false).unwrap();
     set(&mut d, "line_from_x", "invalid");
     d.switch_line(None, true).unwrap();
-    assert!(d.electrical.lines.rows.contains_key(&1));
-    assert!(d.electrical.lines.rows.contains_key(&new));
-    assert!(!d.electrical.lines.rows.contains_key(&3));
+    assert!(d.electrical.graphics.rows.contains_key(&1));
+    assert!(d.electrical.graphics.rows.contains_key(&new));
+    assert!(!d.electrical.graphics.rows.contains_key(&3));
+    d.switch_rect(Some(2), false).unwrap();
     set(&mut d, "rect_min_x", "-3mm");
     set(&mut d, "name", "Revised");
     let fields = d.request().unwrap().fields;
@@ -95,16 +101,16 @@ fn new_invalid_discard_preserves_other_buffered_intent_and_same_input_is_noop() 
         "saved Line retains existing schema-only edit admission"
     );
     d.switch_line(None, false).unwrap();
-    let new = d.electrical.lines.selected.unwrap();
+    let new = d.electrical.graphics.selected.unwrap();
     set(&mut d, "line_to_x", "0");
     assert!(d.request().unwrap_err().contains("distinct endpoints"));
-    set(&mut d, "rect_width", "invalid");
+    set(&mut d, "anchor_x", "invalid");
     d.switch_line(None, true).unwrap();
-    assert!(!d.electrical.lines.rows.contains_key(&new));
+    assert!(!d.electrical.graphics.rows.contains_key(&new));
     assert!(d.focused < d.fields.len());
-    assert_eq!(d.value("rect_width"), "invalid");
+    assert_eq!(d.value("anchor_x"), "invalid");
     assert!(d.request().is_err());
-    set(&mut d, "rect_width", "100000");
+    set(&mut d, "anchor_x", "");
     let f = d.request().unwrap().fields;
     assert!(!f.contains_key("line_additions"));
     assert_eq!(f["line_edits"][0]["index"], 1);

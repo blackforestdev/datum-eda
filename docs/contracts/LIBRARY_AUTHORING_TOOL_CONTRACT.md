@@ -369,6 +369,39 @@ release-GUI or full-qualification result. A broader test filter also selected an
 unresolved board-track failure (`dat-exact30-track-ci-lg26`); that batch is not a
 PASS and does not widen this increment's scope.
 
+Saved Symbol rectangle lifecycle (`dat-saved-symbol-rect-lifecycle-6ksv`) extends
+the shared graphics form to add, select, correct and remove individual Rects,
+including multiple identical rectangles. Lines and Rects share one captured row
+collection, selection, numeric buffer and action/navigation list. Original array
+indices and exact raw preimages identify saved rows. Rect corrections change only
+min/max coordinates and stroke; ordered raw siblings, Point metadata, anchors and
+fields remain intact. New rows serialize typed graphics only, with no persistent
+graphic UUID. Mixed new Line/Rect rows retain append order. The legacy unique-Rect
+request derives from the same buffer; conflicting legacy/sparse intent for one
+row refuses. Removing the selected row discards only its invalid fields.
+
+New and changed Rects retain the existing manual producer's ordered-corner and
+positive-stroke checks. Untouched admitted legacy Rects gain no geometry gate;
+existing Line append versus saved-edit admission remains intact. No additional
+primitive, canvas, controller, schema, history reader or placed-user ECO is added.
+The previous shared preview fix continues to preserve old placed definitions.
+
+The isolated App passes 146 stages in 32.72 seconds with eight inspected captures.
+No setup is required: the original 47 transactions stay byte-exact, six sole Set
+Symbol history operations preserve the other 29 sources, and a later explicit U7
+placement alone consumes the revised rectangle. Its separate consumer records one
+new Net and the exact old initial-Net lineage transition; the other 27 original
+files remain byte-exact. Final cold state has 31 sources and 54 transactions.
+Actual Root body, pin, text and glyph geometry remains exact before/during the
+ghost, after commit and cold; the new ghost and placement use revised geometry.
+All five fields are visible in preview; the cold form shows the selected row,
+shared actions and minimum X, with the other four cold values asserted. Selected
+Rust checks pass (45 GUI-electrical engine, 30 protocol and one new frozen-scene
+case); the broader engine batch remains failed on known `dat-exact30-track-ci-lg26`,
+and `dat-17ld` remains ignored. Initial fixture and transport-launch failures stay
+recorded. Controls are programmatic, with no physical/HUMAN, release-GUI,
+full-qualification or broader-goal acceptance.
+
 Saved Symbol Line graphics (`dat-saved-symbol-line-graphics-l2f7`) now supports
 explicit Add line, selected saved-row endpoint/stroke correction and removal in
 the shared form, with Preview/Cancel, canonical Undo/Redo and Save/cold reopening.
@@ -408,14 +441,15 @@ attempts, the wrong-scene App assertion and the visually incorrect prior preview
 remain recorded. Controls are programmatic; no physical/HUMAN, release-GUI,
 full-qualification or broader-goal acceptance is supplied.
 
-Saved Symbol rectangle correction (`dat-saved-symbol-rectangle-iltr`) exposes the
+The earlier rectangle-correction increment (`dat-saved-symbol-rectangle-iltr`) exposed the
 five existing body min/max coordinate and stroke fields for exactly one existing
 raw Rect, at its retained array position. Other known graphics can coexist. Only
 those five integer leaves change: all other graphics, nested unknown metadata,
 Unit/UUID, anchors and fields remain intact. Ordered corners and positive stroke
-retain the creation validation. Zero or multiple Rects visibly disable body
-correction while existing metadata/anchor flows remain available; no primitive is
-guessed, added, removed or reordered. Unknown primitive variants retain the
+retained the creation validation. At that earlier baseline, zero or multiple Rects
+disabled body correction while metadata/anchor flows remained available; no
+primitive was guessed, added, removed or reordered. The shared graphics lifecycle
+above now permits explicit Rect selection, addition and removal. Unknown primitive variants retain the
 existing typed refusal rather than being dropped or adopted.
 
 The body request qualifies its unique canonical source and captured revision

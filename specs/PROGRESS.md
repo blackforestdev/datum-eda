@@ -699,6 +699,28 @@ reopen. The broader selected board-track failure remains unresolved under
 `dat-exact30-track-ci-lg26`, not an overall batch PASS. This supplies no physical/
 HUMAN, release-GUI, full-qualification or broader-goal acceptance.
 
+Saved Symbol rectangle lifecycle (`dat-saved-symbol-rect-lifecycle-6ksv`) now
+supports Add/select/correct/remove for individual saved Rects, including multiple
+rectangles, through the same Line/Rect collection, numeric buffer and controls.
+Captured indices/raw preimages preserve siblings and Point metadata; typed new
+rows cannot mint graphic UUIDs. Existing new/changed Rect numeric checks and
+untouched legacy admission remain distinct. The original single-Rect correction
+request composes from that same buffer; same-row conflicts refuse.
+
+The ordinary isolated App passes 146 stages in 32.72 seconds with eight inspected
+captures, no setup and clean owned-process shutdown. The original 47-transaction
+prefix and other 29 core sources stay byte-exact through six sole Set Symbol
+history operations. Later U7 explicitly consumes the revised Rect; only its new
+Net and one exact old initial-Net lineage transition accompany it. Final state is
+31 sources/54 transactions, with 27 other original files exact. Actual old Root
+body/pin/text/glyph geometry remains exact before/during ghost, after commit and
+cold, while new ghost/placement geometry is revised. Preview shows all five
+fields; cold form shows selected Rect/Line/actions/minimum X, other cold values
+asserted. The selected 76 Rust cases pass; broader engine batch remains failed
+on known `dat-exact30-track-ci-lg26`, with `dat-17ld` ignored. No new primitive,
+controller, schema, reader, prototype, physical/HUMAN, release-GUI,
+full-qualification or broader-goal acceptance is supplied.
+
 Saved Symbol Line graphics (`dat-saved-symbol-line-graphics-l2f7`) now supports
 adding Lines, selecting an original saved row to correct endpoints/stroke or
 remove it, Preview/Cancel, canonical Undo/Redo and Save/cold reopening. Captured

@@ -42,22 +42,9 @@ impl LibraryDraft {
                     })
                 })
                 .map(|(_, name)| name.clone());
-            let rectangle = self.saved_rectangle_index();
             self.fields.retain(|f| {
-                f.key != "unit"
-                    && f.key != "anchor_pin"
-                    && (!f.key.starts_with("rect_") || rectangle.is_some())
+                f.key != "unit" && f.key != "anchor_pin" && !f.key.starts_with("rect_")
             });
-            if let Some(index) = rectangle {
-                for &(key, pointer) in RECTANGLE_FIELDS {
-                    let text = raw["drawings"][index].pointer(pointer).unwrap().to_string();
-                    self.fields
-                        .iter_mut()
-                        .find(|f| f.key == key)
-                        .unwrap()
-                        .set_text(text);
-                }
-            }
             let empty = Vec::new();
             let anchors = match raw.get("pin_anchors") {
                 None => &empty,
@@ -89,7 +76,7 @@ impl LibraryDraft {
             }
         }
         if self.kind == "symbols" {
-            self.hydrate_lines();
+            self.hydrate_graphics();
         }
         Ok(())
     }
@@ -116,36 +103,6 @@ impl LibraryDraft {
             return None;
         }
         Some(index)
-    }
-
-    fn saved_drawings(&self) -> Result<Option<Value>, String> {
-        if !RECTANGLE_FIELDS
-            .iter()
-            .any(|(key, _)| self.dirty.contains(key))
-        {
-            return Ok(None);
-        }
-        let index = self
-            .saved_rectangle_index()
-            .ok_or("Body correction requires exactly one existing rectangle")?;
-        let original = &self.electrical.original.as_ref().unwrap()["drawings"];
-        let mut drawings = original.clone();
-        for &(key, pointer) in RECTANGLE_FIELDS {
-            let next = self.length(key)?;
-            if drawings[index].pointer(pointer).and_then(Value::as_i64) != Some(next) {
-                *drawings[index].pointer_mut(pointer).unwrap() = json!(next);
-            }
-        }
-        let eda_engine::pool::Primitive::Rect { min, max, width } =
-            serde_json::from_value(drawings[index].clone())
-                .map_err(|_| "Saved rectangle data is unavailable")?
-        else {
-            return Err("Saved rectangle data is unavailable".into());
-        };
-        if min.x >= max.x || min.y >= max.y || width <= 0 {
-            return Err("Body corners must be ordered and stroke width positive".into());
-        }
-        Ok((drawings != *original).then_some(drawings))
     }
 
     /// Named pin labels share the captured source Unit; saved edits never relink it.
@@ -367,10 +324,7 @@ impl LibraryDraft {
                 fields.insert("pin_additions".into(), additions.into());
             }
         } else {
-            self.line_request(fields)?;
-            if let Some(drawings) = self.saved_drawings()? {
-                fields.insert("drawings".into(), drawings);
-            }
+            self.graphic_request(fields)?;
             let anchors = self.electrical_anchors()?;
             let mut ordered = original
                 .get("pin_anchors")

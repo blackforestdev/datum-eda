@@ -383,7 +383,7 @@ impl Fixture {
                     .draft
                     .as_ref()
                     .unwrap();
-                assert_eq!(d.electrical.lines.selected, Some(1));
+                assert_eq!(d.electrical.graphics.selected, Some(1));
                 assert!(d.fields.iter().any(|f| f.key == "line_from_x"));
             }
             2 | 3 => {
@@ -414,7 +414,7 @@ impl Fixture {
                     .draft
                     .as_ref()
                     .unwrap();
-                assert_eq!(d.electrical.lines.selected, Some(1));
+                assert_eq!(d.electrical.graphics.selected, Some(1));
                 for (key, text) in [
                     ("line_from_x", "-500000"),
                     ("line_from_y", "-500000"),
@@ -438,10 +438,15 @@ impl Fixture {
                     .as_ref()
                     .unwrap();
                 assert_eq!(
-                    d.electrical.lines.rows.keys().copied().collect::<Vec<_>>(),
-                    [1]
+                    d.electrical
+                        .graphics
+                        .rows
+                        .keys()
+                        .copied()
+                        .collect::<Vec<_>>(),
+                    [0, 1]
                 );
-                assert_eq!(d.electrical.lines.selected, None);
+                assert_eq!(d.electrical.graphics.selected, None);
                 assert!(d.fields.iter().all(|f| !f.key.starts_with("line_")));
                 let f = d.request().unwrap().fields;
                 assert_eq!(f["line_removals"][0]["index"], 2);

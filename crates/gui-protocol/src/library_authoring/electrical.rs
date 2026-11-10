@@ -2,14 +2,14 @@
 use super::*;
 use std::collections::BTreeMap;
 
-mod lines;
+mod graphics;
 mod saved;
-pub use lines::LineDraft;
+pub use graphics::GraphicDraft;
 
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct ElectricalDraft {
     pub original: Option<Value>,
-    pub lines: LineDraft,
+    pub graphics: GraphicDraft,
     pub unit_label: Option<String>,
     pub pin_id: Option<Uuid>,
     pub pins: Map<String, Value>,
@@ -468,3 +468,6 @@ mod relink_anchor_tests;
 
 #[cfg(test)]
 mod line_tests;
+
+#[cfg(test)]
+mod rect_tests;

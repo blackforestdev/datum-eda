@@ -570,3 +570,6 @@ mod rectangle_tests;
 
 #[path = "native_library_frozen_line_tests.rs"]
 mod line_tests;
+
+#[path = "native_library_frozen_rect_lifecycle_tests.rs"]
+mod rect_lifecycle_tests;

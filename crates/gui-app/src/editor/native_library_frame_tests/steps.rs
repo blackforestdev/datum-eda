@@ -21,6 +21,7 @@ pub(super) enum Step {
     SymbolRemoveAnchor(usize),
     SymbolRelinkAnchor(usize),
     SymbolLine(usize),
+    SymbolRect(usize),
     PackageEdit(usize),
     TextFields(usize),
     MapLabels(usize),

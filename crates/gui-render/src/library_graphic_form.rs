@@ -1,0 +1,61 @@
+//! Shared ordered graphic rows use the Library painter and numeric editors.
+use super::*;
+
+pub(super) fn table(p: &mut Painter<'_>, d: &LibraryDraft) {
+    if d.create {
+        return;
+    }
+    p.line("Graphics · select a row to edit geometry and stroke");
+    for control in d.electrical.graphics.controls() {
+        let label = match control {
+            C::Line(index) | C::Rect(index) => format!(
+                "{}{} graphic {}",
+                if d.electrical.graphics.selected == Some(index) {
+                    "Selected · "
+                } else {
+                    ""
+                },
+                if matches!(control, C::Rect(_)) {
+                    "Rectangle"
+                } else {
+                    "Line"
+                },
+                index + 1
+            ),
+            C::AddLine => "Add line".into(),
+            C::AddRect => "Add rectangle".into(),
+            C::RemoveLine => "Remove line".into(),
+            C::RemoveRect => "Remove rectangle".into(),
+            _ => continue,
+        };
+        p.button(&label, control);
+    }
+}
+
+pub(super) fn review(p: &mut Painter<'_>, raw: &Value) {
+    for (index, row) in raw["drawings"].as_array().into_iter().flatten().enumerate() {
+        let (kind, a, b) = if row.get("Rect").is_some() {
+            ("Rect", "min", "max")
+        } else if row.get("Line").is_some() {
+            ("Line", "from", "to")
+        } else {
+            continue;
+        };
+        let coordinate = |pointer: &str| {
+            row[kind]
+                .pointer(pointer)
+                .and_then(Value::as_i64)
+                .map(physical)
+                .unwrap_or_else(|| "Unavailable".into())
+        };
+        p.line(&format!(
+            "{kind} {}: ({}, {}) to ({}, {}); stroke {}",
+            index + 1,
+            coordinate(&format!("/{a}/x")),
+            coordinate(&format!("/{a}/y")),
+            coordinate(&format!("/{b}/x")),
+            coordinate(&format!("/{b}/y")),
+            coordinate("/width")
+        ));
+    }
+}
