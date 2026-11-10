@@ -567,3 +567,6 @@ fn restored_counter_collision_refuses_before_existing_pinned_user_loses_its_sour
 
 #[path = "native_library_frozen_rectangle_tests.rs"]
 mod rectangle_tests;
+
+#[path = "native_library_frozen_line_tests.rs"]
+mod line_tests;

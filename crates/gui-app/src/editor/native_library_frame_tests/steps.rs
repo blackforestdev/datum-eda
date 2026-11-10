@@ -20,6 +20,7 @@ pub(super) enum Step {
     SymbolAddAnchor(usize),
     SymbolRemoveAnchor(usize),
     SymbolRelinkAnchor(usize),
+    SymbolLine(usize),
     PackageEdit(usize),
     TextFields(usize),
     MapLabels(usize),

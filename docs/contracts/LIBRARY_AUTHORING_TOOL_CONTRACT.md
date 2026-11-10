@@ -369,6 +369,45 @@ release-GUI or full-qualification result. A broader test filter also selected an
 unresolved board-track failure (`dat-exact30-track-ci-lg26`); that batch is not a
 PASS and does not widen this increment's scope.
 
+Saved Symbol Line graphics (`dat-saved-symbol-line-graphics-l2f7`) now supports
+explicit Add line, selected saved-row endpoint/stroke correction and removal in
+the shared form, with Preview/Cancel, canonical Undo/Redo and Save/cold reopening.
+An original captured array index and raw preimage distinguish even identical
+Lines. Corrections patch only five numeric leaves; removals retain all other
+ordered raw graphics, Point metadata, anchors and fields. Distinct edits compose
+with the existing rectangle and anchor controls. Removing a selected row discards
+only its invalid buffered fields; new-row discard remains separate. New Lines
+reuse existing append admission (distinct endpoints, positive stroke), while
+saved corrections retain existing Primitive schema admission. New rows serialize
+only typed Line fields, preventing arbitrary nested UUID extension manufacture.
+No persisted graphic identity, new geometry policy or general graphics editor is
+introduced.
+
+Shared schematic gesture previews now capture each old instance's authenticated
+Symbol definition through the existing model reader. Existing instances use that
+local definition at their requested pose; new placement ghosts use the selected
+current definition. Missing or unauthenticated old captures use the existing
+source-unavailable presentation, with no latest-definition substitution. Legacy
+unbound sources retain their ordinary current-source display semantics. This
+fixes the observed warm-preview leak of revised Lines into old instances without
+adding a history reader, persistent cache or separate renderer.
+
+There are 112 unique passing scoped Rust cases, including preservation during
+placement, wire, marker and moved/rotated previews. The affected pose batch also
+retains one known annotation-admission failure (`dat-project-annotation-root-assertion-i6m9`),
+so it is not an overall PASS. The current ordinary isolated App passes 140 stages
+in 21.63 seconds, with eight inspected captures. No setup is needed: six sole
+Set Symbol transactions exercise two history sequences while preserving the
+other 28 sources and original 40-transaction journal prefix. A later explicit U6
+placement uses the revised Line; only one exact old initial-Net lineage transition
+and one new Net accompany that consumer, leaving the other 26 original files
+byte-exact. Final cold state has 30 sources/47 transactions. Old Root body,
+terminal, text and glyph geometry are checked before and during the ghost, after
+commit and cold; only U6 displays the new Line. Earlier failed fixtures, compile
+attempts, the wrong-scene App assertion and the visually incorrect prior preview
+remain recorded. Controls are programmatic; no physical/HUMAN, release-GUI,
+full-qualification or broader-goal acceptance is supplied.
+
 Saved Symbol rectangle correction (`dat-saved-symbol-rectangle-iltr`) exposes the
 five existing body min/max coordinate and stroke fields for exactly one existing
 raw Rect, at its retained array position. Other known graphics can coexist. Only

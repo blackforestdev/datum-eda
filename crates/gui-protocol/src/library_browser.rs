@@ -71,6 +71,9 @@ pub enum LibraryControl {
     Anchor(usize),
     AddAnchor,
     RemoveAnchor,
+    Line(usize),
+    AddLine,
+    RemoveLine,
 }
 
 #[derive(Debug, Clone, PartialEq)]

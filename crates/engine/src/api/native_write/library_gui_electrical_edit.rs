@@ -3,6 +3,8 @@
 use super::*;
 #[path = "library_gui_symbol_relink_anchor.rs"]
 mod anchor_relinks;
+#[path = "library_gui_symbol_line_edit.rs"]
+mod lines;
 #[path = "library_gui_unit_pin_usage.rs"]
 mod unit_pin_usage;
 
@@ -12,13 +14,17 @@ pub(super) fn build(
     request: LibraryDefinitionRequest,
 ) -> Result<PreparedWrite, EngineError> {
     let body_edit = request.kind == "symbols" && request.fields.contains_key("drawings");
+    let line_edit = request.kind == "symbols"
+        && ["line_edits", "line_removals", "line_additions"]
+            .iter()
+            .any(|key| request.fields.contains_key(*key));
     let adding = request.kind == "units" && request.fields.contains_key("pin_additions");
     let pin_remove = request.kind == "units" && request.fields.contains_key("pin_removals");
     let anchor_add = request.kind == "symbols" && request.fields.contains_key("anchor_additions");
     let anchor_remove = request.kind == "symbols" && request.fields.contains_key("anchor_removals");
     let anchor_relink = request.kind == "symbols" && request.fields.contains_key("anchor_relinks");
     let anchor_edit = anchor_add || anchor_remove || anchor_relink;
-    let (target, mut object) = if body_edit || adding || pin_remove || anchor_edit {
+    let (target, mut object) = if body_edit || line_edit || adding || pin_remove || anchor_edit {
         super::super::saved_source::load(context.model, request.object_id, &request.kind)?
     } else {
         let target = PoolLibraryObjectTarget::new("pool", &request.kind, request.object_id);
@@ -81,6 +87,7 @@ pub(super) fn build(
                 object["pins"] = edited;
             }
             ("units", "pin_additions" | "pin_removals") => {} // Compose after metadata.
+            ("symbols", "line_edits" | "line_removals" | "line_additions") => {}
             ("symbols", "drawings") => {
                 validate_rectangle(&object["drawings"], value)?;
                 object["drawings"] = value.clone();
@@ -109,10 +116,13 @@ pub(super) fn build(
             }
             _ => {
                 return Err(refusal(
-                    "Saved electrical edits support names, explicit pin/anchor edits and one existing rectangular body only",
+                    "Saved electrical edits support names, explicit pin/anchor/Line edits and one existing rectangular body only",
                 ));
             }
         }
+    }
+    if line_edit {
+        lines::apply(&request, &previous, &mut object)?;
     }
     let mut references = HashSet::new();
     if let Some((unit, raw_unit)) = &anchor_basis {
@@ -183,7 +193,7 @@ pub(super) fn build(
             },
         );
     }
-    if body_edit || adding || pin_remove || anchor_edit {
+    if body_edit || line_edit || adding || pin_remove || anchor_edit {
         prepared.batch.operations.insert(
             0,
             crate::substrate::Operation::GuardObjectRevision {
@@ -584,3 +594,7 @@ mod remove_pin_tests;
 #[cfg(test)]
 #[path = "library_gui_symbol_relink_anchor_tests.rs"]
 mod relink_anchor_tests;
+
+#[cfg(test)]
+#[path = "library_gui_symbol_line_tests.rs"]
+mod line_tests;

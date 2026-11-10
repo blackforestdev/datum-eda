@@ -1,6 +1,8 @@
 //! Unit pin table, Symbol anchor/body properties and readable source review.
 use super::*;
 use datum_gui_protocol::library_authoring::LibraryDraft;
+#[path = "library_line_form.rs"]
+mod lines;
 
 pub(super) fn table(p: &mut Painter<'_>, d: &LibraryDraft, rect: RectPx) {
     if d.kind == "units" {
@@ -97,6 +99,7 @@ pub(super) fn table(p: &mut Painter<'_>, d: &LibraryDraft, rect: RectPx) {
                 p.line("Body correction unavailable · exactly one existing rectangle required");
             }
         }
+        lines::table(p, d);
     }
 }
 
@@ -188,7 +191,19 @@ pub(super) fn review(p: &mut Painter<'_>, d: &LibraryDraft) {
         let rectangle = if d.create {
             Some(0)
         } else {
-            d.saved_rectangle_index()
+            let rectangles: Vec<_> = raw["drawings"]
+                .as_array()
+                .into_iter()
+                .flatten()
+                .enumerate()
+                .filter(|(_, row)| row.get("Rect").is_some())
+                .map(|(index, _)| index)
+                .collect();
+            if rectangles.len() == 1 {
+                Some(rectangles[0])
+            } else {
+                None
+            }
         };
         if let Some(index) = rectangle {
             let base = format!("/drawings/{index}/Rect");
@@ -203,11 +218,12 @@ pub(super) fn review(p: &mut Painter<'_>, d: &LibraryDraft) {
         }
         if !d.create {
             p.line(if rectangle.is_some() {
-                "Other graphics and fields retained · placed users stay frozen"
+                "Other raw graphics and fields retained · placed users stay frozen"
             } else {
                 "Body correction unavailable · exactly one existing rectangle required"
             });
         }
+        lines::review(p, raw);
         for anchor in raw
             .get("pin_anchors")
             .and_then(Value::as_array)

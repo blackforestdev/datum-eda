@@ -61,7 +61,7 @@ pub(crate) fn project_bodies(
 }
 // Preserve materialized electrical terminals and ordinary document inspection
 // when a declared source cannot be authenticated. Never substitute latest.
-fn unavailable_source(scene: &mut BoardReviewSceneV1, placed: &PlacedSymbol) {
+pub(crate) fn unavailable_source(scene: &mut BoardReviewSceneV1, placed: &PlacedSymbol) {
     let base_id = format!("schematic-symbol:{}", placed.uuid);
     scene.board_graphics.retain(|g| g.object_id != base_id);
     let mut sink = SchematicTextSink::default();

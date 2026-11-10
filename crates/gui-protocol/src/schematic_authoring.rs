@@ -179,6 +179,9 @@ pub struct SchematicAuthoring {
     >,
     pub source: Option<eda_engine::schematic::Schematic>,
     pub sheet: Option<Uuid>,
+    /// Disposable source-qualified projection basis for existing placed IDs.
+    /// Legacy unbound sources keep the ordinary current-source display basis.
+    pub placed_symbol_definitions: std::collections::BTreeMap<Uuid, Result<Option<Symbol>, String>>,
     pub choices: Vec<LibrarySymbolChoice>,
     pub chosen: Option<usize>,
     pub choice_offset: usize,
@@ -236,6 +239,7 @@ impl SchematicAuthoring {
     pub fn from_model(model: &DesignModel) -> anyhow::Result<Self> {
         let basis = ElectricalSelectionSnapshot::capture(model)
             .map_err(|e| anyhow::anyhow!("Schematic source unavailable: {e:?}"))?;
+        let mut current_symbols = std::collections::BTreeMap::new();
         let mut state = Self {
             source: basis.schematic_source().cloned(),
             ..Default::default()
@@ -347,6 +351,7 @@ impl SchematicAuthoring {
                 let symbol: Symbol = serde_json::from_value(
                     model.materialized_source_shard_value_by_relative_path(&shard.relative_path)?,
                 )?;
+                current_symbols.insert(symbol.uuid, symbol.clone());
                 let id = symbol.uuid.to_string();
                 let binding = resolve_pool_symbol_component_binding(model, Some(&id))?;
                 Ok(LibrarySymbolChoice {
@@ -372,6 +377,38 @@ impl SchematicAuthoring {
                 Err(error) => {
                     state.refusal = Some(format!("A native library entry is unavailable: {error}"))
                 }
+            }
+        }
+        if let Some(source) = &state.source {
+            for placed in source
+                .sheets
+                .values()
+                .flat_map(|sheet| sheet.symbols.values())
+            {
+                let definition = if let Some(id) = placed
+                    .lib_id
+                    .as_deref()
+                    .and_then(|id| id.parse::<Uuid>().ok())
+                {
+                    match model.materialized_placed_symbol_definition(placed.uuid, id) {
+                        Ok(Some(raw)) => serde_json::from_value::<Symbol>(raw)
+                            .map(Some)
+                            .map_err(|e| e.to_string()),
+                        // This is the existing legacy display-only fallback, not
+                        // a fabricated historical binding or a new revision reader.
+                        Ok(None) => current_symbols
+                            .get(&id)
+                            .cloned()
+                            .map(Some)
+                            .ok_or_else(|| "Native library source unavailable".to_owned()),
+                        Err(error) => Err(error.to_string()),
+                    }
+                } else {
+                    Ok(None)
+                };
+                state
+                    .placed_symbol_definitions
+                    .insert(placed.uuid, definition);
             }
         }
         state

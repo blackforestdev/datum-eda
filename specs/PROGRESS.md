@@ -699,6 +699,31 @@ reopen. The broader selected board-track failure remains unresolved under
 `dat-exact30-track-ci-lg26`, not an overall batch PASS. This supplies no physical/
 HUMAN, release-GUI, full-qualification or broader-goal acceptance.
 
+Saved Symbol Line graphics (`dat-saved-symbol-line-graphics-l2f7`) now supports
+adding Lines, selecting an original saved row to correct endpoints/stroke or
+remove it, Preview/Cancel, canonical Undo/Redo and Save/cold reopening. Captured
+array indices and raw preimages preserve duplicate geometry, raw siblings and
+Point metadata; new typed rows cannot manufacture nested UUID identities. Existing
+append-versus-edit numeric admission remains unchanged. Shared gesture previews
+now use each old instance's authenticated local definition at its requested pose;
+only new objects use current choices. Unavailable old captures use the existing
+unavailable rendering, while legacy unbound display semantics remain intact.
+
+The current isolated App passes 140 stages in 21.63 seconds with eight inspected
+captures and clean owned-process shutdown. Actual old Root body/pin/text/glyph
+geometry stays exact before/during the ghost, after commit and cold; only new U6
+uses the revised Line. The earlier warm-preview leak was found by independent
+visual review and fixed in the shared projection. With no setup, six sole Set
+Symbol history transactions preserve the other 28 sources and original 40-transaction
+journal prefix. One later U6 placement adds one Net and records one exact old
+initial-Net lineage transition; the other 26 original files remain byte-exact,
+with 30 sources/47 transactions after cold reopening. There are 112 unique scoped
+Rust passes; the wider affected pose batch remains 44PASS/1FAIL under existing
+`dat-project-annotation-root-assertion-i6m9`, not an overall PASS. Prior failed
+fixtures/compiles and superseded App proofs retain their actual scope. This does
+not establish physical/HUMAN, release-GUI, full qualification or broader-goal
+acceptance.
+
 Saved Symbol rectangle correction (`dat-saved-symbol-rectangle-iltr`) enables the
 existing five min/max/stroke numeric fields for one unambiguous Rect, preserving
 its raw array position, other graphics, unknown metadata, Unit/UUID, anchors and

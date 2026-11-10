@@ -333,22 +333,32 @@ impl Runtime {
             | C::RemovePin
             | C::Anchor(_)
             | C::AddAnchor
-            | C::RemoveAnchor => {
+            | C::RemoveAnchor
+            | C::Line(_)
+            | C::AddLine
+            | C::RemoveLine => {
                 let browser = &mut self.session.workspace_mut().library;
                 if let Some(d) = &mut browser.draft {
                     let pin = matches!(control, C::Pin(_) | C::AddPin | C::RemovePin);
+                    let line = matches!(control, C::Line(_) | C::AddLine | C::RemoveLine);
                     let index = match control {
-                        C::Pin(i) | C::Anchor(i) => Some(i),
+                        C::Pin(i) | C::Anchor(i) | C::Line(i) => Some(i),
                         _ => None,
                     };
-                    let result = if pin {
+                    let result = if line {
+                        d.switch_line(index, control == C::RemoveLine)
+                    } else if pin {
                         d.switch_pin(index, control == C::RemovePin)
                     } else {
                         d.switch_anchor(index, control == C::RemoveAnchor)
                     };
                     match result {
                         Ok(()) => {
-                            let key = if pin {
+                            let key = if line && d.electrical.lines.selected.is_none() {
+                                "name"
+                            } else if line {
+                                "line_from_x"
+                            } else if pin {
                                 "pin_name"
                             } else if d.create
                                 || d.electrical.new_anchor
@@ -467,6 +477,13 @@ impl Runtime {
                         controls.push(C::AddAnchor);
                         if d.create || d.electrical.new_anchor || d.electrical.anchor_id.is_some() {
                             controls.push(C::RemoveAnchor);
+                        }
+                    }
+                    if d.kind == "symbols" && !d.create {
+                        controls.extend(d.electrical.lines.rows.keys().copied().map(C::Line));
+                        controls.push(C::AddLine);
+                        if d.electrical.lines.selected.is_some() {
+                            controls.push(C::RemoveLine);
                         }
                     }
                     if d.kind == "entities" {

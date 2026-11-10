@@ -263,6 +263,35 @@ impl SchematicAuthoring {
             &root.join("schematic/schematic.json"),
         )?;
         for placed in source.sheets[&sheet].symbols.values() {
+            match self.placed_symbol_definitions.get(&placed.uuid) {
+                Some(Ok(Some(symbol))) => {
+                    crate::schematic_scene_import::native_library::replace_body(
+                        &mut scene, placed, symbol,
+                    )?;
+                    continue;
+                }
+                Some(Ok(None)) => continue,
+                Some(Err(_)) => {
+                    crate::schematic_scene_import::native_library::unavailable_source(
+                        &mut scene, placed,
+                    );
+                    continue;
+                }
+                None if self.source.as_ref().is_some_and(|source| {
+                    source
+                        .sheets
+                        .values()
+                        .any(|sheet| sheet.symbols.contains_key(&placed.uuid))
+                }) =>
+                {
+                    crate::schematic_scene_import::native_library::unavailable_source(
+                        &mut scene, placed,
+                    );
+                    continue;
+                }
+                None => {}
+            }
+            // Only new preview objects use the selected current library source.
             if let Some(choice) = self
                 .choices
                 .iter()

@@ -88,6 +88,9 @@ impl LibraryDraft {
                 }
             }
         }
+        if self.kind == "symbols" {
+            self.hydrate_lines();
+        }
         Ok(())
     }
 
@@ -364,6 +367,7 @@ impl LibraryDraft {
                 fields.insert("pin_additions".into(), additions.into());
             }
         } else {
+            self.line_request(fields)?;
             if let Some(drawings) = self.saved_drawings()? {
                 fields.insert("drawings".into(), drawings);
             }
