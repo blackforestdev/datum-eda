@@ -5,6 +5,8 @@ use super::*;
 mod anchor_relinks;
 #[path = "library_gui_symbol_graphic_edit.rs"]
 mod graphics;
+#[path = "library_gui_symbol_fields.rs"]
+mod symbol_fields;
 #[path = "library_gui_unit_pin_usage.rs"]
 mod unit_pin_usage;
 
@@ -27,23 +29,28 @@ pub(super) fn build(
         ]
         .iter()
         .any(|key| request.fields.contains_key(*key));
+    let field_edit = request.kind == "symbols"
+        && symbol_fields::KEYS
+            .iter()
+            .any(|key| request.fields.contains_key(*key));
     let adding = request.kind == "units" && request.fields.contains_key("pin_additions");
     let pin_remove = request.kind == "units" && request.fields.contains_key("pin_removals");
     let anchor_add = request.kind == "symbols" && request.fields.contains_key("anchor_additions");
     let anchor_remove = request.kind == "symbols" && request.fields.contains_key("anchor_removals");
     let anchor_relink = request.kind == "symbols" && request.fields.contains_key("anchor_relinks");
     let anchor_edit = anchor_add || anchor_remove || anchor_relink;
-    let (target, mut object) = if body_edit || graphic_edit || adding || pin_remove || anchor_edit {
-        super::super::saved_source::load(context.model, request.object_id, &request.kind)?
-    } else {
-        let target = PoolLibraryObjectTarget::new("pool", &request.kind, request.object_id);
-        let object = library::pool_library_object_payload(
-            context.model,
-            &target.relative_path,
-            request.object_id,
-        )?;
-        (target, object)
-    };
+    let (target, mut object) =
+        if body_edit || graphic_edit || field_edit || adding || pin_remove || anchor_edit {
+            super::super::saved_source::load(context.model, request.object_id, &request.kind)?
+        } else {
+            let target = PoolLibraryObjectTarget::new("pool", &request.kind, request.object_id);
+            let object = library::pool_library_object_payload(
+                context.model,
+                &target.relative_path,
+                request.object_id,
+            )?;
+            (target, object)
+        };
     let previous = object.clone();
     let pin_removals = if pin_remove {
         unit_pin_usage::removals(context.model, &request, &previous)?
@@ -101,6 +108,7 @@ pub(super) fn build(
                 "line_edits" | "line_removals" | "line_additions" | "rect_edits" | "rect_removals"
                 | "graphic_additions" | "text_edits" | "text_removals",
             ) => {}
+            ("symbols", key) if symbol_fields::KEYS.contains(&key) => {}
             ("symbols", "drawings") => {
                 validate_rectangle(&object["drawings"], value)?;
                 object["drawings"] = value.clone();
@@ -128,14 +136,15 @@ pub(super) fn build(
                 object["pin_anchors"] = posed;
             }
             _ => {
-                return Err(refusal(
-                    "Saved electrical edits support names, explicit pin, anchor, Line, Rect and Text edits only",
-                ));
+                return Err(refusal("Unsupported saved Unit or Symbol edit"));
             }
         }
     }
     if graphic_edit {
         graphics::apply(&request, &previous, &mut object)?;
+    }
+    if field_edit {
+        symbol_fields::apply(&request, &previous, &mut object)?;
     }
     let mut references = HashSet::new();
     if let Some((unit, raw_unit)) = &anchor_basis {
@@ -206,7 +215,7 @@ pub(super) fn build(
             },
         );
     }
-    if body_edit || graphic_edit || adding || pin_remove || anchor_edit {
+    if body_edit || graphic_edit || field_edit || adding || pin_remove || anchor_edit {
         prepared.batch.operations.insert(
             0,
             crate::substrate::Operation::GuardObjectRevision {
@@ -619,3 +628,7 @@ mod rect_tests;
 #[cfg(test)]
 #[path = "library_gui_symbol_text_tests.rs"]
 mod text_tests;
+
+#[cfg(test)]
+#[path = "library_gui_symbol_field_tests.rs"]
+mod symbol_field_tests;

@@ -3,6 +3,8 @@ use super::*;
 use datum_gui_protocol::library_authoring::LibraryDraft;
 #[path = "library_graphic_form.rs"]
 mod graphics;
+#[path = "library_symbol_fields_form.rs"]
+mod symbol_fields;
 
 pub(super) fn table(p: &mut Painter<'_>, d: &LibraryDraft, rect: RectPx) {
     if d.kind == "units" {
@@ -97,6 +99,7 @@ pub(super) fn table(p: &mut Painter<'_>, d: &LibraryDraft, rect: RectPx) {
             p.line("Unit and logical pins retained");
         }
         graphics::table(p, d);
+        symbol_fields::table(p, d);
     }
 }
 
@@ -180,7 +183,8 @@ pub(super) fn review(p: &mut Painter<'_>, d: &LibraryDraft) {
             "Review: {action} Symbol {name} linked to Unit {unit}"
         ));
         if !d.create {
-            p.line("Other raw graphics and fields retained · placed users stay frozen");
+            p.line("Existing placed Symbols retain their data");
+            symbol_fields::review(p, raw);
         }
         graphics::review(p, raw);
         for anchor in raw

@@ -344,7 +344,11 @@ impl Runtime {
             | C::RemoveRect
             | C::Text(_)
             | C::AddText
-            | C::RemoveText => self.activate_electrical(control),
+            | C::RemoveText
+            | C::SymbolField(_)
+            | C::AddSymbolField
+            | C::RemoveSymbolField
+            | C::ClearSymbolPrefix => self.activate_electrical(control),
         }
         self.invalidate_frame();
         true
@@ -448,6 +452,7 @@ impl Runtime {
                     }
                     if d.kind == "symbols" && !d.create {
                         controls.extend(d.electrical.graphics.controls());
+                        controls.extend(d.electrical.symbol_fields.controls());
                     }
                     if d.kind == "entities" {
                         controls.extend((0..d.entity.gates.len()).map(C::Gate));

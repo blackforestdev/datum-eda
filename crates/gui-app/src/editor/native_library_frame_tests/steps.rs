@@ -23,6 +23,7 @@ pub(super) enum Step {
     SymbolLine(usize),
     SymbolRect(usize),
     SymbolText(usize),
+    SymbolFields(usize),
     PackageEdit(usize),
     TextFields(usize),
     MapLabels(usize),

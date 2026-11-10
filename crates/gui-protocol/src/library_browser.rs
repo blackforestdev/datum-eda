@@ -79,6 +79,10 @@ pub enum LibraryControl {
     RemoveRect,
     Text(usize),
     AddText,
+    SymbolField(usize),
+    AddSymbolField,
+    RemoveSymbolField,
+    ClearSymbolPrefix,
     RemoveText,
 }
 

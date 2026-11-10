@@ -699,6 +699,19 @@ reopen. The broader selected board-track failure remains unresolved under
 `dat-exact30-track-ci-lg26`, not an overall batch PASS. This supplies no physical/
 HUMAN, release-GUI, full-qualification or broader-goal acceptance.
 
+Saved Symbol definition fields and prefix
+(`dat-saved-symbol-fields-prefix-rmdc`) support adding, selecting, editing and
+removing ordered rows and setting or clearing the prefix in the shared Library
+form. The isolated App passed 111 stages in 35.57 seconds with six inspected
+captures. Preview and cancel preserved sources and history. Ten sole Set
+Symbol operations preserved the original 61-transaction prefix and existing
+placed data. A separate bare XQ1 placement used the saved prefix and began
+with empty placed fields. The final project had 33 sources and 72 transactions.
+The MPN value preserved Greek Omega in the source. The preview displayed a
+replacement box under the existing glyph-coverage issue
+`dat-ui-filename-glyph-coverage-o53p`. There were 82 scoped Rust passes, with
+the existing `dat-17ld` case ignored.
+
 Saved Symbol literal Text (`dat-saved-symbol-text-graphics-w0k9`) supports add,
 selection, content/position/rotation editing and removal in the shared graphics
 form. Existing text layout determines the preview envelope. The corrected

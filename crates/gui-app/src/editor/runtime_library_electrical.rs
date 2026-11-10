@@ -10,28 +10,25 @@ impl Runtime {
                 _ => None,
             };
             let graphic = d.switch_graphic_control(&control);
-            let is_graphic = graphic.is_some();
-            let result = if let Some(result) = graphic {
+            let result = if let Some(result) = d.switch_symbol_field_control(&control) {
                 result
+            } else if let Some(result) = graphic {
+                result.map(|()| d.electrical.graphics.focus_key())
             } else if pin {
                 d.switch_pin(index, control == C::RemovePin)
+                    .map(|()| "pin_name")
             } else {
                 d.switch_anchor(index, control == C::RemoveAnchor)
+                    .map(|()| {
+                        if d.create || d.electrical.new_anchor || d.electrical.anchor_id.is_some() {
+                            "anchor_pin"
+                        } else {
+                            "anchor_x"
+                        }
+                    })
             };
             match result {
-                Ok(()) => {
-                    let key = if is_graphic {
-                        d.electrical.graphics.focus_key()
-                    } else if pin {
-                        "pin_name"
-                    } else if d.create
-                        || d.electrical.new_anchor
-                        || d.electrical.anchor_id.is_some()
-                    {
-                        "anchor_pin"
-                    } else {
-                        "anchor_x"
-                    };
+                Ok(key) => {
                     if let Some(focused) = d.fields.iter().position(|f| f.key == key) {
                         d.focused = focused;
                         d.offset = focused;

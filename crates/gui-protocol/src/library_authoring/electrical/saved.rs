@@ -77,6 +77,7 @@ impl LibraryDraft {
         }
         if self.kind == "symbols" {
             self.hydrate_graphics();
+            self.hydrate_symbol_fields(raw)?;
         }
         Ok(())
     }
@@ -325,6 +326,7 @@ impl LibraryDraft {
             }
         } else {
             self.graphic_request(fields)?;
+            self.symbol_field_request(original, fields)?;
             let anchors = self.electrical_anchors()?;
             let mut ordered = original
                 .get("pin_anchors")

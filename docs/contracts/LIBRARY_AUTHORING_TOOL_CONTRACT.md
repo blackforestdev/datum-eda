@@ -369,6 +369,33 @@ release-GUI or full-qualification result. A broader test filter also selected an
 unresolved board-track failure (`dat-exact30-track-ci-lg26`); that batch is not a
 PASS and does not widen this increment's scope.
 
+Saved Symbol definition fields and reference prefix
+(`dat-saved-symbol-fields-prefix-rmdc`) use the shared Library form. Designers
+can add, select, edit and remove ordered field rows, including duplicate keys.
+A row stores its literal key and value, optional position and visibility.
+Captured indices and exact raw preimages identify saved rows. Coordinate edits
+preserve Point metadata. Clearing a position removes its member. Untouched
+legacy values and raw metadata retain their representation.
+
+The prefix editor stores the string as typed. Clear removes the property and
+the existing bare Symbol allocator falls back to `U`. An authored empty
+string produces a numeric reference. Existing placed instances retain their
+data. A later bare placement uses the saved prefix and the existing allocator,
+takes its Value from the Symbol name, and starts with empty placed fields.
+
+The isolated native App passed 111 stages in 35.57 seconds with six inspected
+captures. The add and edit previews showed the field review. Clear showed
+Default U. After cold reopening the form showed XQ and MPN, and the test
+asserted the remaining hydrated row data. The MPN value retained Greek Omega
+in the source. The preview showed a replacement box for it, within the
+existing glyph-coverage gap (`dat-ui-filename-glyph-coverage-o53p`).
+The original 61 transactions remained byte-exact through ten sole Set Symbol
+operations and one separate XQ1 placement. XQ1 was readable in the placement
+ghost and after reopening. The final project had 33 sources and 72
+transactions. The focused Rust suites passed 82 tests, with the existing
+`dat-17ld` case ignored. The App evidence comes from programmatic input in
+an isolated Wayland session.
+
 Saved Symbol literal Text graphics (`dat-saved-symbol-text-graphics-w0k9`) share
 the Line and Rect form. Designers can add, select, edit and remove text, including
 its position and rotation, then preview, cancel, commit, undo, redo, save and reopen.

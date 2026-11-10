@@ -4,12 +4,14 @@ use std::collections::BTreeMap;
 
 mod graphics;
 mod saved;
+mod symbol_fields;
 pub use graphics::GraphicDraft;
 
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct ElectricalDraft {
     pub original: Option<Value>,
     pub graphics: GraphicDraft,
+    pub symbol_fields: symbol_fields::SymbolFieldDraft,
     pub unit_label: Option<String>,
     pub pin_id: Option<Uuid>,
     pub pins: Map<String, Value>,
@@ -474,3 +476,6 @@ mod rect_tests;
 
 #[cfg(test)]
 mod text_tests;
+
+#[cfg(test)]
+mod symbol_field_tests;
