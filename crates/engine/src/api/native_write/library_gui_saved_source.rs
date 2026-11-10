@@ -7,23 +7,40 @@ pub(super) fn load(
     kind: &str,
 ) -> Result<(PoolLibraryObjectTarget, Value), EngineError> {
     let target = PoolLibraryObjectTarget::new("pool", kind, id);
-    let candidates = model
+    let (path, object) = reference(model, id, kind)?;
+    if path != target.relative_path {
+        return Err(refusal(
+            "Saved definition is not owned by the canonical project pool path",
+        ));
+    }
+    Ok((target, object))
+}
+
+// Reading a qualified reference does not grant ownership of its write path.
+// One existing source scan serves both reference reads and canonical saved edits.
+pub(super) fn reference(
+    model: &crate::substrate::DesignModel,
+    id: Uuid,
+    kind: &str,
+) -> Result<(String, Value), EngineError> {
+    let mut candidates = Vec::new();
+    for shard in model
         .source_shards
         .iter()
         .filter(|s| s.kind == SourceShardKind::Pool)
-        .filter(|s| {
-            model
-                .materialized_source_shard_value_by_relative_path(&s.relative_path)
-                .ok()
-                .and_then(|v| {
-                    v.get("uuid")
-                        .and_then(Value::as_str)
-                        .and_then(|s| Uuid::parse_str(s).ok())
-                })
+    {
+        if let Ok(raw) =
+            model.materialized_source_shard_value_by_relative_path(&shard.relative_path)
+            && raw
+                .get("uuid")
+                .and_then(Value::as_str)
+                .and_then(|s| s.parse::<Uuid>().ok())
                 == Some(id)
-        })
-        .count();
-    if candidates != 1 {
+        {
+            candidates.push((shard, raw));
+        }
+    }
+    if candidates.len() != 1 {
         return Err(refusal(
             "Saved definition identity has missing or ambiguous source candidates",
         ));
@@ -33,17 +50,13 @@ pub(super) fn load(
         .get(&id)
         .filter(|o| o.domain == "pool" && o.kind == kind)
         .ok_or_else(|| refusal("Saved definition has no matching canonical source"))?;
-    if !model.source_shards.iter().any(|s| {
-        s.shard_id == source.source_shard_id
-            && s.kind == SourceShardKind::Pool
-            && s.relative_path == target.relative_path
-    }) {
+    let (shard, object) = candidates.pop().unwrap();
+    if source.source_shard_id != shard.shard_id {
         return Err(refusal(
             "Saved definition is not owned by the canonical project pool path",
         ));
     }
-    let object = library::pool_library_object_payload(model, &target.relative_path, id)?;
-    Ok((target, object))
+    Ok((shard.relative_path.clone(), object))
 }
 
 pub(super) fn preserve_pinned_revision(

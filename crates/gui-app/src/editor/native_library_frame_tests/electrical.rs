@@ -55,11 +55,13 @@ impl Fixture {
                 .as_ref()
                 .unwrap();
             assert!(
-                !matches!(focus, Some(C::AddAnchor | C::RemoveAnchor))
+                (!matches!(focus, Some(C::AddAnchor)) || draft.kind == "symbols")
+                    && (!matches!(focus, Some(C::RemoveAnchor))
+                        || (draft.kind == "symbols" && draft.electrical.new_anchor))
                     && (!matches!(focus, Some(C::AddPin)) || draft.kind == "units")
                     && (!matches!(focus, Some(C::RemovePin))
                         || (draft.kind == "units" && draft.electrical.selected_new_pin())),
-                "only backed saved-Unit Add and genuine new-row discard may receive Tab"
+                "only backed per-kind Add and genuine new-row discard may receive Tab"
             );
         }
     }

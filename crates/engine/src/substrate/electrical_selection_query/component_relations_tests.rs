@@ -641,3 +641,6 @@ mod entity_remove_gate_tests;
 
 #[path = "component_relations_unit_add_pin_tests.rs"]
 mod unit_add_pin_tests;
+
+#[path = "component_relations_symbol_add_anchor_tests.rs"]
+mod symbol_add_anchor_tests;

@@ -12,6 +12,7 @@ pub struct ElectricalDraft {
     pub pins: Map<String, Value>,
     pub anchors: Map<String, Value>,
     pub anchor_id: Option<Uuid>,
+    pub new_anchor: bool,
     pub unit_pins: BTreeMap<String, Vec<(String, String)>>,
 }
 
@@ -78,7 +79,12 @@ impl LibraryDraft {
                     .and_then(Value::as_object)
                     .into_iter()
                     .flat_map(|m| m.iter())
-                    .filter_map(|(id, pin)| Some((id.clone(), pin.get("name")?.as_str()?.into())))
+                    .filter_map(|(id, pin)| {
+                        Some((
+                            id.parse::<Uuid>().ok()?.to_string(),
+                            pin.get("name")?.as_str()?.into(),
+                        ))
+                    })
                     .collect();
                 (e.id.to_string(), pins)
             })
@@ -114,7 +120,9 @@ impl LibraryDraft {
         let choices = self
             .electrical
             .unit_pins
-            .get(self.value("unit"))
+            .iter()
+            .find(|(id, _)| id.parse::<Uuid>().ok() == self.electrical_unit().parse::<Uuid>().ok())
+            .map(|(_, pins)| pins)
             .cloned()
             .unwrap_or_default();
         if let Some(field) = self.fields.iter_mut().find(|f| f.key == "anchor_pin") {
@@ -153,19 +161,27 @@ impl LibraryDraft {
     }
 
     pub fn electrical_anchors(&self) -> Result<Map<String, Value>, String> {
-        if !self.create {
+        if !self.create && !self.electrical.new_anchor {
             return self.saved_anchors();
         }
         let mut anchors = self.electrical.anchors.clone();
         if !self.value("anchor_pin").is_empty() {
             let pin = self.uuid("anchor_pin")?;
-            if anchors.contains_key(&pin.to_string()) && self.electrical.anchor_id != Some(pin) {
+            let matches = anchors
+                .keys()
+                .filter(|k| k.parse::<Uuid>().ok() == Some(pin))
+                .count();
+            if matches > 1 {
+                return Err("Symbol anchor identity is ambiguous".into());
+            }
+            if matches == 1 && self.electrical.anchor_id != Some(pin) {
                 return Err(
                     "This Unit pin already has an anchor; select that anchor to edit it".into(),
                 );
             }
             if let Some(previous) = self.electrical.anchor_id {
-                anchors.remove(&previous.to_string());
+                let key = pin_key(&anchors, previous)?;
+                anchors.remove(&key);
             }
             if self.value("anchor_orientation").is_empty() {
                 return Err("Choose the pin stub direction".into());
@@ -179,7 +195,8 @@ impl LibraryDraft {
                         "length_nm":self.length("anchor_length")?,"decoration":"none"}
                 }),
             );
-        } else if self.electrical.anchor_id.is_some()
+        } else if (!self.create && self.electrical.new_anchor)
+            || self.electrical.anchor_id.is_some()
             || [
                 "anchor_x",
                 "anchor_y",
@@ -285,16 +302,62 @@ impl LibraryDraft {
         Ok(())
     }
 
-    pub fn switch_anchor(&mut self, index: Option<usize>, remove: bool) -> Result<(), String> {
-        if !self.create && (remove || index.is_none()) {
-            return Err("Saved edits preserve anchor identities and pin links".into());
+    fn original_anchor(&self, id: Uuid) -> bool {
+        self.electrical
+            .original
+            .as_ref()
+            .and_then(|raw| raw["pin_anchors"].as_array())
+            .is_some_and(|rows| {
+                rows.iter()
+                    .any(|r| r["pin"].as_str().and_then(|s| s.parse::<Uuid>().ok()) == Some(id))
+            })
+    }
+    fn anchor_editor_fields(&mut self) {
+        if self.electrical.new_anchor {
+            if !self.fields.iter().any(|f| f.key == "anchor_pin") {
+                self.field("anchor_pin", "Named Unit pin", None, vec![]);
+                let pin = self.fields.pop().unwrap();
+                let index = self
+                    .fields
+                    .iter()
+                    .position(|f| f.key == "anchor_x")
+                    .unwrap();
+                self.fields.insert(index, pin);
+            }
+            self.refresh_unit_pin_choices();
+        } else {
+            self.fields.retain(|f| f.key != "anchor_pin");
         }
-        let selected = index
-            .and_then(|i| self.electrical.anchors.keys().nth(i))
-            .cloned();
+    }
+
+    pub fn switch_anchor(&mut self, index: Option<usize>, remove: bool) -> Result<(), String> {
+        if self.kind != "symbols" {
+            return Err("Pin anchor authoring requires a Symbol draft".into());
+        }
+        if !self.create && remove && !self.electrical.new_anchor {
+            return Err("Saved edits preserve existing anchor identities and pin links".into());
+        }
+        let selected = if let Some(index) = index {
+            let key = self
+                .electrical
+                .anchors
+                .keys()
+                .nth(index)
+                .ok_or("Choose an existing anchor")?;
+            let id = key
+                .parse()
+                .map_err(|_| "Anchor pin identity is malformed")?;
+            Some(pin_key(&self.electrical.anchors, id)?)
+        } else {
+            None
+        };
         if remove {
             if let Some(id) = self.electrical.anchor_id {
-                self.electrical.anchors.remove(&id.to_string());
+                if !self.create && self.original_anchor(id) {
+                    return Err("Existing saved anchors cannot be removed".into());
+                }
+                let key = pin_key(&self.electrical.anchors, id)?;
+                self.electrical.anchors.remove(&key);
             }
         } else {
             self.electrical.anchors = self.electrical_anchors()?;
@@ -304,6 +367,14 @@ impl LibraryDraft {
             .and_then(|id| self.electrical.anchors.get(id))
             .cloned();
         self.electrical.anchor_id = selected.and_then(|id| id.parse().ok());
+        if !self.create {
+            self.electrical.new_anchor = !remove
+                && self
+                    .electrical
+                    .anchor_id
+                    .is_none_or(|id| !self.original_anchor(id));
+            self.anchor_editor_fields();
+        }
         for (key, pointer) in [
             ("anchor_pin", "/pin"),
             ("anchor_x", "/position/x"),
@@ -343,3 +414,6 @@ mod tests;
 
 #[cfg(test)]
 mod add_pin_tests;
+
+#[cfg(test)]
+mod add_anchor_tests;

@@ -9,7 +9,8 @@ pub(super) fn build(
 ) -> Result<PreparedWrite, EngineError> {
     let body_edit = request.kind == "symbols" && request.fields.contains_key("drawings");
     let adding = request.kind == "units" && request.fields.contains_key("pin_additions");
-    let (target, mut object) = if body_edit || adding {
+    let anchor_add = request.kind == "symbols" && request.fields.contains_key("anchor_additions");
+    let (target, mut object) = if body_edit || adding || anchor_add {
         super::super::saved_source::load(context.model, request.object_id, &request.kind)?
     } else {
         let target = PoolLibraryObjectTarget::new("pool", &request.kind, request.object_id);
@@ -39,6 +40,7 @@ pub(super) fn build(
                 validate_rectangle(&object["drawings"], value)?;
                 object["drawings"] = value.clone();
             }
+            ("symbols", "anchor_additions") => {} // Append after retained poses are composed.
             ("symbols", "pin_anchors") => {
                 validate_anchors(&object["pin_anchors"], value)?;
                 object["pin_anchors"] = value.clone();
@@ -53,6 +55,11 @@ pub(super) fn build(
     if adding {
         add_pins(context.model, &request, &mut object)?;
     }
+    let references = if anchor_add {
+        add_anchors(context.model, &request, &mut object)?
+    } else {
+        HashSet::new()
+    };
     // Use the same typed definition admission and reference gate as generic Set.
     match request.kind.as_str() {
         "units" => {
@@ -77,7 +84,18 @@ pub(super) fn build(
         Some("pool"),
         vec![PoolLibraryOperationSpec::Set { target, object }],
     )?;
-    if body_edit || adding {
+    let mut references: Vec<_> = references.into_iter().collect();
+    references.sort();
+    for id in references.into_iter().rev() {
+        prepared.batch.operations.insert(
+            0,
+            crate::substrate::Operation::GuardObjectRevision {
+                object_id: id,
+                expected_object_revision: context.model.objects[&id].object_revision,
+            },
+        );
+    }
+    if body_edit || adding || anchor_add {
         prepared.batch.operations.insert(
             0,
             crate::substrate::Operation::GuardObjectRevision {
@@ -87,6 +105,82 @@ pub(super) fn build(
         );
     }
     Ok(prepared)
+}
+
+// Append typed new rows; existing ordered raw anchors and mixed graphics remain intact.
+fn add_anchors(
+    model: &crate::substrate::DesignModel,
+    request: &LibraryDefinitionRequest,
+    object: &mut Value,
+) -> Result<HashSet<Uuid>, EngineError> {
+    let unit: Uuid = serde_json::from_value(object["unit"].clone())?;
+    let (_, raw_unit) = super::super::saved_source::reference(model, unit, "units")?;
+    if raw_unit["schema_version"].as_u64() != Some(1) {
+        return Err(refusal("Retained Unit requires supported schema version 1"));
+    }
+    let _: crate::pool::Unit = serde_json::from_value(raw_unit.clone())?;
+    let pins = raw_unit["pins"]
+        .as_object()
+        .ok_or_else(|| refusal("Retained Unit pins unavailable"))?;
+    let mut members = HashSet::new();
+    for (key, raw) in pins {
+        let id: Uuid = key
+            .parse()
+            .map_err(|_| refusal("Unit pin identity is malformed"))?;
+        let pin: crate::pool::Pin = serde_json::from_value(raw.clone())?;
+        if !members.insert(id)
+            || pin.uuid != id
+            || model.objects.get(&id).is_none_or(|p| {
+                p.source_shard_id != model.objects[&unit].source_shard_id
+                    || p.domain != "pool"
+                    || (p.kind != "pins" && p.kind.parse::<Uuid>().ok() != Some(id))
+            })
+        {
+            return Err(refusal(
+                "Retained Unit pin membership is missing or ambiguous",
+            ));
+        }
+    }
+    let mut anchored = HashSet::new();
+    if let Some(value) = object.get("pin_anchors") {
+        for raw in value
+            .as_array()
+            .ok_or_else(|| refusal("Symbol anchors must remain an ordered array"))?
+        {
+            let anchor: crate::pool::SymbolPinAnchor = serde_json::from_value(raw.clone())?;
+            if !anchored.insert(anchor.pin) {
+                return Err(refusal("Existing Symbol anchor identity is ambiguous"));
+            }
+        }
+    }
+    let additions = request.fields["anchor_additions"]
+        .as_array()
+        .filter(|a| !a.is_empty())
+        .ok_or_else(|| refusal("Add an explicit named pin anchor"))?;
+    let mut references = HashSet::from([unit]);
+    let mut appended = Vec::new();
+    for raw in additions {
+        let anchor: crate::pool::SymbolPinAnchor = serde_json::from_value(raw.clone())?;
+        let pin = crate::api::native_write::schematic_library::unit_pin(pins, anchor.pin)?;
+        if pin["name"].as_str().is_none_or(|s| s.trim().is_empty()) {
+            return Err(refusal("Choose an existing named Unit pin"));
+        }
+        super::admit_anchor(&mut anchored, &anchor)?;
+        references.insert(anchor.pin);
+        // Only NEW anchors are serialized: unknown UUID-bearing extension data
+        // cannot manufacture another object class through this append intent.
+        appended.push(serde_json::to_value(anchor)?);
+    }
+    let anchors = object
+        .as_object_mut()
+        .unwrap()
+        .entry("pin_anchors")
+        .or_insert_with(|| json!([]));
+    anchors
+        .as_array_mut()
+        .ok_or_else(|| refusal("Symbol anchors must remain an ordered array"))?
+        .extend(appended);
+    Ok(references)
 }
 
 // New rows use the existing creation builder; retained raw pins are never serialized.
@@ -350,3 +444,7 @@ mod tests;
 #[cfg(test)]
 #[path = "library_gui_unit_add_pin_tests.rs"]
 mod add_pin_tests;
+
+#[cfg(test)]
+#[path = "library_gui_symbol_add_anchor_tests.rs"]
+mod add_anchor_tests;

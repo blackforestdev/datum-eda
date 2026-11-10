@@ -236,6 +236,40 @@ in owned Wayland. No saved-pin removal/rekeying, Symbol-topology edit, implicit
 placed update, new reader/schema/controller, approval, physical/HUMAN observation,
 release-GUI execution, full qualification or broader-goal acceptance is supplied.
 
+Saved Symbol anchor addition (`dat-saved-symbol-add-anchor-b6o1`) uses the same
+form to select an existing named pin of the retained Unit and set physical
+position, direction and stub length. Old/new row selection retains intent and
+invalid text; Remove draft anchor discards only a new row. Existing saved anchors
+cannot be removed or relinked. Sparse `anchor_additions` compose after supported
+old-pose edits and append to the ordered raw array. Old anchors, mixed graphics,
+fields and unknown metadata remain exact. The existing creation admission and
+unique parsed-UUID pin lookup are shared with later materialization; ambiguous
+membership, unsupported Unit schema, wrong-kind controls and stale sources refuse.
+Qualified Unit reference reads confer no canonical saved-write authority. Consumed
+Unit/pin and Symbol revisions are guarded; existing frozen-placement readers and
+retained-counter checks preserve old users.
+
+Thirty-one unique focused Rust cases and the corrected ordinary App run pass: 99 stages,
+21.63 seconds and nine inspected captures. Preview/Cancel, new-only discard,
+canonical Undo/Redo and Save/cold reopen use the existing writer. Starting from
+the prior 23-source/24-transaction circuit, no setup write is needed. Three sole
+Set Symbol history transactions preserve all other 22 files and old root/child
+scenes and captures. A later separate explicit Part/gate placement uses the
+expanded Symbol and two actual pins, creates one CI and two electrical identities,
+and permits only the exact existing initial Net lineage transition. Final cold
+state has 26 sources and 28 transactions. The capture named `cold-child` depicts
+Root after reopening; Child rendering assertions and frozen/source checks supply
+their own evidence. Raw compile/reference-fixture failures and the existing
+ignored case remain uncredited. The initial acceptance was withdrawn before landing
+after a valid compact numeric UUID exposed an existing `pins` registry fallback.
+The corrected guard admits that legitimate class under the same identity/source
+checks; append, materialization, history and cold regression cover it. The 13
+unchanged protocol cases retain their prior proof; the corrected engine and App
+supply matching current checks. Original candidate artifacts retain their own scope.
+This supplies no saved-anchor removal, automatic
+placed update, new history reader/schema/controller, physical/HUMAN observation,
+release-GUI execution, full qualification or broader-goal acceptance.
+
 Saved Symbol rectangle correction (`dat-saved-symbol-rectangle-iltr`) exposes the
 five existing body min/max coordinate and stroke fields for exactly one existing
 raw Rect, at its retained array position. Other known graphics can coexist. Only

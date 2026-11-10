@@ -324,7 +324,11 @@ fn saved_symbol_form_retains_order_graphics_and_legacy_anchor_representation() {
         json!({"pin_anchors":expected}).as_object().unwrap().clone()
     );
     assert_eq!(draft.electrical.original, Some(original));
-    assert!(draft.switch_anchor(None, false).is_err());
+    let mut adding = draft.clone();
+    adding.switch_anchor(None, false).unwrap();
+    assert!(adding.request().is_err());
+    adding.switch_anchor(None, true).unwrap();
+    assert_eq!(adding.request().unwrap().fields, request.fields);
     assert!(draft.switch_anchor(None, true).is_err());
     set(&mut draft, "anchor_x", "NaN");
     assert!(draft.request().is_err());

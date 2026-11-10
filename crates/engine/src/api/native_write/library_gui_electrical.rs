@@ -126,17 +126,23 @@ fn symbol_payload(
     }
     let mut anchored = HashSet::new();
     for anchor in &symbol.pin_anchors {
-        if !pins.contains_key(&anchor.pin.to_string()) {
-            return Err(refusal(
-                "Symbol anchor must reference a pin in the selected Unit",
-            ));
-        }
-        if !anchored.insert(anchor.pin) {
-            return Err(refusal("A Unit pin may have only one Symbol anchor"));
-        }
-        if anchor.style.length_nm.is_some_and(|length| length < 0) {
-            return Err(refusal("Pin stub length must not be negative"));
-        }
+        super::super::schematic_library::unit_pin(pins, anchor.pin)?;
+        admit_anchor(&mut anchored, anchor)?;
     }
     Ok(object)
+}
+
+// Creation and saved append share existing duplicate/stub admission only.
+// Retained mixed graphics are not subjected to the creation body template.
+fn admit_anchor(
+    anchored: &mut HashSet<Uuid>,
+    anchor: &crate::pool::SymbolPinAnchor,
+) -> Result<(), EngineError> {
+    if !anchored.insert(anchor.pin) {
+        return Err(refusal("A Unit pin may have only one Symbol anchor"));
+    }
+    if anchor.style.length_nm.is_some_and(|length| length < 0) {
+        return Err(refusal("Pin stub length must not be negative"));
+    }
+    Ok(())
 }

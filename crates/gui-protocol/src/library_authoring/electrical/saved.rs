@@ -308,7 +308,7 @@ impl LibraryDraft {
             if let Some(drawings) = self.saved_drawings()? {
                 fields.insert("drawings".into(), drawings);
             }
-            let anchors = self.saved_anchors()?;
+            let anchors = self.electrical_anchors()?;
             let mut ordered = original
                 .get("pin_anchors")
                 .and_then(Value::as_array)
@@ -323,6 +323,18 @@ impl LibraryDraft {
                     .get(pin)
                     .ok_or("Saved anchor identity changed")?
                     .clone();
+            }
+            let additions: Vec<_> = anchors
+                .iter()
+                .filter(|(key, _)| {
+                    key.parse::<Uuid>()
+                        .ok()
+                        .is_some_and(|id| !self.original_anchor(id))
+                })
+                .map(|(_, raw)| raw.clone())
+                .collect();
+            if !additions.is_empty() {
+                fields.insert("anchor_additions".into(), additions.into());
             }
             let anchors = Value::Array(ordered);
             if !(original.get("pin_anchors").is_none()

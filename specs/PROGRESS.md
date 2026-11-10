@@ -605,6 +605,32 @@ Earlier App proof retains its original candidate. Existing ignored17ld remains s
 controls supply no physical/HUMAN, release-GUI execution, saved-pin removal/rekey,
 implicit placed update, approval, full qualification or broader-goal acceptance.
 
+Saved Symbol Add anchor (`dat-saved-symbol-add-anchor-b6o1`) now supports an
+existing named pin of the retained Unit, physical position/direction/stub length,
+old/new row persistence, new-only discard, Preview/Cancel, canonical Undo/Redo and
+Save/cold reopen. Sparse ordered additions preserve old anchors, mixed raw
+artwork/fields and existing placed users. Shared parsed-UUID membership serves
+both authoring and materialization; qualified reference reads retain canonical
+write boundaries and source revision guards.
+
+Thirty-one unique focused Rust cases plus the corrected ordinary isolated App case
+pass: 99 stages, 21.63 seconds and nine inspected captures. The prior 23-source/
+24-transaction circuit needs no setup. Three sole-Set-Symbol history transactions
+preserve the other 22 files, old scenes and frozen captures. Later explicit Part/
+gate placement uses two pins from the expanded Symbol, creates one CI/two EIs,
+and changes only the exact existing initial Net lineage among old identities;
+final cold state is 26 sources/28 transactions. The `cold-child` filename depicts
+Root; Child scene assertions and cold source/frozen checks remain separately scoped.
+Raw compile/reference-fixture failures are retained; ignored17ld stays uncredited.
+The first acceptance was withdrawn before landing for a legitimate compact numeric
+UUID registered under existing Pin kind `pins`. The narrow correction retains
+source/identity checks and passes actual fallback append/materialization/history/
+cold regressions. Thirteen unchanged protocol cases reuse prior proof; corrected
+engine and matching App checks supply current evidence. Original artifacts remain
+at their recorded candidate.
+Programmatic controls establish no physical/HUMAN or release-GUI execution, saved
+anchor removal/relinking, implicit ECO, full qualification or broader-goal acceptance.
+
 Saved Symbol rectangle correction (`dat-saved-symbol-rectangle-iltr`) enables the
 existing five min/max/stroke numeric fields for one unambiguous Rect, preserving
 its raw array position, other graphics, unknown metadata, Unit/UUID, anchors and

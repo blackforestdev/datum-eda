@@ -16,6 +16,7 @@ pub(super) enum Step {
     EntityAddGate(usize),
     EntityRemoveGate(usize),
     UnitAddPin(usize),
+    SymbolAddAnchor(usize),
     PackageEdit(usize),
     TextFields(usize),
     MapLabels(usize),

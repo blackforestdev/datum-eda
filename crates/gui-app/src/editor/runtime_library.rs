@@ -350,7 +350,7 @@ impl Runtime {
                         Ok(()) => {
                             let key = if pin {
                                 "pin_name"
-                            } else if d.create {
+                            } else if d.create || d.electrical.new_anchor {
                                 "anchor_pin"
                             } else {
                                 "anchor_x"
@@ -461,8 +461,9 @@ impl Runtime {
                     }
                     if d.kind == "symbols" {
                         controls.extend((0..d.electrical.anchors.len()).map(C::Anchor));
-                        if d.create {
-                            controls.extend([C::AddAnchor, C::RemoveAnchor]);
+                        controls.push(C::AddAnchor);
+                        if d.create || d.electrical.new_anchor {
+                            controls.push(C::RemoveAnchor);
                         }
                     }
                     if d.kind == "entities" {

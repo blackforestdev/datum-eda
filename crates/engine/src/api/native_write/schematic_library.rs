@@ -61,9 +61,7 @@ pub fn materialize_pool_symbol_pins(
     let mut pins = Vec::new();
     for anchor in &symbol.pin_anchors {
         let pin_id = anchor.pin;
-        let unit_pin = unit_pins
-            .get(&pin_id.to_string())
-            .ok_or_else(|| invalid!("pool unit {unit_id} has no pin {pin_id}"))?;
+        let unit_pin = unit_pin(unit_pins, pin_id)?;
         let name = unit_pin
             .get("name")
             .and_then(serde_json::Value::as_str)
@@ -84,6 +82,33 @@ pub fn materialize_pool_symbol_pins(
         });
     }
     Ok(pins)
+}
+
+// Logical references use parsed UUID membership, independent of retained key spelling.
+pub(super) fn unit_pin(
+    pins: &serde_json::Map<String, serde_json::Value>,
+    id: Uuid,
+) -> Result<&serde_json::Value> {
+    let mut matches = pins
+        .iter()
+        .filter(|(key, _)| key.parse::<Uuid>().ok() == Some(id));
+    let (_, pin) = matches
+        .next()
+        .ok_or_else(|| invalid!("Unit has no logical pin {id}"))?;
+    if matches.next().is_some() {
+        return Err(invalid!("Unit logical pin {id} membership is ambiguous"));
+    }
+    if pin
+        .get("uuid")
+        .and_then(serde_json::Value::as_str)
+        .and_then(|s| s.parse::<Uuid>().ok())
+        != Some(id)
+    {
+        return Err(invalid!(
+            "Unit logical pin {id} membership and identity differ"
+        ));
+    }
+    Ok(pin)
 }
 
 pub fn resolve_pool_symbol_component_binding(

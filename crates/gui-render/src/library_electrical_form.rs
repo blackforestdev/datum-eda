@@ -73,10 +73,11 @@ pub(super) fn table(p: &mut Painter<'_>, d: &LibraryDraft, rect: RectPx) {
         for (index, anchor) in d.electrical.anchors.values().enumerate() {
             p.button(&anchor_label(d, anchor), C::Anchor(index));
         }
-        if d.create {
-            p.button("Add anchor", C::AddAnchor);
+        p.button("Add anchor", C::AddAnchor);
+        if d.create || d.electrical.new_anchor {
             p.button("Remove draft anchor", C::RemoveAnchor);
-        } else {
+        }
+        if !d.create {
             p.line("Existing pin links and Unit retained");
             if d.saved_rectangle_index().is_none() {
                 p.line("Body correction unavailable · exactly one existing rectangle required");
@@ -214,8 +215,23 @@ fn anchor_label(d: &LibraryDraft, anchor: &Value) -> String {
     let name = d
         .electrical
         .unit_pins
-        .get(d.electrical_unit())
-        .and_then(|pins| pins.iter().find(|(id, _)| id == pin))
+        .iter()
+        .find(|(id, _)| {
+            id.parse::<eda_engine::substrate::ObjectId>().ok()
+                == d.electrical_unit()
+                    .parse::<eda_engine::substrate::ObjectId>()
+                    .ok()
+        })
+        .map(|(_, pins)| pins)
+        .and_then(|pins| {
+            pins.iter().find(|(id, _)| {
+                id.parse::<eda_engine::substrate::ObjectId>()
+                    .ok()
+                    .is_some_and(|id| {
+                        pin.parse::<eda_engine::substrate::ObjectId>().ok() == Some(id)
+                    })
+            })
+        })
         .map(|(_, name)| name.as_str())
         .unwrap_or("Unavailable pin");
     let length = |key: &str| {
