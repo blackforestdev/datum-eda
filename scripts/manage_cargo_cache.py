@@ -228,7 +228,29 @@ def main() -> int:
     parser.add_argument("--manifest-sha256", help="required exact reviewed QA manifest SHA256")
     parser.add_argument("--released-qa-build", action="append", default=[], metavar="target/qa/BUNDLE",
                         help="validate released rebuildable outputs; append --apply to retire binaries only")
+    proof = parser.add_mutually_exclusive_group()
+    proof.add_argument("--retain-proof-build", metavar="target/qa/BUNDLE")
+    proof.add_argument("--resolve-proof-build", metavar="target/qa/BUNDLE")
+    parser.add_argument("--owner")
+    parser.add_argument("--session")
+    parser.add_argument("--issue")
+    parser.add_argument("--reason")
+    parser.add_argument("--pending-proof")
+    parser.add_argument("--result")
+    parser.add_argument("--provenance")
     args = parser.parse_args()
+    proof_bundle = args.retain_proof_build or args.resolve_proof_build
+    if not proof_bundle and any((args.owner, args.session, args.issue, args.reason,
+                                 args.pending_proof, args.result, args.provenance)):
+        parser.error("proof metadata requires a retain or resolve lifecycle command")
+    if proof_bundle and (args.remove or args.apply or args.metadata_only or args.qa_companions_manifest or args.released_qa_build):
+        parser.error("proof lifecycle commands cannot be mixed with other maintenance modes")
+    if proof_bundle and (not args.owner or not args.session):
+        parser.error("proof lifecycle requires --owner and --session")
+    if args.retain_proof_build and (not all((args.issue, args.reason, args.pending_proof)) or args.result or args.provenance):
+        parser.error("retain requires --issue, --reason and --pending-proof")
+    if args.resolve_proof_build and (not all((args.result, args.provenance)) or args.issue or args.reason or args.pending_proof):
+        parser.error("resolve requires --result and --provenance")
     if args.released_qa_build and (args.remove or args.metadata_only or args.qa_companions_manifest):
         parser.error("released QA retirement cannot be mixed with other cleanup modes")
     if bool(args.qa_companions_manifest) != bool(args.manifest_sha256):
@@ -240,7 +262,19 @@ def main() -> int:
     if args.apply and not (args.remove or args.qa_companions_manifest or args.released_qa_build):
         parser.error("--apply requires at least one --remove path")
     try:
-        if args.released_qa_build:
+        if proof_bundle:
+            try:
+                receipt = retention.proof_lifecycle(ROOT, proof_bundle, guard.load_policy().lock_path,
+                    lambda: active_processes(builds_only=True),
+                    lambda paths: active_cache_users(paths, Path("/proc"), include_mappings=True),
+                    owner=args.owner, session=args.session, issue=args.issue,
+                    reason=args.reason, pending=args.pending_proof,
+                    result=args.result, provenance=args.provenance)
+            except retention.Failure as exc:
+                print(json.dumps(exc.receipt, sort_keys=True))
+                raise
+            print(json.dumps(receipt, sort_keys=True))
+        elif args.released_qa_build:
             try:
                 receipt = retention.retire(ROOT, args.released_qa_build, guard.load_policy().lock_path,
                     lambda: active_processes(builds_only=True),

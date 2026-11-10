@@ -57,6 +57,180 @@ class RetentionTests(unittest.TestCase):
                         kwargs.pop("active_check", lambda: []),
                         kwargs.pop("users_check", lambda paths: []), **kwargs)
 
+    def prepare_proof(self):
+        metadata = self.root / self.bundle / "build-info.json"
+        value = json.loads(metadata.read_text())
+        value["build_retention"] = {}
+        metadata.write_text(json.dumps(value))
+        self.write(".beads/issues.jsonl", '{"id":"dat-test","status":"closed","assignee":"codex"}\n')
+
+    def proof(self, **kwargs):
+        return r.proof_lifecycle(self.root, self.bundle, self.root / "guard.lock",
+            kwargs.pop("active_check", lambda: []), kwargs.pop("users_check", lambda paths: []),
+            owner=kwargs.pop("owner", "codex"), session=kwargs.pop("session", "session-a"), **kwargs)
+
+    def retain_proof(self):
+        return self.proof(issue="dat-test", reason="Independent visual review needs this executable",
+                          pending="Review the presented application")
+
+    def test_proof_resolution_retires_in_same_command_and_preserves_evidence(self):
+        self.prepare_proof()
+        self.assertEqual(self.retain_proof()["status"], "proof_retained")
+        binary = self.root / self.bundle / "debug/datum-gui"
+        dependency = binary.with_name("datum-gui.d")
+        before = dependency.read_bytes()
+        self.assertTrue(binary.exists())  # A closed task alone does not resolve proof.
+        with self.assertRaises(r.Failure):
+            self.run_retire(apply=True)
+        result = self.proof(result="Review passed; source landed", provenance="commit abc; reviewer session-b")
+        self.assertFalse(binary.exists())
+        self.assertEqual(dependency.read_bytes(), before)
+        self.assertEqual(result["cleanup_residue"], [])
+        self.assertEqual(result["completed"], [self.bundle + "/debug/datum-gui"])
+        persisted = json.loads((self.root / self.bundle / "proof-cleanup.json").read_text())
+        self.assertEqual(persisted, result)
+        self.assertEqual(self.proof(result="Review passed; source landed",
+            provenance="commit abc; reviewer session-b")["completed"], [])
+        attempts = [json.loads(p.read_text()) for p in
+                    (self.root / self.bundle).glob("proof-cleanup-*.json")]
+        self.assertEqual(len(attempts), 2)
+        self.assertEqual([p for attempt in attempts for p in attempt["completed"]],
+                         [self.bundle + "/debug/datum-gui"])
+
+    def test_proof_foreign_owner_session_and_hold_cannot_resolve(self):
+        self.prepare_proof()
+        self.retain_proof()
+        for values in ({"owner": "other"}, {"session": "other"}):
+            with self.assertRaises(r.guard.ResourcePolicyError):
+                self.proof(result="done", provenance="review", **values)
+        metadata = self.root / self.bundle / "build-info.json"
+        value = json.loads(metadata.read_text())
+        value["build_retention"]["owner_hold"] = True
+        metadata.write_text(json.dumps(value))
+        with self.assertRaises(r.guard.ResourcePolicyError):
+            self.proof(result="done", provenance="review")
+        self.assertTrue((self.root / self.bundle / "debug/datum-gui").exists())
+
+    def test_reassigned_proof_task_cannot_be_resolved_by_previous_owner(self):
+        self.prepare_proof()
+        self.retain_proof()
+        self.write(".beads/issues.jsonl", '{"id":"dat-test","status":"closed","assignee":"other"}\n')
+        with self.assertRaises(r.Failure):
+            self.proof(result="accepted", provenance="review")
+        info = json.loads((self.root / self.bundle / "build-info.json").read_text())
+        self.assertEqual(info["build_retention"]["state"], "retained")
+
+    def test_proof_registration_cannot_rewrite_tracked_metadata(self):
+        self.prepare_proof()
+        metadata = self.root / self.bundle / "build-info.json"
+        before = metadata.read_bytes()
+        subprocess.run(["git", "add", "-f", str(metadata)], cwd=self.root, check=True)
+        with self.assertRaises(r.Failure):
+            self.retain_proof()
+        self.assertEqual(metadata.read_bytes(), before)
+
+    def test_resolution_records_exact_residue_when_cleanup_is_blocked(self):
+        self.prepare_proof()
+        self.retain_proof()
+        # Cargo starts between durable resolution and cleanup admission.
+        checks = iter([[], ["cargo"]])
+        with self.assertRaises(r.Failure) as caught:
+            self.proof(result="accepted", provenance="reviewer session-b",
+                       active_check=lambda: next(checks))
+        self.assertEqual(caught.exception.receipt["cleanup_residue"], [self.bundle + "/debug/datum-gui"])
+        info = json.loads((self.root / self.bundle / "build-info.json").read_text())
+        self.assertEqual(info["build_retention"]["resolution"]["result"], "accepted")
+        self.assertTrue((self.root / self.bundle / "proof-cleanup.json").is_file())
+        self.assertEqual(self.proof(result="accepted", provenance="reviewer session-b")["cleanup_residue"], [])
+
+    def test_registered_proof_uses_positive_elf_admission_not_unrelated_proc_access(self):
+        self.prepare_proof()
+        self.retain_proof()
+        def unrelated_unknown(paths):
+            self.fail("registered proof must not require unrelated process visibility")
+        self.assertEqual(self.proof(result="accepted", provenance="review",
+                                  users_check=unrelated_unknown)["cleanup_residue"], [])
+
+    def test_kernel_busy_selected_elf_is_retained_with_resolution_and_residue(self):
+        self.prepare_proof()
+        self.retain_proof()
+        original = r.os.open
+        def busy(path, flags, *args, **kwargs):
+            if str(path) == "datum-gui" and flags & os.O_RDWR:
+                raise OSError(26, "Text file busy")
+            return original(path, flags, *args, **kwargs)
+        with patch.object(r.os, "open", side_effect=busy):
+            with self.assertRaises(r.Failure) as caught:
+                self.proof(result="accepted", provenance="review")
+        self.assertEqual(caught.exception.receipt["cleanup_residue"], [self.bundle + "/debug/datum-gui"])
+        self.assertTrue((self.root / self.bundle / "debug/datum-gui").exists())
+
+    def test_legacy_retirement_cannot_bypass_explicit_owner_hold(self):
+        metadata = self.root / self.bundle / "build-info.json"
+        value = json.loads(metadata.read_text())
+        value["build_retention"]["owner_hold"] = True
+        metadata.write_text(json.dumps(value))
+        self.denied()
+
+    def test_proof_registration_authenticates_owner_hash_and_requires_a_reason(self):
+        self.prepare_proof()
+        for values in ({"issue": "dat-test", "reason": "", "pending": "review"},
+                       {"issue": "foreign", "reason": "needed", "pending": "review"}):
+            with self.assertRaises(r.guard.ResourcePolicyError):
+                self.proof(**values)
+        self.write(self.bundle + "/debug/datum-gui", "changed")
+        with self.assertRaises(r.guard.ResourcePolicyError):
+            self.retain_proof()
+
+    def test_active_cargo_prevents_resolution_without_falsely_recording_it(self):
+        self.prepare_proof()
+        self.retain_proof()
+        with self.assertRaises(r.Failure) as caught:
+            self.proof(result="accepted", provenance="review", active_check=lambda: ["cargo"])
+        self.assertFalse(caught.exception.receipt["resolution_recorded"])
+        info = json.loads((self.root / self.bundle / "build-info.json").read_text())
+        self.assertEqual(info["build_retention"]["state"], "retained")
+
+    def test_open_task_resolution_records_residue_until_released_then_retry_cleans(self):
+        self.prepare_proof()
+        self.retain_proof()
+        self.write(".beads/issues.jsonl", '{"id":"dat-test","status":"in_progress","assignee":"codex"}\n')
+        with self.assertRaises(r.Failure) as caught:
+            self.proof(result="accepted", provenance="review")
+        self.assertEqual(caught.exception.receipt["cleanup_residue"], [self.bundle + "/debug/datum-gui"])
+        self.write(".beads/issues.jsonl", '{"id":"dat-test","status":"closed","assignee":"codex"}\n')
+        self.assertEqual(self.proof(result="accepted", provenance="review")["cleanup_residue"], [])
+
+    def test_unknown_output_is_reported_and_never_silently_removed(self):
+        self.prepare_proof()
+        self.retain_proof()
+        self.write(self.bundle + "/debug/unclassified", "keep")
+        with self.assertRaises(r.Failure) as caught:
+            self.proof(result="accepted", provenance="review")
+        self.assertEqual(set(caught.exception.receipt["cleanup_residue"]), {
+            self.bundle + "/debug/datum-gui", self.bundle + "/debug/unclassified"})
+
+    def test_foreign_wildcard_test_binary_claim_blocks_proof_resolution(self):
+        self.prepare_proof()
+        self.retain_proof()
+        self.frontier([{"issue_id": "other", "claim": {
+            "scope": ["target/qa/*/debug/datum-gui-test"]}}])
+        with self.assertRaises(r.Failure):
+            self.proof(result="accepted", provenance="review")
+        self.assertTrue((self.root / self.bundle / "debug/datum-gui").exists())
+
+    def test_proof_cli_retains_and_resolves_without_a_separate_delete_command(self):
+        self.prepare_proof()
+        common = ["manage_cargo_cache.py", "--owner", "codex", "--session", "session-a"]
+        for flags in (["--retain-proof-build", self.bundle, "--issue", "dat-test", "--reason", "review", "--pending-proof", "visual"],
+                      ["--resolve-proof-build", self.bundle, "--result", "accepted", "--provenance", "reviewer session-b"]):
+            with patch("sys.argv", common + flags), patch.object(manager, "ROOT", self.root), \
+                    patch.object(manager.guard, "load_policy", return_value=SimpleNamespace(lock_path=self.root / "guard.lock")), \
+                    patch.object(manager, "active_processes", return_value=[]), \
+                    patch.object(manager, "active_cache_users", return_value=[]), redirect_stdout(io.StringIO()):
+                self.assertEqual(manager.main(), 0)
+        self.assertFalse((self.root / self.bundle / "debug/datum-gui").exists())
+
     def denied(self, **kwargs):
         with self.assertRaises(r.Failure) as result:
             self.run_retire(apply=True, **kwargs)

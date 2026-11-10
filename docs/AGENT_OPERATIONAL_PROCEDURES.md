@@ -279,6 +279,13 @@ whenever a review record references evidence or binds an acceptance hash:
   uncommitted. The committed JSON receipt — per-entry manifests, hashes, and
   review outcomes — is the durable evidence of record. A record must never
   describe an ignored or uncommitted path as "committed" or "retained" in-repo.
+- Frozen executable copies are temporary runnable proof, not indefinite durable
+  evidence. Retain active candidate binaries through review and landing. At lane
+  closure, retire obsolete rebuildable copies under recorded ownership and an
+  exact file manifest; retain source commits and pins, logs, captures, journals,
+  dependency metadata (`.d`), hashes and review records. Record which executables
+  were retired without rewriting historical verification indices. Preserve
+  explicit owner holds, wire proof and other sessions' claims.
 - Independent-review receipts must carry the reviewer's session/thread id, not
   only a role path such as `/root/closeout_review`, so reviewer and manager
   distinctness rests on an identifier rather than assertion.
@@ -312,6 +319,21 @@ resource, not an unowned side effect.
 - Never clean or sweep the shared target while any Cargo or rustc process may be
   active. Disposable proof targets must have explicit ownership and cleanup on
   exit; shared-cache cleanup happens only at an observed idle boundary.
+- Keep the matching debug/release binaries needed by active QA; do not accumulate
+  a full executable archive for every completed lane. Include retirement of
+  superseded copies in lane closure, using the exact manifest, an idle build
+  boundary and checks that selected executables are unused. This grants no
+  automatic deletion of another session's artifacts or retained evidence.
+- Keep new Cargo output and retained proof binaries under repository `target/`.
+  Register managed `target/qa/<bundle>` proof with `manage_cargo_cache.py
+  --retain-proof-build`, recording `--owner`, `--session`, `--issue`, `--reason`
+  and `--pending-proof`. After proof resolves and ownership is released, use
+  `--resolve-proof-build` with the same owner/session and `--result` plus
+  `--provenance`: that command records the outcome and retires its binaries.
+  Retained `.d` and evidence remain. A blocked retirement records its residue;
+  remove the stated blocker and retry the same resolution command. Immutable
+  attempt receipts preserve earlier unlinks across retries. Closure is not done
+  while an unexplained obsolete build remains.
 - Any new shell proof runner that compiles Rust must use the guarded runner and
   pass `python3 scripts/check_cargo_resource_policy.py`.
 

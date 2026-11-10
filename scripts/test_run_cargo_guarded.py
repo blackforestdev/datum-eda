@@ -167,6 +167,43 @@ class CargoResourceGuardTests(unittest.TestCase):
             external = root / "elsewhere"
             self.assertEqual(set(guard.retained_cache_paths(root, external)), {root / "target", archive, external})
 
+    def test_private_runnable_copies_count_without_charging_raw_evidence(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            target = root / "target"
+            target.mkdir()
+            elf = b"\x7fELF\x02\x01" + bytes(10) + b"\x02\x00" + bytes(4096)
+            for name in ("codex-delivery", "schematic-interaction-qa"):
+                archive = root / ".datum/scratch" / name
+                bundle = archive / "closed-debug"
+                bundle.mkdir(parents=True)
+                executable = bundle / "datum-gui"
+                executable.write_bytes(elf)
+                executable.chmod(0o755)
+                (bundle / "capture.png").write_bytes(bytes(8192))
+                script = bundle / "driver.py"
+                script.write_text("#!/usr/bin/python3\n")
+                script.chmod(0o755)
+                (bundle / "source.rs").write_bytes(elf)  # Non-runnable data.
+                runtime = bundle / "runtime"
+                runtime.mkdir()
+                os.link(executable, runtime / "runnable-gui")
+                raw = archive / "run104"
+                raw.mkdir()
+                (raw / "raw-proof").write_bytes(elf)
+                (raw / "raw-proof").chmod(0o755)
+                (bundle / "external-link").symlink_to(executable)
+            copies = [root / ".datum/scratch" / name / "closed-debug/datum-gui"
+                      for name in ("codex-delivery", "schematic-interaction-qa")]
+            self.assertEqual(set(guard.retained_cache_paths(root, target)), {target, *copies,
+                *(p.parent / "runtime/runnable-gui" for p in copies)})
+            expected = guard._tree_size(target) + sum(p.stat().st_blocks * 512 for p in copies)
+            self.assertEqual(guard.retained_cache_size(root, target), expected)
+            # Hardlinking an archived companion must not inflate physical usage.
+            os.link(copies[0], target / "datum-gui")
+            expected = guard._tree_size(target) + copies[1].stat().st_blocks * 512
+            self.assertEqual(guard.retained_cache_size(root, target / "nested"), expected)
+
 
     def invoke(self, command, *, target=None, environment=None, cwd=None, explicit=True):
         target = (target or guard.ROOT / "target").resolve()
@@ -180,6 +217,7 @@ class CargoResourceGuardTests(unittest.TestCase):
         if explicit:
             args += ["--target-dir", str(target)]
         with patch.dict(os.environ, environment or {}, clear=True), \
+                patch.object(guard, "ROOT", cwd or guard.ROOT), \
                 patch.object(guard, "load_policy", return_value=policy), \
                 patch.object(guard, "acquire_lock", self.lock), \
                 patch.object(guard, "snapshot_resources", self.preflight), \
@@ -317,7 +355,7 @@ class CargoResourceGuardTests(unittest.TestCase):
                     patch.object(guard.Path, "cwd", return_value=root):
                 self.assertEqual(guard._target_from_arguments(None), root / "primary")
                 self.assertEqual(guard._target_from_arguments("explicit"), root / "explicit")
-            self.invoke(["cargo", "build"], target=root / "explicit",
+            self.invoke(["cargo", "build"], target=root / "target/explicit", cwd=root,
                         environment={"CARGO_TARGET_DIR": "primary", "CARGO_BUILD_TARGET_DIR": "secondary"})
             env = self.child.call_args.kwargs["env"]
             self.assertEqual(env["CARGO_TARGET_DIR"], env["CARGO_BUILD_TARGET_DIR"])
@@ -329,12 +367,23 @@ class CargoResourceGuardTests(unittest.TestCase):
             root = Path(directory)
             for key in ("CARGO_TARGET_DIR", "CARGO_BUILD_TARGET_DIR"):
                 with self.subTest(key=key):
-                    result, _ = self.invoke(["cargo", "build"], target=root / "selected",
-                                            cwd=root, environment={key: "selected"}, explicit=False)
+                    result, _ = self.invoke(["cargo", "build"], target=root / "target/selected",
+                                            cwd=root, environment={key: "target/selected"}, explicit=False)
                     self.assertEqual(result, 17)
-                    self.preflight.assert_called_once_with(root / "selected")
+                    self.preflight.assert_called_once_with(root / "target/selected")
                     self.assertEqual(self.child.call_args.kwargs["env"]["CARGO_TARGET_DIR"],
-                                     str(root / "selected"))
+                                     str(root / "target/selected"))
+
+    def test_external_selected_targets_and_symlink_escape_refuse_before_launch(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "target").mkdir()
+            (root / "target/escape").symlink_to(root / "elsewhere", target_is_directory=True)
+            for path in (root / "elsewhere", root / "target/escape"):
+                for key in ("CARGO_TARGET_DIR", "CARGO_BUILD_TARGET_DIR"):
+                    self.assert_early_refusal(["cargo", "build"], target=path, cwd=root,
+                                              environment={key: str(path)}, explicit=False)
+                self.assert_early_refusal(["cargo", "build"], target=path, cwd=root)
 
     def test_unrelated_configuration_metadata_and_post_separator_payload_stay_compatible(self):
         commands = [

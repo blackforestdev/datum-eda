@@ -7,8 +7,10 @@ import argparse
 import fcntl
 import json
 import os
+import re
 from pathlib import Path
 import shutil
+import stat
 import subprocess
 import sys
 import time
@@ -118,6 +120,25 @@ def retained_cache_paths(root: Path, target_dir: Path) -> list[Path]:
     """Count shared, alternate and archived build trees without double-counting."""
     candidates = [root / "target", target_dir]
     candidates.extend((root / ".datum").glob("agent-cargo-archive-*"))
+    # Private runnable copies are build output too. Evidence beside them is not.
+    for name in ("codex-delivery", "schematic-interaction-qa"):
+        archive = root / ".datum/scratch" / name
+        if archive.is_symlink():
+            continue
+        for parent, directories, files in os.walk(archive, followlinks=False):
+            directories[:] = [name for name in directories
+                              if not (Path(parent) == archive and re.fullmatch(r"run(?:[0-9]+|[a-z0-9]+[0-9]{8}[a-z]?)", name))
+                              and not (Path(parent) / name).is_symlink()]
+            for name in files:
+                path = Path(parent) / name
+                metadata = path.lstat()
+                if not stat.S_ISREG(metadata.st_mode) or not metadata.st_mode & 0o111:
+                    continue
+                with path.open("rb") as source:
+                    header = source.read(18)
+                if (len(header) == 18 and header[:4] == b"\x7fELF" and header[5] in (1, 2)
+                        and int.from_bytes(header[16:18], "little" if header[5] == 1 else "big") in (2, 3)):
+                    candidates.append(path)
     paths: list[Path] = []
     for path in sorted({p.resolve() for p in candidates}, key=lambda p: len(p.parts)):
         if not any(path == parent or parent in path.parents for parent in paths):
@@ -126,7 +147,15 @@ def retained_cache_paths(root: Path, target_dir: Path) -> list[Path]:
 
 
 def retained_cache_size(root: Path, target_dir: Path) -> int:
-    return sum(_tree_size(path) for path in retained_cache_paths(root, target_dir))
+    paths = [path for path in retained_cache_paths(root, target_dir) if path.exists()]
+    if not paths:
+        return 0
+    # One du invocation deduplicates hardlinks across targets and private copies.
+    result = subprocess.run(
+        ["du", "-scx", "--block-size=1", "--", *(str(path) for path in paths)],
+        check=True, capture_output=True, text=True,
+    )
+    return int(result.stdout.splitlines()[-1].split()[0])
 
 
 def _is_within(path: Path, parent: Path) -> bool:
@@ -312,6 +341,8 @@ def validate_output_directories(command: Sequence[str], target: Path) -> Path:
     Canonical environment paths override ordinary discovered configuration;
     explicit --config values override that environment and need validation here.
     """
+    if not target.is_relative_to(ROOT.resolve() / "target"):
+        raise ResourcePolicyError("Cargo output must remain inside the repository target directory")
     cwd = Path.cwd()
     targets = {}
     direct = None
