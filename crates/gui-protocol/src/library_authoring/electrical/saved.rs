@@ -199,6 +199,7 @@ impl LibraryDraft {
         let mut anchors = self.electrical.anchors.clone();
         let Some(id) = self.electrical.anchor_id else {
             if [
+                "anchor_pin",
                 "anchor_x",
                 "anchor_y",
                 "anchor_orientation",
@@ -211,11 +212,55 @@ impl LibraryDraft {
             }
             return Ok(anchors);
         };
+        let target = self.uuid("anchor_pin")?;
+        let unit = self.electrical_unit().parse::<Uuid>().ok();
+        if target != id
+            && (target.is_nil()
+                || !self
+                    .electrical
+                    .unit_pins
+                    .iter()
+                    .find(|(key, _)| key.parse::<Uuid>().ok() == unit)
+                    .is_some_and(|(_, pins)| {
+                        pins.iter().any(|(key, name)| {
+                            key.parse::<Uuid>().ok() == Some(target) && !name.trim().is_empty()
+                        })
+                    }))
+        {
+            return Err("Choose an existing named pin of the retained Unit".into());
+        }
+        if (target != id && self.original_anchor(target))
+            || anchors.iter().any(|(key, row)| {
+                key.parse::<Uuid>().ok() != Some(id)
+                    && row["pin"].as_str().and_then(|s| s.parse::<Uuid>().ok()) == Some(target)
+            })
+        {
+            return Err("This Unit pin already has an anchor; choose an unanchored pin".into());
+        }
+        let original_pin = self
+            .electrical
+            .original
+            .as_ref()
+            .and_then(|raw| raw["pin_anchors"].as_array())
+            .and_then(|rows| {
+                rows.iter().find(|row| {
+                    row["pin"].as_str().and_then(|s| s.parse::<Uuid>().ok()) == Some(id)
+                })
+            })
+            .map(|row| row["pin"].clone())
+            .ok_or("Saved anchor identity unavailable")?;
         let anchor = anchors
             .iter_mut()
             .find(|(key, _)| Uuid::parse_str(key).ok() == Some(id))
             .map(|(_, value)| value)
             .ok_or("Select an existing anchor")?;
+        // Keep the captured map key as the disposable row identity. Reverting
+        // the choice also restores its original raw UUID spelling.
+        anchor["pin"] = if target == id {
+            original_pin
+        } else {
+            json!(target)
+        };
         for (field, key) in [("anchor_x", "x"), ("anchor_y", "y")] {
             let next = self.length(field)?;
             if anchor
@@ -329,13 +374,24 @@ impl LibraryDraft {
                 .cloned()
                 .unwrap_or_default();
             let mut removals = Vec::new();
+            let mut relinks = Map::new();
             for anchor in &mut ordered {
                 let pin = anchor
                     .get("pin")
                     .and_then(Value::as_str)
                     .ok_or("Saved anchor identity unavailable")?;
                 if let Some(current) = anchors.get(pin) {
-                    *anchor = current.clone();
+                    let old: Uuid = pin.parse().map_err(|_| "Saved anchor identity invalid")?;
+                    let next: Uuid = serde_json::from_value(current["pin"].clone())
+                        .map_err(|_| "Choose a named Unit pin")?;
+                    let mut posed = current.clone();
+                    if next != old {
+                        relinks.insert(old.to_string(), json!(next));
+                    }
+                    // Pose admission still receives original identities; the
+                    // explicit sparse correction owns only the pin-reference leaf.
+                    posed["pin"] = anchor["pin"].clone();
+                    *anchor = posed;
                 } else {
                     // Keep the original in the old-pose payload: removal discards
                     // this row's pending pose without affecting another row.
@@ -345,6 +401,9 @@ impl LibraryDraft {
             }
             if !removals.is_empty() {
                 fields.insert("anchor_removals".into(), removals.into());
+            }
+            if !relinks.is_empty() {
+                fields.insert("anchor_relinks".into(), relinks.into());
             }
             let additions: Vec<_> = anchors
                 .iter()

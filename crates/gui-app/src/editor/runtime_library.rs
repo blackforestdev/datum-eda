@@ -350,7 +350,10 @@ impl Runtime {
                         Ok(()) => {
                             let key = if pin {
                                 "pin_name"
-                            } else if d.create || d.electrical.new_anchor {
+                            } else if d.create
+                                || d.electrical.new_anchor
+                                || d.electrical.anchor_id.is_some()
+                            {
                                 "anchor_pin"
                             } else {
                                 "anchor_x"

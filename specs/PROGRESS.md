@@ -677,6 +677,28 @@ Ignored17ld stays uncredited. Programmatic controls supply no physical/HUMAN,
 release-GUI execution, logical-pin removal/rekey, anchor relinking, implicit ECO,
 new minimum/schema/reader/controller, full qualification or broader-goal acceptance.
 
+Saved Symbol anchor pin correction (`dat-saved-symbol-relink-anchor-1p7a`)
+now permits explicit selection of another unanchored named pin of the same Unit.
+The original row identity, order, raw metadata and unedited geometry survive
+Preview/Cancel, canonical Undo/Redo and Save/cold reopening. Foreign, occupied,
+ambiguous and stale targets refuse; same-row conflicting edits refuse, while
+separate row edits compose. Old root/child placed pins and frozen definitions
+retain their prior association; one later explicit new Symbol consumes the
+corrected pin without a placed ECO or logical-pin rekey.
+
+Fifty-six relevant focused Rust cases pass. The ordinary isolated App passes
+89 stages in 21.99 seconds with nine inspected captures and clean owned-process
+shutdown. No setup is needed: three sole Set Symbol history transactions preserve
+the other 27 sources and the original 36-transaction journal prefix. Later bare
+U5 placement uses Auxiliary supply/PowerIn at the retained anchor pose, adds one
+Net identity and records one exact old initial-Net lineage transition; 25 other
+original files remain byte-exact. Final cold state has 29 files/40 transactions.
+New-placement ghost/commit screenshots have a narrow schematic pane; exact pin
+identity/type/position are App/source assertions, with U5 visible after cold
+reopen. The broader selected board-track failure remains unresolved under
+`dat-exact30-track-ci-lg26`, not an overall batch PASS. This supplies no physical/
+HUMAN, release-GUI, full-qualification or broader-goal acceptance.
+
 Saved Symbol rectangle correction (`dat-saved-symbol-rectangle-iltr`) enables the
 existing five min/max/stroke numeric fields for one unambiguous Rect, preserving
 its raw array position, other graphics, unknown metadata, Unit/UUID, anchors and

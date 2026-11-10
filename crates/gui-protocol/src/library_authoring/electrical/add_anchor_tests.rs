@@ -53,7 +53,7 @@ fn saved_add_anchor_composes_old_pose_preserves_raw_and_discards_only_new_rows()
     let (mut d, old, new, raw) = fixture();
     d.switch_anchor(Some(0), false).unwrap();
     assert!(!d.electrical.new_anchor);
-    assert!(!d.fields.iter().any(|f| f.key == "anchor_pin"));
+    assert!(d.fields.iter().any(|f| f.key == "anchor_pin"));
     let mut removing = d.clone();
     removing.switch_anchor(None, true).unwrap();
     assert_eq!(

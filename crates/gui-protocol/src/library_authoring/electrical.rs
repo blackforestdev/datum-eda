@@ -168,13 +168,21 @@ impl LibraryDraft {
         if !self.value("anchor_pin").is_empty() {
             let pin = self.uuid("anchor_pin")?;
             let matches = anchors
-                .keys()
-                .filter(|k| k.parse::<Uuid>().ok() == Some(pin))
+                .values()
+                .filter(|row| row["pin"].as_str().and_then(|s| s.parse::<Uuid>().ok()) == Some(pin))
                 .count();
             if matches > 1 {
                 return Err("Symbol anchor identity is ambiguous".into());
             }
             if !self.create && matches == 0 && self.original_anchor(pin) {
+                if anchors
+                    .keys()
+                    .any(|key| key.parse::<Uuid>().ok() == Some(pin))
+                {
+                    return Err(
+                        "Adding the original pin conflicts with its saved anchor correction".into(),
+                    );
+                }
                 return Err(
                     "This anchor was removed in this draft; choose a different Unit pin or cancel"
                         .into(),
@@ -323,7 +331,7 @@ impl LibraryDraft {
             })
     }
     fn anchor_editor_fields(&mut self) {
-        if self.electrical.new_anchor {
+        if self.electrical.new_anchor || self.electrical.anchor_id.is_some() {
             if !self.fields.iter().any(|f| f.key == "anchor_pin") {
                 self.field("anchor_pin", "Named Unit pin", None, vec![]);
                 let pin = self.fields.pop().unwrap();
@@ -368,6 +376,18 @@ impl LibraryDraft {
         if remove {
             if let Some(id) = self.electrical.anchor_id {
                 let key = pin_key(&self.electrical.anchors, id)?;
+                if !self.create && !self.electrical.new_anchor {
+                    let buffered = self.electrical.anchors[&key]["pin"]
+                        .as_str()
+                        .and_then(|s| s.parse::<Uuid>().ok());
+                    let desired = self.value("anchor_pin").parse::<Uuid>().ok();
+                    if desired.map_or(buffered != Some(id), |target| target != id) {
+                        return Err(
+                            "Resolve this anchor's pin correction before removing the same row"
+                                .into(),
+                        );
+                    }
+                }
                 self.electrical.anchors.remove(&key);
             }
         } else {
@@ -404,15 +424,20 @@ impl LibraryDraft {
             let Some(field) = self.fields.iter_mut().find(|f| f.key == key) else {
                 continue;
             };
-            field.set_text(
-                value
-                    .filter(|v| !v.is_null())
-                    .map_or_else(String::new, |v| {
-                        v.as_str()
-                            .map(str::to_owned)
-                            .unwrap_or_else(|| v.to_string())
-                    }),
-            );
+            let text = value
+                .filter(|v| !v.is_null())
+                .map_or_else(String::new, |v| {
+                    v.as_str()
+                        .map(str::to_owned)
+                        .unwrap_or_else(|| v.to_string())
+                });
+            field.set_text(if key == "anchor_pin" {
+                text.parse::<Uuid>()
+                    .map(|pin| pin.to_string())
+                    .unwrap_or(text)
+            } else {
+                text
+            });
         }
         self.preview = None;
         self.refusal = None;
@@ -434,3 +459,6 @@ mod remove_anchor_tests;
 
 #[cfg(test)]
 mod remove_pin_tests;
+
+#[cfg(test)]
+mod relink_anchor_tests;

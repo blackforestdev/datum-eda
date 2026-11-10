@@ -1,6 +1,8 @@
 //! Saved electrical edits retain raw siblings while composing supported pin,
 //! anchor, metadata and rectangular-body intent through the canonical writer.
 use super::*;
+#[path = "library_gui_symbol_relink_anchor.rs"]
+mod anchor_relinks;
 #[path = "library_gui_unit_pin_usage.rs"]
 mod unit_pin_usage;
 
@@ -14,7 +16,9 @@ pub(super) fn build(
     let pin_remove = request.kind == "units" && request.fields.contains_key("pin_removals");
     let anchor_add = request.kind == "symbols" && request.fields.contains_key("anchor_additions");
     let anchor_remove = request.kind == "symbols" && request.fields.contains_key("anchor_removals");
-    let (target, mut object) = if body_edit || adding || pin_remove || anchor_add || anchor_remove {
+    let anchor_relink = request.kind == "symbols" && request.fields.contains_key("anchor_relinks");
+    let anchor_edit = anchor_add || anchor_remove || anchor_relink;
+    let (target, mut object) = if body_edit || adding || pin_remove || anchor_edit {
         super::super::saved_source::load(context.model, request.object_id, &request.kind)?
     } else {
         let target = PoolLibraryObjectTarget::new("pool", &request.kind, request.object_id);
@@ -35,6 +39,12 @@ pub(super) fn build(
         anchor_removals(&request, &previous)?
     } else {
         HashSet::new()
+    };
+    let anchor_basis = if anchor_edit {
+        let unit: Uuid = serde_json::from_value(previous["unit"].clone())?;
+        Some((unit, anchor_relinks::retained_unit(context.model, unit)?))
+    } else {
+        None
     };
     for (key, value) in &request.fields {
         match (request.kind.as_str(), key.as_str()) {
@@ -75,7 +85,7 @@ pub(super) fn build(
                 validate_rectangle(&object["drawings"], value)?;
                 object["drawings"] = value.clone();
             }
-            ("symbols", "anchor_additions" | "anchor_removals") => {} // Compose after poses.
+            ("symbols", "anchor_additions" | "anchor_removals" | "anchor_relinks") => {} // Compose after poses.
             ("symbols", "pin_anchors") => {
                 let mut posed = value.clone();
                 if let (Some(before), Some(after)) =
@@ -104,11 +114,25 @@ pub(super) fn build(
             }
         }
     }
-    let mut references = if anchor_add || anchor_remove {
-        edit_anchors(context.model, &request, &mut object, &removals)?
-    } else {
-        HashSet::new()
-    };
+    let mut references = HashSet::new();
+    if let Some((unit, raw_unit)) = &anchor_basis {
+        if anchor_relink {
+            references.extend(anchor_relinks::apply(
+                &request,
+                &previous,
+                &mut object,
+                &removals,
+                raw_unit,
+            )?);
+        }
+        references.extend(edit_anchors(
+            &request,
+            &mut object,
+            &removals,
+            *unit,
+            raw_unit,
+        )?);
+    }
     if pin_remove {
         references.extend(unit_pin_usage::require_unused(
             context.model,
@@ -159,7 +183,7 @@ pub(super) fn build(
             },
         );
     }
-    if body_edit || adding || pin_remove || anchor_add || anchor_remove {
+    if body_edit || adding || pin_remove || anchor_edit {
         prepared.batch.operations.insert(
             0,
             crate::substrate::Operation::GuardObjectRevision {
@@ -206,39 +230,14 @@ fn anchor_removals(
 
 // Preserve old ordered raw rows; only genuinely new anchors are serialized.
 fn edit_anchors(
-    model: &crate::substrate::DesignModel,
     request: &LibraryDefinitionRequest,
     object: &mut Value,
     removals: &HashSet<Uuid>,
+    unit: Uuid,
+    raw_unit: &Value,
 ) -> Result<HashSet<Uuid>, EngineError> {
-    let unit: Uuid = serde_json::from_value(object["unit"].clone())?;
-    let (_, raw_unit) = super::super::saved_source::reference(model, unit, "units")?;
-    if raw_unit["schema_version"].as_u64() != Some(1) {
-        return Err(refusal("Retained Unit requires supported schema version 1"));
-    }
-    let _: crate::pool::Unit = serde_json::from_value(raw_unit.clone())?;
-    let pins = raw_unit["pins"]
-        .as_object()
-        .ok_or_else(|| refusal("Retained Unit pins unavailable"))?;
-    let mut members = HashSet::new();
-    for (key, raw) in pins {
-        let id: Uuid = key
-            .parse()
-            .map_err(|_| refusal("Unit pin identity is malformed"))?;
-        let pin: crate::pool::Pin = serde_json::from_value(raw.clone())?;
-        if !members.insert(id)
-            || pin.uuid != id
-            || model.objects.get(&id).is_none_or(|p| {
-                p.source_shard_id != model.objects[&unit].source_shard_id
-                    || p.domain != "pool"
-                    || (p.kind != "pins" && p.kind.parse::<Uuid>().ok() != Some(id))
-            })
-        {
-            return Err(refusal(
-                "Retained Unit pin membership is missing or ambiguous",
-            ));
-        }
-    }
+    let pins = raw_unit["pins"].as_object().unwrap();
+    let members: HashSet<Uuid> = pins.keys().map(|key| key.parse().unwrap()).collect();
     let mut anchored = HashSet::new();
     if let Some(value) = object.get("pin_anchors") {
         for raw in value
@@ -581,3 +580,7 @@ mod remove_anchor_tests;
 #[cfg(test)]
 #[path = "library_gui_unit_remove_pin_tests.rs"]
 mod remove_pin_tests;
+
+#[cfg(test)]
+#[path = "library_gui_symbol_relink_anchor_tests.rs"]
+mod relink_anchor_tests;

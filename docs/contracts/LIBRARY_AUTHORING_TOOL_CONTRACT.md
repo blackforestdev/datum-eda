@@ -337,6 +337,38 @@ supplies no logical-pin removal/rekey, anchor relinking, implicit placed update,
 new schema/reader/controller/minimum policy, physical/HUMAN observation,
 release-GUI execution, full qualification or broader-goal acceptance.
 
+Saved Symbol anchor pin correction (`dat-saved-symbol-relink-anchor-1p7a`)
+exposes the retained Unit's named pin chooser for a selected saved anchor. The
+original captured row identity remains stable while the target changes. Sparse
+`anchor_relinks` changes only the pin reference at the original array position;
+raw metadata, unedited geometry, legacy style and other rows remain intact.
+Same-target choice preserves the original spelling and emits no relink intent.
+Authenticated same-Unit membership and existing source/revision guards refuse
+foreign, occupied, ambiguous or stale targets. Same-row removal/addition conflicts
+refuse explicitly; distinct row edits compose without inferring swaps.
+
+Preview/Cancel, canonical Undo/Redo and Save/cold reopening use the existing
+writer and history. Old root/child placed pins and frozen definitions retain
+their previous association. A later explicit new Symbol placement consumes the
+corrected definition. This corrects a Symbol reference without creating or
+rekeying a logical pin, changing the Unit or applying a placed-component ECO.
+
+Fifty-six relevant focused Rust cases and the ordinary isolated App case pass
+(89 stages, 21.99 seconds, nine inspected captures). With no setup transaction,
+the original 28-source/36-transaction circuit receives three sole Set Symbol
+history transactions; all other 27 sources remain byte-exact in that core phase.
+One later bare Symbol placement creates U5 with Auxiliary supply/PowerIn at the
+retained anchor geometry. It adds one electrical identity and records only the
+existing initial Net's exact lineage transition among old identities; the other
+25 original files remain byte-exact, with 29 sources and 40 transactions after
+cold reopening. The original journal prefix is byte-exact. The new-placement
+ghost and committed captures have a narrow schematic pane; exact association,
+type and position come from executed App/source assertions, with the new Symbol
+visible in the cold capture. Programmatic controls establish no physical/HUMAN,
+release-GUI or full-qualification result. A broader test filter also selected an
+unresolved board-track failure (`dat-exact30-track-ci-lg26`); that batch is not a
+PASS and does not widen this increment's scope.
+
 Saved Symbol rectangle correction (`dat-saved-symbol-rectangle-iltr`) exposes the
 five existing body min/max coordinate and stroke fields for exactly one existing
 raw Rect, at its retained array position. Other known graphics can coexist. Only
