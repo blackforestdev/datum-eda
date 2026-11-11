@@ -512,8 +512,11 @@ There are 96 unique scoped Rust passes, with existing `dat-17ld` ignored. The
 initial stale editable-row assertion failure remains recorded. The cold capture
 shows center X, while all four cold values are asserted. The placement HUD partly
 covers the ghost's top; the complete Circle is visible after cold reopening.
-Pin text is not apparent in the corrected-Circle Library preview
-(`dat-circle-preview-pin-context-i7bx`), and existing canvas overlap remains.
+The original 1.5 mm and 2 mm preview captures contain identical pin-name
+pixels in the compared 96 × 19 region. Independent inspection disproved the
+apparent disappearance reported in `dat-circle-preview-pin-context-i7bx`;
+no product correction was needed. Small preview text and existing canvas
+overlap remain explicit limitations.
 Programmatic debug App proof supplies no pin-text readability, physical/HUMAN,
 release-GUI execution, full qualification or broader-goal acceptance.
 

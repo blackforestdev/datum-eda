@@ -768,8 +768,11 @@ frozen. The original 104 journal entries remain exact through six Symbol sets
 and one placement, ending at 49 sources/111 transactions. There are 96 unique
 scoped Rust passes and known `dat-17ld` remains ignored. One old Net's recorded
 predecessor/revision transition belongs to placement. Cold form/ghost visibility
-limits, preview pin-context intake `dat-circle-preview-pin-context-i7bx` and
-existing overlap remain explicit; no new canvas tool, pin readability,
+limits and existing overlap remain explicit. Independent original-pixel
+comparison disproves the reported pin-name disappearance in
+`dat-circle-preview-pin-context-i7bx`: both previews retain identical name
+ink, with no product fix needed. Small preview text remains a limitation;
+no new canvas tool, pin readability,
 physical/HUMAN, release-GUI execution or broad-goal acceptance is supplied.
 
 Saved Symbol literal Text (`dat-saved-symbol-text-graphics-w0k9`) supports add,
