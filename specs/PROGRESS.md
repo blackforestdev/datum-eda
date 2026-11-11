@@ -765,9 +765,22 @@ Undo/Redo, fresh query, raw metadata, null and omitted defaults pass, ending at
 14 CLI-sourced journal transactions. Raw canonical/import/replay behavior and
 existing error precedence remain. Old source-ownership failures retain staging
 payloads; that exception does not weaken new pair-refusal snapshots. Earlier
-fixture/stack/snapshot failures are retained. Source-only Map ownership intake
-`dat-part-raw-map-owner-nb91` remains unimplemented and unreproduced. No GUI replay,
-universal writer-integrity or full-qualification claim.
+fixture/stack/snapshot failures are retained. The subsequent Map ownership
+correction `dat-part-raw-map-owner-nb91` is described below; this original proof
+is not regraded. No GUI replay, universal writer-integrity or full-qualification
+claim.
+
+Public native Part default PinPadMap ownership (`dat-part-raw-map-owner-nb91`)
+now refuses foreign-owner defaults in manual CLI JSON Create/Set. Fourteen scoped
+checks pass. Actual old commands accepted both mismatches; the updated CLI
+refuses both with saved equal 50-file snapshots. Matching existing Set,
+Undo/Redo, fresh queries, metadata and supported null/omitted new-Part Create
+pass to 18 CLI journal rows, with the Map source byte-exact. No circular
+matching-Map/new-Part creation path is assumed. Existing reference/Footprint
+error order and raw canonical/import/replay scope remain. The separate physical
+Map compatibility intake `dat-part-raw-map-physical-x00t` is source-only, without
+reproduction, implementation or new prerequisite. No GUI replay or qualification
+claim is supplied.
 
 Electrical Library preview status (`dat-f43w`) now shows valid Unit/Symbol
 success without a false refusal action or irrelevant Drill field. Genuine

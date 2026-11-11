@@ -23,10 +23,15 @@ fn project(label: &str) -> PathBuf {
 fn journal(root: &Path) -> Vec<u8> {
     std::fs::read(root.join(".datum/journal/transactions.jsonl")).unwrap_or_default()
 }
-fn payload(root: &Path, id: Uuid) -> serde_json::Value {
+pub(super) fn payload(root: &Path, id: Uuid) -> serde_json::Value {
     super::main_tests_project_pool_library::query_pool_object_payload(root, "parts", id)
 }
-fn write(root: &Path, verb: &str, id: Uuid, value: &serde_json::Value) -> Result<String> {
+pub(super) fn write(
+    root: &Path,
+    verb: &str,
+    id: Uuid,
+    value: &serde_json::Value,
+) -> Result<String> {
     let file = root.join("part-input.json");
     std::fs::write(&file, serde_json::to_vec(value).unwrap()).unwrap();
     command(
@@ -42,16 +47,16 @@ fn write(root: &Path, verb: &str, id: Uuid, value: &serde_json::Value) -> Result
         ],
     )
 }
-struct Fixture {
-    root: PathBuf,
-    part: Uuid,
-    entity: Uuid,
-    package: Uuid,
-    footprint: Uuid,
-    map: Uuid,
+pub(super) struct Fixture {
+    pub(super) root: PathBuf,
+    pub(super) part: Uuid,
+    pub(super) entity: Uuid,
+    pub(super) package: Uuid,
+    pub(super) footprint: Uuid,
+    pub(super) map: Uuid,
 }
 impl Fixture {
-    fn new(label: &str) -> Self {
+    pub(super) fn new(label: &str) -> Self {
         let root = project(label);
         let unit = Uuid::new_v4();
         let pin = Uuid::new_v4();

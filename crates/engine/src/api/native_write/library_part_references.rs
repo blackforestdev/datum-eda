@@ -90,9 +90,28 @@ fn validate_part_links(model: &DesignModel, part: &crate::pool::Part) -> Result<
             )));
         }
     }
+    if let Some(id) = part.default_pin_pad_map {
+        let map =
+            super::super::schematic_library::materialized_pool_object(model, id, "pin_pad_maps")?;
+        let owner = map
+            .get("part")
+            .and_then(serde_json::Value::as_str)
+            .and_then(|value| value.parse::<uuid::Uuid>().ok())
+            .ok_or_else(|| validation(format!("missing part for pool pin_pad_map {id}")))?;
+        if owner != part.uuid {
+            return Err(validation(format!(
+                "part default_pin_pad_map {id} belongs to part {owner}, not {}",
+                part.uuid
+            )));
+        }
+    }
     Ok(())
 }
 
 #[cfg(test)]
 #[path = "library_part_footprint_pair_tests.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "library_part_map_owner_tests.rs"]
+mod map_owner_tests;

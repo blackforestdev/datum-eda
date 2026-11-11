@@ -40,14 +40,14 @@ fn canonical_snapshot(root: &Path) -> BTreeMap<PathBuf, Vec<u8>> {
     files.retain(|path, _| !path.starts_with(".datum/stage"));
     files
 }
-struct Fixture {
-    root: PathBuf,
-    model: DesignModel,
-    part: Uuid,
-    package: Uuid,
-    other: Uuid,
-    good: Uuid,
-    bad: Uuid,
+pub(super) struct Fixture {
+    pub(super) root: PathBuf,
+    pub(super) model: DesignModel,
+    pub(super) part: Uuid,
+    pub(super) package: Uuid,
+    pub(super) other: Uuid,
+    pub(super) good: Uuid,
+    pub(super) bad: Uuid,
 }
 impl Drop for Fixture {
     fn drop(&mut self) {
@@ -55,7 +55,7 @@ impl Drop for Fixture {
     }
 }
 impl Fixture {
-    fn new() -> Self {
+    pub(super) fn new() -> Self {
         let root = crate::api::native_write::test_support::temp_project_root("part-pair");
         bootstrap_native_project(
             &root,
@@ -153,7 +153,7 @@ impl Fixture {
         }
         fixture
     }
-    fn raw(&self) -> Value {
+    pub(super) fn raw(&self) -> Value {
         library::pool_library_object_payload(
             &self.model,
             &format!("pool/parts/{}.json", self.part),

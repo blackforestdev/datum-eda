@@ -228,6 +228,7 @@ mod main_tests_project_label;
 mod main_tests_project_new;
 mod main_tests_project_noconnect;
 mod main_tests_project_part_footprint_pair;
+mod main_tests_project_part_map_owner;
 mod main_tests_project_pool_definition_validation;
 mod main_tests_project_pool_footprint;
 mod main_tests_project_pool_footprint_create_validation;

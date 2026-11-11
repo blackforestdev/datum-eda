@@ -735,9 +735,30 @@ null/omission and metadata checks finish with 14 CLI-sourced journal transaction
 Existing source-ownership errors can retain failed staging payloads; only those
 legacy-error assertions exclude staging, while new mismatch refusals use the full
 persisted snapshot. Earlier fixture, stack-environment and snapshot failures remain
-recorded. PinPadMap ownership is separate source-only intake
-`dat-part-raw-map-owner-nb91`, without a reproduction or new implementation claim.
+recorded. PinPadMap ownership is covered by the subsequent
+`dat-part-raw-map-owner-nb91` correction below; the earlier Footprint/Package proof
+retains its original scope.
 No GUI replay, universal raw-writer integrity or full qualification is supplied.
+
+Public native Part default PinPadMap ownership (`dat-part-raw-map-owner-nb91`)
+now requires the referenced Map's Part UUID to equal the candidate Part UUID for
+manual CLI JSON Create and Set. This follows the existing LibraryGraph ownership
+rule after the unchanged reference and default Footprint/Package checks. Raw
+canonical/import/replay and other-provenance behavior remain unchanged. It adds
+no Map topology or Footprint compatibility rule. Map Footprint/Package
+compatibility is separate source-only intake `dat-part-raw-map-physical-x00t`,
+without reproduction or implementation.
+Fourteen scoped engine/CLI checks pass, including existing Part/Footprint
+regressions and refusal of a stale Part batch after its Map owner changes while
+the Part revision stays fixed. Actual public CLI Create and Set reproduced the
+old foreign-owner admission; the updated normal CLI refuses both with all 50
+persisted files unchanged, backed by saved before/after hash maps. Matching
+existing Set, Undo/Redo, fresh queries, raw metadata and null/omitted new-Part
+defaults pass, ending at 18 CLI-sourced journal rows. The Map source stays
+byte-exact. Matching Map plus new-Part Create is not assumed as a circular
+creation path. Old fixture operations/assertions are reused with visibility-only
+exports. Existing source-blocker staging scope, GUI proof and full-qualification
+boundaries remain; no GUI replay or universal raw-writer integrity is claimed.
 
 The creation-only Part GUI increment (`dat-part-gui-create-6zs4`) adds explicit
 manufacturer/MPN, value, description, datasheet reference and tags, with named
