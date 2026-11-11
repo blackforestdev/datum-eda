@@ -486,8 +486,8 @@ impl Runtime {
                                 .map(C::PreviewPad),
                         );
                     }
-                    if !matches!(d.kind.as_str(), "entities" | "parts" | "pin_pad_maps")
-                        || d.refusal.is_some()
+                    if matches!(d.kind.as_str(), "footprints" | "padstacks")
+                        || d.refusal.as_ref().or(s.library.refusal.as_ref()).is_some()
                     {
                         controls.push(C::Notice);
                     }

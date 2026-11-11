@@ -757,6 +757,17 @@ replacement box under the existing glyph-coverage issue
 `dat-ui-filename-glyph-coverage-o53p`. There were 82 scoped Rust passes, with
 the existing `dat-17ld` case ignored.
 
+Electrical Library preview status (`dat-f43w`) now shows valid Unit/Symbol
+success without a false refusal action or irrelevant Drill field. Genuine
+refusal reasons retain the Console action and Tab stop; physical process and
+Padstack drill inspection remain. Five focused renderer checks and the first
+ordinary read-only App pass (31 stages, four inspected captures, 12.01 seconds).
+All 392 persisted source/history files, 49 canonical sources and the complete
+111-transaction journal remain byte-exact. Existing GUI terminal runtime files
+change; whole-project equality is not claimed. The actual Console reason is
+asserted in full, while its visible strip truncates it. No new notification,
+mutation, physical/HUMAN, release-GUI execution or broad-goal acceptance.
+
 Saved native Symbol Circle graphics (`dat-saved-symbol-circle-qngv`) now use
 the existing numeric graphic form for add/edit/removal, Preview/Cancel,
 Undo/Redo and save/cold. Captured row indices/preimages preserve raw center

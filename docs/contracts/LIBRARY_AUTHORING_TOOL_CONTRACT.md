@@ -486,6 +486,22 @@ transactions. The focused Rust suites passed 82 tests, with the existing
 `dat-17ld` case ignored. The App evidence comes from programmatic input in
 an isolated Wayland session.
 
+Native electrical preview status (`dat-f43w`) uses the existing refusal and
+process state. Valid Unit and Symbol previews show their validated state without
+a false refusal action or irrelevant Drill line. The actual refusal action stays
+available, including in the Tab sequence, when the draft or browser supplies a
+reason. Footprint and Padstack process inspection remains available; the generic
+Drill line applies to Padstacks, with existing Footprint and Package summaries
+retained. No authoring operations, notification state or status vocabulary change.
+Five focused renderer checks pass. The ordinary read-only App passes 31 stages
+in 12.01 seconds with four inspected captures, including actual Tab cycles and
+a zero-radius Circle refusal. The full refusal reaches Console state; its visible
+strip truncates the message. All 392 persisted source/history files, including
+49 canonical sources and the 111-transaction journal, remain byte-exact. GUI
+terminal runtime contexts change and are excluded by the existing source audit
+scope; whole-project byte equality is not claimed. This supplies no physical/HUMAN,
+release-GUI execution, full qualification or broader-goal acceptance.
+
 Saved Symbol Circle graphics (`dat-saved-symbol-circle-qngv`) use the shared
 ordered graphic-row and numeric form. Designers can add, select, correct and
 remove center/radius/stroke, then Preview/Cancel, commit, Undo/Redo and reopen.

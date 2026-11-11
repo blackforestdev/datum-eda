@@ -21,6 +21,8 @@ mod entity_gate_unit;
 mod entity_remove_gate;
 #[path = "native_library_frame_tests/input.rs"]
 mod input;
+#[path = "native_library_frame_tests/library_preview_status.rs"]
+mod library_preview_status;
 #[path = "native_library_frame_tests/map_edit.rs"]
 mod map_edit;
 #[path = "native_library_frame_tests/map_labels.rs"]
@@ -129,6 +131,7 @@ impl Fixture {
                 self.steps.get(self.stage),
                 Some(
                     Step::Placement(_)
+                        | Step::LibraryPreviewStatus(_)
                         | Step::SymbolCircle(_)
                         | Step::AuthoredCircuit(_)
                         | Step::PartDefaultFootprint(_)
@@ -287,6 +290,7 @@ impl Fixture {
             Step::PinLabelClearance(stage) => self.pin_label_clearance(events, stage),
             Step::AuthoredCircuit(stage) => self.authored_circuit(events, stage),
             Step::OpposedPinLabels(stage) => self.opposed_pin_labels(stage),
+            Step::LibraryPreviewStatus(stage) => self.library_preview_status(stage),
             Step::UnitPinMetadata(stage) => self.unit_pin_metadata(stage),
             Step::PackageEdit(stage) => self.check_package_edit(stage),
             Step::Part(stage, footprint) => self.check_part(stage, footprint),

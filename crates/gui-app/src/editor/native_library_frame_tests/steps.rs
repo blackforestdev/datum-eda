@@ -30,6 +30,7 @@ pub(super) enum Step {
     PinLabelClearance(usize),
     AuthoredCircuit(usize),
     OpposedPinLabels(usize),
+    LibraryPreviewStatus(usize),
     PackageEdit(usize),
     TextFields(usize),
     MapLabels(usize),

@@ -136,3 +136,128 @@ fn native_pin_label_clearance_library_uses_world_ink_without_duplicate_screen_la
         "native label adds rendered glyph ink"
     );
 }
+
+fn preview_status_state(kind: &str) -> datum_gui_protocol::ReviewWorkspaceState {
+    use datum_gui_protocol::{library_authoring::LibraryDraft, library_browser::LibraryEntry};
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    let unit: datum_gui_protocol::LibraryJsonValue = r#"{
+        "uuid":"70000000-0000-4000-8000-000000000002","name":"Logic",
+        "pins":{}}"#
+        .parse()
+        .unwrap();
+    state.library.entries.push(LibraryEntry {
+        id: "70000000-0000-4000-8000-000000000002".parse().unwrap(),
+        kind: "units".into(),
+        name: "Logic".into(),
+        source_path: "pool/units/70000000-0000-4000-8000-000000000002.json".into(),
+        revision: Some(1),
+        raw: unit.clone(),
+        warning: None,
+    });
+    let mut draft = LibraryDraft::begin(&state.library, None, kind, "test".into(), None).unwrap();
+    draft.preview = Some(match kind {
+        "units" => unit,
+        "symbols" => r#"{"uuid":"70000000-0000-4000-8000-000000000001",
+            "name":"Logic Symbol","unit":"70000000-0000-4000-8000-000000000002",
+            "drawings":[],"pin_anchors":[]}"#
+            .parse()
+            .unwrap(),
+        "padstacks" => r#"{"name":"Through pad","drill_nm":300000}"#.parse().unwrap(),
+        _ => unreachable!(),
+    });
+    state.library.draft = Some(draft);
+    state
+}
+
+fn preview_status_presentation(
+    state: &datum_gui_protocol::ReviewWorkspaceState,
+) -> (Vec<TextRun>, Vec<HitRegion>, Vec<TextRun>) {
+    let rect = RectPx {
+        x: 0.,
+        y: 0.,
+        width: 600.,
+        height: 2400.,
+    };
+    let (mut quads, mut text, mut hits, mut inspector) =
+        (Vec::new(), Vec::new(), Vec::new(), Vec::new());
+    crate::side_panels::library_surface::render(state, rect, &mut quads, &mut text, &mut hits);
+    crate::side_panels::library_surface::inspector(state, rect, &mut quads, &mut inspector);
+    (text, hits, inspector)
+}
+
+#[test]
+fn valid_electrical_previews_show_success_without_refusal_or_drill() {
+    use datum_gui_protocol::library_browser::LibraryControl as C;
+    for kind in ["units", "symbols"] {
+        let state = preview_status_state(kind);
+        let (text, hits, inspector) = preview_status_presentation(&state);
+        assert!(
+            !hits
+                .iter()
+                .any(|h| h.target == HitTarget::Library(C::Notice))
+        );
+        assert!(
+            !text
+                .iter()
+                .any(|t| t.text.contains("Inspect complete refusal"))
+        );
+        assert!(
+            inspector
+                .iter()
+                .any(|t| t.text == "Validated preview · no source / journal writes")
+        );
+        assert!(
+            !inspector
+                .iter()
+                .any(|t| t.text.starts_with("Drill:") || t.text == "Preview refused")
+        );
+    }
+}
+
+#[test]
+fn genuine_draft_and_browser_refusals_keep_console_access_and_reason() {
+    use datum_gui_protocol::library_browser::LibraryControl as C;
+    for browser_reason in [false, true] {
+        let mut state = preview_status_state("units");
+        let mut draft = state.library.draft.take().unwrap();
+        // A missing resolved project is a real production preview refusal.
+        let reason = draft
+            .validate_preview(&state.library, std::path::Path::new("."))
+            .unwrap_err();
+        draft.preview = None;
+        if browser_reason {
+            state.library.refusal = Some(reason.clone());
+        } else {
+            draft.refusal = Some(reason.clone());
+        }
+        state.library.draft = Some(draft);
+        let (text, hits, inspector) = preview_status_presentation(&state);
+        assert!(
+            hits.iter()
+                .any(|h| h.target == HitTarget::Library(C::Notice))
+        );
+        assert!(
+            text.iter()
+                .any(|t| t.text == "Inspect complete refusal in Console")
+        );
+        assert!(inspector.iter().any(|t| t.text == reason));
+        assert!(inspector.iter().any(|t| t.text == "Preview refused"));
+        assert!(!inspector.iter().any(|t| t.text.starts_with("Drill:")));
+    }
+}
+
+#[test]
+fn physical_padstack_retains_drill_and_process_reason_inspection() {
+    use datum_gui_protocol::library_browser::LibraryControl as C;
+    let state = preview_status_state("padstacks");
+    let (text, hits, inspector) = preview_status_presentation(&state);
+    assert!(
+        hits.iter()
+            .any(|h| h.target == HitTarget::Library(C::Notice))
+    );
+    assert!(
+        text.iter()
+            .any(|t| t.text == "Inspect complete refusal / process reason in Console")
+    );
+    assert!(inspector.iter().any(|t| t.text == "Drill: 300000 nm"));
+}

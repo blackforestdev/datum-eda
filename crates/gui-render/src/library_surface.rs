@@ -263,7 +263,11 @@ pub(crate) fn render(
             }
         }
         definition_review::review(&mut p, d);
-        if !matches!(d.kind.as_str(), "entities" | "parts" | "pin_pad_maps") || d.refusal.is_some()
+        if matches!(d.kind.as_str(), "footprints" | "padstacks")
+            || d.refusal
+                .as_ref()
+                .or(state.library.refusal.as_ref())
+                .is_some()
         {
             p.button(
                 if matches!(
@@ -619,7 +623,7 @@ pub(crate) fn inspector(
             } else if d.kind == "packages" {
                 p.line("Physical body · terminals have names / roles, no stored positions");
                 p.line("Footprint lands are authored separately");
-            } else {
+            } else if d.kind == "padstacks" {
                 p.line(&format!(
                     "Drill: {}",
                     raw.get("drill_nm")
