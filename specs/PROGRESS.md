@@ -827,6 +827,26 @@ ink, with no product fix needed. Small preview text remains a limitation;
 no new canvas tool, pin readability,
 physical/HUMAN, release-GUI execution or broad-goal acceptance is supplied.
 
+Saved native Symbol Arc graphics (`dat-saved-symbol-arc-e3xw`) now use the shared
+numeric graphic form for add/edit/removal, Preview/Cancel, Undo/Redo and cold
+reopen. Center/radius/start/end/stroke changes preserve raw nested metadata,
+original row identity and siblings. Raw signed i32 tenths-of-degree angles retain
+existing sweep/wrap/full-turn behavior; local wide arithmetic does not establish
+whole-scene extreme-coordinate safety. Separate bounds-padding intake
+`dat-schematic-bounds-padding-extremes-x014` is source-only and not a prerequisite.
+There are 111 scoped Rust passes and existing `dat-17ld` remains ignored. The first
+isolated App passes 126 stages in 30.21 seconds with nine inspected captures:
+original Rect retained, six Arc fields added/edited, only Arc removed/history
+restored, then explicit TC3 consumes the edited Arc while old Root/Child
+identities, definitions, ink and net memberships stay frozen. The original 104
+journal rows remain exact, ending at 49 sources/111 transactions; the sole old
+Net lineage/revision delta matches placement. The existing source/history scope
+has 391 files, with normal GUI runtime changes excluded rather than claiming
+whole-project equality. Wrapped-add outline overlap, cold X-only capture with
+six asserted values, and existing crowded text remain explicit. Edited Arc
+preview/ghost/cold placement are visible. No new canvas tool, schema, writer,
+public verb, physical/HUMAN, release-GUI execution or qualification is supplied.
+
 Saved Symbol literal Text (`dat-saved-symbol-text-graphics-w0k9`) supports add,
 selection, content/position/rotation editing and removal in the shared graphics
 form. Existing text layout determines the preview envelope. The corrected

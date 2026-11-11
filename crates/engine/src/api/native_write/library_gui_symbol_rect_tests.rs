@@ -136,7 +136,7 @@ fn rect_refusals_preserve_source_and_journal_and_legacy_conflicts_never_overwrit
         json!({"graphic_additions":[invalid]}),
         json!({"graphic_additions":[rect()],"line_additions":[]}),
         json!({"line_additions":[rect()]}),
-        json!({"graphic_additions":[{"Arc":{"arc":{"center":{"x":0,"y":0},"radius":1,"start_angle":0,"end_angle":900},"width":1}}]}),
+        json!({"graphic_additions":[{"Polygon":{"polygon":{"vertices":[{"x":0,"y":0},{"x":1,"y":0},{"x":0,"y":1}],"closed":true},"width":1}}]}),
     ] {
         assert!(
             edit(&m, &root, "symbols", symbol, fields.clone()).is_err(),

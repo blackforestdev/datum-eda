@@ -254,7 +254,7 @@ pub(super) fn sorted_values<T>(map: &std::collections::HashMap<Uuid, T>) -> Vec<
 }
 
 pub(super) fn arc_path_points(arc: eda_engine::ir::geometry::Arc) -> Vec<PointNm> {
-    let mut sweep = arc.end_angle - arc.start_angle;
+    let mut sweep = i64::from(arc.end_angle) - i64::from(arc.start_angle);
     if sweep == 0 {
         sweep = 3600;
     }
@@ -262,13 +262,20 @@ pub(super) fn arc_path_points(arc: eda_engine::ir::geometry::Arc) -> Vec<PointNm
         sweep += 3600;
     }
     let steps = ((sweep.abs() / 150).max(4) as usize).min(48);
+    // Floating-point rounding near i64 limits must not move a sampled point
+    // beyond the authored radius. Wide sums also keep legacy data infallible.
+    let extent = i128::from(arc.radius).abs();
+    let coordinate = |center: i64, offset: f64| {
+        let radial = i128::from(offset.round() as i64).clamp(-extent, extent);
+        (i128::from(center) + radial).clamp(i128::from(i64::MIN), i128::from(i64::MAX)) as i64
+    };
     (0..=steps)
         .map(|step| {
             let angle_tenths = arc.start_angle as f64 + (sweep as f64 * step as f64 / steps as f64);
             let radians = (angle_tenths / 10.0).to_radians();
             PointNm {
-                x: arc.center.x + (radians.cos() * arc.radius as f64).round() as i64,
-                y: arc.center.y + (radians.sin() * arc.radius as f64).round() as i64,
+                x: coordinate(arc.center.x, radians.cos() * arc.radius as f64),
+                y: coordinate(arc.center.y, radians.sin() * arc.radius as f64),
             }
         })
         .collect()
@@ -485,5 +492,73 @@ pub(super) fn point_nm(point: Point) -> PointNm {
     PointNm {
         x: point.x,
         y: point.y,
+    }
+}
+
+#[cfg(test)]
+mod arc_sampling_tests {
+    use super::*;
+    fn arc(start_angle: i32, end_angle: i32) -> eda_engine::ir::geometry::Arc {
+        eda_engine::ir::geometry::Arc {
+            center: Point::new(0, 0),
+            radius: 1000000,
+            start_angle,
+            end_angle,
+        }
+    }
+    #[test]
+    fn arc_sampling_preserves_native_wrap_full_turn_and_non_normalized_sweeps() {
+        let quarter = arc_path_points(arc(0, 900));
+        assert_eq!(quarter.first(), Some(&PointNm { x: 1000000, y: 0 }));
+        assert_eq!(quarter.last(), Some(&PointNm { x: 0, y: 1000000 }));
+        assert_eq!(quarter.len(), 7);
+        let wrapped = arc_path_points(arc(3500, 100));
+        assert_eq!(wrapped.len(), 5);
+        assert_eq!(wrapped[2], PointNm { x: 1000000, y: 0 });
+        assert_eq!(wrapped.first().unwrap().x, wrapped.last().unwrap().x);
+        assert_eq!(wrapped.first().unwrap().y, -wrapped.last().unwrap().y);
+        for range in [(0, 0), (0, 3600)] {
+            let points = arc_path_points(arc(range.0, range.1));
+            assert_eq!(points.len(), 25);
+            assert_eq!(points.first(), points.last());
+            assert_eq!(points[6], PointNm { x: 0, y: 1000000 });
+        }
+        let backwards = arc_path_points(arc(7200, 0));
+        assert_eq!(backwards.len(), 25);
+        assert_eq!(backwards[6], PointNm { x: 0, y: -1000000 });
+    }
+    #[test]
+    fn arc_sampling_handles_entire_i32_angle_range_without_arithmetic_overflow() {
+        for range in [
+            (i32::MIN, i32::MAX),
+            (i32::MAX, i32::MIN),
+            (i32::MIN, i32::MIN),
+        ] {
+            let points = arc_path_points(arc(range.0, range.1));
+            assert!((5..=49).contains(&points.len()));
+            assert!(
+                points
+                    .iter()
+                    .all(|p| p.x.abs() <= 1000000 && p.y.abs() <= 1000000)
+            );
+        }
+    }
+    #[test]
+    fn arc_sampling_clamps_rounded_offset_to_exact_representable_radius() {
+        for center in [1, -1] {
+            let mut a = arc(0, 1800);
+            a.center = Point::new(center, center);
+            a.radius = i64::MAX - 1;
+            let points = arc_path_points(a);
+            let min = center.checked_sub(a.radius).unwrap();
+            let max = center.checked_add(a.radius).unwrap();
+            assert_eq!(points.first().unwrap().x, max);
+            assert_eq!(points.last().unwrap().x, min);
+            assert!(
+                points
+                    .iter()
+                    .all(|p| (min..=max).contains(&p.x) && (min..=max).contains(&p.y))
+            );
+        }
     }
 }

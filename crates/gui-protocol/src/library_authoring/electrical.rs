@@ -502,3 +502,7 @@ mod anchor_designator_tests;
 #[cfg(test)]
 #[path = "electrical/circle_tests.rs"]
 mod circle_tests;
+
+#[cfg(test)]
+#[path = "electrical/arc_tests.rs"]
+mod arc_tests;

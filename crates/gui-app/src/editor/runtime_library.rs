@@ -352,6 +352,9 @@ impl Runtime {
             | C::Circle(_)
             | C::AddCircle
             | C::RemoveCircle
+            | C::Arc(_)
+            | C::AddArc
+            | C::RemoveArc
             | C::SymbolField(_)
             | C::AddSymbolField
             | C::RemoveSymbolField

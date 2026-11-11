@@ -536,6 +536,43 @@ overlap remain explicit limitations.
 Programmatic debug App proof supplies no pin-text readability, physical/HUMAN,
 release-GUI execution, full qualification or broader-goal acceptance.
 
+Saved Symbol Arc graphics (`dat-saved-symbol-arc-e3xw`) extend the same ordered
+rows and numeric form with center X/Y, radius, start/end angle and stroke.
+Angles remain raw signed 32-bit tenths of a degree with the existing native
+sweep, wrap and full-turn interpretation. New or changed rows require positive
+radius/stroke and checked integer extents; untouched admitted legacy rows gain
+no geometry gate. Captured indices/preimages preserve duplicate-row identity,
+nested Arc/center metadata, unrelated graphics and append order. New additions
+serialize typed geometry without injected graphic identities. Existing canonical
+writes, stale guards and projection are reused; no canvas Arc tool, schema,
+writer, public verb, dependency or placed-user update is added.
+
+There are 111 unique focused Rust passes (58 engine, 45 form, three sampler,
+five Library render), with existing `dat-17ld` ignored. Wide sweep and bounded
+radial-offset arithmetic avoid local sampler overflow while preserving ordinary
+results. These checks do not establish whole-scene extreme-coordinate safety;
+`dat-schematic-bounds-padding-extremes-x014` is separate source-only intake,
+without a public reproduction, implementation grant or new prerequisite.
+The first isolated App passes 126 stages in 30.21 seconds with nine inspected
+captures. It keeps the original Rect, appends a wrapped Arc, edits all six fields,
+removes only the Arc, exercises Preview/Cancel/history/cold and places explicit
+TC3 with the edited quarter Arc plus the Rect. Old Root/Child authenticated
+definitions, ink and pin/net memberships stay frozen. The original 104 journal
+rows remain byte-exact through six sole Symbol history operations and placement,
+ending at 49 sources and 111 transactions. Other pool sources, old CIs, Child
+and old Root members remain exact. The sole old Net predecessor/revision update
+is recorded by the placement transaction, not claimed byte-unchanged.
+
+The existing App source/history scope grows from 367 to 391 files, excluding
+existing GUI terminal/runtime paths; this is not whole-project equality. All six
+numeric fields are readable in add/edit previews. The wrapped addition overlaps
+the Rect's right outline at its authored pose; independent separated-stroke
+visibility is not claimed for that frame. The edited quarter Arc is visible in
+preview, ghost and cold placement, including below the ghost HUD. The cold form
+capture shows center X, while all six restored values are asserted. Existing
+small-text/canvas overlap remains. Programmatic native Wayland/Vulkan App proof
+supplies no physical/HUMAN, release-GUI execution or full qualification claim.
+
 Saved Symbol literal Text graphics (`dat-saved-symbol-text-graphics-w0k9`) share
 the Line and Rect form. Designers can add, select, edit and remove text, including
 its position and rotation, then preview, cancel, commit, undo, redo, save and reopen.

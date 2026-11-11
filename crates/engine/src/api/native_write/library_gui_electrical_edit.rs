@@ -32,6 +32,8 @@ pub(super) fn build(
             "text_removals",
             "circle_edits",
             "circle_removals",
+            "arc_edits",
+            "arc_removals",
         ]
         .iter()
         .any(|key| request.fields.contains_key(*key));
@@ -124,7 +126,7 @@ pub(super) fn build(
                 "symbols",
                 "line_edits" | "line_removals" | "line_additions" | "rect_edits" | "rect_removals"
                 | "graphic_additions" | "text_edits" | "text_removals" | "circle_edits"
-                | "circle_removals",
+                | "circle_removals" | "arc_edits" | "arc_removals",
             ) => {}
             ("symbols", key) if symbol_fields::KEYS.contains(&key) => {}
             ("symbols", "drawings") => {
@@ -679,3 +681,7 @@ mod anchor_designator_tests;
 #[cfg(test)]
 #[path = "library_gui_symbol_circle_tests.rs"]
 mod circle_tests;
+
+#[cfg(test)]
+#[path = "library_gui_symbol_arc_tests.rs"]
+mod arc_tests;

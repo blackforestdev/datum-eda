@@ -8,29 +8,35 @@ pub(super) fn table(p: &mut Painter<'_>, d: &LibraryDraft) {
     p.line("Graphics · select a row to edit geometry and stroke");
     for control in d.electrical.graphics.controls() {
         let label = match control {
-            C::Line(index) | C::Rect(index) | C::Text(index) | C::Circle(index) => format!(
-                "{}{} graphic {}",
-                if d.electrical.graphics.selected == Some(index) {
-                    "Selected · "
-                } else {
-                    ""
-                },
-                if matches!(control, C::Text(_)) {
-                    "Text"
-                } else if matches!(control, C::Rect(_)) {
-                    "Rectangle"
-                } else if matches!(control, C::Circle(_)) {
-                    "Circle"
-                } else {
-                    "Line"
-                },
-                index + 1
-            ),
+            C::Line(index) | C::Rect(index) | C::Text(index) | C::Circle(index) | C::Arc(index) => {
+                format!(
+                    "{}{} graphic {}",
+                    if d.electrical.graphics.selected == Some(index) {
+                        "Selected · "
+                    } else {
+                        ""
+                    },
+                    if matches!(control, C::Text(_)) {
+                        "Text"
+                    } else if matches!(control, C::Rect(_)) {
+                        "Rectangle"
+                    } else if matches!(control, C::Circle(_)) {
+                        "Circle"
+                    } else if matches!(control, C::Arc(_)) {
+                        "Arc"
+                    } else {
+                        "Line"
+                    },
+                    index + 1
+                )
+            }
             C::AddLine => "Add line".into(),
             C::AddRect => "Add rectangle".into(),
             C::AddText => "Add text".into(),
             C::AddCircle => "Add circle".into(),
             C::RemoveCircle => "Remove circle".into(),
+            C::AddArc => "Add arc".into(),
+            C::RemoveArc => "Remove arc".into(),
             C::RemoveLine => "Remove line".into(),
             C::RemoveRect => "Remove rectangle".into(),
             C::RemoveText => "Remove text".into(),
@@ -73,6 +79,25 @@ pub(super) fn review(p: &mut Painter<'_>, raw: &Value) {
                 coordinate("/center/x"),
                 coordinate("/center/y"),
                 coordinate("/radius"),
+                coordinate("/width")
+            ));
+            continue;
+        }
+        if let Some(arc) = row.get("Arc") {
+            let coordinate = |pointer: &str| {
+                arc.pointer(pointer)
+                    .and_then(Value::as_i64)
+                    .map(physical)
+                    .unwrap_or_else(|| "Unavailable".into())
+            };
+            p.line(&format!(
+                "Arc {}: center ({}, {}); radius {}; angles {} to {} (tenths of degree); stroke {}",
+                index + 1,
+                coordinate("/arc/center/x"),
+                coordinate("/arc/center/y"),
+                coordinate("/arc/radius"),
+                arc["arc"]["start_angle"],
+                arc["arc"]["end_angle"],
                 coordinate("/width")
             ));
             continue;

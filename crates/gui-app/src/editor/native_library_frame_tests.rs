@@ -59,6 +59,8 @@ mod proof_assertions;
 mod symbol_add_anchor;
 #[path = "native_library_frame_tests/symbol_anchor_designator.rs"]
 mod symbol_anchor_designator;
+#[path = "native_library_frame_tests/symbol_arc.rs"]
+mod symbol_arc;
 #[path = "native_library_frame_tests/symbol_circle.rs"]
 mod symbol_circle;
 #[path = "native_library_frame_tests/symbol_fields.rs"]
@@ -133,6 +135,7 @@ impl Fixture {
                     Step::Placement(_)
                         | Step::LibraryPreviewStatus(_)
                         | Step::SymbolCircle(_)
+                        | Step::SymbolArc(_)
                         | Step::AuthoredCircuit(_)
                         | Step::PartDefaultFootprint(_)
                         | Step::PartDefaultMap(_)
@@ -284,6 +287,7 @@ impl Fixture {
             Step::SymbolLine(stage) => self.symbol_line(events, stage),
             Step::SymbolRect(stage) => self.symbol_rect(events, stage),
             Step::SymbolCircle(stage) => self.symbol_circle(events, stage),
+            Step::SymbolArc(stage) => self.symbol_arc(events, stage),
             Step::SymbolText(stage) => self.symbol_text(events, stage),
             Step::SymbolFields(stage) => self.symbol_fields(events, stage),
             Step::SymbolAnchorDesignator(stage) => self.symbol_anchor_designator(events, stage),

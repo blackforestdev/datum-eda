@@ -12,7 +12,7 @@ fn provenance() -> WriteProvenance {
 fn circle() -> Value {
     json!({"Circle":{"center":{"x":0,"y":0,"vendor":[3,1,3]},"radius":1000000,"width":100000,"unknown":true}})
 }
-fn fixture(name: &str, drawings: Value) -> (PathBuf, DesignModel, Uuid, Uuid) {
+pub(super) fn fixture(name: &str, drawings: Value) -> (PathBuf, DesignModel, Uuid, Uuid) {
     let root = crate::api::native_write::test_support::temp_project_root(name);
     bootstrap_native_project(
         &root,
@@ -46,10 +46,10 @@ fn fixture(name: &str, drawings: Value) -> (PathBuf, DesignModel, Uuid, Uuid) {
     commit_prepared(&mut m, &root, p).unwrap();
     (root, m, unit, symbol)
 }
-fn raw(m: &DesignModel, id: Uuid) -> Value {
+pub(super) fn raw(m: &DesignModel, id: Uuid) -> Value {
     library::pool_library_object_payload(m, &format!("pool/symbols/{id}.json"), id).unwrap()
 }
-fn edit(
+pub(super) fn edit(
     m: &DesignModel,
     root: &Path,
     kind: &str,

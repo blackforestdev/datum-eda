@@ -7,13 +7,13 @@ use uuid::Uuid;
 const SYMBOL: &str = "4164b3da-29cc-4bfc-aaa1-7c862ba9b00b";
 const PART: &str = "7f7d6e07-8a7c-484c-beaf-e98f962d699d";
 const ROOT: &str = "77ac3f79-5121-4dfe-82e5-2f390da0c99c";
-fn read(path: &Path) -> Value {
+pub(super) fn read(path: &Path) -> Value {
     serde_json::from_slice(&std::fs::read(path).unwrap()).unwrap()
 }
-fn write(path: &Path, value: &Value) {
+pub(super) fn write(path: &Path, value: &Value) {
     std::fs::write(path, serde_json::to_vec_pretty(value).unwrap()).unwrap();
 }
-fn canonical(root: &Path) -> BTreeMap<String, Vec<u8>> {
+pub(super) fn canonical(root: &Path) -> BTreeMap<String, Vec<u8>> {
     source_bytes(root)
         .into_iter()
         .filter(|(p, _)| {
@@ -43,7 +43,7 @@ fn circle_body(scene: &BoardReviewSceneV1, owner: &str) {
     assert_eq!(graphic.path.iter().map(|p| p.y).max(), Some(-3000000));
     assert_eq!(graphic.width_nm, Some(100000));
 }
-fn instance_ink(scene: &Value, id: &str, placed: &Value) -> Value {
+pub(super) fn instance_ink(scene: &Value, id: &str, placed: &Value) -> Value {
     let ids: std::collections::BTreeSet<String> = std::iter::once(id.to_owned())
         .chain(
             placed["pins"]

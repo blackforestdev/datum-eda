@@ -21,6 +21,22 @@ const CIRCLE: &[(&str, &str, &str)] = &[
     ("circle_radius", "Circle radius (nm)", "/Circle/radius"),
     ("circle_width", "Circle stroke width (nm)", "/Circle/width"),
 ];
+const ARC: &[(&str, &str, &str)] = &[
+    ("arc_x", "Arc center X (nm)", "/Arc/arc/center/x"),
+    ("arc_y", "Arc center Y (nm)", "/Arc/arc/center/y"),
+    ("arc_radius", "Arc radius (nm)", "/Arc/arc/radius"),
+    (
+        "arc_start_angle",
+        "Arc start angle (tenths of degree)",
+        "/Arc/arc/start_angle",
+    ),
+    (
+        "arc_end_angle",
+        "Arc end angle (tenths of degree)",
+        "/Arc/arc/end_angle",
+    ),
+    ("arc_width", "Arc stroke width (nm)", "/Arc/width"),
+];
 const TEXT: &[(&str, &str, &str)] = &[
     ("text_literal", "Literal text", "/Text/text"),
     ("text_x", "Text X (nm)", "/Text/position/x"),
@@ -34,6 +50,8 @@ fn fields(raw: &Value) -> &'static [(&'static str, &'static str, &'static str)] 
         RECT
     } else if raw.get("Circle").is_some() {
         CIRCLE
+    } else if raw.get("Arc").is_some() {
+        ARC
     } else {
         LINE
     }
@@ -64,12 +82,14 @@ impl GraphicDraft {
                     C::Rect(*i)
                 } else if raw.get("Circle").is_some() {
                     C::Circle(*i)
+                } else if raw.get("Arc").is_some() {
+                    C::Arc(*i)
                 } else {
                     C::Line(*i)
                 }
             })
             .collect();
-        controls.extend([C::AddLine, C::AddRect, C::AddText, C::AddCircle]);
+        controls.extend([C::AddLine, C::AddRect, C::AddText, C::AddCircle, C::AddArc]);
         if let Some(raw) = self.selected.and_then(|i| self.rows.get(&i)) {
             controls.push(if raw.get("Text").is_some() {
                 C::RemoveText
@@ -77,6 +97,8 @@ impl GraphicDraft {
                 C::RemoveRect
             } else if raw.get("Circle").is_some() {
                 C::RemoveCircle
+            } else if raw.get("Arc").is_some() {
+                C::RemoveArc
             } else {
                 C::RemoveLine
             });
@@ -101,6 +123,7 @@ impl LibraryDraft {
                         || raw.get("Rect").is_some()
                         || raw.get("Text").is_some()
                         || raw.get("Circle").is_some()
+                        || raw.get("Arc").is_some()
                 })
                 .map(|(i, raw)| (i, raw.clone()))
                 .collect(),
@@ -132,6 +155,12 @@ impl LibraryDraft {
             for &(key, _, pointer) in fields(row) {
                 let value = match key {
                     "text_literal" => json!(self.value(key)),
+                    "arc_start_angle" | "arc_end_angle" => json!(
+                        self.value(key)
+                            .trim()
+                            .parse::<i32>()
+                            .map_err(|_| "Enter a signed 32-bit angle in tenths of degree")?
+                    ),
                     "text_rotation" => json!(
                         self.value(key)
                             .trim()
@@ -170,15 +199,24 @@ impl LibraryDraft {
                     center,
                     radius,
                     width,
+                }
+                | eda_engine::pool::Primitive::Arc {
+                    arc: eda_engine::ir::geometry::Arc { center, radius, .. },
+                    width,
                 } if new || *row != previous => {
+                    let kind = if row.get("Arc").is_some() {
+                        "Arc"
+                    } else {
+                        "Circle"
+                    };
                     if radius <= 0 || width <= 0 {
-                        return Err("Circle requires positive radius and stroke width".into());
+                        return Err(format!("{kind} requires positive radius and stroke width"));
                     }
                     if [center.x, center.y]
                         .into_iter()
                         .any(|v| v.checked_sub(radius).is_none() || v.checked_add(radius).is_none())
                     {
-                        return Err("Circle extents exceed integer coordinates".into());
+                        return Err(format!("{kind} extents exceed integer coordinates"));
                     }
                 }
                 eda_engine::pool::Primitive::Text { text, .. } if new => {
@@ -198,12 +236,14 @@ impl LibraryDraft {
                 && !f.key.starts_with("rect_")
                 && !f.key.starts_with("text_")
                 && !f.key.starts_with("circle_")
+                && !f.key.starts_with("arc_")
         });
         self.dirty.retain(|key| {
             !key.starts_with("line_")
                 && !key.starts_with("rect_")
                 && !key.starts_with("text_")
                 && !key.starts_with("circle_")
+                && !key.starts_with("arc_")
         });
         if let Some(raw) = self
             .electrical
@@ -231,6 +271,9 @@ impl LibraryDraft {
     pub fn switch_circle(&mut self, index: Option<usize>, remove: bool) -> Result<(), String> {
         self.switch_graphic("Circle", index, remove)
     }
+    pub fn switch_arc(&mut self, index: Option<usize>, remove: bool) -> Result<(), String> {
+        self.switch_graphic("Arc", index, remove)
+    }
     pub fn switch_graphic_control(
         &mut self,
         control: &crate::library_browser::LibraryControl,
@@ -249,6 +292,9 @@ impl LibraryDraft {
             C::Circle(i) => ("Circle", Some(i), false),
             C::AddCircle => ("Circle", None, false),
             C::RemoveCircle => ("Circle", None, true),
+            C::Arc(i) => ("Arc", Some(i), false),
+            C::AddArc => ("Arc", None, false),
+            C::RemoveArc => ("Arc", None, true),
             _ => return None,
         };
         Some(self.switch_graphic(kind, index, remove))
@@ -298,6 +344,8 @@ impl LibraryDraft {
                     json!({"Text":{"text":"","position":{"x":0,"y":0},"rotation":0}})
                 } else if kind == "Circle" {
                     json!({"Circle":{"center":{"x":0,"y":0},"radius":1000000,"width":100000}})
+                } else if kind == "Arc" {
+                    json!({"Arc":{"arc":{"center":{"x":0,"y":0},"radius":1000000,"start_angle":0,"end_angle":900},"width":100000}})
                 } else if kind == "Rect" {
                     json!({"Rect":{"min":{"x":-1000000,"y":-1000000},"max":{"x":1000000,"y":1000000},"width":100000}})
                 } else {
@@ -327,6 +375,7 @@ impl LibraryDraft {
             ("Rect", "rect_edits", "rect_removals", "rect"),
             ("Text", "text_edits", "text_removals", "text"),
             ("Circle", "circle_edits", "circle_removals", "circle"),
+            ("Arc", "arc_edits", "arc_removals", "arc"),
         ] {
             let mut edits = Vec::new();
             let mut removals = Vec::new();

@@ -44,12 +44,25 @@ fn corrected(raw: &Value, edited: &Value, kind: &str) -> Result<Value, EngineErr
             return Err(refusal("Correction retains the captured graphic kind"));
         }
         if edited != raw {
-            validate_circle(*center, *radius, *width)?;
+            validate_round("Circle", *center, *radius, *width)?;
         }
         permitted["Circle"]["center"]["x"] = json!(center.x);
         permitted["Circle"]["center"]["y"] = json!(center.y);
         permitted["Circle"]["radius"] = json!(radius);
         permitted["Circle"]["width"] = json!(width);
+    } else if let crate::pool::Primitive::Arc { arc, width } = &primitive {
+        if kind != "Arc" {
+            return Err(refusal("Correction retains the captured graphic kind"));
+        }
+        if edited != raw {
+            validate_round("Arc", arc.center, arc.radius, *width)?;
+        }
+        permitted["Arc"]["arc"]["center"]["x"] = json!(arc.center.x);
+        permitted["Arc"]["arc"]["center"]["y"] = json!(arc.center.y);
+        permitted["Arc"]["arc"]["radius"] = json!(arc.radius);
+        permitted["Arc"]["arc"]["start_angle"] = json!(arc.start_angle);
+        permitted["Arc"]["arc"]["end_angle"] = json!(arc.end_angle);
+        permitted["Arc"]["width"] = json!(width);
     } else {
         let (first, second, a, b, width) = match primitive {
             crate::pool::Primitive::Line { from, to, width } if kind == "Line" => {
@@ -102,6 +115,7 @@ pub(super) fn apply(
         ("Rect", "rect_edits", "rect_removals", "rect"),
         ("Text", "text_edits", "text_removals", "text"),
         ("Circle", "circle_edits", "circle_removals", "circle"),
+        ("Arc", "arc_edits", "arc_removals", "arc"),
     ] {
         if let Some(value) = request.fields.get(edits) {
             for edit in value
@@ -184,7 +198,12 @@ pub(super) fn apply(
                     radius,
                     width,
                 } if !request.fields.contains_key("line_additions") => {
-                    validate_circle(*center, *radius, *width)?;
+                    validate_round("Circle", *center, *radius, *width)?;
+                }
+                crate::pool::Primitive::Arc { arc, width }
+                    if !request.fields.contains_key("line_additions") =>
+                {
+                    validate_round("Arc", arc.center, arc.radius, *width)?;
                 }
                 crate::pool::Primitive::Text { text, .. }
                     if !request.fields.contains_key("line_additions") =>
@@ -195,7 +214,7 @@ pub(super) fn apply(
                 }
                 _ => {
                     return Err(refusal(
-                        "Add graphic accepts only supported native Line/Rect/Text/Circle graphics",
+                        "Add graphic accepts only supported native Line/Rect/Text/Circle/Arc graphics",
                     ));
                 }
             }
@@ -211,19 +230,24 @@ pub(super) fn apply(
     Ok(())
 }
 
-fn validate_circle(
+fn validate_round(
+    kind: &str,
     center: crate::ir::geometry::Point,
     radius: i64,
     width: i64,
 ) -> Result<(), EngineError> {
     if radius <= 0 || width <= 0 {
-        return Err(refusal("Circle requires positive radius and stroke width"));
+        return Err(refusal(format!(
+            "{kind} requires positive radius and stroke width"
+        )));
     }
     if [center.x, center.y]
         .into_iter()
         .any(|v| v.checked_sub(radius).is_none() || v.checked_add(radius).is_none())
     {
-        return Err(refusal("Circle extents exceed integer coordinates"));
+        return Err(refusal(format!(
+            "{kind} extents exceed integer coordinates"
+        )));
     }
     Ok(())
 }
