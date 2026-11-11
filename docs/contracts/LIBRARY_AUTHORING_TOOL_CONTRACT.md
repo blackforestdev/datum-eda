@@ -746,8 +746,8 @@ manual CLI JSON Create and Set. This follows the existing LibraryGraph ownership
 rule after the unchanged reference and default Footprint/Package checks. Raw
 canonical/import/replay and other-provenance behavior remain unchanged. It adds
 no Map topology or Footprint compatibility rule. Map Footprint/Package
-compatibility is separate source-only intake `dat-part-raw-map-physical-x00t`,
-without reproduction or implementation.
+compatibility is covered by the subsequent `dat-part-raw-map-physical-x00t`
+correction below; this earlier ownership proof retains its original scope.
 Fourteen scoped engine/CLI checks pass, including existing Part/Footprint
 regressions and refusal of a stale Part batch after its Map owner changes while
 the Part revision stays fixed. Actual public CLI Create and Set reproduced the
@@ -759,6 +759,28 @@ byte-exact. Matching Map plus new-Part Create is not assumed as a circular
 creation path. Old fixture operations/assertions are reused with visibility-only
 exports. Existing source-blocker staging scope, GUI proof and full-qualification
 boundaries remain; no GUI replay or universal raw-writer integrity is claimed.
+
+Public native Part default Map physical compatibility
+(`dat-part-raw-map-physical-x00t`) now checks a declared Map Footprint against
+an explicit Part default Footprint and the selected Part Package, after the
+unchanged reference, Footprint/Package and Map-owner checks. This follows existing
+LibraryGraph rules using the existing materialized readers. Absent/null Map
+Footprints remain optional; no topology, raw canonical/import/replay or other
+provenance policy is added. Nineteen focused engine/CLI checks pass, including
+existing reference/owner/Footprint regressions and a referenced Map change that
+stales a prepared Part without changing the Part revision.
+Actual public CLI Set reproduced both conflicts; the updated normal CLI refuses
+both with all 58 persisted files unchanged per refusal. Matching Set, Undo/Redo,
+cold queries, metadata and optional Part defaults pass. A separate continuation
+uses existing public full-object Package Set with a fresh Package-owned pad UUID,
+then real Map mappings with omitted/null Footprints and Part Set. Both pass, with
+Map and Package source bytes restored exactly, ending at 25 CLI-sourced journal
+rows. The primary 18-row result retains its original scope; the composite result
+includes the continuation. The earlier legacy Package-pad adapter recipe failed
+and remains recorded, without a whole-run PASS. An unexecuted test-fixture path
+correction and driver-assembly failure are retained. Canonical empty-map fixtures
+are supplemental, not public empty-map creation proof. No circular matching-Map
+new-Part creation, GUI replay or full qualification is claimed.
 
 The creation-only Part GUI increment (`dat-part-gui-create-6zs4`) adds explicit
 manufacturer/MPN, value, description, datasheet reference and tags, with named

@@ -104,6 +104,40 @@ fn validate_part_links(model: &DesignModel, part: &crate::pool::Part) -> Result<
                 part.uuid
             )));
         }
+        if let Some(value) = map.get("footprint").filter(|value| !value.is_null()) {
+            let footprint_id = value
+                .as_str()
+                .and_then(|value| value.parse::<uuid::Uuid>().ok())
+                .ok_or_else(|| {
+                    validation(format!("invalid footprint for pool pin_pad_map {id}"))
+                })?;
+            validate_pool_definition_reference(model, footprint_id, "footprints", "footprint")?;
+            if let Some(default) = part.default_footprint
+                && footprint_id != default
+            {
+                return Err(validation(format!(
+                    "part default_pin_pad_map {id} targets footprint {footprint_id}, not default_footprint {default}"
+                )));
+            }
+            let footprint = super::super::schematic_library::materialized_pool_object(
+                model,
+                footprint_id,
+                "footprints",
+            )?;
+            let package = footprint
+                .get("package")
+                .and_then(serde_json::Value::as_str)
+                .and_then(|value| value.parse::<uuid::Uuid>().ok())
+                .ok_or_else(|| {
+                    validation(format!("missing package for pool footprint {footprint_id}"))
+                })?;
+            if package != part.package {
+                return Err(validation(format!(
+                    "part default_footprint {footprint_id} belongs to package {package}, not part package {}",
+                    part.package
+                )));
+            }
+        }
     }
     Ok(())
 }
@@ -115,3 +149,7 @@ mod tests;
 #[cfg(test)]
 #[path = "library_part_map_owner_tests.rs"]
 mod map_owner_tests;
+
+#[cfg(test)]
+#[path = "library_part_map_physical_tests.rs"]
+mod map_physical_tests;

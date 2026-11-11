@@ -778,9 +778,25 @@ Undo/Redo, fresh queries, metadata and supported null/omitted new-Part Create
 pass to 18 CLI journal rows, with the Map source byte-exact. No circular
 matching-Map/new-Part creation path is assumed. Existing reference/Footprint
 error order and raw canonical/import/replay scope remain. The separate physical
-Map compatibility intake `dat-part-raw-map-physical-x00t` is source-only, without
-reproduction, implementation or new prerequisite. No GUI replay or qualification
+Map compatibility correction `dat-part-raw-map-physical-x00t` is described below;
+this original ownership proof is not regraded or made a new prerequisite. No GUI replay or qualification
 claim is supplied.
+
+Public native Part default Map physical compatibility
+(`dat-part-raw-map-physical-x00t`) now refuses a declared Map Footprint conflicting
+with the Part's explicit default or selected Package, after existing reference,
+Footprint/Package and Map-owner checks. Nineteen focused checks pass, including
+reference-change stale-batch protection. Actual old public Set accepts both
+conflicts; the matching CLI refuses both with saved equal 58-file snapshots.
+Matching/history/cold/metadata and optional Part defaults pass. A public
+full-object Package Set with a fresh Package-owned pad UUID supports omitted/null
+Map Footprints and subsequent Part Set; Map and Package bytes restore exactly.
+The primary 18-row proof remains separate from the continuation/composite ending
+at 25 CLI-sourced journal rows. The earlier legacy pad-adapter recipe failed;
+unexecuted test-fixture and driver-assembly corrections remain recorded. Existing
+canonical empty-map fixtures supplement actual real-mapping public proof. No new
+mandatory Footprint, topology/raw canonical/import/replay policy, circular
+matching-Map new-Part Create, GUI replay or full qualification is supplied.
 
 Electrical Library preview status (`dat-f43w`) now shows valid Unit/Symbol
 success without a false refusal action or irrelevant Drill field. Genuine
