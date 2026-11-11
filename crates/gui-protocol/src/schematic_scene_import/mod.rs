@@ -290,4 +290,7 @@ fn push_root_sheet_graphics(
 #[cfg(test)]
 mod tests;
 
+#[cfg(test)]
+mod bounds_tests;
+
 pub(crate) mod native_library;

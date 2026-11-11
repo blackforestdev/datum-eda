@@ -832,8 +832,9 @@ numeric graphic form for add/edit/removal, Preview/Cancel, Undo/Redo and cold
 reopen. Center/radius/start/end/stroke changes preserve raw nested metadata,
 original row identity and siblings. Raw signed i32 tenths-of-degree angles retain
 existing sweep/wrap/full-turn behavior; local wide arithmetic does not establish
-whole-scene extreme-coordinate safety. Separate bounds-padding intake
-`dat-schematic-bounds-padding-extremes-x014` is source-only and not a prerequisite.
+whole-scene extreme-coordinate safety. The subsequent shared-padding correction
+`dat-schematic-bounds-padding-extremes-x014` below retains this original Arc proof
+scope and adds no prerequisite.
 There are 111 scoped Rust passes and existing `dat-17ld` remains ignored. The first
 isolated App passes 126 stages in 30.21 seconds with nine inspected captures:
 original Rect retained, six Arc fields added/edited, only Arc removed/history
@@ -846,6 +847,23 @@ whole-project equality. Wrapped-add outline overlap, cold X-only capture with
 six asserted values, and existing crowded text remain explicit. Edited Arc
 preview/ghost/cold placement are visible. No new canvas tool, schema, writer,
 public verb, physical/HUMAN, release-GUI execution or qualification is supplied.
+
+Native schematic bounds padding (`dat-schematic-bounds-padding-extremes-x014`)
+now clips only otherwise-unrepresentable padding at existing i64 endpoints,
+retaining ordinary/empty padding and exact source geometry. Actual normal native
+projection reproduces four edge overflows before the fix (two passes/one failed
+boundary test); all three focused tests pass after the four arithmetic changes.
+The first small read-only App passes 12 stages in 5.56 seconds through ordinary
+open/Fit/cold, asserting ordered containing bounds and exact endpoints. Three
+public CLI commands author the project, only sheet and near-limit drawing;
+all 15 source/history files and two journal entries/cursor remain byte-exact.
+Expected 17 GUI runtime additions are excluded, not whole-project equality.
+Both reviewed captures contain the native pane/grid but no distinct drawing
+stroke. No visual-line PASS or established cause is claimed; actual runtime
+visibility intake `dat-schematic-edge-stroke-visibility-5nll` stays separate and
+open, not a new bounds prerequisite. No camera/rendering/range policy, physical
+HUMAN, release execution or global extreme-operation qualification is supplied.
+Unchanged CLI/daemon source closures and hashes are reused.
 
 Saved Symbol literal Text (`dat-saved-symbol-text-graphics-w0k9`) supports add,
 selection, content/position/rotation editing and removal in the shared graphics

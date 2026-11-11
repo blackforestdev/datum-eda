@@ -55,6 +55,8 @@ mod pin_label_clearance;
 mod pin_pad_map;
 #[path = "native_library_frame_tests/proof_assertions.rs"]
 mod proof_assertions;
+#[path = "native_library_frame_tests/schematic_bounds.rs"]
+mod schematic_bounds;
 #[path = "native_library_frame_tests/symbol_add_anchor.rs"]
 mod symbol_add_anchor;
 #[path = "native_library_frame_tests/symbol_anchor_designator.rs"]
@@ -136,6 +138,7 @@ impl Fixture {
                         | Step::LibraryPreviewStatus(_)
                         | Step::SymbolCircle(_)
                         | Step::SymbolArc(_)
+                        | Step::SchematicBounds(_)
                         | Step::AuthoredCircuit(_)
                         | Step::PartDefaultFootprint(_)
                         | Step::PartDefaultMap(_)
@@ -288,6 +291,7 @@ impl Fixture {
             Step::SymbolRect(stage) => self.symbol_rect(events, stage),
             Step::SymbolCircle(stage) => self.symbol_circle(events, stage),
             Step::SymbolArc(stage) => self.symbol_arc(events, stage),
+            Step::SchematicBounds(stage) => self.schematic_bounds(events, stage),
             Step::SymbolText(stage) => self.symbol_text(events, stage),
             Step::SymbolFields(stage) => self.symbol_fields(events, stage),
             Step::SymbolAnchorDesignator(stage) => self.symbol_anchor_designator(events, stage),

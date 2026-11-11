@@ -551,8 +551,9 @@ There are 111 unique focused Rust passes (58 engine, 45 form, three sampler,
 five Library render), with existing `dat-17ld` ignored. Wide sweep and bounded
 radial-offset arithmetic avoid local sampler overflow while preserving ordinary
 results. These checks do not establish whole-scene extreme-coordinate safety;
-`dat-schematic-bounds-padding-extremes-x014` is separate source-only intake,
-without a public reproduction, implementation grant or new prerequisite.
+`dat-schematic-bounds-padding-extremes-x014` was source-only at that checkpoint.
+Its subsequent shared-padding correction below retains this original Arc proof
+scope and does not establish whole-scene extreme-coordinate safety.
 The first isolated App passes 126 stages in 30.21 seconds with nine inspected
 captures. It keeps the original Rect, appends a wrapped Arc, edits all six fields,
 removes only the Arc, exercises Preview/Cancel/history/cold and places explicit
@@ -572,6 +573,30 @@ preview, ghost and cold placement, including below the ghost HUD. The cold form
 capture shows center X, while all six restored values are asserted. Existing
 small-text/canvas overlap remains. Programmatic native Wayland/Vulkan App proof
 supplies no physical/HUMAN, release-GUI execution or full qualification claim.
+
+Native schematic scene padding (`dat-schematic-bounds-padding-extremes-x014`)
+now truncates only padding that would exceed existing i64 endpoints. Authored
+geometry, ordinary padding and the empty-scene fallback remain exact. The normal
+native-source projection previously overflowed for four positive/negative/mixed
+boundary-wire cases; the retained before batch has two passes and one failed
+boundary test. After the four shared arithmetic corrections, all three focused
+projection tests pass, including containment, ordered bounds and exact source
+endpoints at the edges and representable padding margin.
+
+The first read-only isolated App passes 12 stages in 5.56 seconds. A small project
+and its only sheet/drawing were authored through three existing public CLI
+commands, then opened, fitted and reopened cold. Exact near-MAX drawing endpoints
+and the same clipped ordered bounds are asserted in both sessions. All 15 files
+in the existing source/history scope, including both journal entries and cursor,
+remain byte-exact; 17 normal GUI terminal/runtime files are added outside that
+scope. All four owned processes stop and the runtime is removed.
+Both actual captures show the active schematic and grid, but no distinct drawing
+stroke is visibly resolved. No visual-line PASS is claimed. Cause remains
+unestablished; actual runtime intake `dat-schematic-edge-stroke-visibility-5nll`
+tracks that separate observation without a new padding prerequisite. This adds
+no coordinate cutoff, camera/renderer policy, source writer or global extreme
+operation qualification. Unchanged CLI/daemon source closures and artifacts are
+reused; programmatic App proof supplies no physical/HUMAN or release execution.
 
 Saved Symbol literal Text graphics (`dat-saved-symbol-text-graphics-w0k9`) share
 the Line and Rect form. Designers can add, select, edit and remove text, including

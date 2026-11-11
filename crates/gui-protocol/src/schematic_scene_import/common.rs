@@ -474,10 +474,30 @@ pub(super) fn schematic_bounds(points: &[PointNm]) -> SceneBounds {
             SCHEMATIC_BOUNDS_PAD_NM,
         )
     } else {
-        let min_x = points.iter().map(|point| point.x).min().unwrap() - SCHEMATIC_BOUNDS_PAD_NM;
-        let min_y = points.iter().map(|point| point.y).min().unwrap() - SCHEMATIC_BOUNDS_PAD_NM;
-        let max_x = points.iter().map(|point| point.x).max().unwrap() + SCHEMATIC_BOUNDS_PAD_NM;
-        let max_y = points.iter().map(|point| point.y).max().unwrap() + SCHEMATIC_BOUNDS_PAD_NM;
+        let min_x = points
+            .iter()
+            .map(|point| point.x)
+            .min()
+            .unwrap()
+            .saturating_sub(SCHEMATIC_BOUNDS_PAD_NM);
+        let min_y = points
+            .iter()
+            .map(|point| point.y)
+            .min()
+            .unwrap()
+            .saturating_sub(SCHEMATIC_BOUNDS_PAD_NM);
+        let max_x = points
+            .iter()
+            .map(|point| point.x)
+            .max()
+            .unwrap()
+            .saturating_add(SCHEMATIC_BOUNDS_PAD_NM);
+        let max_y = points
+            .iter()
+            .map(|point| point.y)
+            .max()
+            .unwrap()
+            .saturating_add(SCHEMATIC_BOUNDS_PAD_NM);
         (min_x, min_y, max_x, max_y)
     };
     SceneBounds {
