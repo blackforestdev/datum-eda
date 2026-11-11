@@ -1,6 +1,8 @@
 //! Ordinary App/presented controls and production logical-key consumer proof.
 //! Programmatic dispatch is distinct from physical input and HUMAN qualification.
 use super::*;
+#[path = "native_library_frame_tests/authored_circuit.rs"]
+mod authored_circuit;
 #[path = "native_library_frame_tests/electrical.rs"]
 mod electrical;
 #[path = "native_library_frame_tests/entity.rs"]
@@ -123,6 +125,7 @@ impl Fixture {
                 self.steps.get(self.stage),
                 Some(
                     Step::Placement(_)
+                        | Step::AuthoredCircuit(_)
                         | Step::PartDefaultFootprint(_)
                         | Step::PartDefaultMap(_)
                         | Step::PartEntity(_)
@@ -159,7 +162,7 @@ impl Fixture {
         assert!(!r.native_edit.blocked, "writer reconciliation must qualify");
         if matches!(
             self.steps.first(),
-            Some(Step::TextFields(_) | Step::EntityAddGate(_))
+            Some(Step::TextFields(_) | Step::EntityAddGate(_) | Step::AuthoredCircuit(_))
         ) && self.wait_for_key_template()
         {
             return;
@@ -276,6 +279,7 @@ impl Fixture {
             Step::SymbolFields(stage) => self.symbol_fields(events, stage),
             Step::SymbolAnchorDesignator(stage) => self.symbol_anchor_designator(events, stage),
             Step::PinLabelClearance(stage) => self.pin_label_clearance(events, stage),
+            Step::AuthoredCircuit(stage) => self.authored_circuit(events, stage),
             Step::UnitPinMetadata(stage) => self.unit_pin_metadata(stage),
             Step::PackageEdit(stage) => self.check_package_edit(stage),
             Step::Part(stage, footprint) => self.check_part(stage, footprint),
