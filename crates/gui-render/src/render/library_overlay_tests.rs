@@ -97,3 +97,42 @@ fn library_body_and_controls_remain_outside_board_clip_after_selection_compositi
         "native selection appends after, preserving the actual Library geometry"
     );
 }
+
+#[test]
+fn native_pin_label_clearance_library_uses_world_ink_without_duplicate_screen_labels() {
+    let raw: datum_gui_protocol::LibraryJsonValue = r#"{"uuid":"70000000-0000-4000-8000-000000000001","name":"Thick body",
+        "unit":"70000000-0000-4000-8000-000000000002",
+        "drawings":[{"Rect":{"min":{"x":-2540000,"y":-2540000},"max":{"x":2540000,"y":2540000},"width":254000}}],
+        "pin_anchors":[{"pin":"70000000-0000-4000-8000-000000000003","position":{"x":-5080000,"y":0},
+            "style":{"orientation":"Right","length_nm":2540000}}]} "#.parse().unwrap();
+    let rect = RectPx {
+        x: 20.,
+        y: 20.,
+        width: 400.,
+        height: 240.,
+    };
+    let draw = |name: &str| {
+        let mut unit: datum_gui_protocol::LibraryJsonValue =
+            r#"{"pins":{"70000000-0000-4000-8000-000000000003":{}}}"#
+                .parse()
+                .unwrap();
+        unit["pins"]["70000000-0000-4000-8000-000000000003"]["name"] = name.into();
+        let mut quads = Vec::new();
+        let mut screen_text = Vec::new();
+        crate::side_panels::library_preview::electrical::symbol(
+            &raw,
+            Some(&unit),
+            rect,
+            &mut quads,
+            &mut screen_text,
+        );
+        assert!(screen_text.is_empty());
+        quads
+    };
+    let unnamed = draw("");
+    let named = draw("IN");
+    assert!(
+        named.len() > unnamed.len(),
+        "native label adds rendered glyph ink"
+    );
+}

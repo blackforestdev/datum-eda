@@ -689,6 +689,16 @@ Ignored17ld stays uncredited. Programmatic controls supply no physical/HUMAN,
 release-GUI execution, logical-pin removal/rekey, anchor relinking, implicit ECO,
 new minimum/schema/reader/controller, full qualification or broader-goal acceptance.
 
+Native Symbol pin-label clearance (`dat-7b2y`) uses the actual body,
+stub and terminal ink in the shared layout. IN and OUT are readable in
+the original thick-stroke Library preview, and S17 clears the terminal
+on XQ2 in open and cold Fit views. The same label is present on the
+uncommitted XQ3 preview. Both isolated App cases passed with four
+inspected captures and byte-for-byte identical canonical sources and
+journals. The Library case retains 9 sources and 9 transactions, and the
+schematic case retains 34 sources and 86 transactions. There were 27
+scoped Rust passes. Nearby Fit labels can still be crowded.
+
 Saved Symbol schematic pin designators
 (`dat-saved-symbol-anchor-designator-8ebg`) support literal entry and
 explicit Clear in the shared anchor form. The isolated App passed 91 stages

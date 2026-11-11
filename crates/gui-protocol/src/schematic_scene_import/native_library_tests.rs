@@ -150,6 +150,30 @@ fn frozen_rotated_body_load_and_preview_preserve_pins_and_all_source_history() {
     let preview = editor
         .project_source(source, sheet.uuid, &loaded, &root)
         .unwrap();
+    let pin_layer = |layer: &str| matches!(layer, "L212" | "L213");
+    let pin_texts = |scene: &BoardReviewSceneV1| {
+        let mut labels: Vec<_> = scene
+            .board_texts
+            .iter()
+            .filter(|text| pin_layer(&text.layer_id))
+            .cloned()
+            .collect();
+        labels.sort_by(|a, b| a.text_uuid.cmp(&b.text_uuid));
+        labels
+    };
+    let pin_geometry = |scene: &BoardReviewSceneV1| {
+        let mut geometry: Vec<_> = scene
+            .board_text_geometries
+            .iter()
+            .filter(|text| pin_layer(&text.layer_id))
+            .cloned()
+            .collect();
+        geometry.sort_by(|a, b| a.text_uuid.cmp(&b.text_uuid));
+        geometry
+    };
+    assert_eq!(pin_texts(&loaded), pin_texts(&preview));
+    assert_eq!(pin_geometry(&loaded), pin_geometry(&preview));
+    let expected_labels = pin_texts(&raw);
     for scene in [&loaded, &preview] {
         for symbol in sheet.symbols.values() {
             let prefix = format!("schematic-symbol:{}", symbol.uuid);
@@ -200,8 +224,42 @@ fn frozen_rotated_body_load_and_preview_preserve_pins_and_all_source_history() {
             "persisted pin terminal projections remain unchanged"
         );
         assert!(!pins(scene).is_empty());
-        assert_eq!(scene.board_texts, raw.board_texts);
-        assert_eq!(scene.board_text_geometries, raw.board_text_geometries);
+        let other_texts = |s: &BoardReviewSceneV1| {
+            s.board_texts
+                .iter()
+                .filter(|text| !pin_layer(&text.layer_id))
+                .cloned()
+                .collect::<Vec<_>>()
+        };
+        let other_geometry = |s: &BoardReviewSceneV1| {
+            s.board_text_geometries
+                .iter()
+                .filter(|text| !pin_layer(&text.layer_id))
+                .cloned()
+                .collect::<Vec<_>>()
+        };
+        assert_eq!(other_texts(scene), other_texts(&raw));
+        assert_eq!(other_geometry(scene), other_geometry(&raw));
+        let labels = pin_texts(scene);
+        assert_eq!(labels.len(), expected_labels.len());
+        for (actual, fallback) in labels.iter().zip(&expected_labels) {
+            assert_eq!(actual.object_id, fallback.object_id);
+            assert_eq!(actual.text_uuid, fallback.text_uuid);
+            assert_eq!(actual.source_object_uuid, fallback.source_object_uuid);
+            assert_eq!(actual.layer_id, fallback.layer_id);
+            assert_eq!(actual.text, fallback.text);
+            let geometry = scene
+                .board_text_geometries
+                .iter()
+                .find(|geometry| geometry.text_uuid == actual.text_uuid)
+                .unwrap();
+            assert!(crate::selection_geometry_catalog::layout_polygon(geometry).is_some());
+            assert!(
+                !geometry.glyphs.is_empty()
+                    || !geometry.fills.is_empty()
+                    || !geometry.strokes.is_empty()
+            );
+        }
         assert_eq!(scene.bounds, raw.bounds);
     }
     assert_eq!(

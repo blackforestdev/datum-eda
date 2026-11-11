@@ -6,7 +6,7 @@ use eda_engine::pool::{Symbol, SymbolPinDecoration};
 use eda_engine::schematic::{HiddenPowerBehavior, PlacedSymbol, SymbolDisplayMode, SymbolPin};
 use serde_json::Value;
 
-pub fn project(raw: &Value, unit: Option<&Value>) -> Result<BoardReviewSceneV1> {
+fn preview_basis(raw: &Value, unit: Option<&Value>) -> Result<(Symbol, PlacedSymbol)> {
     let symbol: Symbol = serde_json::from_value(raw.clone())?;
     let pins = unit.and_then(|u| u.get("pins")).and_then(Value::as_object);
     let mut placed_pins = Vec::new();
@@ -16,7 +16,11 @@ pub fn project(raw: &Value, unit: Option<&Value>) -> Result<BoardReviewSceneV1> 
             "Preview unavailable for decorated pins"
         );
         super::pin_stub_points(anchor).context("Pin direction or length unavailable")?;
-        let pin = pins.and_then(|p| p.get(&anchor.pin.to_string()));
+        let pin = pins.and_then(|pins| {
+            pins.iter()
+                .find(|(key, _)| key.parse().ok() == Some(anchor.pin))
+                .map(|(_, pin)| pin)
+        });
         let name = pin
             .and_then(|p| p.get("name"))
             .and_then(Value::as_str)
@@ -25,7 +29,7 @@ pub fn project(raw: &Value, unit: Option<&Value>) -> Result<BoardReviewSceneV1> 
         placed_pins.push(SymbolPin {
             uuid: anchor.pin,
             library_pin: Some(anchor.pin),
-            number: anchor.number.clone().unwrap_or_else(|| name.clone()),
+            number: anchor.number.clone().unwrap_or_default(),
             name,
             electrical_type: eda_engine::schematic::PinElectricalType::Passive,
             position: anchor.position,
@@ -49,6 +53,26 @@ pub fn project(raw: &Value, unit: Option<&Value>) -> Result<BoardReviewSceneV1> 
         pin_overrides: Vec::new(),
         hidden_power_behavior: HiddenPowerBehavior::PreservedAsImportedMetadata,
     };
+    Ok((symbol, placed))
+}
+
+pub fn fit_pin_labels(
+    scene: &mut BoardReviewSceneV1,
+    raw: &Value,
+    unit: Option<&Value>,
+    nanometers_per_pixel: f32,
+) -> Result<()> {
+    let (symbol, placed) = preview_basis(raw, unit)?;
+    crate::schematic_scene_import::native_library::project_preview_pin_labels(
+        scene,
+        &placed,
+        &symbol,
+        nanometers_per_pixel,
+    )
+}
+
+pub fn project(raw: &Value, unit: Option<&Value>) -> Result<BoardReviewSceneV1> {
+    let (symbol, placed) = preview_basis(raw, unit)?;
     let mut scene = ReviewWorkspaceState::unopened().scene;
     crate::schematic_scene_import::native_library::replace_body(&mut scene, &placed, &symbol)?;
     // Reuse captured world layout, including rotated bearings and advances.

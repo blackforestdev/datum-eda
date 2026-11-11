@@ -9,6 +9,8 @@ use eda_engine::schematic::PlacedSymbol;
 use eda_engine::substrate::DesignModel;
 use uuid::Uuid;
 
+#[path = "native_pin_label_layout.rs"]
+mod native_pin_label_layout;
 #[path = "native_symbol_pins.rs"]
 mod pins;
 
@@ -98,6 +100,7 @@ pub(crate) fn replace_body(
     let base_id = format!("schematic-symbol:{}", placed.uuid);
     scene.board_graphics.retain(|g| g.object_id != base_id);
     let transform = |p| display_point(p, placed.position, placed.rotation, placed.mirrored);
+    let body_start = scene.board_graphics.len();
     let mut text = SchematicTextSink::default();
     let mut text_points = Vec::new();
     for (index, drawing) in symbol.drawings.iter().enumerate() {
@@ -202,8 +205,28 @@ pub(crate) fn replace_body(
             scene.glyph_mesh_assets.push(asset);
         }
     }
+    pins::project_labels(scene, body_start, placed, symbol, Default::default())?;
     pins::project(&mut scene.board_graphics, placed, symbol)?;
     Ok(())
+}
+
+/// Library previews retain the existing screen-space label and marker sizes.
+pub(crate) fn project_preview_pin_labels(
+    scene: &mut BoardReviewSceneV1,
+    placed: &PlacedSymbol,
+    symbol: &Symbol,
+    nanometers_per_pixel: f32,
+) -> Result<()> {
+    let nm = |pixels: f32| (pixels * nanometers_per_pixel).ceil() as i64;
+    let style = native_pin_label_layout::LabelStyle {
+        name_height: nm(10.0).max(1),
+        number_height: nm(10.0).max(1),
+        terminal_radius: nm(2.0),
+        stub_width: PIN_STROKE_NM,
+        body_width: None,
+        minimum_stroke_radius: nm(0.5),
+    };
+    pins::project_labels(scene, 0, placed, symbol, style)
 }
 
 /// Display projection only. Electrical pin anchors and exact placement

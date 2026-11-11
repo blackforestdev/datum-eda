@@ -53,6 +53,7 @@ use scene_bounds::{rect_corners, scene_bounds};
 mod native_schematic_scene;
 pub use native_schematic_scene::project_native_schematic_scene;
 mod schematic_scene_import;
+pub use schematic_scene_import::schematic_stroke;
 pub use schematic_scene_import::{SchematicHitKind, load_kicad_schematic_workspace_state};
 mod artifact_preview_viewport;
 pub use artifact_preview_viewport::ArtifactPreviewViewportState;
@@ -152,7 +153,6 @@ pub use scene_primitives::{
     NetDisplayEntry, OutlinePolyline, SceneBounds, SceneLayer, TrackPrimitive, UnroutedPrimitive,
     ViaPrimitive,
 };
-
 #[path = "zone_fill_projection.rs"]
 mod zone_fill_projection;
 pub use zone_fill_projection::{ZoneFillProjection, ZonePrimitive};

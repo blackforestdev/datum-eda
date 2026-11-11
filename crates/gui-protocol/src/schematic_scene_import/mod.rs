@@ -18,6 +18,7 @@ mod power;
 mod symbols;
 
 use buses::*;
+pub use common::schematic_stroke;
 use common::*;
 use drawings::*;
 use labels::*;

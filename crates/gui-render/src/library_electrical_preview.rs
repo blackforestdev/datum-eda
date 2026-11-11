@@ -59,7 +59,7 @@ pub(crate) fn symbol(
     quads: &mut Vec<Quad>,
     text: &mut Vec<TextRun>,
 ) {
-    let scene =
+    let mut scene =
         match datum_gui_protocol::library_browser::symbol_geometry::preview::project(raw, unit) {
             Ok(scene) => scene,
             Err(reason) => {
@@ -80,6 +80,14 @@ pub(crate) fn symbol(
     let mut camera = CameraState::fit_to_bounds(&scene.bounds);
     camera.zoom = 0.7;
     let projection = Projection::new(rect, &scene.bounds, camera);
+    if projection.scale.is_finite() && projection.scale > 0. {
+        let _ = datum_gui_protocol::library_browser::symbol_geometry::preview::fit_pin_labels(
+            &mut scene,
+            raw,
+            unit,
+            projection.scale.recip(),
+        );
+    }
     for graphic in &scene.board_graphics {
         push_polyline_segments(
             quads,
@@ -115,35 +123,15 @@ pub(crate) fn symbol(
             quads.push(quad);
         }
     }
-    let pins = unit.and_then(|u| u.get("pins")).and_then(Value::as_object);
     for anchor in raw
         .get("pin_anchors")
         .and_then(Value::as_array)
         .into_iter()
         .flatten()
     {
-        let Some((from, to)) = endpoints(anchor) else {
+        let Some((from, _)) = endpoints(anchor) else {
             continue;
         };
-        let name = anchor
-            .get("pin")
-            .and_then(Value::as_str)
-            .and_then(|id| pins.and_then(|pins| pins.get(id)))
-            .and_then(|pin| pin.get("name"))
-            .and_then(Value::as_str)
-            .unwrap_or("Unresolved pin");
-        let number = anchor.get("number").and_then(Value::as_str).unwrap_or("");
-        let (x, y) = projection.project_point(to);
-        draw_text_clipped(
-            &format!("{number} {name}"),
-            x + 4.,
-            y - 6.,
-            10.,
-            TEXT_PRIMARY,
-            TextFace::Ui,
-            rect,
-            text,
-        );
         let (x, y) = projection.project_point(from);
         quads.push(Quad::from_rect(
             RectPx {

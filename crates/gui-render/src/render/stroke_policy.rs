@@ -4,15 +4,15 @@
 //! primitive forces an explicit class decision. Class B/C strokes are resolved
 //! against the live projection by the retained semantic-stroke GPU lane.
 
+use datum_gui_protocol::schematic_stroke::{
+    PIN_LINE_NM, SYMBOL_OUTLINE_NM, TERMINAL_OUTLINE_NM as TERMINAL_DOT_NM,
+};
 use datum_gui_viewport::WeightClass;
 
 pub(crate) const SILK_LINE_NM: i64 = 150_000;
 pub(crate) const EDGE_CUT_NM: i64 = 100_000;
 pub(crate) const SCHEMATIC_WIRE_NM: i64 = 152_400;
 pub(crate) const SCHEMATIC_BUS_NM: i64 = 304_800;
-pub(crate) const SYMBOL_OUTLINE_NM: i64 = 127_000;
-pub(crate) const PIN_LINE_NM: i64 = 101_600;
-pub(crate) const TERMINAL_DOT_NM: i64 = 300_000;
 pub(crate) const JUNCTION_DOT_NM: i64 = 400_000;
 
 #[allow(dead_code)] // Closed inventory: surface slices adopt entries incrementally.

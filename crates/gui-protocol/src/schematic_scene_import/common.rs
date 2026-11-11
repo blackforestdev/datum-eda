@@ -47,6 +47,12 @@ pub(super) const JUNCTION_RADIUS_NM: i64 = 180_000;
 // space; pins carry absolute positions (rotation baked in at import), so the
 // body is derived from the pin envelope and pin lines connect body edge ->
 // terminal (where wires already meet).
+/// Nominal canvas ink shared by schematic stroke rendering and pin-label placement.
+pub mod schematic_stroke {
+    pub const SYMBOL_OUTLINE_NM: i64 = 127_000;
+    pub const PIN_LINE_NM: i64 = 101_600;
+    pub const TERMINAL_OUTLINE_NM: i64 = 300_000;
+}
 pub(super) const PIN_STROKE_NM: i64 = 100_000;
 pub(super) const PIN_TERMINAL_RADIUS_NM: i64 = 90_000;
 pub(super) const MIN_BODY_HALF_NM: i64 = 500_000;

@@ -360,6 +360,27 @@ supplies no logical-pin removal/rekey, anchor relinking, implicit placed update,
 new schema/reader/controller/minimum policy, physical/HUMAN observation,
 release-GUI execution, full qualification or broader-goal acceptance.
 
+Native Symbol pin-label clearance (`dat-7b2y`) positions the name
+and number against the actual projected Symbol body, transformed pin stub
+and terminal ink. The Library preview shares that layout and retains its
+fitted text size and terminal markers. Schematic rendering retains its
+existing stroke classes and widths. Label roles and pin source identity
+remain stable. Authored geometry, attachment points and electrical data
+stay intact.
+
+The original thick-stroke Library case and the XQ2 schematic case passed
+in two isolated native App runs. The 14-stage Library run shows IN and
+OUT clear of the 0.254 mm body stroke in the enlarged preview and
+Inspector. The 23-stage schematic run shows S17 above the XQ2 stub in
+open and cold Fit views and above the uncommitted XQ3 stub. Nearby labels
+can still be crowded in the Fit view. Both runs preserve their canonical
+sources and journals byte-for-byte, with 9 sources and 9 transactions
+in the Library case and 34 sources and 86 transactions in the schematic
+case. No placement was committed by this proof. There were 27 scoped
+Rust passes. The updated native regression compares qualified loaded and
+gesture label layouts at the same pose while retaining its exact source,
+terminal, non-pin text and bounds checks.
+
 Saved Symbol schematic pin designators
 (`dat-saved-symbol-anchor-designator-8ebg`) use the shared saved anchor
 form. Designers can set a literal string or clear the optional property,

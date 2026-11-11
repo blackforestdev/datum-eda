@@ -43,6 +43,8 @@ mod part_entity;
 mod part_package;
 #[path = "native_library_frame_tests/part_placement.rs"]
 mod part_placement;
+#[path = "native_library_frame_tests/pin_label_clearance.rs"]
+mod pin_label_clearance;
 #[path = "native_library_frame_tests/pin_pad_map.rs"]
 mod pin_pad_map;
 #[path = "native_library_frame_tests/proof_assertions.rs"]
@@ -273,6 +275,7 @@ impl Fixture {
             Step::SymbolText(stage) => self.symbol_text(events, stage),
             Step::SymbolFields(stage) => self.symbol_fields(events, stage),
             Step::SymbolAnchorDesignator(stage) => self.symbol_anchor_designator(events, stage),
+            Step::PinLabelClearance(stage) => self.pin_label_clearance(events, stage),
             Step::UnitPinMetadata(stage) => self.unit_pin_metadata(stage),
             Step::PackageEdit(stage) => self.check_package_edit(stage),
             Step::Part(stage, footprint) => self.check_part(stage, footprint),
