@@ -28,6 +28,7 @@ pub(super) enum Step {
     SymbolAnchorDesignator(usize),
     PinLabelClearance(usize),
     AuthoredCircuit(usize),
+    OpposedPinLabels(usize),
     PackageEdit(usize),
     TextFields(usize),
     MapLabels(usize),

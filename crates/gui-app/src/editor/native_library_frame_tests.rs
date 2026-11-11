@@ -25,6 +25,8 @@ mod input;
 mod map_edit;
 #[path = "native_library_frame_tests/map_labels.rs"]
 mod map_labels;
+#[path = "native_library_frame_tests/opposed_pin_labels.rs"]
+mod opposed_pin_labels;
 #[path = "native_library_frame_tests/package.rs"]
 mod package;
 #[path = "native_library_frame_tests/package_edit.rs"]
@@ -280,6 +282,7 @@ impl Fixture {
             Step::SymbolAnchorDesignator(stage) => self.symbol_anchor_designator(events, stage),
             Step::PinLabelClearance(stage) => self.pin_label_clearance(events, stage),
             Step::AuthoredCircuit(stage) => self.authored_circuit(events, stage),
+            Step::OpposedPinLabels(stage) => self.opposed_pin_labels(stage),
             Step::UnitPinMetadata(stage) => self.unit_pin_metadata(stage),
             Step::PackageEdit(stage) => self.check_package_edit(stage),
             Step::Part(stage, footprint) => self.check_part(stage, footprint),

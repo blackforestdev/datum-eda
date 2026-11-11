@@ -368,6 +368,26 @@ existing stroke classes and widths. Label roles and pin source identity
 remain stable. Authored geometry, attachment points and electrical data
 stay intact.
 
+The bounded narrow-body correction (`dat-opposed-pin-label-crowding-q0y5`)
+keeps a name on its owning side when full body clearance would carry it
+through the far outline. It uses the existing own stub, terminal and number
+ink for the minimum feasible inward adjustment, retaining full text and pin
+identity. Body clearance is best effort when the authored Symbol is too
+small; opposed names can still overlap each other or the body. No text
+shrinking, wrapping, outside-body fallback or automatic body resize occurs.
+
+The saved TERU circuit passed a read-only isolated App run with 41 stages
+and five inspected captures: Library preview and Root/Child open and cold
+views retain the source-bound names on their owning sides. The existing fit
+projection now uses bounds without the displaced names; its Inspector preview
+fits the text, while narrow-body canvas overlap remains visible. All 367
+source/history files and 104 journal entries remain byte-for-byte identical.
+Twenty focused native-library checks passed, including cardinal/mirrored
+poses and the retained thick-stroke and fitted-marker cases. The initial
+strict-anchor marker regression and subsequent stroke-radius test-assumption
+failures remain recorded. This is programmatic debug App proof, with no
+physical/HUMAN, release-GUI execution or broader-goal acceptance.
+
 The original thick-stroke Library case and the XQ2 schematic case passed
 in two isolated native App runs. The 14-stage Library run shows IN and
 OUT clear of the 0.254 mm body stroke in the enlarged preview and

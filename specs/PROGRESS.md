@@ -699,6 +699,17 @@ journals. The Library case retains 9 sources and 9 transactions, and the
 schematic case retains 34 sources and 86 transactions. There were 27
 scoped Rust passes. Nearby Fit labels can still be crowded.
 
+Narrow-body native pin names (`dat-opposed-pin-label-crowding-q0y5`) retain
+their owning-side association and full text when complete body clearance is
+impossible. The shared layout uses bounded own-pin ink clearance; authored
+body and name overlap can remain. Twenty focused native-library checks pass,
+including cardinal/mirrored poses and the retained marker case. A read-only
+41-stage App run shows the Library preview and Root/Child open/cold state in
+five inspected captures; all 367 source/history files and 104 transactions
+remain byte-exact. Preview fitting is unchanged, with corrected scene bounds.
+No automatic text/body layout, full readability, physical/HUMAN, release-GUI
+execution or whole-goal acceptance is supplied.
+
 Saved Symbol schematic pin designators
 (`dat-saved-symbol-anchor-designator-8ebg`) support literal entry and
 explicit Clear in the shared anchor form. The isolated App passed 91 stages

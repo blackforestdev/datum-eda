@@ -107,6 +107,7 @@ struct Label {
     position: PointNm,
     axis: usize,
     sign: i128,
+    body_obstacles: Option<usize>,
 }
 
 fn add_label(
@@ -140,7 +141,50 @@ fn add_label(
     let Some(mut bounds) = ink_bounds(geometry) else {
         return Ok(());
     };
-    let by = clearance(&mut bounds, obstacles, label.axis, label.sign);
+    let original = bounds;
+    let mut by = clearance(&mut bounds, obstacles, label.axis, label.sign);
+    if let Some(count) = label.body_obstacles {
+        let axis = label.axis;
+        let across = 1 - axis;
+        let anchor = Bounds::point(label.position)[axis];
+        // An undersized authored body cannot give every name full clearance.
+        // Do not escape a far outline by carrying a name to the opposite pin.
+        // Preserve its owning-side anchor and full text instead.
+        let crosses_far_edge = obstacles[..count].iter().any(|edge| {
+            let crosses_band =
+                original.min[across] < edge.max[across] && edge.min[across] < original.max[across];
+            crosses_band
+                && if label.sign > 0 {
+                    edge.min[axis] > anchor && bounds.max[axis] > edge.min[axis]
+                } else {
+                    edge.max[axis] < anchor && bounds.min[axis] < edge.max[axis]
+                }
+        });
+        if crosses_far_edge {
+            bounds = original;
+            // Keep the existing own-pin ink clearance without using a far
+            // outline as a reason to carry the name across the symbol.
+            by = clearance(&mut bounds, &obstacles[count..], axis, label.sign);
+            let near = obstacles[..count]
+                .iter()
+                .map(|edge| edge.min[axis])
+                .min()
+                .unwrap();
+            let far = obstacles[..count]
+                .iter()
+                .map(|edge| edge.max[axis])
+                .max()
+                .unwrap();
+            let center = (near + far) / 2;
+            let shifted = anchor + by;
+            if (anchor < center && shifted >= center) || (anchor > center && shifted <= center) {
+                // Oversized own-pin text can also be impossible to separate.
+                // Retain association rather than trade it for full clearance.
+                bounds = original;
+                by = 0;
+            }
+        }
+    }
     let translate = |point: &mut PointNm| -> Result<()> {
         let component = if label.axis == 0 {
             &mut point.x
@@ -235,6 +279,7 @@ pub(super) fn project(
                 .map(move |p| Bounds::stroke(p[0], p[1], radius))
         })
         .collect();
+    let body_obstacles = obstacles.len();
     obstacles.extend([
         Bounds::stroke(
             from,
@@ -264,6 +309,7 @@ pub(super) fn project(
         },
         axis: usize::from(horizontal),
         sign: if horizontal { -1 } else { 1 },
+        body_obstacles: None,
     };
     let name = Label {
         key: "pin-name",
@@ -278,6 +324,7 @@ pub(super) fn project(
         position: to,
         axis: usize::from(!horizontal),
         sign: inward,
+        body_obstacles: Some(body_obstacles),
     };
     add_label(
         scene,

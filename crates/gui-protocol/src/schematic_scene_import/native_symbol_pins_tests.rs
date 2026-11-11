@@ -136,3 +136,108 @@ fn declared_symbol_pin_projection_retains_missing_or_moved_source_fallback() {
     project(&mut graphics, &source, &definition).unwrap();
     assert_eq!(graphics, vec![original[1].clone()]);
 }
+
+#[test]
+fn narrow_native_body_keeps_long_opposed_names_at_owning_anchors_through_poses() {
+    let mut symbol = definition();
+    symbol.drawings = vec![eda_engine::pool::Primitive::Rect {
+        min: Point::new(-1_000_000, -500_000),
+        max: Point::new(1_000_000, 500_000),
+        width: 150_000,
+    }];
+    let mut opposite = symbol.pin_anchors[0].clone();
+    opposite.pin = Uuid::from_u128(4);
+    opposite.position.x = 2_000_000;
+    opposite.style.orientation = eda_engine::pool::SymbolPinOrientation::Left;
+    symbol.pin_anchors.push(opposite);
+    let raw_before = serde_json::to_value(&symbol).unwrap();
+    for rotation in [0, 90, 180, 270] {
+        for mirrored in [false, true] {
+            let mut source = placed(rotation, mirrored, (0, 0));
+            let transform = |x| {
+                super::super::display_point(Point::new(x, 0), source.position, rotation, mirrored)
+                    .unwrap()
+            };
+            let left = transform(-2_000_000);
+            let right = transform(2_000_000);
+            source.pins[0].position = Point::new(left.x, left.y);
+            source.pins[0].name = "TERU_IN".into();
+            source.pins[0].number = "TERU_IN".into();
+            let mut pin = source.pins[0].clone();
+            pin.uuid = Uuid::new_v4();
+            pin.library_pin = Some(Uuid::from_u128(4));
+            pin.position = Point::new(right.x, right.y);
+            pin.name = "TERU_OUT".into();
+            pin.number = "TERU_OUT".into();
+            source.pins.push(pin);
+            let unchanged = serde_json::to_value(&source).unwrap();
+            let mut scene = ReviewWorkspaceState::unopened().scene;
+            super::super::replace_body(&mut scene, &source, &symbol).unwrap();
+            for (index, pin) in source.pins.iter().enumerate() {
+                let (terminal, body_side, direction) =
+                    declared_stub(&source, pin, &symbol).unwrap().unwrap();
+                let name = scene
+                    .board_texts
+                    .iter()
+                    .find(|text| {
+                        text.text_uuid
+                            == text_uuid(source.uuid, &format!("pin-name:{index}")).to_string()
+                    })
+                    .unwrap();
+                assert_eq!(name.text, pin.name);
+                let expected = PointNm {
+                    x: body_side.x + direction[0].signum() as i64 * 50_800,
+                    y: body_side.y + direction[1].signum() as i64 * 50_800,
+                };
+                assert_eq!(
+                    name.position, expected,
+                    "only own stub ink clearance, rotation={rotation}, mirrored={mirrored}"
+                );
+                let corners = crate::selection_geometry_catalog::layout_polygon(
+                    scene
+                        .board_text_geometries
+                        .iter()
+                        .find(|g| g.text_uuid == name.text_uuid)
+                        .unwrap(),
+                )
+                .unwrap();
+                let min: [i128; 2] = std::array::from_fn(|i| {
+                    corners
+                        .iter()
+                        .map(|p| p[i].numerator.div_euclid(p[i].denominator))
+                        .min()
+                        .unwrap()
+                });
+                let max: [i128; 2] = std::array::from_fn(|i| {
+                    corners
+                        .iter()
+                        .map(|p| {
+                            p[i].numerator.div_euclid(p[i].denominator)
+                                + i128::from(p[i].numerator.rem_euclid(p[i].denominator) != 0)
+                        })
+                        .max()
+                        .unwrap()
+                });
+                let a = [i128::from(terminal.x), i128::from(terminal.y)];
+                let b = [i128::from(body_side.x), i128::from(body_side.y)];
+                assert!((0..2).any(
+                    |i| max[i] <= a[i].min(b[i]) - 50_800 || min[i] >= a[i].max(b[i]) + 50_800
+                ));
+                assert!((0..2).any(|i| max[i] <= a[i] - 240_000 || min[i] >= a[i] + 240_000));
+                assert_eq!(name.source_object_uuid, Some(pin.uuid.to_string()));
+                let number = scene
+                    .board_texts
+                    .iter()
+                    .find(|text| {
+                        text.text_uuid
+                            == text_uuid(source.uuid, &format!("pin-number:{index}")).to_string()
+                    })
+                    .unwrap();
+                assert_eq!(number.text, pin.number);
+                assert_eq!(number.source_object_uuid, Some(pin.uuid.to_string()));
+            }
+            assert_eq!(serde_json::to_value(&source).unwrap(), unchanged);
+            assert_eq!(serde_json::to_value(&symbol).unwrap(), raw_before);
+        }
+    }
+}

@@ -165,3 +165,63 @@ fn native_pin_label_clearance_fitted_preview_preserves_readable_scale_and_square
     }
     assert_eq!(scene.board_texts.len(), 2);
 }
+
+#[test]
+fn narrow_preview_preserves_full_opposed_names_without_crossing_to_other_pin() {
+    let raw = json!({"uuid":Uuid::from_u128(1),"name":"TERU Symbol","unit":Uuid::from_u128(2),
+        "drawings":[{"Rect":{"min":{"x":-1000000,"y":-500000},"max":{"x":1000000,"y":500000},"width":150000}}],
+        "pin_anchors":[
+            {"pin":Uuid::from_u128(3),"position":{"x":-2000000,"y":0},
+             "style":{"orientation":"Right","length_nm":1000000,"decoration":"none"}},
+            {"pin":Uuid::from_u128(4),"position":{"x":2000000,"y":0},
+             "style":{"orientation":"Left","length_nm":1000000,"decoration":"none"}}]});
+    let unit = json!({"pins":{
+        Uuid::from_u128(3).to_string():{"name":"TERU_IN"},
+        Uuid::from_u128(4).to_string():{"name":"TERU_OUT"}}});
+    let mut scene =
+        crate::library_browser::symbol_geometry::preview::project(&raw, Some(&unit)).unwrap();
+    let graphics = scene.board_graphics.clone();
+    for (index, anchor) in [(0, -949_200), (1, 949_200)] {
+        let text = scene
+            .board_texts
+            .iter()
+            .find(|text| {
+                text.text_uuid
+                    == text_uuid(Uuid::from_u128(1), &format!("pin-name:{index}")).to_string()
+            })
+            .unwrap();
+        assert_eq!(text.position.x, anchor);
+        assert_eq!(text.height_nm, PIN_NAME_HEIGHT_NM);
+    }
+    crate::library_browser::symbol_geometry::preview::fit_pin_labels(
+        &mut scene,
+        &raw,
+        Some(&unit),
+        32_333.88,
+    )
+    .unwrap();
+    for (index, (name, x)) in [("TERU_IN", -925_000), ("TERU_OUT", 925_000)]
+        .into_iter()
+        .enumerate()
+    {
+        let text = scene
+            .board_texts
+            .iter()
+            .find(|text| {
+                text.text_uuid
+                    == text_uuid(Uuid::from_u128(1), &format!("pin-name:{index}")).to_string()
+            })
+            .unwrap();
+        assert_eq!(text.text, name);
+        assert_eq!(
+            text.position.x, x,
+            "fitting names retain successful near-edge clearance"
+        );
+        assert_eq!(
+            text.source_object_uuid,
+            Some(Uuid::from_u128(3 + index as u128).to_string())
+        );
+        assert_eq!(text.height_nm, 323_339);
+    }
+    assert_eq!(scene.board_graphics, graphics);
+}
