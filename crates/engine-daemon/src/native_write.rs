@@ -106,7 +106,11 @@ pub(super) fn native_write_response(
             "native board editing requires expected_model_revision",
         );
     }
+    // A supplied Symbol Move tip is a guard, even though its presence is optional.
+    let supplied_symbol_move_tip =
+        params.verb == "datum.schematic.move_symbol" && params.expected_transaction_tip.is_some();
     if (library_edit
+        || supplied_symbol_move_tip
         || matches!(
             params.verb.as_str(),
             "datum.pcb.move_component"

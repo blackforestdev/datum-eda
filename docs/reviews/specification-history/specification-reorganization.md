@@ -1281,6 +1281,8 @@ failure is relabeled as passed.
 
 ### Actual Symbol Move direct-daemon verification
 
+The six observations below are historical at baseline `87cc3a3e56fdece656e926203af5e0dcb7e82f45`. They are preserved without regrading QUESTION-01 or its maintenance closeout. The subsequent bounded runtime correction is recorded after the original finding.
+
 One finite guarded run used current production `native.describe`/`native.write`
 JSON-RPC dispatch/deserialization with the existing synthetic native library
 fixture copied privately outside the repository. It placed one native Symbol
@@ -1343,6 +1345,36 @@ completes QUESTION-01 verification as a substantiated finding; the issue stays
 open/unselected with no hard dependency, priority promotion or runtime repair.
 No missing guard is accepted as a new product rule. The existing maintenance
 assignment and broad PWO/qualification boundaries remain unchanged.
+
+#### Supplied-tip correction follow-up — 616T
+
+Under PM1271/1272, `dat-symbol-move-daemon-tip-616t` corrects only a supplied
+nonnull transaction-tip guard for direct native Symbol Move. PM060 W2 requires
+fresh applicable caller guards and stale-intent refusal; this correction honors
+the existing optional transport field when supplied. It creates no mandatory
+missing/null-tip policy and ratifies none of the historical omission outcomes.
+Other verbs, parameter decoding, revision-error precedence and canonical
+builder/preview/commit, proposal and writer-lease paths remain unchanged.
+
+A new permanent test decodes actual JSON-RPC requests before normal dispatch.
+Typed placement and a valid seed move establish real distinct tips T1/T2. Before
+the correction, fresh model revision plus older T1 was accepted and grew the
+journal from 2 to 3; that first failed regression and its raw request/response
+remain retained. After the four-line guard correction, stale T1 is refused with
+-32061 for both commit and dry-run, and stale-model-revision refusal keeps
+precedence. All 36 project files remain byte-exact for these initial refusals.
+A current T2 permits exactly one move (journal 2 to 3); a repeated old tip with
+a freshly described model revision is refused with its full project preimage
+unchanged. Cold resolution observes 2mm, Undo observes 1mm, and Redo observes
+2mm with journal lengths 3/4/5. The new test passes in 0.89 seconds; the original
+parametric-field dispatch/proposal test also passes. Its source and the complete
+original six-case probe remain byte-exact at the start of the test module.
+
+This is direct decoded-dispatch and canonical persistence proof, with matching
+daemon-only build verification recorded separately. It supplies no GUI,
+stdio-framing, concurrent-writer, physical/HUMAN or full qualification claim.
+The original synthetic fixture is no production-library-content approval.
+
 
 ### Audit-correction candidate checks and retained boundaries
 

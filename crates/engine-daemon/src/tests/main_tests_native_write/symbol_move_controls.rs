@@ -258,3 +258,168 @@ fn symbol_move_transport_contract_probe() {
     }
     std::fs::remove_dir_all(root).unwrap();
 }
+
+/// Exercise the actual outer JSON decoder and native.write parameter dispatcher.
+fn symbol_move_rpc(engine: &mut Engine, id: u64, params: Value) -> JsonRpcResponse {
+    let raw = json!({"jsonrpc":"2.0", "id":id, "method":"native.write", "params":params});
+    println!("SYMBOL_TIP_REQUEST {raw}");
+    let decoded: JsonRpcRequest = serde_json::from_str(&raw.to_string()).unwrap();
+    let response = dispatch_request(engine, decoded);
+    println!(
+        "SYMBOL_TIP_RESPONSE {}",
+        serde_json::to_string(&response).unwrap()
+    );
+    response
+}
+
+#[test]
+fn symbol_move_supplied_nonempty_tip_refuses_stale_intent_and_preserves_history() {
+    let root = std::env::temp_dir().join(format!("datum_symbol_tip_{}", uuid::Uuid::new_v4()));
+    copy_tree(
+        &PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("../test-harness/testdata/library/native_authored_baseline_v1"),
+        &root,
+    );
+    let mut engine = Engine::new().unwrap();
+    let before = describe(&mut engine, 1, &root);
+    let placed = symbol_move_rpc(
+        &mut engine,
+        2,
+        json!({
+            "project_root":root, "verb":"datum.schematic.place_symbol",
+            "params":{"sheet":"10000000-0000-4000-8000-000000000004",
+            "library_symbol":"30000000-0000-4000-8000-000000000001",
+            "reference":"U1", "value":"tip guard", "x_nm":0, "y_nm":0},
+            "source":"manual", "reason":"Place supplied-tip fixture",
+            "expected_model_revision":before["model_revision"],
+            "expected_transaction_tip":before["transaction_tip"]
+        }),
+    );
+    assert!(placed.error.is_none(), "{placed:?}");
+    let symbol = placed.result.unwrap()["primary_object_id"].clone();
+    let make_move = |current: &Value, x: i64| {
+        json!({
+            "project_root":root, "verb":"datum.schematic.move_symbol",
+            "params":{"symbol":symbol,"instance_path":[],"x_nm":x,"y_nm":0},
+            "source":"manual", "reason":"Move with supplied transaction tip",
+            "expected_model_revision":current["model_revision"],
+            "expected_transaction_tip":current["transaction_tip"]
+        })
+    };
+    let placed_state = describe(&mut engine, 3, &root);
+    let older_tip = placed_state["transaction_tip"].clone();
+    assert!(older_tip.is_string());
+    let seeded = symbol_move_rpc(&mut engine, 4, make_move(&placed_state, 1_000_000));
+    assert!(seeded.error.is_none(), "{seeded:?}");
+    let current = describe(&mut engine, 5, &root);
+    assert_ne!(current["transaction_tip"], older_tip);
+    println!("SYMBOL_TIP_GUARDS older_actual_tip={older_tip} current={current}");
+    let original = preimage(&root);
+    for case in [
+        "stale_tip",
+        "dry_run_stale_tip",
+        "stale_revision_precedence",
+    ] {
+        let mut request = make_move(&current, 2_000_000);
+        request["expected_transaction_tip"] = older_tip.clone();
+        if case == "dry_run_stale_tip" {
+            request["dry_run"] = json!(true);
+        }
+        if case == "stale_revision_precedence" {
+            request["expected_model_revision"] = placed_state["model_revision"].clone();
+        }
+        let response = symbol_move_rpc(&mut engine, 6, request);
+        let after = describe(&mut engine, 7, &root);
+        println!(
+            "SYMBOL_TIP_OBSERVED {case} before={} after={} files={}",
+            current["journal_len"],
+            after["journal_len"],
+            original.len()
+        );
+        let error = response
+            .error
+            .expect("supplied stale intent must be refused");
+        assert_eq!(error.code, -32061);
+        assert!(
+            error
+                .message
+                .contains(if case == "stale_revision_precedence" {
+                    "expected_model_revision"
+                } else {
+                    "transaction tip"
+                }),
+            "{error:?}"
+        );
+        assert_eq!(after, current);
+        assert_eq!(
+            preimage(&root),
+            original,
+            "{case} changed authored/history preimage"
+        );
+    }
+    let valid = symbol_move_rpc(&mut engine, 8, make_move(&current, 2_000_000));
+    assert!(valid.error.is_none(), "{valid:?}");
+    let moved = describe(&mut engine, 9, &root);
+    assert_eq!(
+        moved["journal_len"].as_u64().unwrap(),
+        current["journal_len"].as_u64().unwrap() + 1
+    );
+    assert_ne!(moved["transaction_tip"], current["transaction_tip"]);
+    let stable = preimage(&root);
+    let mut repeated = make_move(&moved, 3_000_000);
+    repeated["expected_transaction_tip"] = current["transaction_tip"].clone();
+    let repeated = symbol_move_rpc(&mut engine, 10, repeated);
+    assert_eq!(repeated.error.unwrap().code, -32061);
+    assert_eq!(
+        preimage(&root),
+        stable,
+        "repeat with fresh revision must still check supplied old tip"
+    );
+    let symbol_id: uuid::Uuid = serde_json::from_value(symbol).unwrap();
+    for (verb, expected_x) in [
+        (None, 2_000_000),
+        (Some("datum.journal.undo"), 1_000_000),
+        (Some("datum.journal.redo"), 2_000_000),
+    ] {
+        if let Some(verb) = verb {
+            let state = describe(&mut engine, 11, &root);
+            let response = symbol_move_rpc(
+                &mut engine,
+                12,
+                json!({
+                    "project_root":root, "verb":verb, "params":{"expected_tip":state["transaction_tip"]},
+                    "source":"manual", "reason":"Supplied-tip move history proof",
+                    "expected_model_revision":state["model_revision"],
+                    "expected_transaction_tip":state["transaction_tip"]
+                }),
+            );
+            assert!(response.error.is_none(), "{response:?}");
+        }
+        let reopened = eda_engine::substrate::ProjectResolver::new(&root)
+            .resolve()
+            .unwrap();
+        let source =
+            eda_engine::substrate::ElectricalSelectionSnapshot::capture(&reopened).unwrap();
+        let schematic = source.schematic_source().unwrap();
+        let placed = &schematic
+            .sheets
+            .values()
+            .find_map(|s| s.symbols.get(&symbol_id))
+            .unwrap();
+        assert_eq!(
+            placed.position,
+            eda_engine::ir::geometry::Point::new(expected_x, 0)
+        );
+        assert_eq!(
+            reopened.journal.len() as u64,
+            describe(&mut engine, 13, &root)["journal_len"]
+                .as_u64()
+                .unwrap()
+        );
+        println!(
+            "SYMBOL_TIP_COLD verb={verb:?} x={expected_x} journal_len={}",
+            reopened.journal.len()
+        );
+    }
+    std::fs::remove_dir_all(root).unwrap();
+}
