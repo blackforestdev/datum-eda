@@ -1,6 +1,29 @@
 //! Independent explicit-intent and full-payload history assertions.
 use super::*;
 impl Fixture {
+    pub(super) fn capture_frame(&mut self, label: &str) {
+        if label.ends_with("-preview") {
+            let d = self
+                .app
+                .runtime
+                .as_ref()
+                .unwrap()
+                .workspace()
+                .library
+                .draft
+                .as_ref()
+                .unwrap();
+            assert!(d.preview.is_some());
+            assert!(d.refusal.is_none());
+        }
+        self.app
+            .runtime
+            .as_mut()
+            .unwrap()
+            .write_visual_screenshot(&self.output.join(format!("{label}.png")))
+            .unwrap();
+    }
+
     pub(super) fn record_placed(&mut self, stack: bool) {
         let s = self.app.runtime.as_ref().unwrap().workspace();
         let e = s.library.selected(&s.selection).unwrap();

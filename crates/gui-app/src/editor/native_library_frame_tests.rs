@@ -57,6 +57,8 @@ mod proof_assertions;
 mod symbol_add_anchor;
 #[path = "native_library_frame_tests/symbol_anchor_designator.rs"]
 mod symbol_anchor_designator;
+#[path = "native_library_frame_tests/symbol_circle.rs"]
+mod symbol_circle;
 #[path = "native_library_frame_tests/symbol_fields.rs"]
 mod symbol_fields;
 #[path = "native_library_frame_tests/symbol_line.rs"]
@@ -127,6 +129,7 @@ impl Fixture {
                 self.steps.get(self.stage),
                 Some(
                     Step::Placement(_)
+                        | Step::SymbolCircle(_)
                         | Step::AuthoredCircuit(_)
                         | Step::PartDefaultFootprint(_)
                         | Step::PartDefaultMap(_)
@@ -277,6 +280,7 @@ impl Fixture {
             Step::SymbolRelinkAnchor(stage) => self.symbol_relink_anchor(events, stage),
             Step::SymbolLine(stage) => self.symbol_line(events, stage),
             Step::SymbolRect(stage) => self.symbol_rect(events, stage),
+            Step::SymbolCircle(stage) => self.symbol_circle(events, stage),
             Step::SymbolText(stage) => self.symbol_text(events, stage),
             Step::SymbolFields(stage) => self.symbol_fields(events, stage),
             Step::SymbolAnchorDesignator(stage) => self.symbol_anchor_designator(events, stage),
@@ -519,28 +523,7 @@ impl Fixture {
                 }
                 assert!(found, "named choice {label} is available");
             }
-            Step::Capture(label) => {
-                if label.ends_with("-preview") {
-                    let d = self
-                        .app
-                        .runtime
-                        .as_ref()
-                        .unwrap()
-                        .workspace()
-                        .library
-                        .draft
-                        .as_ref()
-                        .unwrap();
-                    assert!(d.preview.is_some());
-                    assert!(d.refusal.is_none());
-                }
-                self.app
-                    .runtime
-                    .as_mut()
-                    .unwrap()
-                    .write_visual_screenshot(&self.output.join(format!("{label}.png")))
-                    .unwrap();
-            }
+            Step::Capture(label) => self.capture_frame(label),
             Step::Snapshot => self.snapshot = source_bytes(&self.root),
             Step::Invariant => assert_eq!(
                 source_bytes(&self.root),

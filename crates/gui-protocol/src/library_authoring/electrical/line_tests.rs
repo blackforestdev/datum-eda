@@ -46,7 +46,13 @@ fn duplicate_lines_use_original_indices_and_compose_raw_edits_removals_additions
             .keys()
             .copied()
             .collect::<Vec<_>>(),
-        [1, 2, 3]
+        [0, 1, 2, 3]
+    );
+    assert!(
+        d.electrical
+            .graphics
+            .controls()
+            .contains(&crate::library_browser::LibraryControl::Circle(0))
     );
     assert!(d.request().unwrap().fields.is_empty());
     d.switch_line(Some(3), false).unwrap();

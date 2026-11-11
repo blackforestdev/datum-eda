@@ -486,6 +486,37 @@ transactions. The focused Rust suites passed 82 tests, with the existing
 `dat-17ld` case ignored. The App evidence comes from programmatic input in
 an isolated Wayland session.
 
+Saved Symbol Circle graphics (`dat-saved-symbol-circle-qngv`) use the shared
+ordered graphic-row and numeric form. Designers can add, select, correct and
+remove center/radius/stroke, then Preview/Cancel, commit, Undo/Redo and reopen.
+New and changed Circles require positive radius/stroke and representable integer
+extents. Untouched admitted legacy rows gain no geometry gate. Captured indices
+and raw preimages distinguish identical rows; corrections preserve center
+metadata and unrelated graphics, and typed additions retain append order without
+persistent graphic IDs. Circle schema and native projection already exist;
+this adds no canvas Circle tool, writer, public verb or placed-user update.
+
+The isolated App passed 113 stages in 38.06 seconds with nine inspected captures.
+It explicitly removes the original Rect, authors a 1.5 mm Circle, corrects it to
+2 mm, exercises invalid-input discard/removal/history and cold reopening, then
+places a separate explicit Part as TC3. Old Root/Child definitions, pin/net
+membership and actual body/pin/text/glyph ink remain frozen, including warm
+and placement previews. The original 104 journal rows remain byte-exact through
+six sole Set Symbol operations and that placement; the final project has 49
+sources and 111 transactions. Old Root members, the complete Child, original CIs
+and other pool sources remain exact. One old Net's predecessor list contracts
+to itself and its revision increments during placement; no universal unchanged
+identity-record claim is made.
+
+There are 96 unique scoped Rust passes, with existing `dat-17ld` ignored. The
+initial stale editable-row assertion failure remains recorded. The cold capture
+shows center X, while all four cold values are asserted. The placement HUD partly
+covers the ghost's top; the complete Circle is visible after cold reopening.
+Pin text is not apparent in the corrected-Circle Library preview
+(`dat-circle-preview-pin-context-i7bx`), and existing canvas overlap remains.
+Programmatic debug App proof supplies no pin-text readability, physical/HUMAN,
+release-GUI execution, full qualification or broader-goal acceptance.
+
 Saved Symbol literal Text graphics (`dat-saved-symbol-text-graphics-w0k9`) share
 the Line and Rect form. Designers can add, select, edit and remove text, including
 its position and rotation, then preview, cancel, commit, undo, redo, save and reopen.

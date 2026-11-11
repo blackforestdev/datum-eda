@@ -498,3 +498,7 @@ mod pin_metadata_tests;
 
 #[cfg(test)]
 mod anchor_designator_tests;
+
+#[cfg(test)]
+#[path = "electrical/circle_tests.rs"]
+mod circle_tests;

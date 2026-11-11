@@ -8,7 +8,7 @@ pub(super) fn table(p: &mut Painter<'_>, d: &LibraryDraft) {
     p.line("Graphics · select a row to edit geometry and stroke");
     for control in d.electrical.graphics.controls() {
         let label = match control {
-            C::Line(index) | C::Rect(index) | C::Text(index) => format!(
+            C::Line(index) | C::Rect(index) | C::Text(index) | C::Circle(index) => format!(
                 "{}{} graphic {}",
                 if d.electrical.graphics.selected == Some(index) {
                     "Selected · "
@@ -19,6 +19,8 @@ pub(super) fn table(p: &mut Painter<'_>, d: &LibraryDraft) {
                     "Text"
                 } else if matches!(control, C::Rect(_)) {
                     "Rectangle"
+                } else if matches!(control, C::Circle(_)) {
+                    "Circle"
                 } else {
                     "Line"
                 },
@@ -27,6 +29,8 @@ pub(super) fn table(p: &mut Painter<'_>, d: &LibraryDraft) {
             C::AddLine => "Add line".into(),
             C::AddRect => "Add rectangle".into(),
             C::AddText => "Add text".into(),
+            C::AddCircle => "Add circle".into(),
+            C::RemoveCircle => "Remove circle".into(),
             C::RemoveLine => "Remove line".into(),
             C::RemoveRect => "Remove rectangle".into(),
             C::RemoveText => "Remove text".into(),
@@ -52,6 +56,24 @@ pub(super) fn review(p: &mut Painter<'_>, raw: &Value) {
                 coordinate("/position/x"),
                 coordinate("/position/y"),
                 text["rotation"]
+            ));
+            continue;
+        }
+        if let Some(circle) = row.get("Circle") {
+            let coordinate = |pointer: &str| {
+                circle
+                    .pointer(pointer)
+                    .and_then(Value::as_i64)
+                    .map(physical)
+                    .unwrap_or_else(|| "Unavailable".into())
+            };
+            p.line(&format!(
+                "Circle {}: center ({}, {}); radius {}; stroke {}",
+                index + 1,
+                coordinate("/center/x"),
+                coordinate("/center/y"),
+                coordinate("/radius"),
+                coordinate("/width")
             ));
             continue;
         }

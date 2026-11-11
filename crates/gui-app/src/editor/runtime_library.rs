@@ -349,6 +349,9 @@ impl Runtime {
             | C::Text(_)
             | C::AddText
             | C::RemoveText
+            | C::Circle(_)
+            | C::AddCircle
+            | C::RemoveCircle
             | C::SymbolField(_)
             | C::AddSymbolField
             | C::RemoveSymbolField

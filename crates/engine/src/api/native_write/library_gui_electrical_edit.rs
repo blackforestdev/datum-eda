@@ -30,6 +30,8 @@ pub(super) fn build(
             "graphic_additions",
             "text_edits",
             "text_removals",
+            "circle_edits",
+            "circle_removals",
         ]
         .iter()
         .any(|key| request.fields.contains_key(*key));
@@ -121,7 +123,8 @@ pub(super) fn build(
             (
                 "symbols",
                 "line_edits" | "line_removals" | "line_additions" | "rect_edits" | "rect_removals"
-                | "graphic_additions" | "text_edits" | "text_removals",
+                | "graphic_additions" | "text_edits" | "text_removals" | "circle_edits"
+                | "circle_removals",
             ) => {}
             ("symbols", key) if symbol_fields::KEYS.contains(&key) => {}
             ("symbols", "drawings") => {
@@ -672,3 +675,7 @@ mod pin_metadata_tests;
 #[cfg(test)]
 #[path = "library_gui_symbol_anchor_designator_tests.rs"]
 mod anchor_designator_tests;
+
+#[cfg(test)]
+#[path = "library_gui_symbol_circle_tests.rs"]
+mod circle_tests;

@@ -23,6 +23,7 @@ pub(super) enum Step {
     SymbolRelinkAnchor(usize),
     SymbolLine(usize),
     SymbolRect(usize),
+    SymbolCircle(usize),
     SymbolText(usize),
     SymbolFields(usize),
     SymbolAnchorDesignator(usize),

@@ -757,6 +757,21 @@ replacement box under the existing glyph-coverage issue
 `dat-ui-filename-glyph-coverage-o53p`. There were 82 scoped Rust passes, with
 the existing `dat-17ld` case ignored.
 
+Saved native Symbol Circle graphics (`dat-saved-symbol-circle-qngv`) now use
+the existing numeric graphic form for add/edit/removal, Preview/Cancel,
+Undo/Redo and save/cold. Captured row indices/preimages preserve raw center
+metadata and siblings; newly authored/changed positive radius/stroke and checked
+integer extents reuse the existing Circle schema. The 113-stage isolated App
+passes in 38.06 seconds with nine inspected captures: a later explicit TC3 uses
+the Circle while old Root/Child definitions, ink and pin/net memberships stay
+frozen. The original 104 journal entries remain exact through six Symbol sets
+and one placement, ending at 49 sources/111 transactions. There are 96 unique
+scoped Rust passes and known `dat-17ld` remains ignored. One old Net's recorded
+predecessor/revision transition belongs to placement. Cold form/ghost visibility
+limits, preview pin-context intake `dat-circle-preview-pin-context-i7bx` and
+existing overlap remain explicit; no new canvas tool, pin readability,
+physical/HUMAN, release-GUI execution or broad-goal acceptance is supplied.
+
 Saved Symbol literal Text (`dat-saved-symbol-text-graphics-w0k9`) supports add,
 selection, content/position/rotation editing and removal in the shared graphics
 form. Existing text layout determines the preview envelope. The corrected

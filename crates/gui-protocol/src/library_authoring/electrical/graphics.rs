@@ -15,6 +15,12 @@ const RECT: &[(&str, &str, &str)] = &[
     ("rect_max_y", "Rectangle maximum Y (nm)", "/Rect/max/y"),
     ("rect_width", "Rectangle stroke width (nm)", "/Rect/width"),
 ];
+const CIRCLE: &[(&str, &str, &str)] = &[
+    ("circle_x", "Circle center X (nm)", "/Circle/center/x"),
+    ("circle_y", "Circle center Y (nm)", "/Circle/center/y"),
+    ("circle_radius", "Circle radius (nm)", "/Circle/radius"),
+    ("circle_width", "Circle stroke width (nm)", "/Circle/width"),
+];
 const TEXT: &[(&str, &str, &str)] = &[
     ("text_literal", "Literal text", "/Text/text"),
     ("text_x", "Text X (nm)", "/Text/position/x"),
@@ -26,6 +32,8 @@ fn fields(raw: &Value) -> &'static [(&'static str, &'static str, &'static str)] 
         TEXT
     } else if raw.get("Rect").is_some() {
         RECT
+    } else if raw.get("Circle").is_some() {
+        CIRCLE
     } else {
         LINE
     }
@@ -54,17 +62,21 @@ impl GraphicDraft {
                     C::Text(*i)
                 } else if raw.get("Rect").is_some() {
                     C::Rect(*i)
+                } else if raw.get("Circle").is_some() {
+                    C::Circle(*i)
                 } else {
                     C::Line(*i)
                 }
             })
             .collect();
-        controls.extend([C::AddLine, C::AddRect, C::AddText]);
+        controls.extend([C::AddLine, C::AddRect, C::AddText, C::AddCircle]);
         if let Some(raw) = self.selected.and_then(|i| self.rows.get(&i)) {
             controls.push(if raw.get("Text").is_some() {
                 C::RemoveText
             } else if raw.get("Rect").is_some() {
                 C::RemoveRect
+            } else if raw.get("Circle").is_some() {
+                C::RemoveCircle
             } else {
                 C::RemoveLine
             });
@@ -88,6 +100,7 @@ impl LibraryDraft {
                     raw.get("Line").is_some()
                         || raw.get("Rect").is_some()
                         || raw.get("Text").is_some()
+                        || raw.get("Circle").is_some()
                 })
                 .map(|(i, raw)| (i, raw.clone()))
                 .collect(),
@@ -153,6 +166,21 @@ impl LibraryDraft {
                         "Rectangle requires ordered corners and positive stroke width".into(),
                     );
                 }
+                eda_engine::pool::Primitive::Circle {
+                    center,
+                    radius,
+                    width,
+                } if new || *row != previous => {
+                    if radius <= 0 || width <= 0 {
+                        return Err("Circle requires positive radius and stroke width".into());
+                    }
+                    if [center.x, center.y]
+                        .into_iter()
+                        .any(|v| v.checked_sub(radius).is_none() || v.checked_add(radius).is_none())
+                    {
+                        return Err("Circle extents exceed integer coordinates".into());
+                    }
+                }
                 eda_engine::pool::Primitive::Text { text, .. } if new => {
                     if text.trim().is_empty() {
                         return Err("New Symbol Text must not be empty".into());
@@ -169,9 +197,13 @@ impl LibraryDraft {
             !f.key.starts_with("line_")
                 && !f.key.starts_with("rect_")
                 && !f.key.starts_with("text_")
+                && !f.key.starts_with("circle_")
         });
         self.dirty.retain(|key| {
-            !key.starts_with("line_") && !key.starts_with("rect_") && !key.starts_with("text_")
+            !key.starts_with("line_")
+                && !key.starts_with("rect_")
+                && !key.starts_with("text_")
+                && !key.starts_with("circle_")
         });
         if let Some(raw) = self
             .electrical
@@ -196,6 +228,9 @@ impl LibraryDraft {
     pub fn switch_text(&mut self, index: Option<usize>, remove: bool) -> Result<(), String> {
         self.switch_graphic("Text", index, remove)
     }
+    pub fn switch_circle(&mut self, index: Option<usize>, remove: bool) -> Result<(), String> {
+        self.switch_graphic("Circle", index, remove)
+    }
     pub fn switch_graphic_control(
         &mut self,
         control: &crate::library_browser::LibraryControl,
@@ -211,6 +246,9 @@ impl LibraryDraft {
             C::Text(i) => ("Text", Some(i), false),
             C::AddText => ("Text", None, false),
             C::RemoveText => ("Text", None, true),
+            C::Circle(i) => ("Circle", Some(i), false),
+            C::AddCircle => ("Circle", None, false),
+            C::RemoveCircle => ("Circle", None, true),
             _ => return None,
         };
         Some(self.switch_graphic(kind, index, remove))
@@ -258,6 +296,8 @@ impl LibraryDraft {
                 let next = index.checked_add(1).ok_or("Too many draft graphics")?;
                 let raw = if kind == "Text" {
                     json!({"Text":{"text":"","position":{"x":0,"y":0},"rotation":0}})
+                } else if kind == "Circle" {
+                    json!({"Circle":{"center":{"x":0,"y":0},"radius":1000000,"width":100000}})
                 } else if kind == "Rect" {
                     json!({"Rect":{"min":{"x":-1000000,"y":-1000000},"max":{"x":1000000,"y":1000000},"width":100000}})
                 } else {
@@ -286,6 +326,7 @@ impl LibraryDraft {
             ("Line", "line_edits", "line_removals", "line"),
             ("Rect", "rect_edits", "rect_removals", "rect"),
             ("Text", "text_edits", "text_removals", "text"),
+            ("Circle", "circle_edits", "circle_removals", "circle"),
         ] {
             let mut edits = Vec::new();
             let mut removals = Vec::new();
