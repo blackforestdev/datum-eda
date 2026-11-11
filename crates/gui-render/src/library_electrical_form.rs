@@ -98,6 +98,15 @@ pub(super) fn table(p: &mut Painter<'_>, d: &LibraryDraft, rect: RectPx) {
                 C::RemoveAnchor,
             );
         }
+        if d.has_anchor_designator_control() {
+            if d.anchor_designator() == Some("") {
+                p.line("Schematic pin designator is empty");
+            }
+            p.button(
+                "Clear designator (use logical pin name)",
+                C::ClearAnchorDesignator,
+            );
+        }
         if !d.create {
             p.line("Unit and logical pins retained");
         }
@@ -212,6 +221,11 @@ pub(super) fn review(p: &mut Painter<'_>, d: &LibraryDraft) {
             .flatten()
         {
             p.line(&anchor_label(d, anchor));
+            let designator = anchor["number"].as_str().map_or_else(
+                || "Schematic pin designator · Logical pin name".into(),
+                |number| format!("Schematic pin designator · {number:?}"),
+            );
+            p.line(&designator);
         }
     }
     p.line(if d.create {

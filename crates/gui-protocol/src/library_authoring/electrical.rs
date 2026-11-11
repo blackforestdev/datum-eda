@@ -2,6 +2,7 @@
 use super::*;
 use std::collections::BTreeMap;
 
+mod anchor_designator;
 mod graphics;
 mod pin_metadata;
 mod saved;
@@ -19,6 +20,7 @@ pub struct ElectricalDraft {
     pub pins: Map<String, Value>,
     pub anchors: Map<String, Value>,
     pub anchor_id: Option<Uuid>,
+    anchor_designators: BTreeMap<Uuid, Value>,
     pub new_anchor: bool,
     pub unit_pins: BTreeMap<String, Vec<(String, String)>>,
 }
@@ -407,6 +409,7 @@ impl LibraryDraft {
         } else {
             self.electrical.anchors = self.electrical_anchors()?;
         }
+        self.leave_anchor_designator(remove);
         let raw = selected
             .as_ref()
             .and_then(|id| self.electrical.anchors.get(id))
@@ -453,6 +456,7 @@ impl LibraryDraft {
                 text
             });
         }
+        self.bind_anchor_designator(raw.as_ref());
         self.preview = None;
         self.refusal = None;
         Ok(())
@@ -491,3 +495,6 @@ mod symbol_field_tests;
 
 #[cfg(test)]
 mod pin_metadata_tests;
+
+#[cfg(test)]
+mod anchor_designator_tests;

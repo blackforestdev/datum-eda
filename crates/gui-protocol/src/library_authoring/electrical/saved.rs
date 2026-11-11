@@ -328,6 +328,7 @@ impl LibraryDraft {
         } else {
             self.graphic_request(fields)?;
             self.symbol_field_request(original, fields)?;
+            self.anchor_designator_request(original, fields);
             let anchors = self.electrical_anchors()?;
             let mut ordered = original
                 .get("pin_anchors")

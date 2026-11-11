@@ -339,6 +339,7 @@ impl Runtime {
             | C::Anchor(_)
             | C::AddAnchor
             | C::RemoveAnchor
+            | C::ClearAnchorDesignator
             | C::Line(_)
             | C::AddLine
             | C::RemoveLine
@@ -454,6 +455,9 @@ impl Runtime {
                         controls.push(C::AddAnchor);
                         if d.create || d.electrical.new_anchor || d.electrical.anchor_id.is_some() {
                             controls.push(C::RemoveAnchor);
+                        }
+                        if d.has_anchor_designator_control() {
+                            controls.push(C::ClearAnchorDesignator);
                         }
                     }
                     if d.kind == "symbols" && !d.create {

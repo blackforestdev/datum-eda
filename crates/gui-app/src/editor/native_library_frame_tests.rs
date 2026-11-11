@@ -49,6 +49,8 @@ mod pin_pad_map;
 mod proof_assertions;
 #[path = "native_library_frame_tests/symbol_add_anchor.rs"]
 mod symbol_add_anchor;
+#[path = "native_library_frame_tests/symbol_anchor_designator.rs"]
+mod symbol_anchor_designator;
 #[path = "native_library_frame_tests/symbol_fields.rs"]
 mod symbol_fields;
 #[path = "native_library_frame_tests/symbol_line.rs"]
@@ -270,6 +272,7 @@ impl Fixture {
             Step::SymbolRect(stage) => self.symbol_rect(events, stage),
             Step::SymbolText(stage) => self.symbol_text(events, stage),
             Step::SymbolFields(stage) => self.symbol_fields(events, stage),
+            Step::SymbolAnchorDesignator(stage) => self.symbol_anchor_designator(events, stage),
             Step::UnitPinMetadata(stage) => self.unit_pin_metadata(stage),
             Step::PackageEdit(stage) => self.check_package_edit(stage),
             Step::Part(stage, footprint) => self.check_part(stage, footprint),

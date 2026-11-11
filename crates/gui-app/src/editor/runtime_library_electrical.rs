@@ -10,7 +10,9 @@ impl Runtime {
                 _ => None,
             };
             let graphic = d.switch_graphic_control(&control);
-            let result = if let Some(result) = d.switch_symbol_field_control(&control) {
+            let result = if control == C::ClearAnchorDesignator {
+                d.clear_anchor_designator()
+            } else if let Some(result) = d.switch_symbol_field_control(&control) {
                 result
             } else if let Some(result) = d.switch_pin_alternate_control(&control) {
                 result

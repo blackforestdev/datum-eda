@@ -1,6 +1,8 @@
 //! Saved electrical edits retain raw siblings while composing supported pin,
 //! anchor, metadata and rectangular-body intent through the canonical writer.
 use super::*;
+#[path = "library_gui_symbol_anchor_designator.rs"]
+mod anchor_designator;
 #[path = "library_gui_symbol_relink_anchor.rs"]
 mod anchor_relinks;
 #[path = "library_gui_symbol_graphic_edit.rs"]
@@ -42,6 +44,8 @@ pub(super) fn build(
     let anchor_add = request.kind == "symbols" && request.fields.contains_key("anchor_additions");
     let anchor_remove = request.kind == "symbols" && request.fields.contains_key("anchor_removals");
     let anchor_relink = request.kind == "symbols" && request.fields.contains_key("anchor_relinks");
+    let anchor_designator_edit =
+        request.kind == "symbols" && request.fields.contains_key(anchor_designator::KEY);
     let anchor_edit = anchor_add || anchor_remove || anchor_relink;
     let (target, mut object) = if body_edit
         || graphic_edit
@@ -50,6 +54,7 @@ pub(super) fn build(
         || pin_remove
         || pin_metadata_edit
         || anchor_edit
+        || anchor_designator_edit
     {
         super::super::saved_source::load(context.model, request.object_id, &request.kind)?
     } else {
@@ -123,7 +128,10 @@ pub(super) fn build(
                 validate_rectangle(&object["drawings"], value)?;
                 object["drawings"] = value.clone();
             }
-            ("symbols", "anchor_additions" | "anchor_removals" | "anchor_relinks") => {} // Compose after poses.
+            (
+                "symbols",
+                "anchor_additions" | "anchor_removals" | "anchor_relinks" | anchor_designator::KEY,
+            ) => {} // Compose after poses.
             ("symbols", "pin_anchors") => {
                 let mut posed = value.clone();
                 if let (Some(before), Some(after)) =
@@ -155,6 +163,9 @@ pub(super) fn build(
     }
     if field_edit {
         symbol_fields::apply(&request, &previous, &mut object)?;
+    }
+    if anchor_designator_edit {
+        anchor_designator::apply(&request, &previous, &mut object, &removals)?;
     }
     let mut references = HashSet::new();
     if let Some((unit, raw_unit)) = &anchor_basis {
@@ -235,6 +246,7 @@ pub(super) fn build(
         || pin_remove
         || pin_metadata_edit
         || anchor_edit
+        || anchor_designator_edit
     {
         prepared.batch.operations.insert(
             0,
@@ -656,3 +668,7 @@ mod symbol_field_tests;
 #[cfg(test)]
 #[path = "library_gui_unit_pin_metadata_tests.rs"]
 mod pin_metadata_tests;
+
+#[cfg(test)]
+#[path = "library_gui_symbol_anchor_designator_tests.rs"]
+mod anchor_designator_tests;

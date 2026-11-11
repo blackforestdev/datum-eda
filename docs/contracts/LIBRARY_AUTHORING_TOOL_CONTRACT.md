@@ -360,6 +360,32 @@ supplies no logical-pin removal/rekey, anchor relinking, implicit placed update,
 new schema/reader/controller/minimum policy, physical/HUMAN observation,
 release-GUI execution, full qualification or broader-goal acceptance.
 
+Saved Symbol schematic pin designators
+(`dat-saved-symbol-anchor-designator-8ebg`) use the shared saved anchor
+form. Designers can set a literal string or clear the optional property,
+preview or cancel, commit, use canonical Undo/Redo, and reopen the saved
+definition. Captured indices and exact raw preimages identify the selected
+anchor. Edits compose with the existing pose and relink paths and preserve
+unrelated raw data. Clear removes the property. A later bare placement uses
+the logical pin name when the designator is absent, and retains a literal
+empty string when explicitly authored. This value belongs to the schematic
+pin. Physical pad designators and PinPadMaps retain their existing authority.
+
+The isolated App passed 91 stages in 32.48 seconds with five inspected
+captures. The form and review show S17, and the Clear review shows the
+logical pin name fallback. A separate XQ2 placement uses S17 on its new pin.
+The warm and cold Root scenes contain source-bound S17 text and glyph
+geometry. At the captured Fit zoom the small canvas number partly overlaps
+the terminal, within the existing pin-label issue `dat-7b2y`. The prior
+Omega glyph gap remains tracked under `dat-ui-filename-glyph-coverage-o53p`.
+The original 78 transactions remain byte-for-byte identical through seven
+sole Set Symbol operations followed by the new placement. Existing Root
+and Child geometry remains exact through definition edits and history.
+Placed data and physical maps are preserved. The final project has 34
+sources and 86 transactions. There were 89 scoped Rust passes, with
+`dat-17ld` ignored. The App evidence uses programmatic input in an
+isolated Wayland session.
+
 Saved Symbol anchor pin correction (`dat-saved-symbol-relink-anchor-1p7a`)
 exposes the retained Unit's named pin chooser for a selected saved anchor. The
 original captured row identity remains stable while the target changes. Sparse

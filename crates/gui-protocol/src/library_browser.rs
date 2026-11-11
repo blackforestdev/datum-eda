@@ -74,6 +74,7 @@ pub enum LibraryControl {
     Anchor(usize),
     AddAnchor,
     RemoveAnchor,
+    ClearAnchorDesignator,
     Line(usize),
     AddLine,
     RemoveLine,

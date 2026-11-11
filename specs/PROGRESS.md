@@ -689,6 +689,18 @@ Ignored17ld stays uncredited. Programmatic controls supply no physical/HUMAN,
 release-GUI execution, logical-pin removal/rekey, anchor relinking, implicit ECO,
 new minimum/schema/reader/controller, full qualification or broader-goal acceptance.
 
+Saved Symbol schematic pin designators
+(`dat-saved-symbol-anchor-designator-8ebg`) support literal entry and
+explicit Clear in the shared anchor form. The isolated App passed 91 stages
+in 32.48 seconds with five inspected captures. The original 78 transactions
+remain byte-for-byte identical through seven sole Set Symbol operations.
+A separate XQ2 placement uses S17 with actual source-bound glyph geometry
+in warm and cold Root. The form and review show S17. The small canvas number
+partly overlaps the terminal at captured Fit under `dat-7b2y`. The final
+project has 34 sources and 86 transactions. Existing placements and physical
+maps retain their data. There were 89 scoped Rust passes with `dat-17ld`
+ignored.
+
 Saved Symbol anchor pin correction (`dat-saved-symbol-relink-anchor-1p7a`)
 now permits explicit selection of another unanchored named pin of the same Unit.
 The original row identity, order, raw metadata and unedited geometry survive
