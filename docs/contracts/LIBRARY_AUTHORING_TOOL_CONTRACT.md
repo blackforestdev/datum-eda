@@ -720,6 +720,25 @@ addition/removal, Unit or logical-pin topology, implicit placed updates/ECO and
 approval remain outside this increment; no physical/HUMAN, release-GUI execution,
 full qualification or broader-goal acceptance is claimed.
 
+Public native Part JSON admission (`dat-part-raw-footprint-pair-yjc4`) now checks
+that an explicit default Footprint belongs to the Part's selected Package in
+`project create-pool-library-object` and `project set-pool-library-object` with
+manual CLI provenance. The existing reference checks, canonical source-blocker
+and shape-error priority remain. Matching defaults, explicit null and omitted
+defaults, unrelated raw metadata and supported history/cold reopening are retained.
+This corrects the existing manual admission helpers; raw canonical builders,
+import/replay and other provenance semantics are not expanded or tightened.
+Nine scoped engine/CLI checks pass. The original public CLI reproduced both
+mismatches; the matching updated CLI refuses both with all 36 persisted files
+unchanged per refusal. Compatible public creation/editing, Undo/Redo, fresh query,
+null/omission and metadata checks finish with 14 CLI-sourced journal transactions.
+Existing source-ownership errors can retain failed staging payloads; only those
+legacy-error assertions exclude staging, while new mismatch refusals use the full
+persisted snapshot. Earlier fixture, stack-environment and snapshot failures remain
+recorded. PinPadMap ownership is separate source-only intake
+`dat-part-raw-map-owner-nb91`, without a reproduction or new implementation claim.
+No GUI replay, universal raw-writer integrity or full qualification is supplied.
+
 The creation-only Part GUI increment (`dat-part-gui-create-6zs4`) adds explicit
 manufacturer/MPN, value, description, datasheet reference and tags, with named
 Entity/Package choices and an optional compatible default Footprint. A Package

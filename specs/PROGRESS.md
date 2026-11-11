@@ -757,6 +757,18 @@ replacement box under the existing glyph-coverage issue
 `dat-ui-filename-glyph-coverage-o53p`. There were 82 scoped Rust passes, with
 the existing `dat-17ld` case ignored.
 
+Public native Part JSON Create/Set (`dat-part-raw-footprint-pair-yjc4`) now
+refuses a default Footprint from another Package. Nine scoped engine/CLI checks
+pass. Both public commands reproduced the old admission; the updated normal CLI
+refuses both with all 36 persisted files unchanged. Compatible Create/Set,
+Undo/Redo, fresh query, raw metadata, null and omitted defaults pass, ending at
+14 CLI-sourced journal transactions. Raw canonical/import/replay behavior and
+existing error precedence remain. Old source-ownership failures retain staging
+payloads; that exception does not weaken new pair-refusal snapshots. Earlier
+fixture/stack/snapshot failures are retained. Source-only Map ownership intake
+`dat-part-raw-map-owner-nb91` remains unimplemented and unreproduced. No GUI replay,
+universal writer-integrity or full-qualification claim.
+
 Electrical Library preview status (`dat-f43w`) now shows valid Unit/Symbol
 success without a false refusal action or irrelevant Drill field. Genuine
 refusal reasons retain the Console action and Tab stop; physical process and
