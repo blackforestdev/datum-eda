@@ -859,11 +859,26 @@ public CLI commands author the project, only sheet and near-limit drawing;
 all 15 source/history files and two journal entries/cursor remain byte-exact.
 Expected 17 GUI runtime additions are excluded, not whole-project equality.
 Both reviewed captures contain the native pane/grid but no distinct drawing
-stroke. No visual-line PASS or established cause is claimed; actual runtime
-visibility intake `dat-schematic-edge-stroke-visibility-5nll` stays separate and
-open, not a new bounds prerequisite. No camera/rendering/range policy, physical
+stroke. That checkpoint supplies no visual-line PASS or established cause;
+separate visibility intake `dat-schematic-edge-stroke-visibility-5nll` is resolved
+below without becoming a bounds prerequisite. No camera/rendering/range policy, physical
 HUMAN, release execution or global extreme-operation qualification is supplied.
 Unchanged CLI/daemon source closures and hashes are reused.
+
+Shared stroke precision (`dat-schematic-edge-stroke-visibility-5nll`) resolves
+the X014 visibility finding without regrading its bounds-only proof. Actual
+before admission retained one visible-layer stroke with collapsed f32 endpoints.
+Shared f64 camera centers and integer-derived split retained endpoints now reach
+both ordinary/mask shaders through a consistent extended uniform; camera-only
+changes reuse retained geometry and preserve ordinary placement/width. There are
+47 scoped Rust passes, including actual offscreen Vulkan mask behavior. The first
+repaired App passes 12 stages in 4.25 seconds, with the same distinct horizontal
+stroke personally visible after Fit and cold reopen. All 15 source/history files
+and both journal entries/cursor remain byte-exact; 17 normal runtime additions
+are excluded by the existing scope. All owned processes stop/runtime removed.
+Before captures and the corrected new-test Fit-inset failure remain retained.
+Finite f64 resolution and unchanged absolute f32 quad/glyph formats retain their
+limits; no full-i64 nanometer, HUMAN, release execution or global qualification.
 
 Saved Symbol literal Text (`dat-saved-symbol-text-graphics-w0k9`) supports add,
 selection, content/position/rotation editing and removal in the shared graphics

@@ -70,7 +70,7 @@ fn editor_scene_hits_cannot_shadow_terminal_screen_at_adversarial_cameras() {
     state.ui.dock_height_px = 260;
     let retained = RetainedScene::from_workspace(&state, 1280, 800);
     let fit = CameraState::fit_to_bounds(&state.scene.bounds);
-    let scene_height = (state.scene.bounds.max_y - state.scene.bounds.min_y).max(1) as f32;
+    let scene_height = (state.scene.bounds.max_y - state.scene.bounds.min_y).max(1) as f64;
 
     for (center_shift, zoom) in [
         (0.0, 1.0),

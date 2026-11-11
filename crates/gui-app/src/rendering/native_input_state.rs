@@ -7,7 +7,7 @@ pub(super) const HOVER_BYTES: usize = 128;
 pub(super) struct State {
     pub(super) cursor: Option<[f32; 2]>,
     pub(super) native_cursor: Option<(f32, f32)>,
-    pub(super) center: [f32; 2],
+    pub(super) center: [f64; 2],
     pub(super) zoom: f32,
     pub(super) pan: bool,
     pub(super) epoch: u64,

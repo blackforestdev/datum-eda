@@ -15,7 +15,7 @@ fn terminal_screen_target_under_adversarial_board_overlay() -> HitTarget {
     state.ui.focus = ApplicationFocus::Editor(PaneId(0));
     let retained = RetainedScene::from_workspace(&state, 1280, 800);
     let mut camera = CameraState::fit_to_bounds(&state.scene.bounds);
-    let scene_height = (state.scene.bounds.max_y - state.scene.bounds.min_y).max(1) as f32;
+    let scene_height = (state.scene.bounds.max_y - state.scene.bounds.min_y).max(1) as f64;
     camera.center_y_nm -= scene_height * 0.75;
     camera.zoom = 4.0;
     let prepared = PreparedScene::from_workspace(&state, 1280, 800, camera, &retained).unwrap();

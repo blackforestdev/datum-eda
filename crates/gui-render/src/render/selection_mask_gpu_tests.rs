@@ -627,7 +627,7 @@ fn selection_cue_pixels_stay_two_physical_pixels_through_camera_zoom() {
             let projection = crate::Projection::new(field, &state.scene.bounds, camera);
             let midpoint = PointNm { x: 5_000_000, y: 0 };
             let center = projection.project_point(midpoint);
-            camera.center_y_nm += (center.1 - center.1.round()) / projection.scale;
+            camera.center_y_nm += f64::from((center.1 - center.1.round()) / projection.scale);
             let projection = crate::Projection::new(field, &state.scene.bounds, camera);
             let selected = prepare(&state, camera);
             assert!(

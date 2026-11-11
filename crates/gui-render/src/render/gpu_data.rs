@@ -38,6 +38,7 @@ pub(crate) struct SceneUniform {
     pub(crate) viewport_origin: [f32; 4],
     pub(crate) viewport_size: [f32; 4],
     pub(crate) camera_center_scale: [f32; 4],
+    pub(crate) camera_low: [f32; 4],
 }
 
 impl Vertex {

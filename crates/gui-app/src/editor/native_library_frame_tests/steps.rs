@@ -26,6 +26,7 @@ pub(super) enum Step {
     SymbolCircle(usize),
     SymbolArc(usize),
     SchematicBounds(usize),
+    SchematicEdgeStroke(usize),
     SymbolText(usize),
     SymbolFields(usize),
     SymbolAnchorDesignator(usize),

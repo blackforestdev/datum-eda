@@ -431,8 +431,9 @@ fn p630_exact8_console_covers_canvas_text_without_hiding_foreground() {
         &pane.bounds,
         camera,
     );
-    camera.center_x_nm += (label.x - history.x - 20.0) / projection.scale;
-    camera.center_y_nm += (label.y - history.y - history.height * 0.6) / projection.scale;
+    camera.center_x_nm += f64::from((label.x - history.x - 20.0) / projection.scale);
+    camera.center_y_nm +=
+        f64::from((label.y - history.y - history.height * 0.6) / projection.scale);
     c.renderer
         .prepare_session_workspace(
             &state,

@@ -1,8 +1,8 @@
-struct Scene { resolution: vec4<f32>, viewport_origin: vec4<f32>, viewport_size: vec4<f32>, camera_center_scale: vec4<f32> };
+struct Scene { resolution: vec4<f32>, viewport_origin: vec4<f32>, viewport_size: vec4<f32>, camera_center_scale: vec4<f32>, camera_low: vec4<f32> };
 @group(0) @binding(0) var<uniform> scene: Scene;
 @group(1) @binding(0) var<storage,read> ranges: array<vec4<u32>>;
 struct QuadIn { @builtin(vertex_index) vertex:u32, @location(0) point:vec2<f32>, @location(1) color:vec3<f32> };
-struct StrokeIn { @builtin(vertex_index) vertex:u32, @builtin(instance_index) instance:u32, @location(0) a:vec2<f32>, @location(1) b:vec2<f32>, @location(2) material_floor:vec4<f32>, @location(3) nominal:f32 };
+struct StrokeIn { @builtin(vertex_index) vertex:u32, @builtin(instance_index) instance:u32, @location(0) a:vec2<f32>, @location(1) b:vec2<f32>, @location(2) material_floor:vec4<f32>, @location(3) nominal:f32, @location(4) low_a:vec2<f32>, @location(5) low_b:vec2<f32> };
 struct Out {
  @builtin(position) position:vec4<f32>, @location(0) material:vec3<f32>,
  @location(1) local:vec2<f32>, @location(2) @interpolate(flat) capsule:vec2<f32>,
@@ -21,7 +21,7 @@ fn position(p:vec2<f32>)->vec4<f32> {
  return vec4<f32>(p.x/scene.resolution.x*2.0-1.0,1.0-p.y/scene.resolution.y*2.0,0.0,1.0);
 }
 fn project(p:vec2<f32>)->vec2<f32> {
- return scene.viewport_origin.xy+scene.viewport_size.xy*0.5+(p-scene.camera_center_scale.xy)*scene.camera_center_scale.z;
+ return scene.viewport_origin.xy+scene.viewport_size.xy*0.5+((p-scene.camera_center_scale.xy)-scene.camera_low.xy)*scene.camera_center_scale.z;
 }
 @vertex fn vs_quad(i:QuadIn)->Out {
  var o:Out; o.logical=project(i.point); o.position=position(o.logical); o.material=i.color;
@@ -45,12 +45,14 @@ struct ScreenQuadIn {
 @vertex fn vs_stroke(i:StrokeIn)->Out {
  let endpoint_b=i.vertex==1u || i.vertex==2u || i.vertex==4u;
  let positive=i.vertex==0u || i.vertex==1u || i.vertex==3u;
- let center=select(i.a,i.b,endpoint_b); let d=i.b-i.a;
+ let d=(i.b-i.a)+(i.low_b-i.low_a);
+ let center_relative=(i.a-scene.camera_center_scale.xy)+(i.low_a-scene.camera_low.xy)+d*0.5;
  let tangent=d/max(length(d),1.0); let normal=vec2<f32>(-tangent.y,tangent.x);
  let radius=max(i.nominal*scene.camera_center_scale.z,i.material_floor.w)*0.5;
  let half_length=length(d)*scene.camera_center_scale.z*0.5;
  let across=select(-1.0,1.0,positive)*radius;
- let p=project(center)+tangent*select(-1.0,1.0,endpoint_b)*radius+normal*across;
+ let p=scene.viewport_origin.xy+scene.viewport_size.xy*0.5+center_relative*scene.camera_center_scale.z
+     +tangent*select(-1.0,1.0,endpoint_b)*(half_length+radius)+normal*across;
  var o:Out; o.logical=p; o.position=position(p); o.material=i.material_floor.xyz;
  o.local=vec2<f32>(select(-1.0,1.0,endpoint_b)*(half_length+radius),across);
  o.capsule=vec2<f32>(half_length,radius); let role=group(i.instance,1u); o.label=role.x; o.material_role=role.y; return o;

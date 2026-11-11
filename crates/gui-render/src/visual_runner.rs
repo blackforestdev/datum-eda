@@ -7,10 +7,10 @@ use datum_gui_protocol::{
 };
 use image::RgbaImage;
 
+use crate::CameraState;
 use crate::visual_capture::OffscreenRenderer;
 use crate::visual_diff::{DiffPolicy, DiffResult, compare_images, write_diff_image, write_report};
 use crate::visual_manifest::FixtureManifest;
-use crate::{CameraState, ShellLayout};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct VisualFixtureRun {
@@ -406,23 +406,8 @@ fn repo_root() -> PathBuf {
         .to_path_buf()
 }
 
-fn camera_for_manifest(manifest: &FixtureManifest, state: &ReviewWorkspaceState) -> CameraState {
-    let viewport = manifest.viewport;
-    let layout = ShellLayout::for_window(viewport.width_px, viewport.height_px, None);
-    let scene_viewport = layout.scene_viewport(&state.ui.layout);
-    let board_field_width = (scene_viewport.width - 20.0).max(1.0);
-    let board_field_height = (scene_viewport.height - 20.0).max(1.0);
-    let scene_width = (state.scene.bounds.max_x - state.scene.bounds.min_x).max(1) as f32;
-    let scene_height = (state.scene.bounds.max_y - state.scene.bounds.min_y).max(1) as f32;
-    let _fit_scale = (board_field_width / scene_width)
-        .min(board_field_height / scene_height)
-        .max(0.000_001);
-
-    CameraState {
-        center_x_nm: ((state.scene.bounds.min_x + state.scene.bounds.max_x) as f32) * 0.5,
-        center_y_nm: ((state.scene.bounds.min_y + state.scene.bounds.max_y) as f32) * 0.5,
-        zoom: 1.0,
-    }
+fn camera_for_manifest(_manifest: &FixtureManifest, state: &ReviewWorkspaceState) -> CameraState {
+    CameraState::fit_to_bounds(&state.scene.bounds)
 }
 
 fn diff_policy_for_manifest(manifest: &FixtureManifest) -> Result<DiffPolicy> {
@@ -511,11 +496,11 @@ mod tests {
 
         assert_eq!(
             camera.center_x_nm,
-            ((state.scene.bounds.min_x + state.scene.bounds.max_x) as f32) * 0.5
+            CameraState::fit_to_bounds(&state.scene.bounds).center_x_nm
         );
         assert_eq!(
             camera.center_y_nm,
-            ((state.scene.bounds.min_y + state.scene.bounds.max_y) as f32) * 0.5
+            CameraState::fit_to_bounds(&state.scene.bounds).center_y_nm
         );
         assert_eq!(camera.zoom, 1.0);
     }
@@ -527,14 +512,14 @@ mod tests {
         let state = load_state_for_manifest(&manifest).expect("datum-test fixture should load");
         let camera = camera_for_manifest(&manifest, &state);
         let bounds = &state.scene.bounds;
-        let expected_center_x = ((bounds.min_x + bounds.max_x) as f32) * 0.5;
-        let expected_center_y = ((bounds.min_y + bounds.max_y) as f32) * 0.5;
+        let expected_center_x = (bounds.min_x as f64 + bounds.max_x as f64) * 0.5;
+        let expected_center_y = (bounds.min_y as f64 + bounds.max_y as f64) * 0.5;
 
         assert!((camera.center_x_nm - expected_center_x).abs() <= 1.0);
         assert!((camera.center_y_nm - expected_center_y).abs() <= 1.0);
         assert!((camera.zoom - 1.0).abs() <= f32::EPSILON);
 
-        let layout = ShellLayout::for_window(
+        let layout = crate::ShellLayout::for_window(
             manifest.viewport.width_px,
             manifest.viewport.height_px,
             None,

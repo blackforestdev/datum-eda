@@ -81,7 +81,7 @@ fn frozen_basis(runtime: &mut Runtime) {
             runtime.camera.center_y_nm,
             runtime.camera.zoom
         ),
-        (152807504.0, 95122896.0, 1.0)
+        (152807500.0, 95122893.0, 1.0)
     );
     let prepared = runtime.prepared_scene().unwrap();
     let viewport = prepared.scene_viewport;

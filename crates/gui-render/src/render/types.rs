@@ -31,16 +31,15 @@ impl Projection {
         bounds: &datum_gui_protocol::SceneBounds,
         camera: CameraState,
     ) -> Self {
-        let scene_width = (bounds.max_x - bounds.min_x).max(1) as f32;
-        let scene_height = (bounds.max_y - bounds.min_y).max(1) as f32;
-        let fit_scale = (viewport.width / scene_width)
-            .min(viewport.height / scene_height)
+        let extent = |lo: i64, hi: i64| (hi as i128 - lo as i128).max(1) as f32;
+        let fit_scale = (viewport.width / extent(bounds.min_x, bounds.max_x))
+            .min(viewport.height / extent(bounds.min_y, bounds.max_y))
             .max(0.000_001);
         let scale = (fit_scale * camera.zoom).max(0.000_001);
         let center_x = viewport.x + viewport.width * 0.5;
         let center_y = viewport.y + viewport.height * 0.5;
-        let offset_x = center_x - (camera.center_x_nm - bounds.min_x as f32) * scale;
-        let offset_y = center_y - (camera.center_y_nm - bounds.min_y as f32) * scale;
+        let offset_x = center_x - ((camera.center_x_nm - bounds.min_x as f64) as f32) * scale;
+        let offset_y = center_y - ((camera.center_y_nm - bounds.min_y as f64) as f32) * scale;
         Self {
             viewport,
             bounds: bounds.clone(),
@@ -52,9 +51,10 @@ impl Projection {
     }
 
     fn project_point(&self, point: PointNm) -> (f32, f32) {
+        let distance = |p: i64, origin: i64| (p as i128 - origin as i128) as f32;
         (
-            self.offset_x + (point.x - self.bounds.min_x) as f32 * self.scale,
-            self.offset_y + (point.y - self.bounds.min_y) as f32 * self.scale,
+            self.offset_x + distance(point.x, self.bounds.min_x) * self.scale,
+            self.offset_y + distance(point.y, self.bounds.min_y) * self.scale,
         )
     }
 

@@ -642,3 +642,6 @@ mod tests {
 
 #[path = "pad_compatibility_tests.rs"]
 mod pad_compatibility_tests;
+
+#[path = "edge_stroke_visibility_tests.rs"]
+mod edge_stroke_visibility_tests;

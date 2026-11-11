@@ -32,10 +32,12 @@ impl Default for CameraConfig {
 }
 
 /// Camera state shared by every editor surface.
+/// Centers remain wide until projection; absolute f32 centers lose millimeter
+/// segments near the integer coordinate boundary. This is not i64 nm precision.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct CameraState {
-    pub center_x_nm: f32,
-    pub center_y_nm: f32,
+    pub center_x_nm: f64,
+    pub center_y_nm: f64,
     pub zoom: f32,
 }
 
@@ -68,8 +70,8 @@ impl CameraEngine {
             return;
         }
         let scale = projection_scale(viewport, bounds, *state, config);
-        state.center_x_nm -= delta_x_px / scale;
-        state.center_y_nm -= delta_y_px / scale;
+        state.center_x_nm -= f64::from(delta_x_px / scale);
+        state.center_y_nm -= f64::from(delta_y_px / scale);
     }
 
     pub fn zoom_about_screen_point(
@@ -144,8 +146,8 @@ impl CameraState {
     }
 }
 
-fn midpoint(min: i64, max: i64) -> f32 {
-    ((min as f64 + max as f64) * 0.5) as f32
+fn midpoint(min: i64, max: i64) -> f64 {
+    (i128::from(min) + i128::from(max)) as f64 * 0.5
 }
 
 fn projection_scale(
@@ -194,13 +196,13 @@ fn screen_to_world(
     config: CameraConfig,
     x: f32,
     y: f32,
-) -> (f32, f32) {
+) -> (f64, f64) {
     let scale = projection_scale(viewport, bounds, state, config);
     let center_x = viewport.x + viewport.width * 0.5;
     let center_y = viewport.y + viewport.height * 0.5;
     (
-        state.center_x_nm + (x - center_x) / scale,
-        state.center_y_nm + (y - center_y) / scale,
+        state.center_x_nm + f64::from((x - center_x) / scale),
+        state.center_y_nm + f64::from((y - center_y) / scale),
     )
 }
 
@@ -344,6 +346,43 @@ mod tests {
             10.0,
         );
         assert_eq!(camera, before);
+    }
+
+    #[test]
+    fn fitted_boundary_camera_keeps_millimeter_navigation() {
+        let edge = SceneBounds {
+            min_x: i64::MAX - 6_000_000,
+            min_y: i64::MAX - 5_000_000,
+            max_x: i64::MAX,
+            max_y: i64::MAX,
+        };
+        let mut camera = CameraState::fit_to_bounds(&edge);
+        assert_ne!(camera.center_x_nm, i64::MAX as f64);
+        let before = camera;
+        camera.pan_pixels(viewport(), &edge, 80.0, -40.0);
+        assert!(camera.center_x_nm < before.center_x_nm);
+        assert!(camera.center_y_nm > before.center_y_nm);
+        let fixed = screen_to_world(
+            viewport(),
+            &edge,
+            camera,
+            CameraConfig::default(),
+            600.0,
+            250.0,
+        );
+        camera.zoom_about_screen_point(viewport(), &edge, 600.0, 250.0, 2.0);
+        let after = screen_to_world(
+            viewport(),
+            &edge,
+            camera,
+            CameraConfig::default(),
+            600.0,
+            250.0,
+        );
+        // At this magnitude f64 has a 2048nm ULP; the 1mm fixture remains
+        // distinguishable but full-range single-nanometer navigation is not claimed.
+        assert!((fixed.0 - after.0).abs() <= 2048.0);
+        assert!((fixed.1 - after.1).abs() <= 2048.0);
     }
 
     #[test]

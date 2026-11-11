@@ -67,8 +67,8 @@ fn actual_locked_package_hatch_survives_suppressed_anchor_and_preserves_source()
     let field = crate::inset_rect(initial.scene_viewport, 10.0, 10.0, 10.0, 10.0);
     let scale = crate::Projection::new(field, &state.scene.bounds, camera).scale;
     camera.zoom *= 0.000035 / scale;
-    camera.center_x_nm = locked.position.x as f32;
-    camera.center_y_nm = locked.position.y as f32;
+    camera.center_x_nm = locked.position.x as f64;
+    camera.center_y_nm = locked.position.y as f64;
     let projection = crate::Projection::new(field, &state.scene.bounds, camera);
     let mut anchor = Vec::new();
     crate::native_selection_overlay::lock_cue::push_selected(

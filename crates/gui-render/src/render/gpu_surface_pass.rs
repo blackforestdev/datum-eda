@@ -94,9 +94,17 @@ impl Renderer {
                     viewport_origin: [field.x, field.y, 0.0, 0.0],
                     viewport_size: [field.width, field.height, 0.0, 0.0],
                     camera_center_scale: [
-                        surface.camera.center_x_nm,
-                        surface.camera.center_y_nm,
+                        surface.camera.center_x_nm as f32,
+                        surface.camera.center_y_nm as f32,
                         projection.scale,
+                        0.0,
+                    ],
+                    camera_low: [
+                        (surface.camera.center_x_nm - f64::from(surface.camera.center_x_nm as f32))
+                            as f32,
+                        (surface.camera.center_y_nm - f64::from(surface.camera.center_y_nm as f32))
+                            as f32,
+                        0.0,
                         0.0,
                     ],
                 },

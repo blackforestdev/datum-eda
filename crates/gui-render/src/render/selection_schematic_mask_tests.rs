@@ -44,8 +44,8 @@ fn prepare_schematic(
     let desired =
         (field.width / (hi[0] - lo[0]).max(1.0)).min(field.height / (hi[1] - lo[1]).max(1.0)) * 0.8;
     camera.zoom = (desired / scale).clamp(0.35, 8.0);
-    camera.center_x_nm = (lo[0] + hi[0]) * 0.5;
-    camera.center_y_nm = (lo[1] + hi[1]) * 0.5;
+    camera.center_x_nm = f64::from((lo[0] + hi[0]) * 0.5);
+    camera.center_y_nm = f64::from((lo[1] + hi[1]) * 0.5);
     prepared.set_schematic_camera(camera);
     prepared.append_native_selection(state).unwrap();
     (board, schematic, prepared)

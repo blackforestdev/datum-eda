@@ -38,6 +38,7 @@ struct SceneUniform {
     viewport_origin: vec4<f32>,
     viewport_size: vec4<f32>,
     camera_center_scale: vec4<f32>,
+    camera_low: vec4<f32>,
 };
 
 @group(0) @binding(0)
@@ -57,8 +58,8 @@ struct VsOut {
 fn vs_main(in: VsIn) -> VsOut {
     var out: VsOut;
     let screen = vec2<f32>(
-        scene.viewport_origin.x + scene.viewport_size.x * 0.5 + (in.pos.x - scene.camera_center_scale.x) * scene.camera_center_scale.z,
-        scene.viewport_origin.y + scene.viewport_size.y * 0.5 + (in.pos.y - scene.camera_center_scale.y) * scene.camera_center_scale.z
+        scene.viewport_origin.x + scene.viewport_size.x * 0.5 + ((in.pos.x - scene.camera_center_scale.x) - scene.camera_low.x) * scene.camera_center_scale.z,
+        scene.viewport_origin.y + scene.viewport_size.y * 0.5 + ((in.pos.y - scene.camera_center_scale.y) - scene.camera_low.y) * scene.camera_center_scale.z
     );
     let clip = vec2<f32>(
         (screen.x / scene.resolution.x) * 2.0 - 1.0,

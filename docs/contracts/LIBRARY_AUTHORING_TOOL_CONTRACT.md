@@ -591,12 +591,39 @@ in the existing source/history scope, including both journal entries and cursor,
 remain byte-exact; 17 normal GUI terminal/runtime files are added outside that
 scope. All four owned processes stop and the runtime is removed.
 Both actual captures show the active schematic and grid, but no distinct drawing
-stroke is visibly resolved. No visual-line PASS is claimed. Cause remains
-unestablished; actual runtime intake `dat-schematic-edge-stroke-visibility-5nll`
-tracks that separate observation without a new padding prerequisite. This adds
+stroke is visibly resolved. That bounds-only checkpoint supplies no visual-line
+PASS. Cause was then unestablished; the subsequent correction below resolves
+`dat-schematic-edge-stroke-visibility-5nll` without regrading the padding proof. This adds
 no coordinate cutoff, camera/renderer policy, source writer or global extreme
 operation qualification. Unchanged CLI/daemon source closures and artifacts are
 reused; programmatic App proof supplies no physical/HUMAN or release execution.
+
+Shared retained stroke precision (`dat-schematic-edge-stroke-visibility-5nll`)
+now preserves the existing boundary DrawingLine through ordinary open/Fit and
+cold reopen. The before probe admitted its one stroke on the visible L201 layer,
+but actual retained GPU endpoints collapsed to the same absolute f32 value.
+Shared camera centers now remain f64; retained stroke endpoints carry high and
+integer-derived low f32 components. Both ordinary and selection-mask shaders
+form the direction and camera-relative midpoint before combining lossy absolute
+coordinates. The shared uniform carries the camera residual. Retained geometry
+stays independent of pan/zoom; existing width and pixel-floor behavior remain.
+
+There are 47 focused Rust passes covering the production retained/prepared path,
+ordinary positive/negative and boundary segments, camera/navigation/refresh,
+width, source and layer admission, pane ownership and an actual offscreen Vulkan
+selection-mask material/join/occlusion check. The first repaired read-only App
+passes all 12 stages in 4.25 seconds. Both personally inspected Fit/cold captures
+show the distinct same horizontal stroke. All 15 source/history files, including
+two journal entries and the cursor, remain byte-exact; only 17 normal GUI runtime
+files are added outside that scope. All four owned processes stop and the runtime
+is removed. Earlier failed visibility captures and the initial new-test failure
+at the Fit inset, corrected to the actual viewport clip, remain uncredited.
+
+This is no all-i64 single-nanometer guarantee: the f64 camera has finite resolution
+and existing absolute f32 quad/glyph vertex formats retain their limits. There is
+no coordinate cutoff, source movement, width/color/font/grid policy, new writer,
+schema or dependency. This programmatic native App proof supplies no physical
+HUMAN, release-GUI execution, performance or global extreme qualification.
 
 Saved Symbol literal Text graphics (`dat-saved-symbol-text-graphics-w0k9`) share
 the Line and Rect form. Designers can add, select, edit and remove text, including
