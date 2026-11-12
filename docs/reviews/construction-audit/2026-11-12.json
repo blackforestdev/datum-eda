@@ -1,0 +1,742 @@
+{
+  "kind": "nonnormative_construction_audit_findings",
+  "task": "dat-construction-audit-traceability-lp8l",
+  "date": "2026-11-12",
+  "audit_baseline_commit": "fdedb74d3eb2e252c01596ed5e8fcbd7ee338199",
+  "recording_baseline_commit": "dbbfd43162b8ea8bb8052ca4ad59529633a49a51",
+  "purpose": "Track owner-requested construction audit against existing requirements, issue intake, roadmap ownership and verification entry points.",
+  "authority": "Evidence and intake only; no new specification, acceptance bar, dependency, implementation grant or milestone selection.",
+  "roadmap_state_at_recording": {
+    "fresh_command": "python3 scripts/project_status.py next",
+    "result": "Explicit idle; no successor selected. Separately authorized routine delivery remains unaffected."
+  },
+  "scope_limits": [
+    "Targeted source/contract/evidence audit, not exhaustive specification certification.",
+    "No Cargo proof build, GUI launch, physical board validation or vendor client qualification performed for this record.",
+    "Audit-era in-flight symbol alignment was excluded as delivery evidence.",
+    "Source hashes identify inspected candidates; changed sources require revalidation before repair.",
+    "Existing closed task acceptances and deferred revision work remain unchanged."
+  ],
+  "verification_policy": {
+    "existing_structural_tools": [
+      "python3 scripts/check_progress_coverage.py",
+      "python3 scripts/check_spec_parity.py",
+      "python3 scripts/check_mcp_public_taxonomy.py",
+      "python3 scripts/check_daemon_write_parity.py"
+    ],
+    "meaning": "Structural inventory/state checks are not proof of engineering behavior, external interoperability or standards conformance.",
+    "cargo": "Use scripts/run_cargo_guarded.py --workload proof for authorized Rust proof.",
+    "closure": "Future fixes retain issue-linked landing, focused behavioral evidence and actual independent review; this audit record is not a PASS receipt.",
+    "no_new_gate": "No global audit-ID/string/digest gate added. Extend existing behavioral test owners as each fix is authorized."
+  },
+  "findings": [
+    {
+      "id": "CA-01",
+      "title": "Emit protocol-conforming MCP tool results and execution errors",
+      "classification": "confirmed_protocol_defect",
+      "priority": 1,
+      "type": "bug",
+      "slug": "mcp-result-protocol",
+      "observation": "Production stdio host emits content blocks with type=json for success and execution errors. JSON belongs in structuredContent and/or serialized text; execution errors need appropriate MCP error signaling.",
+      "impact": "Strict standard clients may reject results; portable agent integration is not established by internal envelope tests.",
+      "sources": [
+        {
+          "path": "mcp-server/stdio_tool_host.py",
+          "line": 147,
+          "recording_sha256": "09f030ee79a2f286940a194b316a7bd91fbdf1f0921bc39120ead459cdae0b66",
+          "audit_sha256": "09f030ee79a2f286940a194b316a7bd91fbdf1f0921bc39120ead459cdae0b66",
+          "changed_since_audit": false
+        },
+        {
+          "path": "mcp-server/stdio_tool_host.py",
+          "line": 293,
+          "recording_sha256": "09f030ee79a2f286940a194b316a7bd91fbdf1f0921bc39120ead459cdae0b66",
+          "audit_sha256": "09f030ee79a2f286940a194b316a7bd91fbdf1f0921bc39120ead459cdae0b66",
+          "changed_since_audit": false
+        }
+      ],
+      "requirements": [
+        {
+          "path": "docs/decisions/PRODUCT_MECHANICS_028_TERMINAL_AGENT_INTEROPERABILITY.md",
+          "line": 1,
+          "recording_sha256": "d3ffd97cf53558cea3345260314ec06f28a660e743f7d273a5faa143ce64f1e7",
+          "audit_sha256": "d3ffd97cf53558cea3345260314ec06f28a660e743f7d273a5faa143ce64f1e7",
+          "changed_since_audit": false
+        }
+      ],
+      "external_basis": [
+        "https://modelcontextprotocol.io/specification/2025-06-18/server/tools"
+      ],
+      "evidence": {
+        "method": "Executed production StdioToolHost.run_stdio with existing FakeDaemonClient, negotiated protocol 2025-06-18, called datum.query.board_summary.",
+        "result": "Observed content[0].type=json; allowed-content-tag check rejected json.",
+        "limits": "No actual vendor client or physical design was exercised."
+      },
+      "verification": [
+        {
+          "existing_entry_point": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=mcp-server python3 -m unittest test_stdio_broker test_protocol_catalog",
+          "what_it_does_not_establish": "Existing tests do not independently validate successful/error tool-result shapes against negotiated MCP. Add behavior assertions and real-client round trips during authorized repair.",
+          "executed_for_recording": false
+        }
+      ],
+      "roadmap_related": [
+        "dat-terminal-emulator-epic-jzv.6"
+      ],
+      "issue_id": "dat-mcp-result-protocol-j9tn",
+      "issue_status_at_recording": "open",
+      "roadmap_items_at_recording": [
+        {
+          "key": "TERMINAL-T4-VERIFY",
+          "issue_id": "dat-terminal-emulator-epic-jzv.6",
+          "state": "landed",
+          "authorization": "none"
+        }
+      ]
+    },
+    {
+      "id": "CA-02",
+      "title": "Implement semantic answers behind named revision queries",
+      "classification": "confirmed_public_integration_gap",
+      "priority": 1,
+      "type": "bug",
+      "slug": "revision-query-semantics",
+      "observation": "After validating the query name, query_revision_authority routes every resolved query to query_snapshot, which returns the same records/events. release_readiness, evidence_freshness, impact_path and adapter_status have no query-specific evaluation. RevisionQueryRequest also lacks subject-specific selectors.",
+      "impact": "Users and agents cannot rely on the engine to answer the engineering question named by the interface; an inventory is not executable semantic parity.",
+      "sources": [
+        {
+          "path": "crates/engine/src/revision/public_service.rs",
+          "line": 263,
+          "recording_sha256": "ba0172cd0446ddacad8aa9d63084d8bf31f389f34366421bbbfaa42f81190942",
+          "audit_sha256": "ba0172cd0446ddacad8aa9d63084d8bf31f389f34366421bbbfaa42f81190942",
+          "changed_since_audit": false
+        },
+        {
+          "path": "crates/engine/src/revision/public_service.rs",
+          "line": 370,
+          "recording_sha256": "ba0172cd0446ddacad8aa9d63084d8bf31f389f34366421bbbfaa42f81190942",
+          "audit_sha256": "ba0172cd0446ddacad8aa9d63084d8bf31f389f34366421bbbfaa42f81190942",
+          "changed_since_audit": false
+        },
+        {
+          "path": "crates/cli/src/commands/revision.rs",
+          "line": 3,
+          "recording_sha256": "943112e88837c8862dcf01fcdef82c6e3794714463062220144d6209c8f5d098",
+          "audit_sha256": "943112e88837c8862dcf01fcdef82c6e3794714463062220144d6209c8f5d098",
+          "changed_since_audit": false
+        },
+        {
+          "path": "crates/verb-registry/src/verbs_revision.rs",
+          "line": 37,
+          "recording_sha256": "708b37c38477805a22df6fcf800d405ffcab8829c6237bbd3c5fc2c083dc1d75",
+          "audit_sha256": "708b37c38477805a22df6fcf800d405ffcab8829c6237bbd3c5fc2c083dc1d75",
+          "changed_since_audit": false
+        }
+      ],
+      "requirements": [
+        {
+          "path": "specs/PRODUCT_REVISION_ENGINE_SPEC.md",
+          "line": 428,
+          "recording_sha256": "acb82143ec76fde01b9196184fbe9fbb2c5a93ba5109ddcb0b6aaf052aa8ef48",
+          "audit_sha256": "acb82143ec76fde01b9196184fbe9fbb2c5a93ba5109ddcb0b6aaf052aa8ef48",
+          "changed_since_audit": false
+        },
+        {
+          "path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
+          "line": 317,
+          "recording_sha256": "afab7d520261327e5b470b4d5262c3212fae03cffc954f98f476daade35028a6",
+          "audit_sha256": "afab7d520261327e5b470b4d5262c3212fae03cffc954f98f476daade35028a6",
+          "changed_since_audit": false
+        }
+      ],
+      "evidence": {
+        "method": "Source control-flow review of engine, native facade, CLI and daemon.",
+        "result": "Known query names share one snapshot implementation; public CLI exposes catalog/query.",
+        "limits": "Underlying typed revision evaluators and records exist; no claim that all revision machinery is absent."
+      },
+      "verification": [
+        {
+          "existing_entry_point": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p eda-engine revision::public_service::tests --locked --offline",
+          "what_it_does_not_establish": "Current tests primarily cover inventory and unmanaged/stale behavior; need managed query-specific results and explicit unsupported states.",
+          "executed_for_recording": false
+        },
+        {
+          "existing_entry_point": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-eda-cli commands::revision --locked --offline",
+          "what_it_does_not_establish": "Catalog/serialization parity alone does not establish semantic answers.",
+          "executed_for_recording": false
+        }
+      ],
+      "roadmap_related": [
+        "dat-product-revision-engine-build-18f"
+      ],
+      "frontier_steps": [
+        "REV-I09"
+      ],
+      "issue_id": "dat-revision-query-semantics-o8zs",
+      "issue_status_at_recording": "open",
+      "roadmap_items_at_recording": [
+        {
+          "key": "PRODUCT-REVISION-ENGINE",
+          "issue_id": "dat-product-revision-engine-build-18f",
+          "state": "deferred",
+          "authorization": "none"
+        }
+      ]
+    },
+    {
+      "id": "CA-03",
+      "title": "Preserve distinct observations across converging impact paths",
+      "classification": "confirmed_algorithm_defect_static_reproduction",
+      "priority": 1,
+      "type": "bug",
+      "slug": "impact-converging-observations",
+      "observation": "evaluate_subject marks nodes visited once while queue entries also carry changed-observation sets. A later path with additional observations is discarded.",
+      "impact": "An affected downstream document/evidence consumer can be reported Unaffected, contrary to witness-qualified impact semantics.",
+      "sources": [
+        {
+          "path": "crates/engine/src/revision/impact_analysis.rs",
+          "line": 52,
+          "recording_sha256": "59009c0e19a571eb7de359a3348209c02ab46565f836720bdef96608fc4993fb",
+          "audit_sha256": "59009c0e19a571eb7de359a3348209c02ab46565f836720bdef96608fc4993fb",
+          "changed_since_audit": false
+        },
+        {
+          "path": "crates/engine/src/revision/impact_tests.rs",
+          "line": 238,
+          "recording_sha256": "23f124145a2555fd851b721972219cfbd1cfe6efb6dc795d7caf26dc4a46281e",
+          "audit_sha256": "23f124145a2555fd851b721972219cfbd1cfe6efb6dc795d7caf26dc4a46281e",
+          "changed_since_audit": false
+        }
+      ],
+      "requirements": [
+        {
+          "path": "specs/PRODUCT_REVISION_ENGINE_SPEC.md",
+          "line": 94,
+          "recording_sha256": "acb82143ec76fde01b9196184fbe9fbb2c5a93ba5109ddcb0b6aaf052aa8ef48",
+          "audit_sha256": "acb82143ec76fde01b9196184fbe9fbb2c5a93ba5109ddcb0b6aaf052aa8ef48",
+          "changed_since_audit": false
+        },
+        {
+          "path": "specs/PRODUCT_REVISION_ENGINE_SPEC.md",
+          "line": 261,
+          "recording_sha256": "acb82143ec76fde01b9196184fbe9fbb2c5a93ba5109ddcb0b6aaf052aa8ef48",
+          "audit_sha256": "acb82143ec76fde01b9196184fbe9fbb2c5a93ba5109ddcb0b6aaf052aa8ef48",
+          "changed_since_audit": false
+        }
+      ],
+      "evidence": {
+        "method": "Source review and bounded Python transcription of the traversal.",
+        "reproduction": {
+          "changes": {
+            "A": [
+              "geometry"
+            ],
+            "B": [
+              "electrical"
+            ]
+          },
+          "edges": [
+            {
+              "from": "A",
+              "to": "M",
+              "sensitivity": [
+                "geometry"
+              ]
+            },
+            {
+              "from": "B",
+              "to": "M",
+              "sensitivity": [
+                "electrical"
+              ]
+            },
+            {
+              "from": "M",
+              "to": "DOC",
+              "sensitivity": [
+                "electrical"
+              ]
+            }
+          ],
+          "visit_order": "A then B; M reached first with geometry"
+        },
+        "result": "Transcription returns Unaffected for DOC; B -> M -> DOC requires Affected.",
+        "limits": "Rust function was not executed. Located callers are tests; no integrated GUI release corruption demonstrated."
+      },
+      "verification": [
+        {
+          "existing_entry_point": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p eda-engine revision::impact_tests --locked --offline",
+          "what_it_does_not_establish": "Existing simple-chain tests omit multiple deltas/convergent paths. Repair needs convergence and cycle cases with valid graph fixtures.",
+          "executed_for_recording": false
+        }
+      ],
+      "roadmap_related": [
+        "dat-product-revision-engine-build-18f"
+      ],
+      "frontier_steps": [
+        "REV-I05"
+      ],
+      "issue_id": "dat-impact-converging-observations-wnsu",
+      "issue_status_at_recording": "open",
+      "roadmap_items_at_recording": [
+        {
+          "key": "PRODUCT-REVISION-ENGINE",
+          "issue_id": "dat-product-revision-engine-build-18f",
+          "state": "deferred",
+          "authorization": "none"
+        }
+      ]
+    },
+    {
+      "id": "CA-04",
+      "title": "Separate probe transport evidence from real agent interoperability proof",
+      "classification": "confirmed_evidence_scope_gap",
+      "priority": 1,
+      "type": "task",
+      "slug": "real-agent-interop-proof",
+      "observation": "Named adapter workflow test passes a generated probe as --binary for each vendor name. The fake agent client reads the same custom json block produced by the broker.",
+      "impact": "This establishes useful Datum transport/plumbing behavior but cannot establish actual vendor configuration, instruction discovery, protocol validation, authentication or resume behavior.",
+      "sources": [
+        {
+          "path": "crates/gui-app/src/terminal/terminal_agent_launch_tests.rs",
+          "line": 26,
+          "recording_sha256": "eab657cfadf3a084dd42ca17b3732bac0ec3da777dbbb7fcf32e4060b7c98d75",
+          "audit_sha256": "eab657cfadf3a084dd42ca17b3732bac0ec3da777dbbb7fcf32e4060b7c98d75",
+          "changed_since_audit": false
+        },
+        {
+          "path": "crates/gui-app/src/terminal/terminal_agent_launch_tests.rs",
+          "line": 52,
+          "recording_sha256": "eab657cfadf3a084dd42ca17b3732bac0ec3da777dbbb7fcf32e4060b7c98d75",
+          "audit_sha256": "eab657cfadf3a084dd42ca17b3732bac0ec3da777dbbb7fcf32e4060b7c98d75",
+          "changed_since_audit": false
+        },
+        {
+          "path": "scripts/agent_mcp_adapter_probe.py",
+          "line": 2,
+          "recording_sha256": "b64aa6ad0c4466a405f9ee9e00bc70939193b6960b5f27a772e823f240e17cdd",
+          "audit_sha256": "b64aa6ad0c4466a405f9ee9e00bc70939193b6960b5f27a772e823f240e17cdd",
+          "changed_since_audit": false
+        },
+        {
+          "path": "scripts/agent_mcp_adapter_probe.py",
+          "line": 90,
+          "recording_sha256": "b64aa6ad0c4466a405f9ee9e00bc70939193b6960b5f27a772e823f240e17cdd",
+          "audit_sha256": "b64aa6ad0c4466a405f9ee9e00bc70939193b6960b5f27a772e823f240e17cdd",
+          "changed_since_audit": false
+        }
+      ],
+      "requirements": [
+        {
+          "path": "docs/gui/DATUM_TERMINAL_AGENT_INTEROP_SPEC.md",
+          "line": 223,
+          "recording_sha256": "133feaada1eda919ad4b57216ff1782ac00d02a8d6726c2ce64bc3dad169f968",
+          "audit_sha256": "133feaada1eda919ad4b57216ff1782ac00d02a8d6726c2ce64bc3dad169f968",
+          "changed_since_audit": false
+        }
+      ],
+      "evidence": {
+        "method": "Retained runner, Rust test and probe source inspection.",
+        "result": "Vendor adapter names are exercised using a stand-in executable.",
+        "limits": "Preserve unrelated terminal proof and historical owner acceptance; this record neither reopens the terminal epic nor invalidates every terminal claim."
+      },
+      "verification": [
+        {
+          "existing_entry_point": "bash scripts/run_agent_launch_pty_proof.sh",
+          "what_it_does_not_establish": "Current runner uses probes. Real installed/version-pinned clients need separate ordinary workflow evidence in an isolated owned environment; authorization/auth prerequisites remain explicit.",
+          "executed_for_recording": false
+        }
+      ],
+      "roadmap_related": [
+        "dat-terminal-emulator-epic-jzv.6"
+      ],
+      "related_finding_ids": [
+        "CA-01"
+      ],
+      "issue_id": "dat-real-agent-interop-proof-x5qp",
+      "issue_status_at_recording": "open",
+      "roadmap_items_at_recording": [
+        {
+          "key": "TERMINAL-T4-VERIFY",
+          "issue_id": "dat-terminal-emulator-epic-jzv.6",
+          "state": "landed",
+          "authorization": "none"
+        }
+      ]
+    },
+    {
+      "id": "CA-05",
+      "title": "Complete manual PCB track via and zone authoring parity",
+      "classification": "declared_delivery_gap",
+      "priority": 2,
+      "type": "feature",
+      "slug": "manual-pcb-authoring-parity",
+      "observation": "Board tool gate permits Select and available Move. Track/via/zone native CLI/MCP authoring exists; full graphical editing remains explicitly pending.",
+      "impact": "Core board workflows cannot yet be completed through the intended manual graphical editor, despite automation coverage.",
+      "sources": [
+        {
+          "path": "crates/gui-app/src/editor/runtime_tool_actions.rs",
+          "line": 13,
+          "recording_sha256": "f76e3afd5c6bf4ddaaed21dd5c2ac868b90d355a3bc7780eecfa5448ea814d92",
+          "audit_sha256": "f76e3afd5c6bf4ddaaed21dd5c2ac868b90d355a3bc7780eecfa5448ea814d92",
+          "changed_since_audit": false
+        }
+      ],
+      "requirements": [
+        {
+          "path": "CLAUDE.md",
+          "line": 15,
+          "recording_sha256": "ead76a282c5b159dbebc6be895a50f03511f9c488608e9e31756e61b8be192f9",
+          "audit_sha256": "ead76a282c5b159dbebc6be895a50f03511f9c488608e9e31756e61b8be192f9",
+          "changed_since_audit": false
+        },
+        {
+          "path": "docs/contracts/PCB_LAYOUT_TOOL_CONTRACT.md",
+          "line": 838,
+          "recording_sha256": "11801d6a598d497f1cb3a8edb9cb2008f72f078c5a7356c591c8c36e100813bd",
+          "audit_sha256": "11801d6a598d497f1cb3a8edb9cb2008f72f078c5a7356c591c8c36e100813bd",
+          "changed_since_audit": false
+        }
+      ],
+      "evidence": {
+        "method": "Runtime dispatch and contract review.",
+        "result": "Native GUI editing is pending.",
+        "limits": "Native schematic authoring uses separate implemented paths; this does not claim all authoring tools are absent."
+      },
+      "verification": [
+        {
+          "existing_entry_point": "Existing gui-app board gesture/native-edit tests plus ordinary isolated Wayland/WGPU application workflow",
+          "what_it_does_not_establish": "Needs direct manual create/edit/delete, journal/history and save/reopen proof; CLI-only mutation and handoff tests are insufficient. No new GUI campaign authorized by this intake.",
+          "executed_for_recording": false
+        }
+      ],
+      "roadmap_related": [],
+      "issue_id": "dat-manual-pcb-authoring-parity-5dll",
+      "issue_status_at_recording": "open",
+      "roadmap_items_at_recording": []
+    },
+    {
+      "id": "CA-06",
+      "title": "Close schematic to PCB engineering revision and hierarchy workflow",
+      "classification": "declared_delivery_gap",
+      "priority": 2,
+      "type": "feature",
+      "slug": "schematic-pcb-revision-loop",
+      "observation": "Initial transfer refuses stale Part bindings, leaves existing physical counterparts unchanged and supports the bounded root occurrence. ECO/synchronization/repeated hierarchy are excluded from delivered initial transfer.",
+      "impact": "Initial capture/transfer does not yet support the complete change-existing-design workflow needed for long-lived professional designs.",
+      "sources": [
+        {
+          "path": "crates/engine/src/api/native_write/schematic_board_transfer/plan.rs",
+          "line": 27,
+          "recording_sha256": "f5a7d1281b1cb30e741b25d051de40dfa8112129679c4a81f1560d2d33f381ab",
+          "audit_sha256": "f5a7d1281b1cb30e741b25d051de40dfa8112129679c4a81f1560d2d33f381ab",
+          "changed_since_audit": false
+        },
+        {
+          "path": "crates/engine/src/api/native_write/schematic_board_transfer/plan.rs",
+          "line": 189,
+          "recording_sha256": "f5a7d1281b1cb30e741b25d051de40dfa8112129679c4a81f1560d2d33f381ab",
+          "audit_sha256": "f5a7d1281b1cb30e741b25d051de40dfa8112129679c4a81f1560d2d33f381ab",
+          "changed_since_audit": false
+        },
+        {
+          "path": "crates/engine/src/api/native_write/schematic_board_transfer/plan.rs",
+          "line": 200,
+          "recording_sha256": "f5a7d1281b1cb30e741b25d051de40dfa8112129679c4a81f1560d2d33f381ab",
+          "audit_sha256": "f5a7d1281b1cb30e741b25d051de40dfa8112129679c4a81f1560d2d33f381ab",
+          "changed_since_audit": false
+        }
+      ],
+      "requirements": [
+        {
+          "path": "docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md",
+          "line": 64,
+          "recording_sha256": "c48fa809fe9c16b45fde8ecd3a8bfffc21f79c3a841093b14a3e7687e8360886",
+          "audit_sha256": "c48fa809fe9c16b45fde8ecd3a8bfffc21f79c3a841093b14a3e7687e8360886",
+          "changed_since_audit": false
+        }
+      ],
+      "evidence": {
+        "method": "Transfer planner, composed operation batch and closed task boundary review.",
+        "result": "Existing counterpart is retained rather than updated.",
+        "limits": "The accepted bounded initial-transfer delivery remains closed and credited; no reopening or expanded acceptance bar."
+      },
+      "verification": [
+        {
+          "existing_entry_point": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p eda-engine api::native_write::schematic_board_transfer::tests --locked --offline",
+          "what_it_does_not_establish": "Current tests establish initial transfer/repeat/history/refusal, not general ECO or repeated-instance update. Future bounded work needs previewed electrical/physical consequences and reopen/history proof.",
+          "executed_for_recording": false
+        }
+      ],
+      "roadmap_related": [
+        "dat-initial-connected-pcb-transfer-mbzh"
+      ],
+      "issue_id": "dat-schematic-pcb-revision-loop-cf5t",
+      "issue_status_at_recording": "open",
+      "roadmap_items_at_recording": []
+    },
+    {
+      "id": "CA-07",
+      "title": "Qualify remaining library graph admission and duplicate policy convergence",
+      "classification": "architectural_followup_requires_bounded_revalidation",
+      "priority": 2,
+      "type": "task",
+      "slug": "library-graph-admission-audit",
+      "observation": "Library contract identifies remaining whole-graph/duplicate integration work; commit admission, CLI validation and GUI editing still have distinct integration seams.",
+      "impact": "Shared write plumbing does not by itself prove identical semantic admission across every entry surface.",
+      "sources": [
+        {
+          "path": "crates/engine/src/substrate/pool_journal_ops.rs",
+          "line": 389,
+          "recording_sha256": "130c970ce7507644dcc2f68d4624f128d849a3dddff08e884c19607a7b497d5e",
+          "audit_sha256": "130c970ce7507644dcc2f68d4624f128d849a3dddff08e884c19607a7b497d5e",
+          "changed_since_audit": false
+        },
+        {
+          "path": "crates/cli/src/commands/pool/validation.rs",
+          "line": 12,
+          "recording_sha256": "0bfff63b78376986b37f998b55744ef834dbe68c1aa385b0842b605114d9ae47",
+          "audit_sha256": "0bfff63b78376986b37f998b55744ef834dbe68c1aa385b0842b605114d9ae47",
+          "changed_since_audit": false
+        },
+        {
+          "path": "crates/engine/src/api/native_write/library_gui_part_edit.rs",
+          "line": 250,
+          "recording_sha256": "dcbc36ec6b88dd9dcfdab40334d466e648fc45d4fbd888a16905310a54fc3b88",
+          "audit_sha256": "dcbc36ec6b88dd9dcfdab40334d466e648fc45d4fbd888a16905310a54fc3b88",
+          "changed_since_audit": false
+        }
+      ],
+      "requirements": [
+        {
+          "path": "docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md",
+          "line": 1847,
+          "recording_sha256": "c48fa809fe9c16b45fde8ecd3a8bfffc21f79c3a841093b14a3e7687e8360886",
+          "audit_sha256": "c48fa809fe9c16b45fde8ecd3a8bfffc21f79c3a841093b14a3e7687e8360886",
+          "changed_since_audit": false
+        }
+      ],
+      "evidence": {
+        "method": "Contract and source seam review; bounded closure scope of 88z1 checked before recording.",
+        "result": "Remaining integration concern captured for qualification, not blanket rejection of existing shared validators.",
+        "limits": "No runtime corruption or unequal-admission reproduction. Closed 88z1 delivered narrower Padstack/Footprint validation and stays closed. Existing duplicate-pad issue jpg0 may be related, not presumed the same bug."
+      },
+      "verification": [
+        {
+          "existing_entry_point": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p eda-engine pool::tests --locked --offline",
+          "what_it_does_not_establish": "Need a bounded cross-entry comparison of identical graph/reference/duplicate inputs before prescribing a repair; existing shared definition-validation tests retain their scope.",
+          "executed_for_recording": false
+        }
+      ],
+      "roadmap_related": [
+        "dat-library-validation-convergence-88z1",
+        "dat-component-pad-validate-duplicate-jpg0"
+      ],
+      "issue_id": "dat-library-graph-admission-audit-ly96",
+      "issue_status_at_recording": "open",
+      "roadmap_items_at_recording": [
+        {
+          "key": "LIBRARY-VALIDATION-CONVERGENCE",
+          "issue_id": "dat-library-validation-convergence-88z1",
+          "state": "landed",
+          "authorization": "none"
+        }
+      ]
+    },
+    {
+      "id": "CA-08",
+      "title": "Map schematic simulation goal to existing simulation boundary decision",
+      "classification": "future_capability_contract_gap",
+      "existing_issue": "dat-simulation-boundary-decision-wfa",
+      "observation": "Behavioral model attachments and content-addressed storage exist; executable schematic simulation/probing/result invalidation and SPICE-netlist export were not established.",
+      "impact": "The foundation allows simulation but does not yet deliver the post-capture analysis workflow described by the owner.",
+      "sources": [
+        {
+          "path": "specs/progress/contract_coverage_details.md",
+          "line": 27,
+          "recording_sha256": "1d60ccc095c795b1add33c38069869189bf995cfa6edc25d865aae60af129dac",
+          "audit_sha256": "1d60ccc095c795b1add33c38069869189bf995cfa6edc25d865aae60af129dac",
+          "changed_since_audit": false
+        },
+        {
+          "path": "specs/progress/contract_coverage_details.md",
+          "line": 46,
+          "recording_sha256": "1d60ccc095c795b1add33c38069869189bf995cfa6edc25d865aae60af129dac",
+          "audit_sha256": "1d60ccc095c795b1add33c38069869189bf995cfa6edc25d865aae60af129dac",
+          "changed_since_audit": false
+        }
+      ],
+      "requirements": [
+        {
+          "path": "docs/DATUM_PRODUCT_MECHANICS.md",
+          "line": 425,
+          "recording_sha256": "11fbf0ab392eae04a9a228bcf47e53f046c8cec09cad036ebd26a77fa457f2de",
+          "audit_sha256": "11fbf0ab392eae04a9a228bcf47e53f046c8cec09cad036ebd26a77fa457f2de",
+          "changed_since_audit": false
+        }
+      ],
+      "evidence": {
+        "method": "Module/source inventory and implementation-status review.",
+        "result": "Attachment/data foundation present; execution workflow absent from inspected implementation.",
+        "limits": "Existing boundary decision already selects native netlisting plus external solver adapters. No simulator/dependency adoption or new simulation mechanism is authorized."
+      },
+      "verification": [
+        {
+          "existing_entry_point": "Future simulation workflow verification under the existing boundary decision",
+          "what_it_does_not_establish": "No existing end-to-end simulation runner identified. Scope must define exact pin/model mapping, stimuli, run provenance, results/probes and invalidation before implementation can be assessed.",
+          "executed_for_recording": false
+        }
+      ],
+      "roadmap_related": [],
+      "issue_id": "dat-simulation-boundary-decision-wfa",
+      "issue_status_at_recording": "open",
+      "roadmap_items_at_recording": []
+    },
+    {
+      "id": "CA-09",
+      "title": "Reconcile advanced routing ambition with current contract exclusions",
+      "classification": "owner_goal_scope_disposition",
+      "priority": 3,
+      "type": "question",
+      "slug": "advanced-routing-scope",
+      "observation": "Diff-pair/length matching/impedance are deferred; push-and-shove and interactive width-from-rules are explicitly out of the current PCB contract scope. Current rules lack the advanced constraint types and evaluate only basic scope leaves.",
+      "impact": "Delivering the current bounded routing contract alone cannot establish the broader advanced trace manipulation/routing ambition.",
+      "sources": [
+        {
+          "path": "crates/engine/src/rules/ast.rs",
+          "line": 36,
+          "recording_sha256": "2c13fa5486cf8115cec7188b7ec507ace67a73083d9c90cd812e4879beba2f15",
+          "audit_sha256": "2c13fa5486cf8115cec7188b7ec507ace67a73083d9c90cd812e4879beba2f15",
+          "changed_since_audit": false
+        },
+        {
+          "path": "crates/engine/src/rules/eval.rs",
+          "line": 19,
+          "recording_sha256": "15f67781cf2902525b8d9d9169fe4565cbb9a43d8942ec8a914d7948171e0cd0",
+          "audit_sha256": "15f67781cf2902525b8d9d9169fe4565cbb9a43d8942ec8a914d7948171e0cd0",
+          "changed_since_audit": false
+        },
+        {
+          "path": "crates/engine/src/board/route_proposal/revalidation.rs",
+          "line": 53,
+          "recording_sha256": "1d234cc006b999a12a819119595d266faae106ec5c7c156bae0e7601169d5752",
+          "audit_sha256": "1d234cc006b999a12a819119595d266faae106ec5c7c156bae0e7601169d5752",
+          "changed_since_audit": false
+        }
+      ],
+      "requirements": [
+        {
+          "path": "docs/contracts/PCB_LAYOUT_TOOL_CONTRACT.md",
+          "line": 858,
+          "recording_sha256": "11801d6a598d497f1cb3a8edb9cb2008f72f078c5a7356c591c8c36e100813bd",
+          "audit_sha256": "11801d6a598d497f1cb3a8edb9cb2008f72f078c5a7356c591c8c36e100813bd",
+          "changed_since_audit": false
+        }
+      ],
+      "evidence": {
+        "method": "Contract and rule/kernel implementation review.",
+        "result": "Deterministic route proposals/revalidation exist; advanced interactive/high-speed scope remains future.",
+        "limits": "Deferrals/exclusions are not runtime bugs. This is a scope question, not ratification, implementation grant or automatic successor."
+      },
+      "verification": [
+        {
+          "existing_entry_point": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p eda-engine board::tests::route_path_candidate_authored_copper_graph_policy::route_policy_preservation_tests --locked --offline",
+          "what_it_does_not_establish": "Retained routing policy tests cannot prove unimplemented differential-pair, length-matching, impedance or push-and-shove behavior. New proof should follow authorized bounded behavior.",
+          "executed_for_recording": false
+        }
+      ],
+      "roadmap_related": [],
+      "issue_id": "dat-advanced-routing-scope-fkpb",
+      "issue_status_at_recording": "open",
+      "roadmap_items_at_recording": []
+    },
+    {
+      "id": "CA-10",
+      "title": "Preserve drafting standard implementation and owner goal distinction",
+      "classification": "specification_only_delivery_boundary",
+      "existing_issue": "dat-symbol-footprint-editor-design-5gs",
+      "observation": "PM064 is ratified design-level doctrine and selects IEC60617 symbology; it does not demonstrate implementation or conformance. Owner used IEEE315 as an example in the audit discussion.",
+      "impact": "A standards registry or completed specification cannot establish standards-compliant generated documentation. IEEE315 wording must not silently replace the existing ratified IEC selection.",
+      "sources": [
+        {
+          "path": "docs/decisions/PRODUCT_MECHANICS_064_ADOPTED_DRAFTING_STANDARD_OBJECT_MECHANISM.md",
+          "line": 3,
+          "recording_sha256": "6045601506b55e0fd4cfea8e8eb2f425690db36eb7e49331210ee5b06dcc8031",
+          "audit_sha256": "6045601506b55e0fd4cfea8e8eb2f425690db36eb7e49331210ee5b06dcc8031",
+          "changed_since_audit": false
+        },
+        {
+          "path": "docs/decisions/PRODUCT_MECHANICS_064_ADOPTED_DRAFTING_STANDARD_OBJECT_MECHANISM.md",
+          "line": 74,
+          "recording_sha256": "6045601506b55e0fd4cfea8e8eb2f425690db36eb7e49331210ee5b06dcc8031",
+          "audit_sha256": "6045601506b55e0fd4cfea8e8eb2f425690db36eb7e49331210ee5b06dcc8031",
+          "changed_since_audit": false
+        }
+      ],
+      "requirements": [
+        {
+          "path": "specs/STANDARDS_COMPLIANCE_SPEC.md",
+          "line": 181,
+          "recording_sha256": "1316c28f0ffa21c75497af3fb35488074ac07ea36aa3b9c3f5535e793596f15b",
+          "audit_sha256": "1316c28f0ffa21c75497af3fb35488074ac07ea36aa3b9c3f5535e793596f15b",
+          "changed_since_audit": false
+        }
+      ],
+      "evidence": {
+        "method": "Standard-adoption doctrine and support dispositions reviewed.",
+        "result": "Design-only boundary and selected IEC symbology preserved.",
+        "limits": "No new standards selection, compliance judgment, licensed-source access, or implementation authorization. Closed drafting specification task remains closed."
+      },
+      "verification": [
+        {
+          "existing_entry_point": "python3 scripts/test_drafting_standard_completion.py",
+          "what_it_does_not_establish": "Validates specification/state boundaries, not implemented standard-conforming symbol/document generation.",
+          "executed_for_recording": false
+        }
+      ],
+      "roadmap_related": [
+        "dat-adopted-drafting-standard-object-er9"
+      ],
+      "issue_id": "dat-symbol-footprint-editor-design-5gs",
+      "issue_status_at_recording": "open",
+      "roadmap_items_at_recording": [
+        {
+          "key": "ADOPTED-DRAFTING-STANDARD-SPEC",
+          "issue_id": "dat-adopted-drafting-standard-object-er9",
+          "state": "landed",
+          "authorization": "none"
+        }
+      ]
+    }
+  ],
+  "recording_validation": {
+    "status": "record_consistency_passed",
+    "checks": [
+      {
+        "command": "python3 scripts/check_progress_coverage.py",
+        "result": "PASS"
+      },
+      {
+        "command": "python3 scripts/project_status.py check",
+        "result": "PASS; 131 Frontier items"
+      },
+      {
+        "command": "python3 scripts/project_status.py check-render",
+        "result": "PASS; projection current"
+      },
+      {
+        "command": "one-off JSON/issue/source-link/hash verification",
+        "result": "PASS; 10 findings, 39 anchors, unchanged source hashes from audit baseline"
+      },
+      {
+        "command": "git diff --check",
+        "result": "PASS"
+      }
+    ],
+    "limits": "These results validate record consistency and existing state boundaries; they do not resolve the findings or establish product behavior.",
+    "independent_review": {
+      "disposition": "BOUNDED RECORD ACCURACY PASS",
+      "scope": "Separate review session inspected report, navigation, cited source/requirements, tracker links, source hashes and verification owners. Corrected CA-09 nested test filter in report and tracker before final review.",
+      "limits": "Documentation accuracy only; no product acceptance, implementation grant or fresh runtime qualification."
+    }
+  }
+}
