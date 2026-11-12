@@ -70,7 +70,21 @@
       },
       "related_issue_ids": [],
       "proof_limits": "Source/control-flow review; no compiled Rust or ordinary application replay.",
-      "issue_id": "dat-drc-authored-width-rule-vz09"
+      "issue_id": "dat-drc-authored-width-rule-vz09",
+      "closure": {
+        "designer_visible_result": "DRC enforces the enabled scoped TrackWidth rule and applicable priority consistently with routing admission.",
+        "regression_cases": [
+          "A saved design with net-class minimum 100000nm, authored All minimum 500000nm and a 200000nm track reports the governing width violation.",
+          "Focused regression cases cover disabled rules and supported All/Net/NetClass/Layer scope and priority resolution without silently falling back to the weaker net-class value."
+        ],
+        "required_evidence": [
+          "Meaningful implementation-level regression demonstrates the original counterexample and corrected behavior at the identified candidate.",
+          "Run the existing focused verification entry points applicable to the change; record actual test counts/results and candidate identity. Empty test selection is not a pass.",
+          "Obtain actual independent review and cite the landing commit in the existing issue. Use ordinary public workflow evidence where that workflow exists; internal-only primitives retain their stated exposure limit."
+        ],
+        "authority": "Closure documentation requested by owner. Implementation still requires its existing bounded grant/ownership. No new normative mechanism or milestone acceptance is adopted here.",
+        "implementation_status": "open; no repair or behavioral verification claimed"
+      }
     },
     {
       "id": "CA-12",
@@ -130,7 +144,21 @@
       },
       "related_issue_ids": [],
       "proof_limits": "Source-derived Python classification/filter counterexample executed, not compiled Rust. run_history.rs is active dirty work; inspected committed baseline only.",
-      "issue_id": "dat-drc-profile-hidden-errors-bf31"
+      "issue_id": "dat-drc-profile-hidden-errors-bf31",
+      "closure": {
+        "designer_visible_result": "The DRC profile retains physical width/via errors and its normalized summary reflects those emitted findings.",
+        "regression_cases": [
+          "Width, via-hole and annular-ring violations remain visible and failing in the DRC profile.",
+          "Regressions compare raw findings with normalized DRC/standards/release results, preserving each profile scope and visible waiver/deviation state."
+        ],
+        "required_evidence": [
+          "Meaningful implementation-level regression demonstrates the original counterexample and corrected behavior at the identified candidate.",
+          "Run the existing focused verification entry points applicable to the change; record actual test counts/results and candidate identity. Empty test selection is not a pass.",
+          "Obtain actual independent review and cite the landing commit in the existing issue. Use ordinary public workflow evidence where that workflow exists; internal-only primitives retain their stated exposure limit."
+        ],
+        "authority": "Closure documentation requested by owner. Implementation still requires its existing bounded grant/ownership. No new normative mechanism or milestone acceptance is adopted here.",
+        "implementation_status": "open; no repair or behavioral verification claimed"
+      }
     },
     {
       "id": "CA-13",
@@ -178,7 +206,21 @@
       },
       "related_issue_ids": [],
       "proof_limits": "Source/control-flow review; no compiled Rust or ordinary application replay.",
-      "issue_id": "dat-drc-unsupported-hole-selection-r2fj"
+      "issue_id": "dat-drc-unsupported-hole-selection-r2fj",
+      "closure": {
+        "designer_visible_result": "An explicitly requested unsupported HoleSize check cannot be presented as an evaluated clean result.",
+        "regression_cases": [
+          "The public typed API test selects HoleSize alone and observes an explicit unsupported/not-implemented result or refusal.",
+          "Supported selected checks continue to run; a mixed supported/unsupported selection exposes its incomplete scope. This issue does not require implementing a new hole checker."
+        ],
+        "required_evidence": [
+          "Meaningful implementation-level regression demonstrates the original counterexample and corrected behavior at the identified candidate.",
+          "Run the existing focused verification entry points applicable to the change; record actual test counts/results and candidate identity. Empty test selection is not a pass.",
+          "Obtain actual independent review and cite the landing commit in the existing issue. Use ordinary public workflow evidence where that workflow exists; internal-only primitives retain their stated exposure limit."
+        ],
+        "authority": "Closure documentation requested by owner. Implementation still requires its existing bounded grant/ownership. No new normative mechanism or milestone acceptance is adopted here.",
+        "implementation_status": "open; no repair or behavioral verification claimed"
+      }
     },
     {
       "id": "CA-14",
@@ -229,7 +271,21 @@
       },
       "related_issue_ids": [],
       "proof_limits": "Source/control-flow review; no compiled Rust or ordinary application replay.",
-      "issue_id": "dat-finding-rename-correlation-ww6e"
+      "issue_id": "dat-finding-rename-correlation-ww6e",
+      "closure": {
+        "designer_visible_result": "Presentation-only renames preserve finding correlation and existing fingerprint dispositions when stable targets and relevant observations are unchanged.",
+        "regression_cases": [
+          "An ERC refdes rename and a DRC net-name rename preserve the applicable fingerprint/waiver correlation across a new check and save/reopen.",
+          "Negative controls change a relevant electrical or geometry observation and prove that the prior disposition cannot silently suppress the changed finding."
+        ],
+        "required_evidence": [
+          "Meaningful implementation-level regression demonstrates the original counterexample and corrected behavior at the identified candidate.",
+          "Run the existing focused verification entry points applicable to the change; record actual test counts/results and candidate identity. Empty test selection is not a pass.",
+          "Obtain actual independent review and cite the landing commit in the existing issue. Use ordinary public workflow evidence where that workflow exists; internal-only primitives retain their stated exposure limit."
+        ],
+        "authority": "Closure documentation requested by owner. Implementation still requires its existing bounded grant/ownership. No new normative mechanism or milestone acceptance is adopted here.",
+        "implementation_status": "open; no repair or behavioral verification claimed"
+      }
     },
     {
       "id": "CA-15",
@@ -279,7 +335,21 @@
       },
       "related_issue_ids": [],
       "proof_limits": "Source/control-flow review; no compiled Rust or ordinary application replay.",
-      "issue_id": "dat-erc-occurrence-waiver-identity-ueaz"
+      "issue_id": "dat-erc-occurrence-waiver-identity-ueaz",
+      "closure": {
+        "designer_visible_result": "Ordinary ERC findings preserve repeated-sheet occurrence identity so one occurrence can be navigated and waived independently.",
+        "regression_cases": [
+          "Two instances of one child definition with identical local SIG output conflicts produce distinct occurrence-qualified targets and disposition fingerprints.",
+          "Waiving one occurrence leaves the other active after check persistence and reopen; existing occurrence-qualified interface diagnostics remain correct."
+        ],
+        "required_evidence": [
+          "Meaningful implementation-level regression demonstrates the original counterexample and corrected behavior at the identified candidate.",
+          "Run the existing focused verification entry points applicable to the change; record actual test counts/results and candidate identity. Empty test selection is not a pass.",
+          "Obtain actual independent review and cite the landing commit in the existing issue. Use ordinary public workflow evidence where that workflow exists; internal-only primitives retain their stated exposure limit."
+        ],
+        "authority": "Closure documentation requested by owner. Implementation still requires its existing bounded grant/ownership. No new normative mechanism or milestone acceptance is adopted here.",
+        "implementation_status": "open; no repair or behavioral verification claimed"
+      }
     },
     {
       "id": "CA-16",
@@ -335,7 +405,21 @@
         "dat-kicad-footprint-library-k0i9"
       ],
       "proof_limits": "Bounded Python lowering transcription executed by reviewer; not compiled Rust/export-file validation. Cited pad/copper code was clean; active process/import edits excluded.",
-      "issue_id": "dat-gerber-pad-shape-projection-3ojz"
+      "issue_id": "dat-gerber-pad-shape-projection-3ojz",
+      "closure": {
+        "designer_visible_result": "Gerber copper preserves each supported authored Oval/RoundRect pad shape and orientation, or explicitly refuses unsupported geometry before publishing the output.",
+        "regression_cases": [
+          "Export regressions cover 2mm by 1mm Oval and RoundRect pads at 0 and 90 degrees, with representative corner-ratio handling and explicit arbitrary-angle support/refusal.",
+          "The public export path produces geometry consistent with the authored design or returns a typed refusal without presenting substituted or partial copper as successful output."
+        ],
+        "required_evidence": [
+          "Meaningful implementation-level regression demonstrates the original counterexample and corrected behavior at the identified candidate.",
+          "Run the existing focused verification entry points applicable to the change; record actual test counts/results and candidate identity. Empty test selection is not a pass.",
+          "Obtain actual independent review and cite the landing commit in the existing issue. Use ordinary public workflow evidence where that workflow exists; internal-only primitives retain their stated exposure limit."
+        ],
+        "authority": "Closure documentation requested by owner. Implementation still requires its existing bounded grant/ownership. No new normative mechanism or milestone acceptance is adopted here.",
+        "implementation_status": "open; no repair or behavioral verification claimed"
+      }
     },
     {
       "id": "CA-17",
@@ -392,7 +476,21 @@
         "dat-bom-management-spec-7ng"
       ],
       "proof_limits": "Python transcription of row key/group/count logic executed by reviewer; no compiled export comparison. No BOM row-loss claim.",
-      "issue_id": "dat-inventory-placement-identity-yuf4"
+      "issue_id": "dat-inventory-placement-identity-yuf4",
+      "closure": {
+        "designer_visible_result": "BOM/PnP comparisons identify physical occurrences independently of shared library Package definitions.",
+        "regression_cases": [
+          "An unchanged export containing two placements sharing one library Package compares with all rows matched and zero missing, extra or drift.",
+          "Changing only the second placement yields exactly its identified drift; supported multiple-package roles do not collide, and exported row counts remain intact."
+        ],
+        "required_evidence": [
+          "Meaningful implementation-level regression demonstrates the original counterexample and corrected behavior at the identified candidate.",
+          "Run the existing focused verification entry points applicable to the change; record actual test counts/results and candidate identity. Empty test selection is not a pass.",
+          "Obtain actual independent review and cite the landing commit in the existing issue. Use ordinary public workflow evidence where that workflow exists; internal-only primitives retain their stated exposure limit."
+        ],
+        "authority": "Closure documentation requested by owner. Implementation still requires its existing bounded grant/ownership. No new normative mechanism or milestone acceptance is adopted here.",
+        "implementation_status": "open; no repair or behavioral verification claimed"
+      }
     },
     {
       "id": "CA-18",
@@ -449,7 +547,21 @@
         "dat-product-revision-engine-build-18f"
       ],
       "proof_limits": "Internal callable engine primitive source trace. Public revision operation integration is separately incomplete (CA-02); no integrated GUI release exploit demonstrated.",
-      "issue_id": "dat-release-authority-attestation-b150"
+      "issue_id": "dat-release-authority-attestation-b150",
+      "closure": {
+        "designer_visible_result": "The engine accepts a selected release-authority attestation only when it authorizes the exact candidate/digest under the applicable standing and policy.",
+        "regression_cases": [
+          "With valid candidate approval A retained, selecting unrelated, revoked, wrong-intent or out-of-scope authority B returns a typed refusal without advancing the authority snapshot/head.",
+          "A valid selected release authority succeeds at the existing engine primitive; regression evidence does not claim unavailable public GUI/CLI release integration."
+        ],
+        "required_evidence": [
+          "Meaningful implementation-level regression demonstrates the original counterexample and corrected behavior at the identified candidate.",
+          "Run the existing focused verification entry points applicable to the change; record actual test counts/results and candidate identity. Empty test selection is not a pass.",
+          "Obtain actual independent review and cite the landing commit in the existing issue. Use ordinary public workflow evidence where that workflow exists; internal-only primitives retain their stated exposure limit."
+        ],
+        "authority": "Closure documentation requested by owner. Implementation still requires its existing bounded grant/ownership. No new normative mechanism or milestone acceptance is adopted here.",
+        "implementation_status": "open; no repair or behavioral verification claimed"
+      }
     },
     {
       "id": "CA-19",
@@ -501,7 +613,21 @@
         "dat-product-revision-engine-build-18f"
       ],
       "proof_limits": "Source/control-flow review; no compiled Rust or ordinary application replay.",
-      "issue_id": "dat-journal-integrity-payload-83a3"
+      "issue_id": "dat-journal-integrity-payload-83a3",
+      "closure": {
+        "designer_visible_result": "Integrity inspection detects disagreement between accepted journal payloads and the immutable transaction authority that covers them.",
+        "regression_cases": [
+          "Changing journal provenance alone while preserving transaction IDs/operations/revisions cannot retain a Complete integrity result.",
+          "Regressions cover applicable earlier covered transactions as well as the tip, preserve valid reopen/undo behavior and explicitly supported pre-integrity journals; any additional inverse-payload claim receives its own evidence."
+        ],
+        "required_evidence": [
+          "Meaningful implementation-level regression demonstrates the original counterexample and corrected behavior at the identified candidate.",
+          "Run the existing focused verification entry points applicable to the change; record actual test counts/results and candidate identity. Empty test selection is not a pass.",
+          "Obtain actual independent review and cite the landing commit in the existing issue. Use ordinary public workflow evidence where that workflow exists; internal-only primitives retain their stated exposure limit."
+        ],
+        "authority": "Closure documentation requested by owner. Implementation still requires its existing bounded grant/ownership. No new normative mechanism or milestone acceptance is adopted here.",
+        "implementation_status": "open; no repair or behavioral verification claimed"
+      }
     },
     {
       "id": "CA-20",
@@ -553,7 +679,21 @@
         "dat-product-revision-engine-build-18f"
       ],
       "proof_limits": "Recoverability/usability gap, not demonstrated data loss or necessarily a requirement breach: REV-I01 explicitly permits read-only diagnostic recovery.",
-      "issue_id": "dat-integrity-incomplete-stage-188y"
+      "issue_id": "dat-integrity-incomplete-stage-188y",
+      "closure": {
+        "designer_visible_result": "Missing or partial uncommitted stage manifests have an explicit, tested recovery outcome and a supported preservation/reconciliation remedy.",
+        "regression_cases": [
+          "Crash cases before complete generation.json and before journal append preserve the prior complete committed authority and clearly report abandoned/incomplete staging.",
+          "The supported continuation or reconciliation path is demonstrated without discarding committed corruption. Diagnostic-only behavior remains permitted; accepting it as the disposition must document the concrete recovery remedy rather than claim automatic recovery."
+        ],
+        "required_evidence": [
+          "Meaningful implementation-level regression demonstrates the original counterexample and corrected behavior at the identified candidate.",
+          "Run the existing focused verification entry points applicable to the change; record actual test counts/results and candidate identity. Empty test selection is not a pass.",
+          "Obtain actual independent review and cite the landing commit in the existing issue. Use ordinary public workflow evidence where that workflow exists; internal-only primitives retain their stated exposure limit."
+        ],
+        "authority": "Closure documentation requested by owner. Implementation still requires its existing bounded grant/ownership. No new normative mechanism or milestone acceptance is adopted here.",
+        "implementation_status": "open; no repair or behavioral verification claimed"
+      }
     }
   ],
   "source_snapshots": [
@@ -785,6 +925,21 @@
       "disposition": "BOUNDED RECORD ACCURACY PASS",
       "scope": "Separate reviewer checked CA11-20 source/requirement excerpts, baseline hashes, tracker links, counterexample limits and existing verification module owners. No material correction required.",
       "limits": "Record accuracy only; no compiled product proof, implementation grant, acceptance or data-loss claim."
+    }
+  },
+  "closure_documentation": {
+    "task": "dat-audit-gap-closure-criteria-tw17",
+    "status": "documented_independently_reviewed",
+    "scope": "CA11-20; mirror existing findings into concrete acceptance checklists on their existing open/unassigned issues.",
+    "review_boundary": "Existing source audit/evidence retained. This change documents closure; it does not repair, authorize implementation, or grade product behavior.",
+    "validation": [
+      "Ten report/issue checklists exactly match; 60 unchecked criteria; all findings open.",
+      "Project status check passed (131 Frontier items); generated projection remains current.",
+      "Whitespace check passed."
+    ],
+    "independent_review": {
+      "disposition": "BOUNDED CLOSURE DOCUMENTATION PASS",
+      "scope": "Separate reviewer compared closure-only delta and existing issue checklists against the recorded audit; no material correction. Original evidence/limitations unchanged; no product acceptance."
     }
   }
 }
