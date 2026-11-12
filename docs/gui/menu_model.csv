@@ -15,6 +15,7 @@ menubar,Edit,,,5,Delete,delete,,schematic.selection.delete,,,,Delete
 menubar,Edit,,,6,Symbol Fields…,properties,,schematic.symbol_fields.open,,,,
 menubar,Edit,,,7,Symbol Fields Table…,properties,,schematic.symbol_fields_table.open,,,,
 menubar,Edit,,,8,Preferences,settings,,,,edit.preferences,,
+menubar,Edit,,,9,Transfer Schematic to PCB…,component,,schematic.board_transfer.open,,,,
 menubar,View,,,0,Fit to Board,fit,,view.fit,,,,F
 menubar,View,,,1,Zoom In,zoom-in,,view.zoom_in,,,,Ctrl++
 menubar,View,,,2,Zoom Out,zoom-out,,view.zoom_out,,,,Ctrl+-

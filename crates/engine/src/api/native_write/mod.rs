@@ -100,3 +100,6 @@ mod project_units_receipt_tests;
 mod test_support;
 
 pub use context::{BatchComposer, PreparedWrite, WriteProvenance, build_batch, commit_prepared};
+
+/// Initial source-qualified, connected board creation.
+pub mod schematic_board_transfer;

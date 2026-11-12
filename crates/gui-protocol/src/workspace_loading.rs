@@ -197,8 +197,9 @@ pub(super) fn load_workspace(
         basis_started.elapsed().as_millis()
     ));
     let scene_started = std::time::Instant::now();
-    let (scene, board_path) = if let Some(board_file) = &request.board_file {
-        load_scene_from_kicad_import(board_file)?
+    let (scene, board_path, unrouted_warning) = if let Some(board_file) = &request.board_file {
+        let (scene, path) = load_scene_from_kicad_import(board_file)?;
+        (scene, path, None)
     } else {
         project_scene(
             request,
@@ -217,6 +218,18 @@ pub(super) fn load_workspace(
         review_attach_started.elapsed().as_millis()
     ));
     let mut state = ReviewWorkspaceState::new(scene, review);
+    if let Some(reason) = unrouted_warning {
+        let now = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map_or(0, |elapsed| elapsed.as_millis() as u64);
+        state
+            .ui
+            .publish_console_feedback(ConsoleFeedbackDraft::action_refusal(
+                ConsoleFeedbackSource::Workspace,
+                now,
+                reason,
+            ));
+    }
     // Locate the companion schematic from the ORIGINAL KiCad source when this
     // request was materialized into a native project (the materialized
     // `board/board.json` has no sibling `.kicad_sch`); otherwise derive it from
@@ -422,7 +435,7 @@ pub(super) fn load_gui_supervision_snapshot(
 fn project_scene(
     request: &LiveReviewRequest,
     model: &DesignModel,
-) -> Result<(BoardReviewSceneV1, PathBuf)> {
+) -> Result<(BoardReviewSceneV1, PathBuf, Option<String>)> {
     let root = &request.project_root;
     let board_shard = model
         .source_shards
@@ -504,7 +517,20 @@ fn project_scene(
     let mut board_graphics =
         outline_board_graphics_from_outline(&outline, &inspect.board_uuid, &edge_cuts_layer_key);
     board_graphics.extend(native_board_graphics::project(&board_value)?);
-    let unrouted_primitives: Vec<UnroutedPrimitive> = Vec::new();
+    let unrouted = eda_engine::substrate::ElectricalSelectionSnapshot::capture(model)
+        .and_then(|snapshot| snapshot.unrouted_display(&model.model_revision));
+    let (unrouted_primitives, unrouted_warning) = match unrouted {
+        Ok(airwires) => (
+            crate::kicad_scene_import::unrouted_primitives_from_airwires(&airwires),
+            None,
+        ),
+        Err(error) => (
+            Vec::new(),
+            Some(format!(
+                "Unrouted display unavailable; no connected-state conclusion: {error:?}"
+            )),
+        ),
+    };
     let net_display = net_display_from_native_board_value(&board_value)?;
 
     let mut scene = build_board_review_scene(
@@ -535,7 +561,7 @@ fn project_scene(
     for zone in &mut scene.zones {
         zone.fill_projection = ZoneFillProjection::capture(model, zone.zone_uuid.parse()?);
     }
-    Ok((scene, board_path))
+    Ok((scene, board_path, unrouted_warning))
 }
 
 // These collections are the canonical sources of the CLI projections. Empty
@@ -556,7 +582,7 @@ pub(super) fn load_scene_from_engine(
 ) -> Result<(BoardReviewSceneV1, PathBuf)> {
     let root = &request.project_root;
     let model = ProjectResolver::new(root).resolve()?;
-    project_scene(request, &model)
+    project_scene(request, &model).map(|(scene, path, _)| (scene, path))
 }
 
 #[cfg(test)]

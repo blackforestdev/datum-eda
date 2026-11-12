@@ -4,6 +4,7 @@ use datum_gui_protocol::WorkspaceTool;
 pub use datum_gui_viewport::CameraState;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum HitTarget {
+    BoardTransfer(datum_gui_protocol::board_transfer::BoardTransferAction),
     InspectorSectionNavigation {
         basis: datum_gui_protocol::inspector_context::InspectorNavigationBasis,
         offsets: Vec<(

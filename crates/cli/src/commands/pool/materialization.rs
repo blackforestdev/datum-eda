@@ -50,6 +50,48 @@ pub(crate) fn materialize_supported_pool_package_graphics_with_source(
         return Ok(None);
     };
     let source = footprint.as_ref().map_or(eda_engine::api::native_write::board_components::pad_materialization::PadLandPatternSource::LegacyPackage,|f|eda_engine::api::native_write::board_components::pad_materialization::PadLandPatternSource::Footprint(f.uuid));
+    // Match the existing qualified_payload boundary: incomplete historical
+    // placements remain explicitly unadopted and retain their legacy projection.
+    let has_part_source = model.source_shards.iter().any(|s| {
+        s.taxon == Some(SourceShardTaxon::PoolPart)
+            && model
+                .materialized_source_shard_value_by_relative_path(&s.relative_path)
+                .is_ok_and(|v| v["uuid"] == serde_json::json!(component.part))
+    });
+    if let Some(selected) = footprint.as_ref().filter(|_| has_part_source) {
+        let graphics =
+            eda_engine::api::native_write::board_components::footprint_graphics::materialize(
+                &model,
+                component,
+                selected.uuid,
+            )?;
+        let key = component.uuid.to_string();
+        macro_rules! project_graphics {
+            ($($field:ident),+ $(,)?) => { $(project.board.$field.insert(key.clone(), serde_json::from_value(graphics[stringify!($field)].clone())?);)+ };
+        }
+        project_graphics!(
+            component_silkscreen,
+            component_silkscreen_arcs,
+            component_silkscreen_circles,
+            component_silkscreen_texts,
+            component_silkscreen_polygons,
+            component_silkscreen_polylines,
+            component_mechanical_polygons,
+            component_models_3d
+        );
+        let mut pads = selected
+            .pads
+            .values()
+            .cloned()
+            .map(|pad| {
+                let padstack = resolve_native_project_pool_padstack(project, &model, pad.padstack)?;
+                Ok(native_component_pad(pad, padstack.as_ref()))
+            })
+            .collect::<Result<Vec<_>>>()?;
+        pads.sort_by(|a, b| a.name.cmp(&b.name).then_with(|| a.uuid.cmp(&b.uuid)));
+        project.board.component_pads.insert(key, pads);
+        return Ok(Some(source));
+    }
     let geometry = PoolLandPatternGeometry::from_footprint_or_package(footprint, package);
 
     let key = component.uuid.to_string();

@@ -68,7 +68,7 @@ pub fn build_materialize_component_pad_sources(
             "request differs from the guarded placement/Part preimage",
         ));
     }
-    let (mut pads, transition) = materialize(model, request, &board)?;
+    let (mut pads, transition) = materialize(model, request, &board, None)?;
     let binding_updates = component_binding::refresh(model, request, &board, &mut pads)?;
     let mut previous = serde_json::Map::new();
     // Preserve the full historical materialization, including unaffected graphics.
@@ -179,7 +179,7 @@ pub fn prepare_component_pad_materialization(
     materialized: &serde_json::Value,
 ) -> Result<serde_json::Value, EngineError> {
     let board = model.materialized_source_shard_value(SourceShardKind::BoardRoot)?;
-    let (pads, transition) = materialize(model, request, &board)?;
+    let (pads, transition) = materialize(model, request, &board, None)?;
     let mut value = materialized
         .as_object()
         .cloned()
@@ -196,6 +196,7 @@ fn materialize(
     model: &DesignModel,
     request: &ComponentPadMaterializationRequest,
     board: &serde_json::Value,
+    initial_allocations: Option<&BTreeMap<Uuid, Uuid>>,
 ) -> Result<(Vec<ComponentPadSource>, ComponentPadTransition), EngineError> {
     let placement = &request.placement;
     let board_id: Uuid = serde_json::from_value(board["uuid"].clone())?;
@@ -203,7 +204,7 @@ fn materialize(
     let part: Part = serde_json::from_value(source::source_value(model, &part_pin)?)?;
     let package_pin = source::capture_root(model, placement.package, T::PoolPackage)?;
     let package: Package = serde_json::from_value(source::source_value(model, &package_pin)?)?;
-    let (owner, pads): (PinnedPadLibrarySource, Vec<Pad>) = match request.land_pattern {
+    let (owner, mut pads): (PinnedPadLibrarySource, Vec<Pad>) = match request.land_pattern {
         PadLandPatternSource::Footprint(id) => {
             let owner = source::capture_root(model, id, T::PoolFootprint)?;
             let footprint: Footprint =
@@ -264,6 +265,16 @@ fn materialize(
                 "ComponentInstance does not pin the selected PinPadMap",
             ));
         }
+    }
+    if let Some(allocations) = initial_allocations {
+        if allocations.keys().copied().collect::<BTreeSet<_>>()
+            != pads.iter().map(|p| p.uuid).collect()
+        {
+            return Err(invalid(
+                "initial allocation set does not match the complete footprint",
+            ));
+        }
+        pads.sort_by_key(|p| p.uuid);
     }
     let previous: Vec<ComponentPadSource> = serde_json::from_value(
         board["component_pads"][placement.uuid.to_string()]
@@ -400,7 +411,10 @@ fn materialize(
         let uuid = if let Some(id) = supplied.get(&pad.uuid) {
             *id
         } else {
-            let id = Uuid::new_v4();
+            let id = match initial_allocations {
+                Some(allocations) => allocations[&pad.uuid],
+                None => Uuid::new_v4(),
+            };
             if model.objects.contains_key(&id)
                 || model.journal.iter().any(|t| t.diff.created.contains(&id))
             {
@@ -483,6 +497,50 @@ mod tests;
 
 #[cfg(test)]
 mod exact30_tests;
+
+/// Initial creation pins the prospective CI declared in the same canonical batch.
+/// Full source/process materialization is reused; commit independently verifies
+/// the exact CI preimage, first-birth package and complete allocation set.
+pub(crate) fn initial_materialization(
+    model: &DesignModel,
+    placement: PlacedPackage,
+    footprint: Uuid,
+    map: Uuid,
+    ci: crate::substrate::RevisionedRef,
+    allocations: &BTreeMap<Uuid, Uuid>,
+) -> Result<serde_json::Value, EngineError> {
+    let owner = model
+        .component_instances
+        .get(&ci.object_id)
+        .filter(|owner| {
+            owner.authority == crate::substrate::ComponentInstanceAuthority::Authored
+                && owner.placed_package_refs.is_empty()
+                && owner.part_ref == Some(placement.part)
+                && owner.object_revision.0.checked_add(1) == Some(ci.object_revision.0)
+        })
+        .ok_or_else(|| invalid("initial materialization requires the declared next authored CI"))?;
+    let _ = owner;
+    let mut payload = super::footprint_graphics::materialize(model, &placement, footprint)?;
+    let request = ComponentPadMaterializationRequest {
+        placement,
+        land_pattern: PadLandPatternSource::Footprint(footprint),
+        component_instance: None,
+        pin_pad_map: Some(map),
+        correspondences: vec![],
+        adopt_existing: false,
+    };
+    let board = model.materialized_source_shard_value(SourceShardKind::BoardRoot)?;
+    let (mut pads, transition) = materialize(model, &request, &board, Some(allocations))?;
+    for pad in &mut pads {
+        pad.source_binding
+            .as_mut()
+            .ok_or_else(|| invalid("missing initial Pad source"))?
+            .component_instance = Some(ci.clone());
+    }
+    payload["component_pads"] = serde_json::to_value(pads)?;
+    payload["pad_source_transition"] = serde_json::to_value(transition)?;
+    Ok(payload)
+}
 
 #[cfg(test)]
 mod proposal_tests;

@@ -18,6 +18,7 @@
 //! (see [`derive_board_package_from_symbol_id`]), guard insertion, and
 //! journal provenance are byte-for-byte the CLI's historical behavior.
 
+pub mod footprint_graphics;
 pub mod pad_materialization;
 pub mod process_update;
 mod verb_registry;

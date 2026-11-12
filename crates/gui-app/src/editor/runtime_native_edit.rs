@@ -10,6 +10,8 @@ use datum_gui_protocol::{
 use std::sync::{Arc, Mutex, mpsc};
 #[path = "runtime_native_edit/actions.rs"]
 mod actions;
+#[path = "runtime_board_transfer.rs"]
+mod board_transfer;
 #[path = "runtime_native_edit/catalog.rs"]
 mod catalog;
 use catalog::native_write_verb_ids;
@@ -169,6 +171,18 @@ impl Runtime {
         datum_gui_protocol::gui_menu_model::native_project_edit_available(self.workspace())
     }
     pub(super) fn queue_native_edit(&mut self, action: NativeEditAction) -> bool {
+        if self.workspace().ui.board_transfer.is_some()
+            && !matches!(
+                action,
+                NativeEditAction::BoardTransfer | NativeEditAction::PrepareBoardSources { .. }
+            )
+        {
+            self.log_console_refusal(
+                ConsoleFeedbackSource::Tool,
+                "Close the PCB transfer review first",
+            );
+            return true;
+        }
         if !matches!(action, NativeEditAction::Proposal)
             && self.workspace().schematic_authoring.delete_review.is_some()
         {
@@ -276,6 +290,20 @@ impl Runtime {
             intent.proposal = review.pending.clone();
             intent.expected_revision = review.revision.clone();
             intent.expected_tip = review.tip;
+        }
+        if matches!(
+            action,
+            NativeEditAction::BoardTransfer | NativeEditAction::PrepareBoardSources { .. }
+        ) {
+            let Some(review) = &self.workspace().ui.board_transfer else {
+                return false;
+            };
+            intent.expected_revision = review.plan.expected_model_revision.0.clone();
+            intent.expected_tip = review.plan.expected_tip;
+            if matches!(action, NativeEditAction::BoardTransfer) {
+                intent.request_id = review.request.edit_seed;
+                intent.board_transfer = Some(review.request.clone());
+            }
         }
         if matches!(action, NativeEditAction::LibraryAcquire) {
             let Some(acquisition) = &self.workspace().library.acquisition else {
@@ -464,6 +492,7 @@ impl Runtime {
             .schematic_authoring
             .delete_review
             .take();
+        let transfer_review = self.session.workspace_mut().ui.board_transfer.take();
         let draft = self.workspace().schematic_authoring.creation.clone();
         let editing = self.selected_schematic_edit_snapshot();
         let placement = matches!(answer.intent.action, NativeEditAction::LibraryAcquire)
@@ -488,6 +517,14 @@ impl Runtime {
         } else {
             None
         };
+        let workspace_refusal = answer
+            .next
+            .as_ref()
+            .and_then(|next| next.ui.console.latest())
+            .is_some_and(|record| {
+                record.source == datum_gui_protocol::ConsoleFeedbackSource::Workspace
+                    && record.category == datum_gui_protocol::ConsoleFeedbackCategory::ActionRefusal
+            });
         if let (Some(next), Some(prepared)) = (answer.next, answer.selection) {
             self.native_edit.pending_move_base = None;
             self.publish_prepared_workspace(next, prepared);
@@ -495,6 +532,7 @@ impl Runtime {
             self.native_edit.blocked = true;
             self.restore_pending_move_base();
         }
+        self.restore_board_transfer(transfer_review, &answer.result);
         self.restore_delete_review(review, answer.proposal, &answer.result);
         if let (Err(reason), Some(mut acquisition)) = (&answer.result, refused_acquisition) {
             acquisition.refusal = Some(reason.clone());
@@ -518,7 +556,9 @@ impl Runtime {
                     action: "native_project_edit".into(),
                     detail: message.clone(),
                 });
-                self.log_console_echo(ConsoleFeedbackSource::Tool, message);
+                if !workspace_refusal {
+                    self.log_console_echo(ConsoleFeedbackSource::Tool, message);
+                }
             }
             Err(message) => {
                 self.session.workspace_mut().last_command_status = Some(EditorCommandStatus {

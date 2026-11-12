@@ -125,6 +125,12 @@
           "label": "Preferences",
           "icon": "settings",
           "submenu": "edit.preferences"
+        },
+        {
+          "label": "Transfer Schematic to PCB\u2026",
+          "icon": "component",
+          "gui_local": "schematic.board_transfer.open",
+          "requires_project": true
         }
       ],
       "submenus": {

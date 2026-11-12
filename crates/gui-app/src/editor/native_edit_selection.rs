@@ -198,6 +198,23 @@ impl Runtime {
         if !same_world {
             self.preserve_cameras_for_refresh(&next);
         }
+        // Keep the new projection's one typed Workspace refusal, not its UI bag
+        // or a copied Console history. Other consumer state stays locally owned.
+        let refusal = next
+            .ui
+            .console
+            .latest()
+            .filter(|record| {
+                record.source == datum_gui_protocol::ConsoleFeedbackSource::Workspace
+                    && record.category == datum_gui_protocol::ConsoleFeedbackCategory::ActionRefusal
+            })
+            .map(|record| {
+                datum_gui_protocol::ConsoleFeedbackDraft::action_refusal(
+                    record.source,
+                    record.occurred_unix_ms,
+                    record.message.clone(),
+                )
+            });
         let workspace = self.session.workspace_mut();
         let library_selection = workspace
             .library
@@ -258,6 +275,16 @@ impl Runtime {
             rebuilt.native_write_verbs = current.native_write_verbs.clone();
         }
         workspace.backing = next.backing;
+        if let Some(refusal) = refusal {
+            let already_visible = workspace.ui.console.latest().is_some_and(|record| {
+                record.source == refusal.source
+                    && record.category == refusal.category
+                    && record.message == refusal.message
+            });
+            if !already_visible {
+                workspace.ui.publish_console_feedback(refusal);
+            }
+        }
         workspace.selection = prepared.selected;
         if let Some(key) = acquired.or(created).or(library_selection)
             && workspace.library.entries.iter().any(|e| e.key() == key)

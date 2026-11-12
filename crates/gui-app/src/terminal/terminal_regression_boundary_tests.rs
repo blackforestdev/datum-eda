@@ -24,7 +24,8 @@ use winit::event::ElementState;
 /// focus only when the resulting behavior expects terminal typing).
 fn expected_terminal_entry(target: &HitTarget) -> bool {
     match target {
-        HitTarget::InspectorSectionToggle { .. }
+        HitTarget::BoardTransfer(_)
+        | HitTarget::InspectorSectionToggle { .. }
         | HitTarget::InspectorRunErc(_)
         | HitTarget::InspectorEditSymbol(_)
             | HitTarget::InspectorBindInterface(_)

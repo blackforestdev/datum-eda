@@ -9,6 +9,14 @@ impl App {
             return;
         };
         runtime.selection_release_suppressed = false;
+        if runtime.last_cursor_pos.is_some_and(|(x, y)| {
+            matches!(
+                runtime.presented_hits.hit_test(x, y),
+                Some(HitTarget::BoardTransfer(_))
+            )
+        }) {
+            return;
+        }
         if runtime.marking_menu_active() {
             return;
         }

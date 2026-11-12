@@ -4,6 +4,15 @@ use crate::*;
 pub(crate) struct ProjectGenerateBoardComponentsArgs {
     /// Project root directory
     pub(crate) path: PathBuf,
+    /// Use authored component bindings and explicit Maps for connected initial transfer
+    #[arg(long)]
+    pub(crate) linked: bool,
+    /// Native root source sheet for linked transfer
+    #[arg(long, requires = "linked")]
+    pub(crate) sheet: Option<Uuid>,
+    /// Explicit <component-instance-uuid>=<pin-pad-map-uuid>, repeat for each component
+    #[arg(long = "pin-pad-map", requires = "linked")]
+    pub(crate) pin_pad_maps: Vec<String>,
     /// Commit generated board packages through the project journal
     #[arg(long, conflicts_with = "as_proposal")]
     pub(crate) apply: bool,

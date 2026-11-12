@@ -9,6 +9,15 @@ pub(super) fn final_bindings(
     batch: &OperationBatch,
     kind: TransactionKind,
 ) -> Result<BTreeMap<Uuid, ComponentInstance>, EngineError> {
+    if kind == TransactionKind::Normal
+        && batch.operations.iter().any(|op| {
+            matches!(op, Operation::CreateBoardPackage {materialized,..}
+            if materialized["component_pads"].as_array().is_some_and(|pads|
+                pads.iter().any(|p| !p["source_binding"]["component_instance"].is_null())))
+        })
+    {
+        return crate::api::native_write::schematic_board_transfer::initial_bindings(model, batch);
+    }
     let mut relevant = BTreeSet::new();
     for op in &batch.operations {
         let value = match op {

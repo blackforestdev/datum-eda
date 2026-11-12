@@ -74,7 +74,7 @@ impl Runtime {
         }
     }
 
-    pub(super) fn selected_schematic_idle(&self) -> Result<(), String> {
+    pub(crate) fn selected_schematic_idle(&self) -> Result<(), String> {
         if !self.native_edit_available()
             || self.native_edit.pending()
             || self.check_work.pending()

@@ -1,6 +1,8 @@
 //! CPU frame composition with explicit renderer-owned control preparation.
 use super::*;
 use crate::resource_consumers::{Consumer, FrameConsumers, Stream};
+#[path = "board_transfer.rs"]
+mod board_transfer;
 #[path = "preparation_diagnostics.rs"]
 pub(crate) mod preparation_diagnostics;
 
@@ -498,6 +500,15 @@ impl PreparedScene {
                 } else {
                     Consumer::New
                 };
+            board_transfer::render(
+                state,
+                &layout,
+                controls,
+                scale,
+                &mut menu_overlay_quads,
+                &mut menu_overlay_text_runs,
+                &mut hit_regions,
+            );
             global_preferences_dialog::render_global_preferences_dialog(
                 state,
                 &layout,

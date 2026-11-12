@@ -38,6 +38,7 @@ impl Runtime {
             return handled;
         }
         match target {
+            HitTarget::BoardTransfer(action) => self.handle_board_transfer(*action),
             HitTarget::MoveCoordinates => self.open_move_coordinates(),
             HitTarget::CoordinateEntry(control) => self.coordinate_field_click(*control),
             HitTarget::InspectorSectionToggle { .. }

@@ -11,15 +11,22 @@ use eda_engine::substrate::CommitSource;
 pub(super) fn parse_params(value: Value) -> Result<NativeWriteParams, String> {
     if matches!(
         value.get("verb").and_then(Value::as_str),
-        Some("datum.library.create" | "datum.library.edit" | "datum.schematic.create_sheet")
+        Some(
+            "datum.library.create"
+                | "datum.library.edit"
+                | "datum.schematic.create_sheet"
+                | "datum.schematic.transfer_to_pcb"
+                | "datum.pcb.prepare_footprint_sources"
+        )
     ) && value.get("expected_transaction_tip").is_none()
     {
-        let action =
-            if value.get("verb").and_then(Value::as_str) == Some("datum.schematic.create_sheet") {
-                "sheet creation"
-            } else {
-                "library editing"
-            };
+        let action = match value.get("verb").and_then(Value::as_str) {
+            Some("datum.schematic.create_sheet") => "sheet creation",
+            Some("datum.schematic.transfer_to_pcb" | "datum.pcb.prepare_footprint_sources") => {
+                "PCB transfer"
+            }
+            _ => "library editing",
+        };
         return Err(format!(
             "{action} requires explicit expected_transaction_tip (null for an empty journal)"
         ));
@@ -91,7 +98,9 @@ pub(super) fn native_write_response(
     if (library_edit
         || matches!(
             params.verb.as_str(),
-            "datum.pcb.move_component"
+            "datum.schematic.transfer_to_pcb"
+                | "datum.pcb.prepare_footprint_sources"
+                | "datum.pcb.move_component"
                 | "datum.journal.undo"
                 | "datum.journal.redo"
                 | "datum.schematic.create_sheet"
@@ -113,7 +122,9 @@ pub(super) fn native_write_response(
         || supplied_symbol_move_tip
         || matches!(
             params.verb.as_str(),
-            "datum.pcb.move_component"
+            "datum.schematic.transfer_to_pcb"
+                | "datum.pcb.prepare_footprint_sources"
+                | "datum.pcb.move_component"
                 | "datum.journal.undo"
                 | "datum.journal.redo"
                 | "datum.schematic.create_sheet"
@@ -159,6 +170,17 @@ pub(super) fn native_write_response(
         }
     };
 
+    if params.verb == "datum.schematic.transfer_to_pcb"
+        && params
+            .batch_id
+            .is_some_and(|id| id != prepared.batch.batch_id)
+    {
+        return error_response(
+            request_id,
+            -32602,
+            "Transfer batch_id must equal the retained review edit_seed",
+        );
+    }
     if params.dry_run {
         let operation_kinds: Vec<String> = prepared
             .batch

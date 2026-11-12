@@ -299,6 +299,43 @@
     },
     "status": "FAIL retained separately"
   },
+  "initial_connected_pcb_transfer": {
+    "authority": "Direct owner approval and PM1274\u20131286 bounded implementation/review grants; no successor milestone selection",
+    "behavior": [
+      "Explicit current Part/Footprint/PinPadMap review for a supported unique native root sheet",
+      "One footprint per eligible authored ComponentInstance, agreed instance value, qualified mapped pads/nets and complete correspondence in one canonical batch",
+      "Separate explicit saved board-source preparation; no-write preview/Cancel/refusal/repeat",
+      "Undo/Redo, Save and cold App reopening; current native airwire display estimate"
+    ],
+    "focused_proof": {
+      "cli": ".datum/scratch/codex-delivery/mbzh-cli-parity-b.log: one existing legacy footprint parity test",
+      "daemon": ".datum/scratch/codex-delivery/mbzh-daemon-b.log: one test covering eight exact guard-code/message refusals and complete file-preimage equality; earlier generic refusal result retained separately",
+      "engine": ".datum/scratch/codex-delivery/mbzh-engine-f.log: five tests; qualified initial airwire, history and stale query included",
+      "reuse": "Engine F precedes the shared zone-projection addition and fixture L0-to-L1 correction. Unchanged birth/value/Map/net/history/guard proof is reused; final ordinary App exercises current native L1 and the empty-zone query. CLI parity and daemon guard code are unchanged."
+    },
+    "independent_review_thread": "01a1af09-2188-7dc0-ada3-f2745ca59ddd",
+    "issue": "dat-initial-connected-pcb-transfer-mbzh",
+    "ordinary_app": {
+      "captures": 5,
+      "cleanup": "All four owned process groups stopped; runtime removed; no cleanup errors",
+      "input_scope": "Presented menu/review/Layer pointer controls; history and Save through existing Runtime action queue; cold App restart; programmatic, not physical HUMAN input",
+      "result": ".datum/scratch/schematic-interaction-qa/runmbzh20261111e/result.json",
+      "stages": 18,
+      "test_seconds": 11.38,
+      "visible_result": "Two L1 copper footprint pads labeled U1/U2 joined by an airwire beside the schematic after ordinary Top Copper activation"
+    },
+    "prior_evidence": "All original delivery fields and prior wire/library proof retained unchanged.",
+    "release_build": "Current GUI/CLI/daemon release trio built successfully in 8m41s; release executables not run by the GUI scenario.",
+    "retained_boundaries": [
+      "Initial transfer leaves existing counterparts unchanged; ECO/synchronization separate",
+      "Repeated-source hierarchy, imported adoption and full cross-selection separate",
+      "Legacy display estimate retains arc omissions; not nominal-connectivity/DRC qualification",
+      "Native layer default visibility intake dat-native-layer-default-visibility-t460; no preference override",
+      "Release GUI runtime, physical HUMAN input and full qualification not claimed"
+    ],
+    "retention": "Referenced scratch logs, projects, images and review/landing index are machine-local and prunable, not committed executable archives.",
+    "status": "implemented_debug_verified"
+  },
   "issue_id": "dat-library-gui-authoring-1ix7",
   "kind": "ordinary_application",
   "launch_command": "DATUM_LIBRARY_PROJECT=/home/bfadmin/Documents/datum-eda/.datum/library-gui-delivery/ordinary-app-attempt-3 DATUM_LIBRARY_OUTPUT=/home/bfadmin/Documents/datum-eda/.datum/library-gui-delivery/ordinary-app-attempt-3-frames python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-app --features visual ordinary_library_browse_author_preview_cancel_history_save_reopen --jobs 1 -- --ignored --nocapture --test-threads=1 > .datum/library-gui-delivery/ordinary-app-attempt-3.log 2>&1",

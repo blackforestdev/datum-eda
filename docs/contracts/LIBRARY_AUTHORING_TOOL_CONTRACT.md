@@ -39,6 +39,32 @@ shared surface and are referenced, not redefined.
 
 ## Current Implementation Reality
 
+Initial connected schematic-to-PCB transfer is implemented for supported unique
+native root sheets (`dat-initial-connected-pcb-transfer-mbzh`). **Edit → Transfer
+Schematic to PCB…** reviews explicit current Part/Footprint/PinPadMap choices,
+reports unresolved components and incomplete connected-net scope, and creates one
+physical footprint per eligible authored `ComponentInstance`. Same-component Gate
+values must agree, including explicit empty values. The atomic canonical batch
+records the CI ownership, qualified placed pads, mapped nets and correspondence;
+reference text is display data. Declared counterparts remain unchanged on repeat.
+
+Board source preparation is an explicitly accepted, separately saved transaction;
+closing the review retains that preparation. Preview, Cancel, refusal and repeat
+add no authored/history changes. Transfer supports Undo/Redo and Save/cold reopen.
+The CLI `project generate-board-components --linked --sheet … --pin-pad-map CI=MAP`
+shares the planner/composer; the existing geometry-only mode retains its boundary.
+Native airwire presentation reuses the existing qualified-source display estimate,
+including filled-zone projection and truthful unavailable-source feedback; it is
+not complete nominal-connectivity or DRC qualification.
+
+Actual isolated App verification covers 18 stages and five captures, including
+visible L1 copper footprints and their airwire after ordinary Layers activation.
+Native layer defaults based on KiCad names remain a separate intake
+(`dat-native-layer-default-visibility-t460`). Initial transfer does not deliver ECO,
+synchronization, repeated-source hierarchy, imported adoption or full cross-selection.
+Programmatic history/Save actions use the existing Runtime queue; physical HUMAN
+input, release-GUI execution and full qualification remain separate.
+
 The shared write substrate now exists and is not the blocker. The engine has
 `Operation`/`OperationBatch`, the single journaled commit path, revision guards,
 `ObjectId`/`object_revision` discovery, `ComponentInstance` shards, Import Map

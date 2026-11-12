@@ -75,6 +75,11 @@ impl Runtime {
             self.trace_click("primary click ignored: no cursor position".to_string());
             return false;
         };
+        if let Some(target @ HitTarget::BoardTransfer(_)) =
+            self.presented_hits.hit_test(x, y).cloned()
+        {
+            return self.select_hit_target(&target);
+        }
         if self.workspace().ui.active_menu.is_none()
             && let Some(target) = self.presented_hits.hit_test(x, y).cloned()
             && self.handle_schematic_chrome(&target)

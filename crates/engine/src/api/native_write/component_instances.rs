@@ -53,7 +53,7 @@ mod library_bindings;
 pub use library_bindings::{
     ComponentInstancePartChoice, build_bind_component_instance,
     build_bind_component_instance_with_pin_pad_map, build_set_component_instance,
-    build_set_component_instance_with_pin_pad_map,
+    build_set_component_instance_with_pin_pad_map, initial_package_binding,
 };
 
 /// Build the batch that deletes an existing authored component instance.

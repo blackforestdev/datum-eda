@@ -71,6 +71,10 @@ pub enum NativeEditAction {
     Schematic,
     Library,
     LibraryAcquire,
+    BoardTransfer,
+    PrepareBoardSources {
+        board: Uuid,
+    },
 }
 
 impl NativeEditAction {
@@ -93,7 +97,9 @@ impl NativeEditAction {
             | Self::Proposal
             | Self::Schematic
             | Self::Library
-            | Self::LibraryAcquire => false,
+            | Self::LibraryAcquire
+            | Self::BoardTransfer
+            | Self::PrepareBoardSources { .. } => false,
         }
     }
 }
@@ -114,6 +120,8 @@ pub struct NativeEditIntent {
         bool,
         eda_engine::api::native_write::library_gui::LibraryDefinitionRequest,
     )>,
+    pub board_transfer:
+        Option<eda_engine::api::native_write::schematic_board_transfer::TransferRequest>,
     pub instance_path: Vec<Uuid>,
     pub library_acquisition:
         Option<eda_engine::api::native_write::library_acquisition::LibraryAcquisitionRequest>,
@@ -134,6 +142,7 @@ impl NativeEditIntent {
             action,
             request_id: Uuid::new_v4(),
             schematic: None,
+            board_transfer: None,
             symbol_group: None,
             proposal: None,
             library: None,
@@ -384,6 +393,19 @@ impl NativeProjectClient {
                     serde_json::to_value(request)?,
                 )
             }
+            NativeEditAction::BoardTransfer => (
+                "datum.schematic.transfer_to_pcb",
+                serde_json::to_value(
+                    intent
+                        .board_transfer
+                        .as_ref()
+                        .context("Transfer review missing")?,
+                )?,
+            ),
+            NativeEditAction::PrepareBoardSources { board } => (
+                "datum.pcb.prepare_footprint_sources",
+                json!({"board":board}),
+            ),
             NativeEditAction::LibraryAcquire => (
                 "datum.library.acquire",
                 serde_json::to_value(
@@ -455,12 +477,12 @@ impl NativeProjectClient {
         let reason = format!("GUI {verb}; request {}", intent.request_id);
         // Empty-native bootstrap allocates once from this captured gesture seed.
         // The canonical builder and final write envelope must keep that batch ID.
-        let batch_id = match &intent.schematic {
+        let batch_id = intent.board_transfer.as_ref().map(|r| r.edit_seed).unwrap_or_else(|| match &intent.schematic {
             Some(crate::schematic_authoring::SchematicEditRequest::DesignEdit {
                 edit: eda_engine::api::native_write::design_clipboard_edit::DesignEditIntent::PlaceBundle { edit_seed, .. }, ..
             }) => *edit_seed,
             _ => intent.request_id,
-        };
+        });
         let result = self.call(
             "native.write",
             json!({"project_root":intent.project_root,

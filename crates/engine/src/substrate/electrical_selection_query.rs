@@ -193,6 +193,43 @@ impl ElectricalSelectionSnapshot {
             })
     }
 
+    /// Existing legacy airwire display estimate, not nominal connectivity or DRC
+    /// authority. Reads the captured qualified Pad/Net projection.
+    pub fn unrouted_display(
+        &self,
+        expected: &ModelRevision,
+    ) -> Result<Vec<crate::board::Airwire>, ElectricalQueryFailure> {
+        self.require_revision(expected)?;
+        let source = self.board_source()?;
+        let shard = self.model.objects[&source.uuid].source_shard_id;
+        let mut value = self.source_shard_value(expected, shard)?.clone();
+        // Native rules live in a separate shard and do not participate in the
+        // legacy display calculation. This transient Board never enters commit.
+        value["rules"] = serde_json::json!([]);
+        let mut board: crate::board::Board = serde_json::from_value(value).map_err(|error| {
+            ElectricalQueryFailure::UnavailableBasis {
+                sources: vec![shard],
+                reason: error.to_string(),
+            }
+        })?;
+        let zones = board.zones.values().cloned().collect::<Vec<_>>();
+        let (projected, blocked) =
+            crate::substrate::zone_fill_copper_projection_zones(&zones, &self.model.zone_fills);
+        if !blocked.is_empty() {
+            return Err(ElectricalQueryFailure::UnavailableBasis {
+                sources: vec![shard],
+                reason: format!(
+                    "Zone copper is unavailable for the unrouted estimate: {blocked:?}"
+                ),
+            });
+        }
+        board.zones = projected
+            .into_iter()
+            .map(|zone| (zone.uuid, zone))
+            .collect();
+        Ok(board.unrouted())
+    }
+
     pub fn board_run(
         &self,
         expected: &ModelRevision,

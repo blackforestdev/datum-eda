@@ -16,6 +16,8 @@ use crate::{
 };
 use std::collections::BTreeMap;
 
+#[path = "board_transfer.rs"]
+pub mod board_transfer;
 #[path = "workspace_layout/revision_tiling.rs"]
 mod revision_tiling;
 
@@ -63,6 +65,7 @@ pub struct WorkspaceFilterState {
 #[derive(Debug, Clone, PartialEq)]
 pub struct WorkspaceUiState {
     pub selection_region: Option<SelectionRegionFeedback>,
+    pub board_transfer: Option<crate::board_transfer::BoardTransferReview>,
     pub selection_inspector: crate::selection_view::inspector_state::SelectionInspectorState,
     /// The one application-level input/selection owner. `WorkspaceLayout`
     /// retains pane structure and the last editor leaf, while this value says
@@ -126,6 +129,7 @@ impl WorkspaceUiState {
     pub fn new(filters: WorkspaceFilterState) -> Self {
         Self {
             selection_region: None,
+            board_transfer: None,
             selection_inspector: Default::default(),
             focus: ApplicationFocus::default(),
             active_dock_tab: None,

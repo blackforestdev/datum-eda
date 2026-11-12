@@ -54,6 +54,7 @@ pub fn build_bind_component_instance_with_pin_pad_map(
         &mut payload,
         None,
         pin_pad_map,
+        None,
     )?;
     let prepared = BatchComposer::compose(model, provenance)
         .push_op(Operation::CreateComponentInstance {
@@ -163,6 +164,7 @@ pub fn build_set_component_instance_with_pin_pad_map(
             &mut merged,
             Some(&previous),
             pin_pad_map,
+            None,
         )?;
         payload = merged;
     }
@@ -187,6 +189,7 @@ fn declare_map(
     payload: &mut Value,
     previous: Option<&ComponentInstance>,
     selected: Option<Uuid>,
+    initial_placement: Option<&crate::board::PlacedPackage>,
 ) -> Result<(), EngineError> {
     let prior = previous
         .into_iter()
@@ -228,6 +231,7 @@ fn declare_map(
         part,
         part_revision,
         spec.package_id,
+        initial_placement,
     )?;
     if let Some((_, old)) = prior.first() {
         for override_ref in &old.local_override_refs {
@@ -238,6 +242,7 @@ fn declare_map(
                 part,
                 part_revision,
                 spec.package_id,
+                initial_placement,
             )?;
         }
         return Ok(());
@@ -268,6 +273,7 @@ fn validate_map(
     part_id: Uuid,
     part_revision: crate::substrate::ObjectRevision,
     placement_id: Uuid,
+    initial_placement: Option<&crate::board::PlacedPackage>,
 ) -> Result<(), EngineError> {
     let value = model.materialized_pool_object_revision(id, "pin_pad_maps", revision)?;
     let map: crate::pool::PinPadMap = serde_json::from_value(value)?;
@@ -284,8 +290,15 @@ fn validate_map(
         model.materialized_pool_object_revision(part_id, "parts", part_revision)?,
     )?;
     let board = model.materialized_source_shard_value(SourceShardKind::BoardRoot)?;
-    let placement: crate::board::PlacedPackage =
-        serde_json::from_value(board["packages"][placement_id.to_string()].clone())?;
+    let placement: crate::board::PlacedPackage = match initial_placement {
+        Some(placement) if placement.uuid == placement_id => placement.clone(),
+        Some(_) => {
+            return Err(invalid(
+                "initial Package identity differs from the declared binding",
+            ));
+        }
+        None => serde_json::from_value(board["packages"][placement_id.to_string()].clone())?,
+    };
     if placement.part != part_id
         || placement.package != part.package
         || footprint.package != part.package
@@ -295,6 +308,72 @@ fn validate_map(
         ));
     }
     Ok(())
+}
+
+/// Contribute one guarded CI extension to the initial transfer's create batch.
+/// The placement is prospective; existing bindings and source payload remain exact.
+pub fn initial_package_binding(
+    model: &DesignModel,
+    id: Uuid,
+    placement: &crate::board::PlacedPackage,
+    map: Uuid,
+) -> Result<Operation, EngineError> {
+    let previous = authored_component_instance(model, id)?;
+    if !previous.placed_package_refs.is_empty() || previous.part_ref != Some(placement.part) {
+        return Err(invalid(
+            "initial transfer requires an unplaced, Part-bound authored component",
+        ));
+    }
+    if model.objects.contains_key(&placement.uuid)
+        || model.journal.iter().any(|t| {
+            t.diff.created.contains(&placement.uuid) || t.diff.deleted.contains(&placement.uuid)
+        })
+    {
+        return Err(invalid(
+            "initial Package identity is already allocated or retired",
+        ));
+    }
+    let object = &model.objects[&id];
+    let shard = model
+        .source_shards
+        .iter()
+        .find(|s| s.shard_id == object.source_shard_id)
+        .ok_or_else(|| invalid("missing authored component source"))?;
+    let old = model.materialized_source_shard_value_by_relative_path(&shard.relative_path)?["component_instance"].clone();
+    let mut payload = old.clone();
+    payload["object_revision"] = serde_json::json!(
+        previous
+            .object_revision
+            .0
+            .checked_add(1)
+            .ok_or_else(|| invalid("component revision overflow"))?
+    );
+    payload["placed_package_refs"] = serde_json::json!([{
+        "object_id":placement.uuid,"object_revision":0
+    }]);
+    payload["placed_package_roles"] =
+        serde_json::json!({placement.uuid.to_string():{"role":"primary"}});
+    let spec = ComponentInstanceSpec {
+        part_id: previous.part_ref,
+        symbol_ids: previous.placed_symbol_refs.clone(),
+        package_id: placement.uuid,
+        symbol_roles: vec![],
+        package_roles: vec![],
+    };
+    declare_map(
+        model,
+        id,
+        &spec,
+        &mut payload,
+        Some(&previous),
+        Some(map),
+        Some(placement),
+    )?;
+    Ok(Operation::SetComponentInstance {
+        component_instance_id: id,
+        previous_component_instance: old,
+        component_instance: payload,
+    })
 }
 
 #[cfg(test)]

@@ -2533,3 +2533,19 @@ for `dat-schematic-create-child-sheet-g28d` covers shared name/pose/Proposal con
 cancellation, atomic creation, Undo/Redo, nested creation after history, qualified
 navigation, Save and exact cold reopening. The derived inventory
 now has 278 unique public function names, pinned in `specs/SPEC_PARITY.md`.
+
+### Initial connected PCB transfer — current implementation
+
+The bounded native root-sheet transfer API adds `plan_transfer` and
+`TransferPlan::ready_count` for read-only explicit-choice review, and
+`prepare_transfer` for the one canonical initial-create batch.
+`component_instances::initial_package_binding` contributes a guarded CI update;
+it is not a second writer. The `datum.schematic.transfer_to_pcb` and
+`datum.pcb.prepare_footprint_sources` native-write producers preserve separate
+explicit source preparation, current revision/tip guards, CI identity, mapped
+Pad/Net evidence and canonical history. Declared counterparts remain unchanged.
+The captured-source `unrouted_display` query reuses the existing display estimate
+and filled-zone projection, with unavailable-source feedback; it does not grant
+nominal-connectivity, ECO, imported/repeated-hierarchy or full qualification
+acceptance. See `dat-initial-connected-pcb-transfer-mbzh` and the existing Library
+contract/delivery record for the actual bounded ordinary-App proof.

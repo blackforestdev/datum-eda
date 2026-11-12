@@ -472,6 +472,9 @@ impl ProjectGenerateBoardComponentsArgs {
     pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
         let Self {
             path,
+            linked,
+            sheet,
+            pin_pad_maps,
             apply,
             as_proposal,
             proposal,
@@ -481,6 +484,93 @@ impl ProjectGenerateBoardComponentsArgs {
             pitch_nm,
             layer,
         } = self;
+        if apply && as_proposal {
+            anyhow::bail!("--apply and --as-proposal are mutually exclusive");
+        }
+        if linked {
+            use eda_engine::api::native_write::schematic_board_transfer::{
+                TransferChoice, TransferRequest, plan_transfer, prepare_transfer,
+            };
+            let (_, mut model) = load_native_project_with_resolved_board_and_model(&path)?;
+            let sheet = sheet.context("--linked requires an explicit native root --sheet")?;
+            let choices = pin_pad_maps
+                .iter()
+                .map(|value| {
+                    let (ci, map) = value
+                        .split_once('=')
+                        .context("--pin-pad-map expects <component-instance>=<map>")?;
+                    Ok(TransferChoice {
+                        component_instance: ci.parse()?,
+                        pin_pad_map: map.parse()?,
+                    })
+                })
+                .collect::<Result<Vec<_>>>()?;
+            let request = TransferRequest {
+                sheet,
+                choices,
+                edit_seed: proposal.unwrap_or_else(Uuid::new_v4),
+                origin: Point::new(origin_x_nm, origin_y_nm),
+                pitch_nm,
+                layer,
+            };
+            let plan = plan_transfer(&model, &request)?;
+            let mut transaction = None;
+            let mut proposed = None;
+            if plan.ready_count() > 0 && (apply || as_proposal) {
+                let prepared = prepare_transfer(
+                    &model,
+                    WriteProvenance::new(
+                        "datum-eda-cli",
+                        cli_commit_source()?,
+                        "Initial connected PCB transfer",
+                    ),
+                    &request,
+                )?;
+                if apply {
+                    transaction = Some(
+                        commit_prepared(&mut model, &path, prepared)?
+                            .transaction
+                            .transaction_id,
+                    );
+                } else {
+                    proposed = Some(
+                        create_draft_proposal_from_batch(
+                            &mut model,
+                            &path,
+                            ProposalCreateRequest {
+                                proposal_id: proposal,
+                                batch: prepared.batch,
+                                rationale: rationale.unwrap_or_else(|| {
+                                    "Review initial connected PCB transfer".into()
+                                }),
+                                source: ProposalSource::Cli,
+                                checks_run: vec![],
+                                finding_fingerprints: vec![],
+                            },
+                        )?
+                        .proposal_id,
+                    );
+                }
+            }
+            let report = serde_json::json!({"contract":"native_connected_initial_transfer_v1","plan":plan,
+                "transaction_id":transaction,"proposal_id":proposed});
+            return Ok((
+                render_report(format, &report, |r| {
+                    let mut lines = vec![format!(
+                        "Initial connected PCB transfer: transaction={} proposal={}",
+                        r["transaction_id"], r["proposal_id"]
+                    )];
+                    for row in r["plan"]["components"].as_array().into_iter().flatten() {
+                        lines.push(format!(
+                            "{}: {} {}",
+                            row["reference"], row["status"], row["reason"]
+                        ));
+                    }
+                    lines.join("\n")
+                }),
+                0,
+            ));
+        }
         let report = generate_native_project_board_components(
             &path,
             apply,

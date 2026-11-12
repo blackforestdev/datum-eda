@@ -132,6 +132,7 @@ impl Runtime {
                 self.open_new_project()
             }
             GuiLocalHandler::OpenProject => self.open_project(),
+            GuiLocalHandler::BoardTransfer => self.begin_board_transfer(),
             GuiLocalHandler::SymbolFields => self.begin_selected_symbol_edit(),
             GuiLocalHandler::SymbolFieldsTable => self.begin_schematic_field_table(),
             GuiLocalHandler::AnnotateSheet => self.begin_schematic_annotation(),
