@@ -2,6 +2,60 @@
 use super::*;
 
 #[test]
+fn board_route_payload_requires_matching_action_basis_and_exclusive_editor() {
+    use eda_engine::api::native_write::board_routing::route::{RouteBasis, RouteRequest};
+    let project = Uuid::new_v4();
+    let tip = Some(Uuid::new_v4());
+    let mut intent = NativeEditIntent::new(
+        PathBuf::from("/native/project"),
+        project,
+        "current".into(),
+        tip,
+        NativeEditAction::BoardRoute,
+    );
+    assert!(intent.validate_route_payload().is_err());
+    intent.board_route = Some(RouteRequest {
+        basis: RouteBasis {
+            project,
+            board: Uuid::new_v4(),
+            revision: eda_engine::substrate::ModelRevision("current".into()),
+            tip,
+            start_pad: Uuid::new_v4(),
+            net: Uuid::new_v4(),
+            start: eda_engine::ir::geometry::Point::new(0, 0),
+            layer: 1,
+            preferred_width_nm: None,
+            minimum_width_nm: None,
+            maximum_width_nm: None,
+            clearance: None,
+        },
+        end_pad: None,
+        points: vec![],
+        width_nm: 200_000,
+        edit_seed: Uuid::new_v4(),
+    });
+    assert!(intent.validate_route_payload().is_ok());
+    for mutation in 0..5 {
+        let mut wrong = intent.clone();
+        match mutation {
+            0 => wrong.action = NativeEditAction::Save,
+            1 => wrong.project_id = Uuid::new_v4(),
+            2 => wrong.expected_revision = "old".into(),
+            3 => wrong.expected_tip = None,
+            _ => wrong.instance_path.push(Uuid::new_v4()),
+        }
+        assert!(
+            wrong.validate_route_payload().is_err(),
+            "mutation {mutation}"
+        );
+    }
+    let mut ordinary = intent;
+    ordinary.action = NativeEditAction::Save;
+    ordinary.board_route = None;
+    assert!(ordinary.validate_route_payload().is_ok());
+}
+
+#[test]
 #[ignore = "requires owned DATUM_FIRST_EDIT_PROJECT; mutates and restores its name"]
 fn first_edit_p0_transport_and_stale_refusal() {
     let root = PathBuf::from(std::env::var_os("DATUM_FIRST_EDIT_PROJECT").unwrap());

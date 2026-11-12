@@ -72,6 +72,7 @@ pub enum NativeEditAction {
     Library,
     LibraryAcquire,
     BoardTransfer,
+    BoardRoute,
     PrepareBoardSources {
         board: Uuid,
     },
@@ -99,6 +100,7 @@ impl NativeEditAction {
             | Self::Library
             | Self::LibraryAcquire
             | Self::BoardTransfer
+            | Self::BoardRoute
             | Self::PrepareBoardSources { .. } => false,
         }
     }
@@ -124,6 +126,7 @@ pub struct NativeEditIntent {
     )>,
     pub board_transfer:
         Option<eda_engine::api::native_write::schematic_board_transfer::TransferRequest>,
+    pub board_route: Option<eda_engine::api::native_write::board_routing::route::RouteRequest>,
     pub instance_path: Vec<Uuid>,
     pub library_acquisition:
         Option<eda_engine::api::native_write::library_acquisition::LibraryAcquisitionRequest>,
@@ -145,6 +148,7 @@ impl NativeEditIntent {
             request_id: Uuid::new_v4(),
             schematic: None,
             board_transfer: None,
+            board_route: None,
             symbol_group: None,
             symbol_alignment: None,
             proposal: None,
@@ -152,6 +156,38 @@ impl NativeEditIntent {
             library_acquisition: None,
             instance_path: Vec::new(),
         }
+    }
+
+    fn validate_route_payload(&self) -> Result<()> {
+        if !matches!(self.action, NativeEditAction::BoardRoute) {
+            anyhow::ensure!(
+                self.board_route.is_none(),
+                "Route payload does not match edit action"
+            );
+            return Ok(());
+        }
+        let request = self
+            .board_route
+            .as_ref()
+            .context("Route edit payload missing")?;
+        anyhow::ensure!(
+            request.basis.project == self.project_id
+                && request.basis.revision.0 == self.expected_revision
+                && request.basis.tip == self.expected_tip,
+            "Route source basis does not match prepared intent"
+        );
+        anyhow::ensure!(
+            self.proposal.is_none()
+                && self.schematic.is_none()
+                && self.library.is_none()
+                && self.library_acquisition.is_none()
+                && self.board_transfer.is_none()
+                && self.symbol_group.is_none()
+                && self.symbol_alignment.is_none()
+                && self.instance_path.is_empty(),
+            "Route intent contains another editor's payload"
+        );
+        Ok(())
     }
 }
 
@@ -327,6 +363,7 @@ impl NativeProjectClient {
     }
 
     pub fn execute(&self, intent: &NativeEditIntent) -> Result<NativeEditReceipt> {
+        intent.validate_route_payload()?;
         let initial = self.describe(&intent.project_root)?;
         if initial.get("transaction_tip") != Some(&json!(intent.expected_tip)) {
             bail!("Project history changed since the edit began; refresh before editing");
@@ -403,6 +440,15 @@ impl NativeProjectClient {
                         .board_transfer
                         .as_ref()
                         .context("Transfer review missing")?,
+                )?,
+            ),
+            NativeEditAction::BoardRoute => (
+                "datum.pcb.draw_track",
+                serde_json::to_value(
+                    intent
+                        .board_route
+                        .as_ref()
+                        .context("Route edit payload missing")?,
                 )?,
             ),
             NativeEditAction::PrepareBoardSources { board } => (

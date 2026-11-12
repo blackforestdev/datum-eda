@@ -7,6 +7,7 @@ impl ReviewWorkspaceState {
             return false;
         }
         self.authoring.coordinates = None;
+        self.authoring.board_route = None;
         self.authoring.handle_feedback = None;
         self.tool = tool;
         self.authoring.gesture = AuthoringGestureState::idle(tool);
@@ -33,10 +34,19 @@ impl ReviewWorkspaceState {
         world: PointNm,
         target_object_id: Option<String>,
     ) -> bool {
+        self.begin_authoring_gesture_resolved(self.snap_authoring_point(world), target_object_id)
+    }
+
+    /// Shared gesture entry for an already resolved source contact. Quantizing
+    /// an off-grid Pad centre again would disconnect the authored endpoint.
+    pub fn begin_authoring_gesture_resolved(
+        &mut self,
+        point: PointNm,
+        target_object_id: Option<String>,
+    ) -> bool {
         if self.tool == WorkspaceTool::Select {
             return false;
         }
-        let point = self.snap_authoring_point(world);
         self.authoring.gesture = AuthoringGestureState {
             preset: None,
             tool: self.tool,
@@ -57,10 +67,18 @@ impl ReviewWorkspaceState {
         world: PointNm,
         target_object_id: Option<String>,
     ) -> bool {
+        self.preview_authoring_gesture_resolved(self.snap_authoring_point(world), target_object_id)
+    }
+
+    /// Caller has already applied source-contact or grid snapping.
+    pub fn preview_authoring_gesture_resolved(
+        &mut self,
+        point: PointNm,
+        target_object_id: Option<String>,
+    ) -> bool {
         if !self.authoring.gesture.is_active() {
             return false;
         }
-        let point = self.snap_authoring_point(world);
         if self.authoring.gesture.preview == Some(point)
             && self.authoring.gesture.target_object_id == target_object_id
         {
@@ -74,9 +92,10 @@ impl ReviewWorkspaceState {
     }
 
     pub fn cancel_authoring_gesture(&mut self) -> bool {
+        let had_route = self.authoring.board_route.take().is_some();
         self.authoring.handle_feedback = None;
         self.authoring.coordinates = None;
-        if !self.authoring.gesture.is_active() {
+        if !self.authoring.gesture.is_active() && !had_route {
             return false;
         }
         self.authoring.gesture = AuthoringGestureState::idle(self.tool);
@@ -91,7 +110,7 @@ impl ReviewWorkspaceState {
         &mut self,
         world: PointNm,
     ) -> Option<TerminalCommandHandoff> {
-        if self.tool != WorkspaceTool::DrawBoardTrack {
+        if self.tool != WorkspaceTool::DrawBoardTrack || self.authoring.board_route.is_some() {
             return None;
         }
         let from = self.authoring.gesture.anchor?;
