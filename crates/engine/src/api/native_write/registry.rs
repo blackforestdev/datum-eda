@@ -51,6 +51,7 @@ pub fn native_write_verbs() -> &'static [NativeWriteVerb] {
         let mut verbs: Vec<NativeWriteVerb> = Vec::new();
         verbs.extend_from_slice(super::project::VERBS);
         verbs.extend_from_slice(super::board_components::VERBS);
+        verbs.extend_from_slice(super::board_routing::VERBS);
         verbs.extend_from_slice(super::waivers::VERBS);
         verbs.extend_from_slice(super::schematic_edit::VERBS);
         verbs.extend_from_slice(super::schematic_board_transfer::VERBS);
@@ -148,6 +149,7 @@ mod tests {
                 "datum.library.acquire",
                 "datum.library.create",
                 "datum.library.edit",
+                "datum.pcb.draw_track",
                 "datum.pcb.move_component",
                 "datum.pcb.prepare_footprint_sources",
                 "datum.project.create_rule",
