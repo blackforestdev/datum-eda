@@ -9,7 +9,7 @@ numbered decisions and domain contracts; the structured Frontier selects work.
 - [Completed repository maintenance](specification-history/maintenance-records.md): cleanup requirements, completion receipts, exact history-rewrite approval and recovery.
 - [GUI performance](gui-performance/): bounded measurements, source pins, owner dispositions and qualification limits.
 - [Workflow delivery](workflow-delivery-rollout/): retained planning, implementation and independent-review receipts; retired enforcement stays retired.
-- [Construction audit, 2026-11-12](construction-audit/2026-11-12.json): ten findings linked to tracker intake, governing requirements, roadmap ownership, source revisions and verification gaps; evidence only, with no execution grant or product acceptance.
+- [Construction audit, 2026-11-12](construction-audit/2026-11-12.json) and [engineering correctness follow-up](construction-audit/2026-11-12-followup.json): findings linked to tracker intake, governing requirements, roadmap ownership, source revisions and verification gaps; evidence only, with no execution grant or product acceptance.
 
 ## Cargo output and native workspace separation
 

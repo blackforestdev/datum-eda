@@ -1,0 +1,790 @@
+{
+  "kind": "nonnormative_construction_audit_followup",
+  "task": "dat-construction-audit-followup-06nl",
+  "date": "2026-11-12",
+  "previous_record": "docs/reviews/construction-audit/2026-11-12.json",
+  "audit_baseline_commit": "dc442a6d1affc6f13a3e03a4d14bd1a0f99c18e1",
+  "recording_head_commit": "dc442a6d1affc6f13a3e03a4d14bd1a0f99c18e1",
+  "scope": "Engineering correctness: DRC/check normalization, ERC identity/waivers, manufacturing geometry/inventory oracle, release authority and journal recovery/integrity.",
+  "authority": "Owner-requested audit and tracking only; no product modification, implementation grant, new normative mechanism, acceptance bar or milestone selection.",
+  "candidate_limits": [
+    "Committed baseline is the audited candidate; active dirty product/prototype work is excluded from delivery judgments.",
+    "Source review/control-flow counterexamples plus specifically labeled Python transcriptions; no new compiled Rust, GUI, vendor-client or physical-board qualification.",
+    "Earlier CA01-10 remain separately tracked; current open statuses checked before continuation.",
+    "Incomplete-stage behavior is a recovery/coverage gap, not a data-loss finding or strict breach of the explicitly allowed diagnostic-state policy."
+  ],
+  "retained_positive_evidence": [
+    "Net partitions retain occurrence qualification before the ERC projection; net anchor transitions and pending electrical/physical correspondence are materially implemented.",
+    "Canonical writes recheck under writer leases, and post-append failure exposes CommitOutcomeUncertain.",
+    "Nominal physical connectivity reports unavailable geometry as error instead of blanket clean.",
+    "Existing terminal, initial transfer, release primitives and prior bounded deliveries retain their demonstrated scope."
+  ],
+  "findings": [
+    {
+      "id": "CA-11",
+      "title": "Enforce authored TrackWidth rules consistently in DRC",
+      "priority": 1,
+      "classification": "source_confirmed_rule_enforcement_gap",
+      "observation": "Width checking reads only net-class minimum or its fallback; it does not resolve enabled authored TrackWidth rules/scopes/priorities. Routing authoring does resolve scoped authored rules.",
+      "minimal_counterexample": {
+        "net_class_minimum_nm": 100000,
+        "authored_enabled_TrackWidth_All_minimum_nm": 500000,
+        "track_width_nm": 200000,
+        "source_trace_result": "Width check emits no violation although the authored rule requires one."
+      },
+      "engineering_consequence": "Design authoring/routing and checking can disagree on the governing constraint.",
+      "source_anchors": [
+        {
+          "path": "crates/engine/src/drc/mod.rs",
+          "line": 73
+        },
+        {
+          "path": "crates/engine/src/drc/checks/mod.rs",
+          "line": 129
+        },
+        {
+          "path": "crates/engine/src/drc/checks/mod.rs",
+          "line": 570
+        },
+        {
+          "path": "crates/engine/src/api/native_write/board_routing/route.rs",
+          "line": 187
+        }
+      ],
+      "requirement_anchors": [
+        {
+          "path": "docs/decisions/PRODUCT_MECHANICS_009_RULES_CONSTRAINTS_CHECKS.md",
+          "line": 425
+        },
+        {
+          "path": "specs/ENGINE_SPEC.md",
+          "line": 1384
+        }
+      ],
+      "verification": {
+        "existing_entry_points": [
+          "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p eda-engine drc::tests --locked --offline"
+        ],
+        "missing_behavioral_proof": "Add conflicting net-class/authored-rule fixtures for enabled scopes, priority and disabled rules; compare routing admission with DRC. Narrow finding concerns TrackWidth, not every process-policy path.",
+        "executed": false
+      },
+      "related_issue_ids": [],
+      "proof_limits": "Source/control-flow review; no compiled Rust or ordinary application replay.",
+      "issue_id": "dat-drc-authored-width-rule-vz09"
+    },
+    {
+      "id": "CA-12",
+      "title": "Keep physical errors visible in the DRC check profile",
+      "priority": 1,
+      "classification": "source_confirmed_profile_filtering_defect",
+      "observation": "Normalization categorizes width/via errors as standards; the DRC profile selects their check rules but retains only findings whose domain is drc. Summary is computed after filtering.",
+      "minimal_counterexample": {
+        "codes": [
+          "track_width_below_min",
+          "via_hole_out_of_range",
+          "via_annular_below_min"
+        ],
+        "normalized_domain": "standards",
+        "profile": "drc",
+        "source_derived_result": {
+          "raw_errors": 1,
+          "normalized_errors": 0,
+          "normalized_status": "ok"
+        }
+      },
+      "engineering_consequence": "A requested physical-rule check can hide its emitted error and present a clean normalized result.",
+      "source_anchors": [
+        {
+          "path": "crates/cli/src/commands/check/finding_identity.rs",
+          "line": 9
+        },
+        {
+          "path": "crates/cli/src/commands/check/run_view.rs",
+          "line": 430
+        },
+        {
+          "path": "crates/cli/src/commands/check/profile_coverage.rs",
+          "line": 39
+        },
+        {
+          "path": "crates/cli/src/commands/check/run_history.rs",
+          "line": 280
+        }
+      ],
+      "requirement_anchors": [
+        {
+          "path": "specs/CHECKING_ARCHITECTURE_SPEC.md",
+          "line": 119
+        },
+        {
+          "path": "specs/CHECKING_ARCHITECTURE_SPEC.md",
+          "line": 194
+        }
+      ],
+      "verification": {
+        "existing_entry_points": [
+          "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-eda-cli main_tests_project_check_profiles --locked --offline"
+        ],
+        "missing_behavioral_proof": "For each width/via violation require DRC profile findings and normalized summary to retain the error; check standards and release profiles too.",
+        "executed": false
+      },
+      "related_issue_ids": [],
+      "proof_limits": "Source-derived Python classification/filter counterexample executed, not compiled Rust. run_history.rs is active dirty work; inspected committed baseline only.",
+      "issue_id": "dat-drc-profile-hidden-errors-bf31"
+    },
+    {
+      "id": "CA-13",
+      "title": "Report unsupported requested HoleSize checks explicitly",
+      "priority": 2,
+      "classification": "unsupported_scope_reporting_gap",
+      "observation": "RuleType::HoleSize is an accepted public typed API selection, but the DRC dispatcher executes no corresponding branch and reports passed from its empty error set.",
+      "minimal_counterexample": {
+        "selected_rules": [
+          "HoleSize"
+        ],
+        "source_trace_result": "No checker invoked; violations empty and passed=true."
+      },
+      "engineering_consequence": "An agent or API caller can mistake an unsupported requested check for an evaluated clean result.",
+      "source_anchors": [
+        {
+          "path": "crates/engine/src/rules/ast.rs",
+          "line": 36
+        },
+        {
+          "path": "crates/engine/src/drc/mod.rs",
+          "line": 64
+        },
+        {
+          "path": "crates/engine/src/drc/mod.rs",
+          "line": 115
+        }
+      ],
+      "requirement_anchors": [
+        {
+          "path": "specs/ENGINE_SPEC.md",
+          "line": 1743
+        },
+        {
+          "path": "specs/CHECKING_ARCHITECTURE_SPEC.md",
+          "line": 194
+        }
+      ],
+      "verification": {
+        "existing_entry_points": [
+          "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p eda-engine drc::tests --locked --offline"
+        ],
+        "missing_behavioral_proof": "Exercise explicit unsupported selection and require truthful unsupported/not-implemented scope. The current API coverage list already excludes HoleSize; do not claim hole checking was delivered.",
+        "executed": false
+      },
+      "related_issue_ids": [],
+      "proof_limits": "Source/control-flow review; no compiled Rust or ordinary application replay.",
+      "issue_id": "dat-drc-unsupported-hole-selection-r2fj"
+    },
+    {
+      "id": "CA-14",
+      "title": "Preserve finding correlation across presentation-only renames",
+      "priority": 2,
+      "classification": "source_confirmed_fingerprint_identity_gap",
+      "observation": "ERC IDs use net/component/pin display names; fallback CheckFinding fingerprints hash full ERC payload including those names/messages. DRC fingerprints also hash human messages containing net names.",
+      "minimal_counterexample": {
+        "action": "Waive an ERC output conflict, then rename U1 to U7 while preserving source UUIDs and connectivity.",
+        "source_trace_result": "Name-derived ID/message/payload change, so the fingerprint no longer matches the waiver."
+      },
+      "engineering_consequence": "Presentation-only changes can reopen accepted findings and create noisy comparison history.",
+      "source_anchors": [
+        {
+          "path": "crates/engine/src/erc/finding_id.rs",
+          "line": 12
+        },
+        {
+          "path": "crates/cli/src/commands/check/run_view.rs",
+          "line": 248
+        },
+        {
+          "path": "crates/cli/src/commands/check/finding_identity.rs",
+          "line": 138
+        },
+        {
+          "path": "crates/engine/src/drc/fingerprint.rs",
+          "line": 15
+        }
+      ],
+      "requirement_anchors": [
+        {
+          "path": "docs/decisions/PRODUCT_MECHANICS_009_RULES_CONSTRAINTS_CHECKS.md",
+          "line": 299
+        },
+        {
+          "path": "specs/CHECKING_ARCHITECTURE_SPEC.md",
+          "line": 205
+        }
+      ],
+      "verification": {
+        "existing_entry_points": [
+          "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p eda-engine erc::tests --locked --offline",
+          "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-eda-cli main_tests_project_check_profiles --locked --offline"
+        ],
+        "missing_behavioral_proof": "Verify refdes/net-name-only changes preserve correlation while actual relevant electrical/geometry changes invalidate it. Do not suppress legitimate changed-observable rechecks.",
+        "executed": false
+      },
+      "related_issue_ids": [],
+      "proof_limits": "Source/control-flow review; no compiled Rust or ordinary application replay.",
+      "issue_id": "dat-finding-rename-correlation-ww6e"
+    },
+    {
+      "id": "CA-15",
+      "title": "Keep hierarchy occurrence identity in ordinary ERC findings",
+      "priority": 1,
+      "classification": "source_confirmed_occurrence_identity_gap",
+      "observation": "Native connectivity has occurrence-qualified partitions, but NetPinRef projection discards instance_path. Ordinary pin/net ERC uses local names and source pin IDs without qualified net identity; identical repeated-child findings can share a fingerprint.",
+      "minimal_counterexample": {
+        "design": "Two instances of one child definition each contain two conflicting outputs on local label SIG.",
+        "source_trace_result": "Distinct qualified nets produce identical ordinary ERC payload/fingerprints; a fingerprint waiver can match both occurrences."
+      },
+      "engineering_consequence": "Independent electrical issues cannot be safely navigated or waived separately by instance.",
+      "source_anchors": [
+        {
+          "path": "crates/engine/src/connectivity/native_net_info.rs",
+          "line": 87
+        },
+        {
+          "path": "crates/engine/src/erc/mod.rs",
+          "line": 128
+        },
+        {
+          "path": "crates/engine/src/erc/pin_evidence.rs",
+          "line": 11
+        },
+        {
+          "path": "crates/cli/src/commands/check/run_view.rs",
+          "line": 310
+        }
+      ],
+      "requirement_anchors": [
+        {
+          "path": "docs/decisions/PRODUCT_MECHANICS_009_RULES_CONSTRAINTS_CHECKS.md",
+          "line": 290
+        },
+        {
+          "path": "docs/decisions/PRODUCT_MECHANICS_053_ELECTRICAL_IDENTITY_AUTHORITY.md",
+          "line": 1
+        }
+      ],
+      "verification": {
+        "existing_entry_points": [
+          "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p eda-engine erc::tests --locked --offline"
+        ],
+        "missing_behavioral_proof": "Add repeated-instance ERC conflict fixtures with distinct occurrence targets and fingerprints; applying one waiver must leave the other active. Existing interface-specific hierarchy diagnostics are not the defect.",
+        "executed": false
+      },
+      "related_issue_ids": [],
+      "proof_limits": "Source/control-flow review; no compiled Rust or ordinary application replay.",
+      "issue_id": "dat-erc-occurrence-waiver-identity-ueaz"
+    },
+    {
+      "id": "CA-16",
+      "title": "Preserve supported pad shapes in Gerber copper projection",
+      "priority": 1,
+      "classification": "source_confirmed_silent_geometry_substitution",
+      "observation": "PadShape::Oval and RoundRect lower to rectangular PadAperture. Copper export preflight/rotation handles only Rect, then emits rectangle apertures for the lowered shapes.",
+      "minimal_counterexample": {
+        "pad": "2mm by 1mm Oval, then RoundRect",
+        "poses_degrees": [
+          0,
+          90
+        ],
+        "transcription_result": "Both shapes/poses lower to the same unrotated full rectangle."
+      },
+      "engineering_consequence": "Exported copper can differ from the authored pad geometry without a typed unsupported refusal.",
+      "source_anchors": [
+        {
+          "path": "crates/engine/src/board/pad.rs",
+          "line": 95
+        },
+        {
+          "path": "crates/engine/src/export/copper.rs",
+          "line": 17
+        },
+        {
+          "path": "crates/engine/src/export/copper.rs",
+          "line": 100
+        },
+        {
+          "path": "crates/cli/src/commands/gerber/copper_projection.rs",
+          "line": 37
+        }
+      ],
+      "requirement_anchors": [
+        {
+          "path": "docs/contracts/MANUFACTURING_OUTPUT_TOOL_CONTRACT.md",
+          "line": 24
+        },
+        {
+          "path": "docs/decisions/PRODUCT_MECHANICS_012_APPLICATION_QUALITY_BAR.md",
+          "line": 331
+        }
+      ],
+      "verification": {
+        "existing_entry_points": [
+          "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p eda-engine export::tests::copper_tests --locked --offline"
+        ],
+        "missing_behavioral_proof": "Verify supported exact Oval/RoundRect geometry and rotation or explicit refusal before publication; include the public export path. Adjacent footprint-acquisition/process work remains owned separately.",
+        "executed": false
+      },
+      "related_issue_ids": [
+        "dat-kicad-footprint-library-k0i9"
+      ],
+      "proof_limits": "Bounded Python lowering transcription executed by reviewer; not compiled Rust/export-file validation. Cited pad/copper code was clean; active process/import edits excluded.",
+      "issue_id": "dat-gerber-pad-shape-projection-3ojz"
+    },
+    {
+      "id": "CA-17",
+      "title": "Use placement occurrence identity in BOM and PnP comparisons",
+      "priority": 2,
+      "classification": "source_confirmed_comparison_identity_defect",
+      "observation": "Inventory rows store component.package (library definition) as package_uuid and omit placement uuid. Comparison falls back to this shared definition when no ComponentInstance binding exists; role-qualified placements can also share a CI key.",
+      "minimal_counterexample": {
+        "design": "Board-only R1 and R2 use the same 0402 Package definition.",
+        "comparison": "Compare unchanged own export.",
+        "transcription_result": {
+          "matched": 1,
+          "missing": 1,
+          "extra": 1
+        }
+      },
+      "engineering_consequence": "The comparison/drift oracle falsely flags normal repeated footprints; exported rows themselves are retained.",
+      "source_anchors": [
+        {
+          "path": "crates/cli/src/commands/inventory/rows.rs",
+          "line": 47
+        },
+        {
+          "path": "crates/cli/src/commands/inventory/rows.rs",
+          "line": 76
+        },
+        {
+          "path": "crates/cli/src/commands/inventory/inventory.rs",
+          "line": 46
+        },
+        {
+          "path": "crates/cli/src/commands/inventory/inventory.rs",
+          "line": 632
+        }
+      ],
+      "requirement_anchors": [
+        {
+          "path": "docs/contracts/MANUFACTURING_OUTPUT_TOOL_CONTRACT.md",
+          "line": 216
+        },
+        {
+          "path": "docs/contracts/MANUFACTURING_OUTPUT_TOOL_CONTRACT.md",
+          "line": 241
+        }
+      ],
+      "verification": {
+        "existing_entry_points": [
+          "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-eda-cli main_tests_project_bom_compare --locked --offline"
+        ],
+        "missing_behavioral_proof": "Compare identical exports of repeated library definitions with zero missing/extra; change one placement and require exactly its drift. Cover explicit multi-package roles.",
+        "executed": false
+      },
+      "related_issue_ids": [
+        "dat-bom-management-spec-7ng"
+      ],
+      "proof_limits": "Python transcription of row key/group/count logic executed by reviewer; no compiled export comparison. No BOM row-loss claim.",
+      "issue_id": "dat-inventory-placement-identity-yuf4"
+    },
+    {
+      "id": "CA-18",
+      "title": "Validate the attestation selected as release authority",
+      "priority": 1,
+      "classification": "source_confirmed_internal_release_authority_gap",
+      "observation": "Release preparation validates candidate.attestations but only copies request.release_authority_attestation into the issued Release. Public engine apply and final snapshot validation do not establish that this selected attestation authorizes that candidate/digest and remains active.",
+      "minimal_counterexample": {
+        "setup": "Candidate has valid approval A; another existing attestation B targets an unrelated subject or has valid revocation facts.",
+        "action": "Select B as release_authority_attestation while retaining A in candidate approvals.",
+        "source_trace_result": "The examined checks validate A and resolvability/shape of B, not B authorization for this release."
+      },
+      "engineering_consequence": "A release record can assert unrelated or revoked release authority despite valid separate candidate approvals.",
+      "source_anchors": [
+        {
+          "path": "crates/engine/src/revision/release_transaction.rs",
+          "line": 151
+        },
+        {
+          "path": "crates/engine/src/revision/release_transaction.rs",
+          "line": 259
+        },
+        {
+          "path": "crates/engine/src/revision/release_transaction.rs",
+          "line": 351
+        },
+        {
+          "path": "crates/engine/src/revision/release_transaction.rs",
+          "line": 447
+        },
+        {
+          "path": "crates/engine/src/revision/authority.rs",
+          "line": 546
+        }
+      ],
+      "requirement_anchors": [
+        {
+          "path": "specs/PRODUCT_REVISION_ENGINE_SPEC.md",
+          "line": 180
+        },
+        {
+          "path": "specs/PRODUCT_REVISION_ENGINE_SPEC.md",
+          "line": 207
+        }
+      ],
+      "verification": {
+        "existing_entry_points": [
+          "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p eda-engine revision::release_tests --locked --offline"
+        ],
+        "missing_behavioral_proof": "Keep valid candidate approval A, vary only selected authority B across unrelated/revoked/wrong-intent/out-of-scope cases; require refusal without authority/head mutation.",
+        "executed": false
+      },
+      "related_issue_ids": [
+        "dat-product-revision-engine-build-18f"
+      ],
+      "proof_limits": "Internal callable engine primitive source trace. Public revision operation integration is separately incomplete (CA-02); no integrated GUI release exploit demonstrated.",
+      "issue_id": "dat-release-authority-attestation-b150"
+    },
+    {
+      "id": "CA-19",
+      "title": "Bind accepted journal records to their immutable integrity blobs",
+      "priority": 1,
+      "classification": "source_confirmed_integrity_inspection_gap",
+      "observation": "Integrity verification compares journal tip UUID to head and verifies blob bytes against generation metadata, but never compares the actual accepted journal record payload to its immutable transaction blob. Parent-generation payload coverage is not traversed by this path.",
+      "minimal_counterexample": {
+        "action": "After an integrity-backed commit, alter only journal provenance.actor/reason while preserving transaction UUID, operations and revisions.",
+        "source_trace_result": "Parsing/replay/model revision and inspected integrity checks can still accept Complete despite journal/blob disagreement."
+      },
+      "engineering_consequence": "History provenance can disagree with immutable authority while integrity inspection reports complete.",
+      "source_anchors": [
+        {
+          "path": "crates/engine/src/revision/store.rs",
+          "line": 317
+        },
+        {
+          "path": "crates/engine/src/revision/store.rs",
+          "line": 418
+        },
+        {
+          "path": "crates/engine/src/substrate/board_batch_basis.rs",
+          "line": 44
+        },
+        {
+          "path": "crates/engine/src/substrate/transaction_links.rs",
+          "line": 18
+        }
+      ],
+      "requirement_anchors": [
+        {
+          "path": "specs/PRODUCT_REVISION_ENGINE_SPEC.md",
+          "line": 325
+        },
+        {
+          "path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
+          "line": 122
+        }
+      ],
+      "verification": {
+        "existing_entry_points": [
+          "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p eda-engine substrate::tests::revision_integrity --locked --offline"
+        ],
+        "missing_behavioral_proof": "Mutate accepted-journal provenance independently from immutable blobs and require truthful integrity refusal; verify parent coverage and preserve supported pre-integrity journals. Inverse-payload consequences need separate runtime proof.",
+        "executed": false
+      },
+      "related_issue_ids": [
+        "dat-product-revision-engine-build-18f"
+      ],
+      "proof_limits": "Source/control-flow review; no compiled Rust or ordinary application replay.",
+      "issue_id": "dat-journal-integrity-payload-83a3"
+    },
+    {
+      "id": "CA-20",
+      "title": "Define safe continuation after an incomplete uncommitted integrity stage",
+      "priority": 2,
+      "classification": "recoverability_and_crash_coverage_gap",
+      "observation": "Staging durably creates a directory before generation.json is written. Recovery parses every stage manifest before checking journal membership; missing/partial uncommitted manifest can make integrity unavailable and prevent further canonical writes.",
+      "minimal_counterexample": {
+        "interruption": "After stage directory/blob creation, before complete generation.json and before journal append.",
+        "source_trace_result": "Intact earlier head/journal/design can be placed in read-only diagnostic state by the abandoned stage."
+      },
+      "engineering_consequence": "An uncommitted staging artifact can strand ordinary authoring; no safe continuation route was identified in the inspected implementation.",
+      "source_anchors": [
+        {
+          "path": "crates/engine/src/revision/store.rs",
+          "line": 97
+        },
+        {
+          "path": "crates/engine/src/revision/store.rs",
+          "line": 169
+        },
+        {
+          "path": "crates/engine/src/revision/store.rs",
+          "line": 275
+        },
+        {
+          "path": "crates/engine/src/substrate/commit.rs",
+          "line": 234
+        },
+        {
+          "path": "crates/engine/src/substrate/tests/revision_integrity.rs",
+          "line": 183
+        }
+      ],
+      "requirement_anchors": [
+        {
+          "path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
+          "line": 122
+        }
+      ],
+      "verification": {
+        "existing_entry_points": [
+          "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p eda-engine substrate::tests::revision_integrity --locked --offline"
+        ],
+        "missing_behavioral_proof": "Exercise missing/partial manifests before the journal commit point and establish a safe preservation/reconciliation path. Current fault injection occurs after completed staging.",
+        "executed": false
+      },
+      "related_issue_ids": [
+        "dat-product-revision-engine-build-18f"
+      ],
+      "proof_limits": "Recoverability/usability gap, not demonstrated data loss or necessarily a requirement breach: REV-I01 explicitly permits read-only diagnostic recovery.",
+      "issue_id": "dat-integrity-incomplete-stage-188y"
+    }
+  ],
+  "source_snapshots": [
+    {
+      "path": "crates/cli/src/commands/check/finding_identity.rs",
+      "baseline_sha256": "de849b2ee63bfa57e64de1e7cc902c0ea2de66a5f32a5f7a85866c814ea9f4e5",
+      "recording_worktree_sha256": "de849b2ee63bfa57e64de1e7cc902c0ea2de66a5f32a5f7a85866c814ea9f4e5",
+      "worktree_differs_from_audited_source": false
+    },
+    {
+      "path": "crates/cli/src/commands/check/profile_coverage.rs",
+      "baseline_sha256": "80a6eb203ede97d68090d853bf28e750f88beabad17faa6545ddabfe0509eb72",
+      "recording_worktree_sha256": "80a6eb203ede97d68090d853bf28e750f88beabad17faa6545ddabfe0509eb72",
+      "worktree_differs_from_audited_source": false
+    },
+    {
+      "path": "crates/cli/src/commands/check/run_history.rs",
+      "baseline_sha256": "8ad35bad6aef79a489c6fc44631e09c0d8a4d98fbe1ddc06526bf2560cad1252",
+      "recording_worktree_sha256": "a12456b163e052762585a6477c23549aa2f1ee28705525c5cac22ecc651c74b7",
+      "worktree_differs_from_audited_source": true
+    },
+    {
+      "path": "crates/cli/src/commands/check/run_view.rs",
+      "baseline_sha256": "7ec7d3195645e87693192424d49d9c1ce742d6926f23dd313714f07eb84f3d6c",
+      "recording_worktree_sha256": "7ec7d3195645e87693192424d49d9c1ce742d6926f23dd313714f07eb84f3d6c",
+      "worktree_differs_from_audited_source": false
+    },
+    {
+      "path": "crates/cli/src/commands/gerber/copper_projection.rs",
+      "baseline_sha256": "1e9b1251f2359dc571a968704f43a0c4f7e913c4bcc65e50e72477be41f15b8e",
+      "recording_worktree_sha256": "1e9b1251f2359dc571a968704f43a0c4f7e913c4bcc65e50e72477be41f15b8e",
+      "worktree_differs_from_audited_source": false
+    },
+    {
+      "path": "crates/cli/src/commands/inventory/inventory.rs",
+      "baseline_sha256": "39668b7803b3d232a45d23878d48d0ed728a425e27834f718573f44f3d5b062e",
+      "recording_worktree_sha256": "39668b7803b3d232a45d23878d48d0ed728a425e27834f718573f44f3d5b062e",
+      "worktree_differs_from_audited_source": false
+    },
+    {
+      "path": "crates/cli/src/commands/inventory/rows.rs",
+      "baseline_sha256": "615db706198d658749a1517c73e250d48918dd7142bf4c50130d9334df088afd",
+      "recording_worktree_sha256": "615db706198d658749a1517c73e250d48918dd7142bf4c50130d9334df088afd",
+      "worktree_differs_from_audited_source": false
+    },
+    {
+      "path": "crates/engine/src/api/native_write/board_routing/route.rs",
+      "baseline_sha256": "f2262fbb2d4353733cfcaeeaa4b15500b54a103eb2f9e96b465759dcf48f90cf",
+      "recording_worktree_sha256": "f2262fbb2d4353733cfcaeeaa4b15500b54a103eb2f9e96b465759dcf48f90cf",
+      "worktree_differs_from_audited_source": false
+    },
+    {
+      "path": "crates/engine/src/board/pad.rs",
+      "baseline_sha256": "f515652957e0633365451e55e4ffaceec0cf697f72c3dd6e80ec87150bf6c110",
+      "recording_worktree_sha256": "f515652957e0633365451e55e4ffaceec0cf697f72c3dd6e80ec87150bf6c110",
+      "worktree_differs_from_audited_source": false
+    },
+    {
+      "path": "crates/engine/src/connectivity/native_net_info.rs",
+      "baseline_sha256": "e711c574260aabbc903d147dfec1ae4401c1f8aa44aa37b7507512c1d3aa1ab6",
+      "recording_worktree_sha256": "e711c574260aabbc903d147dfec1ae4401c1f8aa44aa37b7507512c1d3aa1ab6",
+      "worktree_differs_from_audited_source": false
+    },
+    {
+      "path": "crates/engine/src/drc/checks/mod.rs",
+      "baseline_sha256": "fdfe881b98b5002b5b3582402be76e83bb01b7678979b6952fe608a67240a438",
+      "recording_worktree_sha256": "fdfe881b98b5002b5b3582402be76e83bb01b7678979b6952fe608a67240a438",
+      "worktree_differs_from_audited_source": false
+    },
+    {
+      "path": "crates/engine/src/drc/fingerprint.rs",
+      "baseline_sha256": "7ba3a3866f7393b1dd598b69aec50f3fea66dc79614f6f596b3e6721cdb3a65d",
+      "recording_worktree_sha256": "7ba3a3866f7393b1dd598b69aec50f3fea66dc79614f6f596b3e6721cdb3a65d",
+      "worktree_differs_from_audited_source": false
+    },
+    {
+      "path": "crates/engine/src/drc/mod.rs",
+      "baseline_sha256": "7f3f5ab8a1650904fc13563245318135a4220877babd60b8edbd537166b3ee2e",
+      "recording_worktree_sha256": "7f3f5ab8a1650904fc13563245318135a4220877babd60b8edbd537166b3ee2e",
+      "worktree_differs_from_audited_source": false
+    },
+    {
+      "path": "crates/engine/src/erc/finding_id.rs",
+      "baseline_sha256": "38dec8f3239ae04adef6190e5d7f3676aa6bf76cc5444f10abfdcfee9d1fd365",
+      "recording_worktree_sha256": "38dec8f3239ae04adef6190e5d7f3676aa6bf76cc5444f10abfdcfee9d1fd365",
+      "worktree_differs_from_audited_source": false
+    },
+    {
+      "path": "crates/engine/src/erc/mod.rs",
+      "baseline_sha256": "7283bb6a7ba5a677a7a600ed4317466340a4de5187a9178b13b5ad5839dea592",
+      "recording_worktree_sha256": "7283bb6a7ba5a677a7a600ed4317466340a4de5187a9178b13b5ad5839dea592",
+      "worktree_differs_from_audited_source": false
+    },
+    {
+      "path": "crates/engine/src/erc/pin_evidence.rs",
+      "baseline_sha256": "513c1ffbe153e46caa12a17fcc17ae99d30e4c32436637dbe8324c2d68b968ad",
+      "recording_worktree_sha256": "513c1ffbe153e46caa12a17fcc17ae99d30e4c32436637dbe8324c2d68b968ad",
+      "worktree_differs_from_audited_source": false
+    },
+    {
+      "path": "crates/engine/src/export/copper.rs",
+      "baseline_sha256": "680b90c81532d8acfb2c9171585b736a276a272afe7da119d34e8ed76a7d0448",
+      "recording_worktree_sha256": "680b90c81532d8acfb2c9171585b736a276a272afe7da119d34e8ed76a7d0448",
+      "worktree_differs_from_audited_source": false
+    },
+    {
+      "path": "crates/engine/src/revision/authority.rs",
+      "baseline_sha256": "e67b4b1a8b383fece2c8d4e11ae01b05abaae019e680d1d0d14d9747813c36c0",
+      "recording_worktree_sha256": "e67b4b1a8b383fece2c8d4e11ae01b05abaae019e680d1d0d14d9747813c36c0",
+      "worktree_differs_from_audited_source": false
+    },
+    {
+      "path": "crates/engine/src/revision/release_transaction.rs",
+      "baseline_sha256": "9ec6da0c0507ea297fbd9661a2d5dfc5a27dd376a957509c584f65097867c977",
+      "recording_worktree_sha256": "9ec6da0c0507ea297fbd9661a2d5dfc5a27dd376a957509c584f65097867c977",
+      "worktree_differs_from_audited_source": false
+    },
+    {
+      "path": "crates/engine/src/revision/store.rs",
+      "baseline_sha256": "0f10f647361042649524d4ef31068c6c373b52f0cea0e0bcb5057d742ec65db1",
+      "recording_worktree_sha256": "0f10f647361042649524d4ef31068c6c373b52f0cea0e0bcb5057d742ec65db1",
+      "worktree_differs_from_audited_source": false
+    },
+    {
+      "path": "crates/engine/src/rules/ast.rs",
+      "baseline_sha256": "2c13fa5486cf8115cec7188b7ec507ace67a73083d9c90cd812e4879beba2f15",
+      "recording_worktree_sha256": "2c13fa5486cf8115cec7188b7ec507ace67a73083d9c90cd812e4879beba2f15",
+      "worktree_differs_from_audited_source": false
+    },
+    {
+      "path": "crates/engine/src/substrate/board_batch_basis.rs",
+      "baseline_sha256": "82690d264c9072e8f7a5790d337ea5ac2e51cfb48a7cc1534a0ed682521e50c0",
+      "recording_worktree_sha256": "82690d264c9072e8f7a5790d337ea5ac2e51cfb48a7cc1534a0ed682521e50c0",
+      "worktree_differs_from_audited_source": false
+    },
+    {
+      "path": "crates/engine/src/substrate/commit.rs",
+      "baseline_sha256": "091c769d995b54ebd5a7bc1b8ee044fbe3fa53c33446c9e74f5e1566ef50b428",
+      "recording_worktree_sha256": "091c769d995b54ebd5a7bc1b8ee044fbe3fa53c33446c9e74f5e1566ef50b428",
+      "worktree_differs_from_audited_source": false
+    },
+    {
+      "path": "crates/engine/src/substrate/tests/revision_integrity.rs",
+      "baseline_sha256": "7d83529f24e7ab7702f18bfa5433e8e1873ee56fb288f1b59e40e944b24ee745",
+      "recording_worktree_sha256": "7d83529f24e7ab7702f18bfa5433e8e1873ee56fb288f1b59e40e944b24ee745",
+      "worktree_differs_from_audited_source": false
+    },
+    {
+      "path": "crates/engine/src/substrate/transaction_links.rs",
+      "baseline_sha256": "ece76a699178db15de8a5543484c8a17bf0f60ba9c9dd8b7eaeb59f7b25f569f",
+      "recording_worktree_sha256": "ece76a699178db15de8a5543484c8a17bf0f60ba9c9dd8b7eaeb59f7b25f569f",
+      "worktree_differs_from_audited_source": false
+    },
+    {
+      "path": "docs/contracts/MANUFACTURING_OUTPUT_TOOL_CONTRACT.md",
+      "baseline_sha256": "1bd407f2ef613bd3fa9616850a5c8d003d809089a6708e3f464eae879e5d5406",
+      "recording_worktree_sha256": "1bd407f2ef613bd3fa9616850a5c8d003d809089a6708e3f464eae879e5d5406",
+      "worktree_differs_from_audited_source": false
+    },
+    {
+      "path": "docs/decisions/PRODUCT_MECHANICS_009_RULES_CONSTRAINTS_CHECKS.md",
+      "baseline_sha256": "e3813581b18e84f19b6576f9435fec4d1d516f5680b056f1b7ad937424e614f0",
+      "recording_worktree_sha256": "e3813581b18e84f19b6576f9435fec4d1d516f5680b056f1b7ad937424e614f0",
+      "worktree_differs_from_audited_source": false
+    },
+    {
+      "path": "docs/decisions/PRODUCT_MECHANICS_012_APPLICATION_QUALITY_BAR.md",
+      "baseline_sha256": "b65caa2dc836c36b92218dd4c8e8d580353271b03c17a53120ba0c5683155c35",
+      "recording_worktree_sha256": "b65caa2dc836c36b92218dd4c8e8d580353271b03c17a53120ba0c5683155c35",
+      "worktree_differs_from_audited_source": false
+    },
+    {
+      "path": "docs/decisions/PRODUCT_MECHANICS_053_ELECTRICAL_IDENTITY_AUTHORITY.md",
+      "baseline_sha256": "0ad9bee9267353694098e80bc9aa1ac94ea8bfc83af65ac639ce3ac319c6456e",
+      "recording_worktree_sha256": "0ad9bee9267353694098e80bc9aa1ac94ea8bfc83af65ac639ce3ac319c6456e",
+      "worktree_differs_from_audited_source": false
+    },
+    {
+      "path": "specs/CHECKING_ARCHITECTURE_SPEC.md",
+      "baseline_sha256": "b57c99ae26205119e7dfe36b54010c3c67228818cd55b76975f76736d7f3b2b0",
+      "recording_worktree_sha256": "b57c99ae26205119e7dfe36b54010c3c67228818cd55b76975f76736d7f3b2b0",
+      "worktree_differs_from_audited_source": false
+    },
+    {
+      "path": "specs/ENGINE_SPEC.md",
+      "baseline_sha256": "e23001f7886806be9fb52d5861f43ee728235b3e9618d84e32d1c42e36184c5b",
+      "recording_worktree_sha256": "e23001f7886806be9fb52d5861f43ee728235b3e9618d84e32d1c42e36184c5b",
+      "worktree_differs_from_audited_source": false
+    },
+    {
+      "path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
+      "baseline_sha256": "afab7d520261327e5b470b4d5262c3212fae03cffc954f98f476daade35028a6",
+      "recording_worktree_sha256": "afab7d520261327e5b470b4d5262c3212fae03cffc954f98f476daade35028a6",
+      "worktree_differs_from_audited_source": false
+    },
+    {
+      "path": "specs/PRODUCT_REVISION_ENGINE_SPEC.md",
+      "baseline_sha256": "acb82143ec76fde01b9196184fbe9fbb2c5a93ba5109ddcb0b6aaf052aa8ef48",
+      "recording_worktree_sha256": "acb82143ec76fde01b9196184fbe9fbb2c5a93ba5109ddcb0b6aaf052aa8ef48",
+      "worktree_differs_from_audited_source": false
+    }
+  ],
+  "recording_validation": {
+    "status": "record_consistency_passed",
+    "checks": [
+      {
+        "command": "python3 scripts/check_progress_coverage.py",
+        "result": "PASS"
+      },
+      {
+        "command": "python3 scripts/project_status.py check",
+        "result": "PASS; 131 Frontier items"
+      },
+      {
+        "command": "python3 scripts/project_status.py check-render",
+        "result": "PASS; current projection"
+      },
+      {
+        "command": "one-off issue/source anchor and baseline hash verification",
+        "result": "PASS; 10 findings, 60 anchors, 33 source snapshots"
+      },
+      {
+        "command": "git diff --check",
+        "result": "PASS"
+      }
+    ],
+    "meaning": "Record consistency only; no product behavior, standards conformance or implementation acceptance.",
+    "independent_review": {
+      "disposition": "BOUNDED RECORD ACCURACY PASS",
+      "scope": "Separate reviewer checked CA11-20 source/requirement excerpts, baseline hashes, tracker links, counterexample limits and existing verification module owners. No material correction required.",
+      "limits": "Record accuracy only; no compiled product proof, implementation grant, acceptance or data-loss claim."
+    }
+  }
+}
