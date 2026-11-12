@@ -136,9 +136,35 @@ fn one_locked_member_refuses_the_complete_group_without_writes() {
 #[test]
 fn unequal_body_alignment_preserves_contacts_and_authenticates_cold_source() {
     let (root, mut model, symbols) = fixture("symbol_body_alignment");
+    let snapshot = ElectricalSelectionSnapshot::capture(&model).unwrap();
+    let sheet = snapshot
+        .schematic_source()
+        .unwrap()
+        .sheets
+        .values()
+        .next()
+        .unwrap();
+    let sheet_id = sheet.uuid;
+    let library = sheet.symbols[&symbols[0]].lib_id.clone().unwrap();
+    for i in 0..6 {
+        write(
+            &mut model,
+            &root,
+            "datum.schematic.place_symbol",
+            json!({
+                "sheet":sheet_id,"instance_path":[],"library_symbol":library,
+                "reference":format!("U{}",i+3),"value":"Unselected foreign geometry",
+                "x_nm":40000000+i*5000000,"y_nm":50000000
+            }),
+        );
+    }
     let request = request(symbols);
     let (basis, destination) = plan_alignment(&model, &request).unwrap();
     let snapshot = ElectricalSelectionSnapshot::capture(&model).unwrap();
+    assert_eq!(
+        basis,
+        SymbolMoveSetBasis::capture(&snapshot, &request.symbols, &[]).unwrap()
+    );
     let old_wires = snapshot.schematic_source().unwrap().sheets[&basis.sheet_id]
         .wires
         .clone();

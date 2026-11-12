@@ -154,6 +154,21 @@ impl Runtime {
         let hit_started = std::time::Instant::now();
         let prepared_target = self.presented_hits.hit_test(x, y).cloned();
         let hit_elapsed = hit_started.elapsed();
+        // Diagnostic markers overlay source ink. During schematic authoring,
+        // the canvas gesture owns that point (for example, wiring a flagged
+        // pin); finding rows and all surrounding chrome keep their owners.
+        let schematic_canvas_marker =
+            matches!(prepared_target.as_ref(), Some(HitTarget::CheckFinding(_)))
+                && (self.workspace().schematic_authoring.active()
+                    || self
+                        .native_edit
+                        .preview
+                        .as_ref()
+                        .is_some_and(|preview| preview.is_schematic()))
+                && self.cursor_in_editor_scene()
+                && self.pane_at_screen(x, y).is_some_and(|pane| {
+                    self.workspace().ui.layout.content_for(pane) == Some(PaneContent::Schematic)
+                });
         if self.terminal_clipboard_menu_active()
             && !matches!(
                 prepared_target.as_ref(),
@@ -172,10 +187,10 @@ impl Runtime {
         }
         if let Some(target) = prepared_target
             && !(authoring_gesture
-                && matches!(
+                && (matches!(
                     target,
                     HitTarget::AuthoredObject(_) | HitTarget::ReviewAction(_)
-                ))
+                ) || schematic_canvas_marker))
         {
             self.trace_click(format!(
                 "primary click ({x:.1}, {y:.1}) presented target {target:?}; hit {}ms; dock {:?}",

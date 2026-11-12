@@ -97,8 +97,19 @@ preview, cancel and one canonical edit with fresh component/object identities,
 project-wide collision-free references and retained captured library sources.
 Unsupported ownership, changed dependencies and cross-project component payloads
 refuse the whole block; Symbol Cut remains unavailable. This extends the existing
-clipboard/Proposal primitives without adding a public CLI verb. The practical
-schematic-capture goal and full editor qualification remain open.
+clipboard/Proposal primitives without adding a public CLI verb.
+
+## Current practical schematic capture integration
+
+The representative Root/Child amplifier workflow now combines group alignment,
+block copy, actionable ERC, wire repair, Undo/Redo and Save/cold reopening.
+Alignment compares unchanged contact geometry consistently on populated sheets;
+visible diagnostic markers allow active wire endpoint placement. The ordinary
+37-stage App run passes with a current clean ERC result after repair and reopening.
+Public native writes prepare its fixture; this is not evidence of manually drawing
+the entire circuit. The practical schematic-capture workflow has passed independent review. Physical
+HUMAN observation, release-runtime execution and full editor qualification remain
+separate.
 
 ## Scope Integrity Terms
 

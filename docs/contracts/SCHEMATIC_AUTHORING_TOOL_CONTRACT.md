@@ -168,7 +168,7 @@ physical/ECO workflows and full qualification remain open.
 
 ### Bounded native Symbol alignment
 
-The active practical-capture work in `dat-practical-schematic-capture-jsgv` adds
+The alignment increment in `dat-practical-schematic-capture-jsgv` adds
 structured Horizontal Left/Center/Right and Vertical Top/Center/Bottom presets
 for a complete homogeneous Symbol selection in one unique native occurrence.
 Alignment uses authenticated placed library body extents and their union;
@@ -303,8 +303,37 @@ dispatch are not physical keyboard/HUMAN evidence; Cancel/history/Save used
 existing Runtime commands. The preview now says “place copied block” and success
 says “Copied block placed”; Wire-only wording is unchanged. All owned GUI,
 daemon, clipboard and compositor processes stopped and runtime storage was
-removed with no cleanup errors. This does not complete the larger practical
-capture goal, representative-circuit ERC composition or full qualification.
+removed with no cleanup errors. That exercise alone did not establish
+representative-circuit ERC composition or whole-goal completion.
+
+### Representative amplifier integration
+
+The subsequent ordinary-App integration revises a native common-emitter NPN
+amplifier in a unique Child occurrence with Root input/output interfaces. Public
+native writers prepare the circuit fixture; this setup is not manual GUI drawing.
+Presented Root/Child navigation, bias-resistor alignment, complete block copying
+and fresh project-wide references exercise the composed designer workflow.
+
+Two production corrections support this case. Unordered foreign contact points
+and segments receive a deterministic order before strict alignment-basis
+comparison; duplicate geometry and the source-pin order used for wire movement
+remain intact. Diagnostic markers over the schematic canvas yield to an active
+schematic operation or Move preview, allowing a wire endpoint on a flagged pin.
+Idle marker selection and diagnostic controls retain their existing routing.
+
+The 37-stage J run passed in 51.71 seconds with ten reviewed captures. Default ERC
+first reports the genuinely floating R4.2 terminal. A two-segment wire joins that
+pin to the existing GND net; the old report visibly becomes stale. Wire Undo/Redo
+precedes the new check-record transaction, then an explicit ERC rerun reports
+zero findings, errors and warnings. Save, an actual App restart, Child navigation
+and another explicit ERC run retain the repaired circuit and current clean result.
+The cold Inspector reports 70 matching materialized sources. All owned GUI,
+daemon, clipboard and compositor processes stopped without cleanup errors.
+
+Input uses programmatic pointer events and production menu/shortcut dispatch;
+history and Save use Runtime commands. Existing manual placement, wiring and
+hierarchy proof retains its original scope. Physical HUMAN observation,
+release-runtime execution and full qualification remain separate.
 
 An interior scalar Label can slide along its existing wire while all incident
 wires stay fixed and the complete physical connectivity partition is preserved.

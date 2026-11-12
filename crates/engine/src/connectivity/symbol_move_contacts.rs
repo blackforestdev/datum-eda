@@ -206,6 +206,11 @@ impl SymbolContactBasis {
             };
             segments.push((entry.position, end));
         }
+        // These foreign collections come from unordered source maps. Their
+        // order has no contact meaning, but the immutable basis is compared
+        // across independent captures when arming an alignment preview.
+        points.sort_by_key(|point| (point.x, point.y));
+        segments.sort_by_key(|(from, to)| (from.x, from.y, to.x, to.y));
         let basis = Self {
             points,
             segments,
@@ -352,3 +357,7 @@ fn local_source(sheet: Sheet) -> Schematic {
 fn invalid(reason: &str) -> EngineError {
     EngineError::Validation(reason.into())
 }
+
+#[cfg(test)]
+#[path = "symbol_move_contacts_tests.rs"]
+mod tests;
