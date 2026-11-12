@@ -27,6 +27,10 @@ use crate::substrate::{
 use super::context::{BatchComposer, PreparedWrite, WriteProvenance};
 use super::ids;
 
+#[path = "component_instance_placement.rs"]
+mod placement;
+pub(super) use placement::placed_symbol_component_instance_birth;
+
 /// An explicit role override for one placed-symbol or placed-package ref of a
 /// component instance (parsed by the CLI from `<uuid>=<role>[:label]`).
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -94,36 +98,14 @@ pub fn build_placed_symbol_component_instance_op(
     part_id: Uuid,
 ) -> Result<Operation, EngineError> {
     let part_ref = revisioned_ref(model, part_id)?;
-    let component_instance_id = ids::derive_object_id(
-        &model.project.project_id,
-        "component-instance",
-        &[
-            "schematic".to_string(),
-            pool_symbol_id.to_string(),
-            placed_symbol_id.to_string(),
-        ],
-    );
-    let library_bindings = part_library_binding_payload(model, component_instance_id, part_id)?;
-    Ok(Operation::CreateComponentInstance {
-        component_instance_id,
-        component_instance: serde_json::json!({
-            "uuid": component_instance_id,
-            "object_revision": 0,
-            "part_ref": part_ref,
-            "library_bindings": library_bindings,
-            "placed_symbol_refs": [{
-                "object_id": placed_symbol_id,
-                "object_revision": 0
-            }],
-            "placed_package_refs": [],
-            "placed_symbol_roles": {
-                (placed_symbol_id.to_string()): {
-                    "role": "primary"
-                }
-            },
-            "placed_package_roles": {}
-        }),
-    })
+    let revision = serde_json::from_value(part_ref["object_revision"].clone())?;
+    Ok(placed_symbol_component_instance_birth(
+        model.project.project_id,
+        placed_symbol_id,
+        pool_symbol_id,
+        part_id,
+        revision,
+    ))
 }
 
 fn authored_component_instance(

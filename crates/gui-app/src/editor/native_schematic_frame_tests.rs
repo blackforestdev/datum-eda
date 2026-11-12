@@ -12,6 +12,8 @@ use std::{
 use winit::platform::wayland::EventLoopBuilderExtWayland;
 #[path = "native_schematic_frame_tests/alignment.rs"]
 mod alignment;
+#[path = "native_schematic_frame_tests/block_clipboard.rs"]
+mod block_clipboard;
 #[path = "native_schematic_frame_tests/board_transfer.rs"]
 mod board_transfer;
 #[path = "native_schematic_frame_tests/context_menu.rs"]

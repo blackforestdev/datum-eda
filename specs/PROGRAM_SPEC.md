@@ -89,6 +89,17 @@ Only selection-bounds reference is currently supported; unsupported members,
 stale guards and an unchanged result refuse without a partial edit. Distribution
 and other reference modes remain outside this bounded implementation.
 
+## Current native schematic block clipboard
+
+Native GUI Copy/Paste/Duplicate supports eligible same-project Symbol blocks
+with explicitly selected internal Wires/Junctions. Shared placement provides
+preview, cancel and one canonical edit with fresh component/object identities,
+project-wide collision-free references and retained captured library sources.
+Unsupported ownership, changed dependencies and cross-project component payloads
+refuse the whole block; Symbol Cut remains unavailable. This extends the existing
+clipboard/Proposal primitives without adding a public CLI verb. The practical
+schematic-capture goal and full editor qualification remain open.
+
 ## Scope Integrity Terms
 
 The following terms are normative for scope framing across this repository:

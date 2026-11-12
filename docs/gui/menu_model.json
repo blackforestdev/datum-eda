@@ -1398,7 +1398,7 @@
         "W": {
           "label": "Duplicate",
           "icon": "copy",
-          "not_built": "Symbol group clipboard not yet implemented"
+          "gui_local": "edit.duplicate"
         }
       },
       "secondary": {
@@ -1408,7 +1408,13 @@
           "submenu": "Align"
         }
       },
-      "overflow": [],
+      "overflow": [
+        {
+          "label": "Copy",
+          "icon": "copy",
+          "gui_local": "edit.copy"
+        }
+      ],
       "submenus": {
         "Align": [
           {

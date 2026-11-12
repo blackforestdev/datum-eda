@@ -480,7 +480,15 @@ pub(super) fn render(
                     None if authoring.wire => "Place Wire · click vertices",
                     None if authoring.child_draft.is_some() => "Click or Enter: review child sheet",
                     None if authoring.design_placement.is_some() => {
-                        "Click: place wiring · R: rotate · X/Y: flip"
+                        if authoring
+                            .design_placement
+                            .as_ref()
+                            .is_some_and(|draft| draft.bundle.symbols.is_some())
+                        {
+                            "Click: place copied block · R: rotate · X/Y: flip"
+                        } else {
+                            "Click: place wiring · R: rotate · X/Y: flip"
+                        }
                     }
                     None if authoring.gate_draft.is_some() => {
                         "Click: review Gate · R: rotate · X/Y: flip"

@@ -263,6 +263,16 @@ impl SchematicAuthoring {
             &root.join("schematic/schematic.json"),
         )?;
         for placed in source.sheets[&sheet].symbols.values() {
+            if let Some(symbol) = self
+                .design_placement
+                .as_ref()
+                .and_then(|draft| draft.symbol_definitions.get(&placed.uuid))
+            {
+                crate::schematic_scene_import::native_library::replace_body(
+                    &mut scene, placed, symbol,
+                )?;
+                continue;
+            }
             match self.placed_symbol_definitions.get(&placed.uuid) {
                 Some(Ok(Some(symbol))) => {
                     crate::schematic_scene_import::native_library::replace_body(

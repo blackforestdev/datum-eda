@@ -98,9 +98,15 @@ fn committed_feedback(intent: &NativeEditIntent, reconciled: bool) -> &'static s
     use eda_engine::api::native_write::design_clipboard_edit::DesignEditIntent;
     match &intent.schematic {
         Some(SchematicEditRequest::DesignEdit {
-            edit: DesignEditIntent::PlaceBundle { .. },
+            edit: DesignEditIntent::PlaceBundle { bundle, .. },
             ..
-        }) => "Wiring placed",
+        }) => {
+            if bundle.symbols.is_some() {
+                "Copied block placed"
+            } else {
+                "Wiring placed"
+            }
+        }
         Some(SchematicEditRequest::DesignEdit {
             edit: DesignEditIntent::TransformExisting { .. },
             ..

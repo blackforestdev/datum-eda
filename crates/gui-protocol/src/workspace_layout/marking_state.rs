@@ -86,13 +86,17 @@ impl MarkingMenuState {
         use crate::AuthoredSelectionClass as C;
         if let Some(menu) = self.selection.as_ref().filter(|m| m.schematic)
             && let Some(subject) = &menu.inspection_subject
-            && let Ok(members) =
-                crate::footprint_move_preview::native::group::symbol_members(subject)
-            && members.len() >= 2
+            && let crate::SelectionSubject::Compound(compound) = subject
+            && compound.members.len() >= 2
+            && compound.members.iter().any(|id| id.class == C::Symbol)
+            && compound.members.iter().all(|id| {
+                matches!(id.class, C::Symbol | C::Wire | C::Junction)
+                    && id.instance_path == compound.members.iter().next().unwrap().instance_path
+            })
             && (self.target_object_id.is_none()
                 || self
                     .schematic_context_target()
-                    .is_some_and(|target| members.contains(target)))
+                    .is_some_and(|target| compound.members.contains(target)))
         {
             return "schematic.multiselect";
         }
@@ -229,6 +233,25 @@ impl MarkingMenuState {
         }
         if authoring.active() || authoring.picker || authoring.creation.is_some() {
             return Err("Finish or cancel the current edit first".into());
+        }
+        if self.menu_key == "schematic.multiselect"
+            && let B::GuiLocal(key @ ("edit.copy" | "edit.duplicate")) = item.binding()
+        {
+            let crate::SelectionTarget::Native(view) = &state.selection else {
+                return Err("Select the block again".into());
+            };
+            if view.stale
+                || view.project != menu.project
+                || view.revision.0 != menu.revision
+                || menu.inspection_subject.as_ref() != Some(&view.subject)
+            {
+                return Err("Selection changed; reopen the context menu".into());
+            }
+            return crate::gui_menu_model::action_registry::design_clipboard_unavailable_reason(
+                key, state,
+            )
+            .flatten()
+            .map_or(Ok(()), |reason| Err(reason.into()));
         }
         let class = target.map(|id| id.class);
         let verb = match item.binding() {

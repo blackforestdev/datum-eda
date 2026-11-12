@@ -32,6 +32,9 @@ impl WiringTransformBasis {
                 return Err(invalid("Wiring transform contains duplicate targets"));
             }
             match target.class {
+                ClipboardClass::Symbol => {
+                    return Err(invalid("Use the Symbol Move command for existing Symbols"));
+                }
                 ClipboardClass::Wire => {
                     let wire = sheet
                         .wires

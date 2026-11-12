@@ -107,7 +107,7 @@ impl Runtime {
             .as_ref()
             .and_then(|menu| menu.selection.as_ref())
             .map(|menu| menu.pickup_world);
-        let preserve=move_object && target.as_ref().is_some_and(|target|
+        let preserve=(move_object || matches!(item.gui_local.as_deref(),Some("edit.copy" | "edit.duplicate"))) && target.as_ref().is_some_and(|target|
             matches!(&self.workspace().selection,datum_gui_protocol::SelectionTarget::Native(view)
                 if !view.stale && datum_gui_protocol::footprint_move_preview::native::group::subject_contains(&view.subject,target)));
         self.dismiss_marking_menu();

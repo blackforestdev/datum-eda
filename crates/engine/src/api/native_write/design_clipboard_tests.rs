@@ -170,7 +170,7 @@ fn design_clipboard_untrusted_shape_identity_pose_and_source_paths_refuse_withou
         mirrored: false,
     };
     let mut unsupported = serde_json::to_value(&bundle).unwrap();
-    unsupported["items"][0]["class"] = json!("symbol");
+    unsupported["items"][0]["class"] = json!("unsupported_label");
     assert!(serde_json::from_value::<DesignClipboardBundle>(unsupported).is_err());
     let mut altered = bundle.clone();
     altered.items[0].raw["uuid"] = json!(Uuid::new_v4());

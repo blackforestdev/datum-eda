@@ -12,10 +12,11 @@ use eda_engine::{
 pub struct DesignClipboardPlacement {
     pub bundle: DesignClipboardBundle,
     pub edit_seed: Uuid,
+    pub symbol_definitions: std::collections::BTreeMap<Uuid, eda_engine::pool::Symbol>,
 }
 impl DesignClipboardPlacement {
     pub fn capture(bundle: DesignClipboardBundle, edit_seed: Uuid) -> Result<Self, String> {
-        bundle
+        let items = bundle
             .placed(
                 ClipboardPlacement {
                     position: bundle.reference,
@@ -25,7 +26,23 @@ impl DesignClipboardPlacement {
                 edit_seed,
             )
             .map_err(|error| error.to_string())?;
-        Ok(Self { bundle, edit_seed })
+        let mut symbol_definitions = std::collections::BTreeMap::new();
+        if let Some(data) = &bundle.symbols {
+            for (old, placed) in bundle.items.iter().zip(&items) {
+                if let Some(source) = data.sources.get(&old.id) {
+                    symbol_definitions.insert(
+                        placed.id,
+                        serde_json::from_value(source.definition.clone())
+                            .map_err(|e| e.to_string())?,
+                    );
+                }
+            }
+        }
+        Ok(Self {
+            bundle,
+            edit_seed,
+            symbol_definitions,
+        })
     }
 
     pub fn request(

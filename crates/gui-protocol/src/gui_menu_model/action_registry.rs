@@ -237,8 +237,16 @@ pub fn design_clipboard_unavailable_reason(
         }
         if key != "edit.paste" {
             let crate::SelectionTarget::Native(view) = &state.selection else {
-                return Some("Select wires or junctions first");
+                return Some("Select Symbols, wires or junctions first");
             };
+            if key == "edit.cut"
+                && view
+                    .members
+                    .iter()
+                    .any(|m| m.class == crate::AuthoredSelectionClass::Symbol)
+            {
+                return Some("Symbol Cut is not supported; use Copy or Duplicate");
+            }
             if view.stale
                 || view.members.is_empty()
                 || view.members.iter().any(|id| {
@@ -246,10 +254,11 @@ pub fn design_clipboard_unavailable_reason(
                         id.class,
                         crate::AuthoredSelectionClass::Wire
                             | crate::AuthoredSelectionClass::Junction
+                            | crate::AuthoredSelectionClass::Symbol
                     )
                 })
             {
-                return Some("Select current wires or junctions");
+                return Some("Select current Symbols, wires or junctions");
             }
         }
         None

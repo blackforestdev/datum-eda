@@ -23,6 +23,7 @@ fn bundle() -> DesignClipboardBundle {
         source_sheet: id(91),
         instance_path: vec![],
         reference: Point::zero(),
+        symbols: None,
         items: vec![
             ClipboardItem {
                 class: ClipboardClass::Wire,

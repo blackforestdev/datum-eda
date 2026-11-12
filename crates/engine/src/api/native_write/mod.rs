@@ -32,6 +32,7 @@ pub mod design_clipboard_edit;
 mod design_clipboard_receipt;
 #[cfg(test)]
 mod design_clipboard_receipt_tests;
+pub mod design_clipboard_symbols;
 #[cfg(test)]
 mod design_clipboard_tests;
 pub mod durability;

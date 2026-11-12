@@ -56,11 +56,10 @@ impl Runtime {
                 "Copy requires one schematic occurrence"
             );
             let class = match member.class {
+                Class::Symbol => ClipboardClass::Symbol,
                 Class::Wire => ClipboardClass::Wire,
                 Class::Junction => ClipboardClass::Junction,
-                _ => anyhow::bail!(
-                    "Design clipboard currently supports selected wires and junctions"
-                ),
+                _ => anyhow::bail!("Select native Symbols, wires or junctions to copy"),
             };
             targets.push(ClipboardTarget {
                 class,
@@ -79,13 +78,20 @@ impl Runtime {
             .context("Schematic source unavailable")?;
         let reference = targets
             .iter()
-            .find_map(|t| sheet.wires.get(&t.id).map(|w| w.from))
+            .filter_map(|t| sheet.symbols.get(&t.id))
+            .min_by_key(|s| (s.position.y, s.position.x, s.uuid))
+            .map(|s| s.position)
+            .or_else(|| {
+                targets
+                    .iter()
+                    .find_map(|t| sheet.wires.get(&t.id).map(|w| w.from))
+            })
             .or_else(|| {
                 targets
                     .iter()
                     .find_map(|t| sheet.junctions.get(&t.id).map(|j| j.position))
             })
-            .context("Select wires or junctions to copy")?;
+            .context("Select Symbols, wires or junctions to copy")?;
         Ok(DesignClipboardBundle::capture(
             &native.model,
             basis.source,
@@ -100,11 +106,18 @@ impl Runtime {
         }
         let result = (|| -> Result<()> {
             let bundle = self.capture_design_clipboard()?;
+            anyhow::ensure!(
+                !cut || bundle.symbols.is_none(),
+                "Symbol Cut is not supported; use Copy or Duplicate"
+            );
             self.write_clipboard_text(&serde_json::to_string(&bundle)?)?;
             if cut {
                 self.delete_selected_schematic();
             } else {
-                self.log_console_echo(ConsoleFeedbackSource::Tool, "Copied selected wiring");
+                self.log_console_echo(
+                    ConsoleFeedbackSource::Tool,
+                    "Copied selected design objects",
+                );
             }
             Ok(())
         })();
@@ -140,7 +153,7 @@ impl Runtime {
         }
         true
     }
-    fn begin_design_placement(&mut self, bundle: DesignClipboardBundle) -> Result<()> {
+    fn begin_design_placement(&mut self, mut bundle: DesignClipboardBundle) -> Result<()> {
         anyhow::ensure!(
             !self.native_edit.pending()
                 && self.native_edit.preview.is_none()
@@ -149,6 +162,19 @@ impl Runtime {
                 && !self.workspace().schematic_authoring.picker,
             "Finish or cancel the current gesture first"
         );
+        if bundle.symbols.is_some() {
+            anyhow::ensure!(
+                self.ensure_selection_authority()?,
+                "Open a native Project first"
+            );
+            bundle.prepare_placement(
+                &self
+                    .native_selection
+                    .as_ref()
+                    .context("Clipboard source unavailable")?
+                    .model,
+            )?;
+        }
         let placement = DesignClipboardPlacement::capture(bundle, Uuid::new_v4())
             .map_err(anyhow::Error::msg)?;
         let cursor = self.last_cursor_pos.and_then(|screen| {
@@ -179,7 +205,7 @@ impl Runtime {
         }
         self.log_console_echo(
             ConsoleFeedbackSource::Tool,
-            "Place wiring: click to place; R rotates, X/Y mirror; Escape cancels",
+            "Place copied objects: click to place; R rotates, X/Y mirror; Escape cancels",
         );
         self.invalidate_frame();
         Ok(())

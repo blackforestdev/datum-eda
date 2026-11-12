@@ -2571,3 +2571,30 @@ Focused native source/history tests cover Symbol births, later writes, units
 updates, cold loaded history, Undo/Redo and byte-exact duplicate-init refusal.
 These outcomes support the active practical-capture goal; they do not establish
 its completion or full schematic qualification.
+
+### Native Symbol block clipboard — current implementation
+
+`DesignClipboardBundle` retains the existing Wire/Junction representation and
+adds optional typed captured Symbol sources. `prepare_placement` authenticates
+those same-project source objects and refreshes project-wide reference
+reservations without replacing the captured definitions or component choices.
+The shared annotation prefix/lowest-free discipline allocates new references.
+Common checked cardinal pose transforms retain raw Symbol/field payloads while
+remapping new physical Symbol, pin and field identities and typed owned refs.
+
+The existing design-edit builder adds ordinary schematic-only component births
+through the current-model placement contributor. Its shared pure CI constructor
+also defines immutable receipt comparison; a recorded Part revision is never
+new-placement admission. Current dependencies, source membership, Part/Gate
+choices and complete target scope are revalidated before application. The kernel
+computes electrical membership and lineage from the new graph; clipboard data
+supplies no old Net identity or PCB ownership. Eligible ordinary single-gate
+owners have one primary role without a custom label or package role. Multi-gate,
+board-bound, local override, foreign, unavailable or changed sources refuse as a
+whole. Symbol Cut and existing-Symbol transforms are not enabled through this
+wiring-edit intent; normal Symbol Move remains its existing shared path.
+
+The ordinary App proof covers two selected resistor Symbols and their internal
+Wire, rectangle/lasso acquisition, Copy/Paste and presented contextual Duplicate,
+visible field preservation, preview/cancel, atomic history and Save/restart.
+It is bounded practical-capture evidence, not whole-editor or release acceptance.

@@ -128,6 +128,11 @@ pub(super) fn build_with_id(
             Ok(prepared)
         }
         DesignEditIntent::Cut { targets } => {
+            if targets.iter().any(|t| t.class == ClipboardClass::Symbol) {
+                return Err(invalid(
+                    "Symbol Cut is not supported; use Copy or Duplicate",
+                ));
+            }
             let captured =
                 DesignClipboardBundle::capture(context.model, sheet, path, targets, Point::zero())?;
             if captured.items.iter().any(|item| {
@@ -137,14 +142,19 @@ pub(super) fn build_with_id(
             }
             let targets = targets
                 .iter()
-                .map(|target| DeleteTarget {
-                    id: target.id,
-                    class: match target.class {
-                        ClipboardClass::Wire => DeleteClass::Wire,
-                        ClipboardClass::Junction => DeleteClass::Junction,
-                    },
+                .map(|target| {
+                    Ok(DeleteTarget {
+                        id: target.id,
+                        class: match target.class {
+                            ClipboardClass::Wire => DeleteClass::Wire,
+                            ClipboardClass::Junction => DeleteClass::Junction,
+                            ClipboardClass::Symbol => {
+                                return Err(invalid("Symbol Cut is not supported"));
+                            }
+                        },
+                    })
                 })
-                .collect::<Vec<_>>();
+                .collect::<Result<Vec<_>, EngineError>>()?;
             // Exact raw inverse, Bus Entry dependencies and complete selection
             // admission are owned by the same deletion builder as ordinary Delete.
             let mut prepared =
@@ -170,21 +180,29 @@ pub(super) fn build_with_id(
                 .sheets
                 .get(&sheet)
                 .ok_or_else(|| invalid("Paste sheet unavailable"))?;
-            let (operations, ids) = place_operations(
+            let (mut operations, mut ids) = place_operations(
                 target,
                 bundle,
                 placement,
                 edit_seed,
                 ClipboardContactPolicy::DrawWireEndpoints,
             )?;
+            let items = bundle.placed(*placement, *edit_seed)?;
+            let births = super::design_clipboard_symbols::births(context.model, bundle, &items)?;
+            for birth in &births {
+                ids.extend(super::design_clipboard_symbols::birth_ids(birth)?);
+            }
+            operations.extend(births);
             validate_fresh_ids(context, &ids)?;
+            let primary = items
+                .iter()
+                .find(|i| i.class == ClipboardClass::Symbol)
+                .map(|item| item.id)
+                .or_else(|| ids.iter().next().copied())
+                .ok_or_else(|| invalid("Paste contains no supported objects"))?;
             let mut prepared = BatchComposer::compose(context.model, provenance)
                 .push_ops(operations)
-                .primary_object(
-                    *ids.iter()
-                        .next()
-                        .ok_or_else(|| invalid("Paste contains no supported objects"))?,
-                )
+                .primary_object(primary)
                 .finish()?;
             if let Some(id) = batch_id {
                 prepared.batch.batch_id = id;
@@ -224,6 +242,18 @@ pub(super) fn place_operations(
     let mut operations = Vec::new();
     for ClipboardItem { class, id, raw } in items {
         match class {
+            ClipboardClass::Symbol => {
+                for owned in super::design_clipboard_symbols::symbol_ids(&raw)? {
+                    if owned != id && !ids.insert(owned) {
+                        return Err(invalid("Pasted Symbol identities collide"));
+                    }
+                }
+                operations.push(Operation::CreateSchematicSymbol {
+                    sheet_id: sheet,
+                    symbol_id: id,
+                    symbol: raw,
+                });
+            }
             ClipboardClass::Wire => {
                 let wire: SchematicWire = serde_json::from_value(raw.clone())?;
                 if wire.from == wire.to || !geometry.insert(edge_key(wire.from, wire.to)) {
@@ -297,6 +327,13 @@ pub fn preview_placement(
     let mut preview = target.clone();
     for op in operations {
         match op {
+            Operation::CreateSchematicSymbol {
+                symbol_id, symbol, ..
+            } => {
+                preview
+                    .symbols
+                    .insert(symbol_id, serde_json::from_value(symbol)?);
+            }
             Operation::CreateSchematicWire { wire_id, wire, .. } => {
                 preview.wires.insert(wire_id, serde_json::from_value(wire)?);
             }
@@ -380,6 +417,9 @@ pub(super) fn transform_operations(
         }
         let mut next = item.raw.clone();
         match item.class {
+            ClipboardClass::Symbol => {
+                return Err(invalid("Use Symbol Move for existing Symbol transforms"));
+            }
             ClipboardClass::Wire => {
                 let old: SchematicWire = serde_json::from_value(item.raw.clone())?;
                 if target.wires.get(&item.id) != Some(&old) {

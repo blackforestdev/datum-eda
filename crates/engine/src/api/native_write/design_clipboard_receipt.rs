@@ -172,14 +172,21 @@ fn recorded(proposal: &Proposal) -> Result<Receipt, EngineError> {
             if receipt.cut_source.is_some() || receipt.transform_source.is_some() {
                 return Err(invalid("Paste receipt contains existing-source authority"));
             }
-            place_operations(
+            let mut expected = place_operations(
                 &receipt.before,
                 bundle,
                 placement,
                 edit_seed,
                 *contact_policy,
             )?
-            .0
+            .0;
+            let items = bundle.placed(*placement, *edit_seed)?;
+            expected.extend(super::design_clipboard_symbols::expected_births(
+                proposal.project_id,
+                bundle,
+                &items,
+            ));
+            expected
         }
         DesignEditIntent::Cut { targets } => {
             if receipt.transform_source.is_some() {
@@ -216,6 +223,7 @@ fn recorded(proposal: &Proposal) -> Result<Receipt, EngineError> {
                     return Err(invalid("Cut receipt contains a locked object"));
                 }
                 match item.class {
+                    ClipboardClass::Symbol => return Err(invalid("Symbol Cut is not supported")),
                     ClipboardClass::Wire => {
                         let wire: SchematicWire = serde_json::from_value(item.raw.clone())?;
                         if receipt.before.wires.get(&item.id) != Some(&wire) {
@@ -270,7 +278,9 @@ fn recorded(proposal: &Proposal) -> Result<Receipt, EngineError> {
             Operation::GuardObjectRevision { .. } => {
                 guards.push(op.clone());
             }
-            Operation::CreateSchematicWire { .. }
+            Operation::CreateSchematicSymbol { .. }
+            | Operation::CreateComponentInstance { .. }
+            | Operation::CreateSchematicWire { .. }
             | Operation::DeleteSchematicWire { .. }
             | Operation::DeleteSchematicJunction { .. } => known.push(op.clone()),
             Operation::PlaceSchematicMarker {
@@ -378,8 +388,24 @@ pub fn validate_current(
                 &receipt.edit,
             )?;
         }
-        DesignEditIntent::PlaceBundle { .. } => {
-            let ids = proposal
+        DesignEditIntent::PlaceBundle {
+            bundle,
+            placement,
+            edit_seed,
+            ..
+        } => {
+            let items = bundle.placed(*placement, *edit_seed)?;
+            let actual = super::design_clipboard_symbols::births(context.model, bundle, &items)?;
+            if actual
+                != super::design_clipboard_symbols::expected_births(
+                    proposal.project_id,
+                    bundle,
+                    &items,
+                )
+            {
+                return Err(invalid("Reviewed new component placement source changed"));
+            }
+            let mut ids: BTreeSet<_> = proposal
                 .batch
                 .operations
                 .iter()
@@ -389,6 +415,12 @@ pub fn validate_current(
                     _ => None,
                 })
                 .collect();
+            for item in items.iter().filter(|i| i.class == ClipboardClass::Symbol) {
+                ids.extend(super::design_clipboard_symbols::symbol_ids(&item.raw)?);
+            }
+            for birth in actual {
+                ids.extend(super::design_clipboard_symbols::birth_ids(&birth)?);
+            }
             validate_created_ids(context, proposal, &ids)?;
         }
     }

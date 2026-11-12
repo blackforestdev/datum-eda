@@ -20,18 +20,21 @@ use uuid::Uuid;
 pub enum ClipboardClass {
     Wire,
     Junction,
+    Symbol,
 }
 impl ClipboardClass {
     pub(super) fn source_class(self) -> &'static str {
         match self {
             Self::Wire => "wires",
             Self::Junction => "junctions",
+            Self::Symbol => "symbols",
         }
     }
     fn token(self) -> &'static str {
         match self {
             Self::Wire => "wire",
             Self::Junction => "junction",
+            Self::Symbol => "symbol",
         }
     }
 }
@@ -61,6 +64,8 @@ pub struct DesignClipboardBundle {
     pub instance_path: Vec<Uuid>,
     pub reference: Point,
     pub items: Vec<ClipboardItem>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub symbols: Option<super::design_clipboard_symbols::SymbolClipboardSources>,
 }
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -103,6 +108,12 @@ impl DesignClipboardBundle {
                 .get(&sheet)
                 .ok_or_else(|| invalid("Clipboard sheet unavailable"))?;
             let raw = match target.class {
+                ClipboardClass::Symbol => member_payload(
+                    &raw,
+                    "symbols",
+                    target.id,
+                    &source_sheet.symbols[&target.id],
+                )?,
                 ClipboardClass::Wire => {
                     member_payload(&raw, "wires", target.id, &source_sheet.wires[&target.id])?
                 }
@@ -120,6 +131,7 @@ impl DesignClipboardBundle {
             });
         }
         items.sort_by_key(|item| (item.class, item.id));
+        let symbols = super::design_clipboard_symbols::capture(model, &items)?;
         let bundle = Self {
             format: "datum.design-clipboard".into(),
             version: 1,
@@ -129,6 +141,7 @@ impl DesignClipboardBundle {
             instance_path: path.to_vec(),
             reference,
             items,
+            symbols,
         };
         bundle.validate()?;
         Ok(bundle)
@@ -159,6 +172,13 @@ impl DesignClipboardBundle {
                 return Err(invalid("Clipboard lock metadata must be boolean"));
             }
             match item.class {
+                ClipboardClass::Symbol => {
+                    let symbol: crate::schematic::PlacedSymbol =
+                        serde_json::from_value(item.raw.clone())?;
+                    if symbol.uuid != item.id {
+                        return Err(invalid("Clipboard Symbol identity is invalid"));
+                    }
+                }
                 ClipboardClass::Wire => {
                     let wire: SchematicWire = serde_json::from_value(item.raw.clone())?;
                     if wire.uuid != item.id || wire.from == wire.to {
@@ -173,7 +193,12 @@ impl DesignClipboardBundle {
                 }
             }
         }
+        super::design_clipboard_symbols::validate(self)?;
         Ok(())
+    }
+    /// Refresh target reservations without changing captured component sources.
+    pub fn prepare_placement(&mut self, model: &DesignModel) -> Result<(), EngineError> {
+        super::design_clipboard_symbols::prepare(model, self)
     }
     /// The same checked mirror/cardinal transform used by native Symbol edits.
     /// A fresh physical map is stable for one gesture. Unknown metadata remains
@@ -190,6 +215,7 @@ impl DesignClipboardBundle {
         let mut result = Vec::new();
         let mut ids = BTreeSet::new();
         let mut junction_positions = BTreeSet::new();
+        let references = super::design_clipboard_symbols::references(self)?;
         for item in &self.items {
             let id = Uuid::new_v5(
                 &seed,
@@ -201,6 +227,16 @@ impl DesignClipboardBundle {
             let mut raw = item.raw.clone();
             raw["uuid"] = serde_json::to_value(id)?;
             match item.class {
+                ClipboardClass::Symbol => {
+                    raw = super::design_clipboard_symbols::placed(
+                        &raw,
+                        id,
+                        seed,
+                        self.reference,
+                        placement,
+                        &references[&item.id],
+                    )?;
+                }
                 ClipboardClass::Wire => {
                     let wire: SchematicWire = serde_json::from_value(item.raw.clone())?;
                     set_point(

@@ -251,7 +251,7 @@ contacts remain guarded. Raw extensions, physical UUIDs and exact history invers
 must survive. Port Move retains its existing position-only `SetSchematicPort`
 behavior and explicit membership; No-connect remains pin-owned.
 
-Shared design clipboard support currently covers explicit Wire/Junction objects.
+The earlier wire-editing clipboard increment covers explicit Wire/Junction objects.
 Copy is read-only; Cut uses reviewed canonical deletion. After the explicit
 placement click, manual Paste and Duplicate assign fresh physical IDs through
 one guarded direct batch. Common R/X/Y placement pose uses
@@ -273,8 +273,39 @@ arrows displace the preview by the displayed exact current-grid increment; the
 ordinary apply click commits it. Text, navigation, menu and pan owners retain
 their inputs. Qualified selected wire grips distinguish physical ends, contact
 vertices and existing Junctions, with the same captured handle used for pickup.
-Component clipboard support, obstacle routing and full editor qualification remain
-outside this increment under `dat-schematic-wire-endpoint-edit-4368`.
+Component clipboard support, obstacle routing and full editor qualification were
+outside that increment under `dat-schematic-wire-endpoint-edit-4368`.
+The current practical-capture extension adds native same-project Symbol blocks
+with explicitly selected internal Wires/Junctions to the shared Copy/Paste and
+Duplicate path. Rectangle and lasso acquire the complete mixed block; Copy and
+contextual Duplicate preserve that whole scope. Preview uses the captured
+library body, a retained gesture seed and checked common R/X/Y pose. Fresh
+Symbol/pin/field/component/binding identities and project-wide references are
+allocated without copying old electrical or PCB ownership. Positioned custom
+fields retain their values, visibility and relative geometry. The normal new
+placement authority must still recreate the captured Part/Gate/Unit/Symbol
+choices exactly; it never silently substitutes a newer source or clones an old
+CI binding against current admission. Multi-gate/board-bound owners, nonstandard
+owner roles or labels, local overrides, cross-project component payloads and
+changed/unavailable dependencies refuse the entire block. Symbol Cut remains
+unavailable; Wire/Junction placement and Cut retain their existing canonical
+writers/contact rules, and ordinary Symbol Move retains its shared path.
+
+The isolated ordinary-App exercise selected a two-resistor series block through
+both rectangle and lasso, invoked production Copy/Paste shortcut actions and the
+presented Duplicate command, cancelled without canonical writes, then accepted
+Paste and Duplicate as separate atomic design entries. Undo/Redo and Save plus
+an actual App restart retained six Symbols, three Wires, six schematic-only CIs
+and three independently identified visible Tolerance fields. The retained A run
+passed 18 stages in 18.51 seconds; the current wording-corrected B run passed the
+same 18 stages in 9.34 seconds. Programmatic pointer input and shortcut-action
+dispatch are not physical keyboard/HUMAN evidence; Cancel/history/Save used
+existing Runtime commands. The preview now says “place copied block” and success
+says “Copied block placed”; Wire-only wording is unchanged. All owned GUI,
+daemon, clipboard and compositor processes stopped and runtime storage was
+removed with no cleanup errors. This does not complete the larger practical
+capture goal, representative-circuit ERC composition or full qualification.
+
 An interior scalar Label can slide along its existing wire while all incident
 wires stay fixed and the complete physical connectivity partition is preserved.
 Symbol-pin interior-contact refusal and existing endpoint Label/Power attachment
