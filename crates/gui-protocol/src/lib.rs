@@ -2568,21 +2568,16 @@ fn scene_layers_from_native_stackup_value(board: &Value) -> Option<Vec<SceneLaye
             .get("layer_type")
             .and_then(|value| value.as_str())
             .map(native_stackup_layer_kind)
-            .unwrap_or_else(|| inferred_scene_layer_kind(&name))
-            .to_string();
+            .unwrap_or_else(|| inferred_scene_layer_kind(&name));
         scene_layers.push(SceneLayer {
             layer_id: layer_id(id),
-            name: name.clone(),
-            kind,
+            visible_by_default: kind == "copper" || inferred_scene_layer_visible_by_default(&name),
+            name,
+            kind: kind.to_string(),
             render_order: render_order as u32,
-            visible_by_default: inferred_scene_layer_visible_by_default(&name),
         });
     }
-    if scene_layers.is_empty() {
-        None
-    } else {
-        Some(scene_layers)
-    }
+    (!scene_layers.is_empty()).then_some(scene_layers)
 }
 
 fn native_stackup_layer_kind(layer_type: &str) -> &'static str {
@@ -3739,7 +3734,7 @@ mod tests {
         let board = json!({
             "stackup": {
                 "layers": [
-                    { "id": 0, "name": "F.Cu", "layer_type": "Copper", "thickness_nm": 0 },
+                    { "id": 1, "name": "Top Copper", "layer_type": "Copper", "thickness_nm": 0 },
                     { "id": 2, "name": "B.Cu", "layer_type": "Copper", "thickness_nm": 0 },
                     { "id": 13, "name": "F.Paste", "layer_type": "Paste", "thickness_nm": 0 },
                     { "id": 25, "name": "Edge.Cuts", "layer_type": "Mechanical", "thickness_nm": 0 }
@@ -3747,7 +3742,7 @@ mod tests {
             }
         });
         let layers = scene_layers_from_native_stackup_value(&board).expect("scene layers");
-
+        assert!(layers[0].visible_by_default);
         assert!(layers.iter().any(|layer| {
             layer.layer_id == "L2"
                 && layer.name == "B.Cu"

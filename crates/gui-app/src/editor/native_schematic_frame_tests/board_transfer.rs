@@ -373,10 +373,14 @@ impl TransferWorkflow {
                     .get("L1")
                     .copied()
                     .unwrap_or(layer.visible_by_default);
-                if !visible {
-                    self.host
-                        .control(events, HitTarget::ToggleLayer("L1".into()));
-                }
+                assert!(
+                    layer.visible_by_default,
+                    "Native copper must default visible"
+                );
+                assert!(
+                    visible,
+                    "Cold native copper must be visible without a layer toggle"
+                );
             }
             17 => {
                 assert!(
