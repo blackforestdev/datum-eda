@@ -30,6 +30,7 @@ from project_task_details import (
     validate_completion,
 )
 from project_feature_delivery import delivery_lines, validate_feature_delivery
+from project_delivery_gaps import validate_delivery_gaps, gap_view, gap_lines
 from history_commit_locator import commit_exists
 from project_claim_scope import claim_scope_failures
 from project_cancellation import validate_cancellation, validate_cancellation_history
@@ -377,6 +378,7 @@ def validate(root: Path, now: datetime | None = None, *, delivery_checks: bool =
                 failures.append(f"{label}: claimed head does not resolve: {claim['head']}")
         if state == "in_progress" and isinstance(claim, dict):
             active_claims.append((str(label), claim))
+    failures.extend(validate_delivery_gaps(manifest, issues))
     if delivery_checks:
         from workflow_delivery_selector import selector_failures
         failures.extend(selector_failures(root, manifest))
@@ -482,9 +484,10 @@ def emit(payload: dict[str, Any], as_json: bool, human: str, error: bool = False
         print(human, file=sys.stderr if error else sys.stdout)
 
 
-def next_view(item: dict[str, Any], issue: dict[str, Any], appointments: dict | None = None) -> dict[str, Any]:
+def next_view(item: dict[str, Any], issue: dict[str, Any], appointments: dict | None = None, issues: dict | None = None) -> dict[str, Any]:
     """Join roadmap selection with the operational facts agents must report."""
     view = dict(item)
+    view["delivery_gaps"] = gap_view(item, issues or {})
     view["tracker_status"] = issue.get("status")
     view["assignee"] = issue.get("assignee")
     claim_state, claim_detail = resolve_claim_state(item)
@@ -522,6 +525,7 @@ def render_next(view: dict[str, Any]) -> str:
             lines.append(f"  Recommended: {request['recommended_response']}")
     lines.append(view["summary"])
     lines.extend(delivery_lines(view))
+    lines.extend(gap_lines(view, full=True))
     return "\n".join(lines)
 
 
@@ -562,7 +566,7 @@ def main(argv: list[str] | None = None) -> int:
                 view = idle_view(state["manifest"])
                 emit({"ok": True, "next": None, **view}, as_json, render_idle(view) if args.full else render_brief(view))
                 return 0
-            view = next_view(item, state["issues"][item["issue_id"]], state["manifest"].get("management_appointments", {}))
+            view = next_view(item, state["issues"][item["issue_id"]], state["manifest"].get("management_appointments", {}), state["issues"])
             emit({"ok": True, "next": view}, as_json, render_next(view) if args.full else render_brief(view))
         else:
             item = state["next"]
@@ -583,7 +587,7 @@ def main(argv: list[str] | None = None) -> int:
                 emit({"ok": True, "details": None, **view}, as_json, render_idle(view) if args.full else render_brief(view))
                 return 0
             if "completion" not in item:
-                view = next_view(item, state["issues"][item["issue_id"]], state["manifest"].get("management_appointments", {}))
+                view = next_view(item, state["issues"][item["issue_id"]], state["manifest"].get("management_appointments", {}), state["issues"])
                 view["completion"] = None
                 human = "\n".join([
                     PRESENTATION_GUIDANCE,
@@ -591,12 +595,13 @@ def main(argv: list[str] | None = None) -> int:
                     f"State: {view['state']}; authorization: {view['authorization']}",
                     f"Tracker: {view['tracker_status']}; assignee: {view['assignee'] or 'unassigned'}; live claim: {view['claim_detail']}",
                     "Work start: " + view["work_start"], view["summary"],
-                    *authority_lines(view), *delivery_lines(view),
+                    *authority_lines(view), *delivery_lines(view), *gap_lines(view, full=True),
                     "Completion plan: none recorded; this query does not authorize work.",
                 ])
                 emit({"ok": True, "details": view}, as_json, human if args.full else render_brief(view, True))
                 return 0
             view = completion_view(item, state["issues"][item["issue_id"]], state["manifest"].get("management_appointments", {}))
+            view["delivery_gaps"] = gap_view(item, state["issues"])
             emit({"ok": True, "details": view}, as_json, render_completion(view) if args.full else render_brief(view, True))
         return 0
     if args.command in {"render", "check-render"}:

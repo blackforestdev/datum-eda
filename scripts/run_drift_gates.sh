@@ -8,6 +8,8 @@ cd "$repo_root"
 case "${1:---focused}" in
   --focused)
     if [[ $# -gt 1 ]]; then echo "usage: $0 [--focused|--full]" >&2; exit 2; fi
+    python3 scripts/test_project_delivery_gaps.py
+    python3 scripts/check_project_delivery_transitions.py --base "${SOURCE_HEALTH_BASE_REF:-HEAD^}"
     # Routine structural checks. Full qualification requires explicit --full.
     for gate in check_cargo_resource_policy check_progress_coverage \
         check_spec_parity check_spec_governance check_evidence_traceability \
@@ -27,6 +29,8 @@ case "${1:---focused}" in
     ;;
   --full)
     if [[ $# -gt 1 ]]; then echo "usage: $0 [--focused|--full]" >&2; exit 2; fi
+    python3 scripts/test_project_delivery_gaps.py
+    python3 scripts/check_project_delivery_transitions.py --base "${SOURCE_HEALTH_BASE_REF:-HEAD^}"
     ;;
   *) echo "usage: $0 [--focused|--full]" >&2; exit 2 ;;
 esac

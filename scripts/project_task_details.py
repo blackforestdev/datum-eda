@@ -10,6 +10,7 @@ from typing import Any
 
 from history_commit_locator import commit_exists
 from project_feature_delivery import delivery_lines
+from project_delivery_gaps import gap_lines
 from project_work_authority import decision_view, work_start, authority_lines, PRESENTATION_GUIDANCE
 
 
@@ -541,6 +542,7 @@ def render_completion(view: dict[str, Any]) -> str:
     lines.append(view["summary"])
     lines.extend(authority_lines(view))
     lines.extend(delivery_lines(view))
+    lines.extend(gap_lines(view, full=True))
     if view["decision_input_required"]:
         owner_input = view["owner_input"]
         lines.append(f"Owner response format: {owner_input['response_format']}")

@@ -213,6 +213,18 @@ tasks to consume review waiting time. Explicit owner-requested maintenance or
 research keeps its scope. One maintained task record preserves actual independent
 findings and disposition; routine substeps do not require separate receipt sets.
 
+Required delivery corrections carry `delivery:required` on their existing Beads
+issues, retain finite closure checklists, and are hard prerequisites of named
+nonterminal Frontier items. Quarantined work carries its corrections at re-entry;
+future-capability questions require bounded scope dispositions, not unapproved
+implementation. Status queries expose unresolved corrections. Commit and CI
+checks reject orphaned/unmarked corrections, replacement of unresolved criteria,
+detached open prerequisites, premature closure, and new delivery availability or
+admission over unresolved blockers. Commit checks use the staged snapshot, so
+unstaged resolutions cannot supply proof. Historical acceptance and independently
+granted routine fixes remain intact. These checks enforce recorded dependencies
+and criteria; they do not prove runtime behavior, review truth, or authority.
+
 ## Work-Item Workflow
 
 ### Routine implementation and fixes

@@ -285,6 +285,7 @@ def render_brief(view: dict, details: bool = False) -> str:
         return ("Next task: none; explicit idle.\n" + view["work_start"]
                 + "\nReason: " + short(view["selection"]["reason"])
                 + "\nFull record: python3 scripts/project_status.py next --full")
+    from project_delivery_gaps import gap_lines
     completion = view.get("completion") or view
     steps = completion.get("steps", [])
     step_id = completion.get("canonical_next_step_id")
@@ -302,6 +303,7 @@ def render_brief(view: dict, details: bool = False) -> str:
     ]
     if view.get("hold"):
         lines.append("Hold: " + short(view["hold"]["reason"]))
+    lines.extend(gap_lines(view))
     if view.get("decision_input_required"):
         boundary = "Owner" if view["owner_input_required"] else "Delegated"
         lines.append(f"{boundary} boundary: INPUT REQUIRED from {view['decision_maker']}; "
