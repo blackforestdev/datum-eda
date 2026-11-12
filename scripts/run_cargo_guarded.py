@@ -116,29 +116,56 @@ def snapshot_resources(target_dir: Path) -> ResourceSnapshot:
     )
 
 
-def retained_cache_paths(root: Path, target_dir: Path) -> list[Path]:
+def _runnable_copies(archive: Path) -> list[Path]:
+    if not archive.exists():
+        return []
+    if archive.is_symlink():
+        raise ResourcePolicyError(f"runnable-copy root is a symlink: {archive}")
+    result = []
+    def walk_error(error):
+        raise error
+    for parent, directories, files in os.walk(archive, followlinks=False, onerror=walk_error):
+        directories[:] = [name for name in directories
+                          if not (Path(parent) == archive and re.fullmatch(r"run(?:[0-9]+|[a-z0-9]+[0-9]{8}[a-z]?)", name))
+                          and not (Path(parent) / name).is_symlink()]
+        for name in files:
+            path = Path(parent) / name
+            metadata = path.lstat()
+            if not stat.S_ISREG(metadata.st_mode) or not metadata.st_mode & 0o111:
+                continue
+            with path.open("rb") as source:
+                header = source.read(18)
+            if (len(header) == 18 and header[:4] == b"\x7fELF" and header[5] in (1, 2)
+                    and int.from_bytes(header[16:18], "little" if header[5] == 1 else "big") in (2, 3)):
+                result.append(path)
+    return result
+
+
+def retained_cache_paths(root: Path, target_dir: Path, *, legacy_state: Path | None = None) -> list[Path]:
     """Count shared, alternate and archived build trees without double-counting."""
     candidates = [root / "target", target_dir]
     candidates.extend((root / ".datum").glob("agent-cargo-archive-*"))
+    # Git's own registry binds these to this repository; sibling names do not.
+    if (root / ".git").exists() or root.resolve() == ROOT.resolve():
+        worktrees = subprocess.run(["git", "-C", str(root), "worktree", "list", "--porcelain", "-z"],
+                                  check=True, capture_output=True).stdout
+        for item in worktrees.split(b"\0"):
+            if item.startswith(b"worktree "):
+                target = Path(os.fsdecode(item[len(b"worktree "):])) / "target"
+                if target.is_symlink() or target.exists() and not target.is_dir():
+                    raise ResourcePolicyError(f"registered worktree target has unknown type: {target}")
+                candidates.append(target)
+    # This is the established legacy Datum QA namespace, not a home-directory
+    # search. Other roots used by hermetic callers do not inspect the real HOME.
+    if legacy_state is None and root.resolve() == ROOT.resolve():
+        legacy_state = Path.home() / ".local/state"
+    if legacy_state is not None:
+        for archive in legacy_state.glob("datum-qa-*"):
+            candidates.extend(_runnable_copies(archive))
     # Private runnable copies are build output too. Evidence beside them is not.
     for name in ("codex-delivery", "schematic-interaction-qa"):
         archive = root / ".datum/scratch" / name
-        if archive.is_symlink():
-            continue
-        for parent, directories, files in os.walk(archive, followlinks=False):
-            directories[:] = [name for name in directories
-                              if not (Path(parent) == archive and re.fullmatch(r"run(?:[0-9]+|[a-z0-9]+[0-9]{8}[a-z]?)", name))
-                              and not (Path(parent) / name).is_symlink()]
-            for name in files:
-                path = Path(parent) / name
-                metadata = path.lstat()
-                if not stat.S_ISREG(metadata.st_mode) or not metadata.st_mode & 0o111:
-                    continue
-                with path.open("rb") as source:
-                    header = source.read(18)
-                if (len(header) == 18 and header[:4] == b"\x7fELF" and header[5] in (1, 2)
-                        and int.from_bytes(header[16:18], "little" if header[5] == 1 else "big") in (2, 3)):
-                    candidates.append(path)
+        candidates.extend(_runnable_copies(archive))
     paths: list[Path] = []
     for path in sorted({p.resolve() for p in candidates}, key=lambda p: len(p.parts)):
         if not any(path == parent or parent in path.parents for parent in paths):
@@ -146,8 +173,8 @@ def retained_cache_paths(root: Path, target_dir: Path) -> list[Path]:
     return paths
 
 
-def retained_cache_size(root: Path, target_dir: Path) -> int:
-    paths = [path for path in retained_cache_paths(root, target_dir) if path.exists()]
+def retained_cache_size(root: Path, target_dir: Path, *, legacy_state: Path | None = None) -> int:
+    paths = [path for path in retained_cache_paths(root, target_dir, legacy_state=legacy_state) if path.exists()]
     if not paths:
         return 0
     # One du invocation deduplicates hardlinks across targets and private copies.
@@ -170,6 +197,17 @@ def evaluate_resources(
     policy: ResourcePolicy, snapshot: ResourceSnapshot, workload: str
 ) -> list[str]:
     errors: list[str] = []
+    cache_bytes = max(snapshot.target_bytes, snapshot.retained_cache_bytes)
+    if cache_bytes > policy.target_high_watermark_bytes:
+        errors.append(
+            "retained Cargo build output exceeds hard ceiling: "
+            f"{format_gib(cache_bytes)} retained; "
+            f"ceiling {format_gib(policy.target_high_watermark_bytes)}; "
+            "cleanup required before continuing: identify and retire unused released build output "
+            "with the existing retention tools, preserving active proof and current QA; "
+            "rerun this guard and retry only within the ceiling. "
+            "Start the inventory with python3 scripts/manage_cargo_cache.py"
+        )
     if workload == "proof" and policy.forbid_tmp_target:
         if _is_within(snapshot.target_dir, Path("/tmp")):
             errors.append(
@@ -197,18 +235,9 @@ def resource_warnings(
     policy: ResourcePolicy, snapshot: ResourceSnapshot
 ) -> list[str]:
     cache_bytes = max(snapshot.target_bytes, snapshot.retained_cache_bytes)
-    if cache_bytes <= policy.target_soft_limit_bytes:
+    if (cache_bytes <= policy.target_soft_limit_bytes
+            or cache_bytes > policy.target_high_watermark_bytes):
         return []
-    # Retention targets guide maintenance; actual filesystem reserves remain
-    # blocking above. A cache target alone must not strand safe development.
-    if cache_bytes > policy.target_high_watermark_bytes:
-        return [
-            "retained Cargo caches exceed advisory high watermark: "
-            f"{format_gib(cache_bytes)} used; "
-            f"target {format_gib(policy.target_high_watermark_bytes)}; "
-            "build may proceed while filesystem reserves are sufficient; "
-            "inspect with python3 scripts/manage_cargo_cache.py"
-        ]
     return [
         "retained Cargo caches exceed soft target: "
         f"{format_gib(cache_bytes)} used; "

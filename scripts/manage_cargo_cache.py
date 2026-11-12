@@ -107,9 +107,9 @@ def active_cache_users(paths: list[Path], proc_root: Path, *, uninspectable: lis
                 if process.stat().st_uid == os.getuid():
                     if executable is not None or uninspectable is None:
                         raise guard.ResourcePolicyError("cannot inspect executable mappings for process " + process.name)
-                    # Both proc views are protected. The metadata caller has
-                    # already proved the entire tree non-runnable; retain that
-                    # original fallback without claiming this process is idle.
+                    # Both proc views are protected. The caller must separately
+                    # prove safety through non-runnable metadata or held ELF
+                    # write descriptors; this does not assert process idleness.
                 continue
             for line in mappings.splitlines():
                 fields = line.split(maxsplit=5)
@@ -275,14 +275,18 @@ def main() -> int:
                 raise
             print(json.dumps(receipt, sort_keys=True))
         elif args.released_qa_build:
+            uninspectable = []
             try:
                 receipt = retention.retire(ROOT, args.released_qa_build, guard.load_policy().lock_path,
                     lambda: active_processes(builds_only=True),
                     lambda paths: active_cache_users(paths, Path("/proc"),
-                        include_mappings=True), apply=args.apply)
+                        uninspectable=uninspectable, include_mappings=True),
+                    apply=args.apply, retain_metadata=True)
             except retention.Failure as exc:
+                exc.receipt["uninspectable_processes"] = sorted(set(uninspectable))
                 print(json.dumps(exc.receipt, sort_keys=True))
                 raise
+            receipt["uninspectable_processes"] = sorted(set(uninspectable))
             print(json.dumps(receipt, sort_keys=True))
         elif args.qa_companions_manifest:
             try:

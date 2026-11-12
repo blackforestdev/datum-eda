@@ -94,9 +94,9 @@ class CargoResourceGuardTests(unittest.TestCase):
         self.assertTrue(any("/tmp reserve" in error for error in errors))
         self.assertTrue(any("target-filesystem reserve" in error for error in errors))
 
-    def test_cache_targets_warn_without_blocking_safe_builds(self) -> None:
+    def test_cache_below_or_at_ceiling_only_warns_above_soft_target(self) -> None:
         policy = self.policy(Path("/tmp/lock"))
-        for size, message in [(10, None), (21, "soft target"), (41, "advisory high watermark")]:
+        for size, message in [(10, None), (20, None), (21, "soft target"), (40, "soft target")]:
             with self.subTest(cache_gib=size):
                 snapshot = self.snapshot(Path("/workspace/target"), target_gib=size)
                 self.assertEqual(guard.evaluate_resources(policy, snapshot, "proof"), [])
@@ -105,12 +105,47 @@ class CargoResourceGuardTests(unittest.TestCase):
                 if message:
                     self.assertIn(message, warnings[0])
 
+    def test_hard_ceiling_stops_child_launch_for_both_workloads(self) -> None:
+        policy = self.policy(Path("/tmp/lock"))
+        ceiling = policy.target_high_watermark_bytes
+        target = (guard.ROOT / "target").resolve()
+        for workload in ("proof", "interactive"):
+            for size in (ceiling - 1, ceiling, ceiling + 1):
+                for archived in (False, True):
+                    with self.subTest(workload=workload, size=size, archived=archived):
+                        snapshot = replace(
+                            self.snapshot(target),
+                            target_bytes=1 if archived else size,
+                            retained_cache_bytes=size if archived else 0,
+                        )
+                        child = Mock(return_value=subprocess.CompletedProcess([], 17))
+                        stderr = io.StringIO()
+                        with patch.dict(os.environ, {}, clear=True), \
+                                patch.object(guard, "load_policy", return_value=policy), \
+                                patch.object(guard, "acquire_lock", return_value=nullcontext()), \
+                                patch.object(guard, "refuse_native_projects"), \
+                                patch.object(guard, "snapshot_resources", return_value=snapshot), \
+                                patch.object(guard.subprocess, "run", child), \
+                                redirect_stderr(stderr):
+                            result = guard.main(["--workload", workload, "--", "cargo", "build"])
+                        if size > ceiling:
+                            self.assertEqual(result, 75)
+                            child.assert_not_called()
+                            self.assertIn("exceeds hard ceiling", stderr.getvalue())
+                            self.assertIn("retire unused released build output", stderr.getvalue())
+                            self.assertIn("cleanup required before continuing", stderr.getvalue())
+                            self.assertIn("retry only within the ceiling", stderr.getvalue())
+                            self.assertNotIn("build may proceed", stderr.getvalue())
+                        else:
+                            self.assertEqual(result, 17)
+                            child.assert_called_once()
+
     def test_over_target_cache_still_refuses_insufficient_disk_reserves(self) -> None:
         policy = self.policy(Path("/tmp/lock"))
         snapshot = self.snapshot(Path("/workspace/target"), target_gib=41,
                                  target_free_gib=19, tmp_free_gib=5)
         errors = guard.evaluate_resources(policy, snapshot, "proof")
-        self.assertEqual(len(errors), 2)
+        self.assertEqual(len(errors), 3)
         self.assertTrue(any("/tmp reserve" in error for error in errors))
         self.assertTrue(any("target-filesystem reserve" in error for error in errors))
 
@@ -154,8 +189,12 @@ class CargoResourceGuardTests(unittest.TestCase):
             self.snapshot(Path("/workspace/target/small"), target_gib=1),
             retained_cache_bytes=41 * guard.GIB,
         )
-        self.assertEqual(guard.evaluate_resources(policy, snapshot, "proof"), [])
-        self.assertIn("advisory high watermark", guard.resource_warnings(policy, snapshot)[0])
+        for workload in ("proof", "interactive"):
+            errors = guard.evaluate_resources(policy, snapshot, workload)
+            self.assertEqual(len(errors), 1)
+            self.assertIn("41.0 GiB retained", errors[0])
+            self.assertIn("ceiling 40.0 GiB", errors[0])
+            self.assertEqual(guard.resource_warnings(policy, snapshot), [])
 
     def test_retained_cache_paths_include_archives_without_duplicate_targets(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -166,6 +205,48 @@ class CargoResourceGuardTests(unittest.TestCase):
             self.assertEqual(set(paths), {root / "target", archive})
             external = root / "elsewhere"
             self.assertEqual(set(guard.retained_cache_paths(root, external)), {root / "target", archive, external})
+
+    def test_same_git_worktree_and_legacy_copies_count_but_unrelated_outputs_do_not(self):
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            root, peer, unrelated = [base / name for name in ("repo", "worktree", "unrelated")]
+            root.mkdir()
+            subprocess.run(["git", "init", "-q", root], check=True)
+            subprocess.run(["git", "-C", root, "-c", "user.name=Test", "-c", "user.email=test@example.invalid",
+                            "-c", "commit.gpgsign=false", "commit", "--allow-empty", "-qm", "test: seed isolated worktree fixture",
+                            "-m", "Create the finite registry used by resource accounting tests."], check=True)
+            subprocess.run(["git", "-C", root, "worktree", "add", "--detach", "-q", peer], check=True)
+            for path in (root / "target", peer / "target", unrelated / "target"):
+                path.mkdir(parents=True)
+                (path / "cache").write_bytes(b"build output")
+            state = base / "state"
+            legacy = state / "datum-qa-test"
+            legacy.mkdir(parents=True)
+            executable = root / "target/runtime"
+            executable.write_bytes(b"\x7fELF\x02\x01" + b"\0" * 10 + b"\x02\0")
+            executable.chmod(0o755)
+            before = guard.retained_cache_size(root, root / "target", legacy_state=state)
+            copied = legacy / "runtime"
+            os.link(executable, copied)
+            (legacy / "raw.json").write_bytes(b"raw evidence" * 10000)
+            paths = guard.retained_cache_paths(root, root / "target", legacy_state=state)
+            self.assertEqual(set(paths), {root / "target", peer / "target", copied})
+            self.assertEqual(guard.retained_cache_size(root, root / "target", legacy_state=state), before)
+            self.assertTrue((unrelated / "target/cache").exists())
+
+    def test_worktree_registry_errors_and_legacy_symlinks_do_not_claim_complete_accounting(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / ".git").mkdir()
+            with patch.object(guard.subprocess, "run", side_effect=subprocess.CalledProcessError(1, ["git"])):
+                with self.assertRaises(subprocess.CalledProcessError):
+                    guard.retained_cache_paths(root, root / "target")
+            (root / ".git").rmdir()
+            state = root / "state"
+            state.mkdir()
+            (state / "datum-qa-link").symlink_to(root, target_is_directory=True)
+            with self.assertRaisesRegex(guard.ResourcePolicyError, "symlink"):
+                guard.retained_cache_paths(root, root / "target", legacy_state=state)
 
     def test_private_runnable_copies_count_without_charging_raw_evidence(self):
         with tempfile.TemporaryDirectory() as directory:

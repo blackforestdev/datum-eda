@@ -339,7 +339,7 @@ def retire(root, relatives, lock_path, active_check, users_check, *, apply=False
                "completed": [], "selected": [], "retained": [], "observed_absent": [],
                "runtime_proof": "held ELF write descriptors; no unrelated-app idle assertion"}
     bound = []
-    roles = PROOF_BINARIES if retain_metadata else BINARIES
+    roles = PROOF_BINARIES if registered_proof else BINARIES
     try:
         bundles = []
         for relative in relatives:

@@ -2,11 +2,14 @@
 from collections import Counter
 from contextlib import redirect_stdout, redirect_stderr
 import io
+import errno
 import hashlib
 import json
 import os
+import shutil
 from pathlib import Path
 import subprocess
+import sys
 import tempfile
 from types import SimpleNamespace
 import unittest
@@ -56,6 +59,126 @@ class RetentionTests(unittest.TestCase):
         return r.retire(self.root, bundles or [self.bundle], self.root / "guard.lock",
                         kwargs.pop("active_check", lambda: []),
                         kwargs.pop("users_check", lambda paths: []), **kwargs)
+
+    def released_cli_with_hidden_process(self, *, before_users=None, error=None):
+        proc = self.root / "proc"
+        hidden = proc / "123"
+        hidden.mkdir(parents=True, exist_ok=True)
+        (hidden / "maps").write_text("")
+        readlink, read_text = Path.readlink, Path.read_text
+        inspect = manager.active_cache_users
+        def link(path):
+            if path == hidden / "exe":
+                raise error or PermissionError("unavailable unrelated process")
+            return readlink(path)
+        def text(path, *args, **kwargs):
+            if path == hidden / "maps":
+                raise PermissionError("unavailable unrelated mappings")
+            return read_text(path, *args, **kwargs)
+        def users(paths, ignored_proc, **kwargs):
+            if before_users:
+                before_users()
+            return inspect(paths, proc, **kwargs)
+        output, errors = io.StringIO(), io.StringIO()
+        with patch.object(manager, "ROOT", self.root), \
+                patch.object(manager.guard, "load_policy", return_value=SimpleNamespace(lock_path=self.root / "lock")), \
+                patch.object(manager, "active_processes", return_value=[]), \
+                patch.object(manager, "active_cache_users", side_effect=users), \
+                patch.object(sys, "argv", ["manage_cargo_cache.py", "--released-qa-build", self.bundle, "--apply"]), \
+                patch.object(Path, "readlink", link), patch.object(Path, "read_text", text), \
+                redirect_stdout(output), redirect_stderr(errors):
+            result = manager.main()
+        return result, json.loads(output.getvalue()), errors.getvalue()
+
+    def install_real_selected_elf(self):
+        image = self.root / self.bundle / "debug/datum-gui"
+        shutil.copy2(sys.executable, image)
+        info = self.root / self.bundle / "build-info.json"
+        data = json.loads(info.read_text())
+        data["files_sha256"]["debug/datum-gui"] = hashlib.sha256(image.read_bytes()).hexdigest()
+        data["files_sha256"].pop("debug/datum-gui.d")
+        info.write_text(json.dumps(data))
+        return image
+
+    def test_released_cli_kernel_holds_block_new_exec_despite_hidden_process(self):
+        image = self.install_real_selected_elf()
+        def blocked():
+            with self.assertRaises(OSError) as caught:
+                subprocess.run([str(image), "-c", "pass"], check=True)
+            self.assertEqual(caught.exception.errno, errno.ETXTBSY)
+        result, receipt, _ = self.released_cli_with_hidden_process(before_users=blocked)
+        self.assertEqual(result, 0)
+        self.assertEqual(receipt["uninspectable_processes"], ["123"])
+        self.assertEqual(receipt["completed"], [self.bundle + "/debug/datum-gui"])
+        self.assertTrue(image.with_suffix(".d").exists())
+        self.assertIn("no unrelated-app idle assertion", receipt["runtime_proof"])
+        self.assertTrue((self.root / self.bundle / "source-snapshot/file.rs").exists())
+
+    def test_running_renamed_hardlinked_elf_refuses_before_proc_visibility(self):
+        image = self.install_real_selected_elf()
+        process = subprocess.Popen([str(image), "-c", "import time; time.sleep(30)"])
+        try:
+            renamed = self.root / "renamed-running-image"
+            image.rename(renamed)
+            os.link(renamed, image)
+            result, receipt, _ = self.released_cli_with_hidden_process()
+            self.assertEqual(result, 75)
+            self.assertEqual(receipt["completed"], [])
+            self.assertIn("Text file busy", receipt["reason"])
+            self.assertTrue(image.exists())
+        finally:
+            process.terminate()
+            process.wait(timeout=5)
+
+    def test_hidden_proc_views_do_not_bypass_hold_hash_or_visible_mapping(self):
+        info = self.root / self.bundle / "build-info.json"
+        original = info.read_text()
+        for fault in ("hold", "hash"):
+            data = json.loads(original)
+            if fault == "hold":
+                data["build_retention"]["owner_hold"] = True
+            else:
+                data["files_sha256"]["debug/datum-gui"] = "0" * 64
+            info.write_text(json.dumps(data))
+            result, receipt, _ = self.released_cli_with_hidden_process()
+            self.assertEqual(result, 75)
+            self.assertEqual(receipt["completed"], [])
+        info.write_text(original)
+        visible = self.root / "proc/124"
+        visible.mkdir()
+        (visible / "exe").symlink_to(sys.executable)
+        image = self.root / self.bundle / "debug/datum-gui"
+        (visible / "maps").write_text(f"1000-2000 r-xp 00000000 00:00 0 {image}\n")
+        result, receipt, _ = self.released_cli_with_hidden_process()
+        self.assertEqual(result, 75)
+        self.assertIn("mapped by an active process", receipt["reason"])
+        self.assertTrue(image.exists())
+
+    def test_other_process_inspection_errors_still_refuse_released_cli(self):
+        result, receipt, _ = self.released_cli_with_hidden_process(error=OSError(errno.EIO, "inspection failed"))
+        self.assertEqual(result, 75)
+        self.assertEqual(receipt["completed"], [])
+
+    def test_legacy_cli_preserves_pinned_dependencies_without_accepting_proof_test_role(self):
+        dependency = self.root / self.bundle / "debug/datum-gui.d"
+        before = dependency.read_bytes()
+        result, receipt, _ = self.released_cli_with_hidden_process()
+        self.assertEqual(result, 0)
+        self.assertEqual(receipt["completed"], [self.bundle + "/debug/datum-gui"])
+        self.assertEqual(dependency.read_bytes(), before)
+        self.create("target/qa/extra")
+        self.bundle = "target/qa/extra"
+        extra = self.root / self.bundle / "debug/datum-gui-test"
+        extra.write_bytes(b"\x7fELF\x02\x01" + b"\0" * 10 + b"\x02\0payload")
+        extra.chmod(0o755)
+        info = self.root / self.bundle / "build-info.json"
+        data = json.loads(info.read_text())
+        data["files_sha256"]["debug/datum-gui-test"] = hashlib.sha256(extra.read_bytes()).hexdigest()
+        info.write_text(json.dumps(data))
+        result, receipt, _ = self.released_cli_with_hidden_process()
+        self.assertEqual(result, 75)
+        self.assertEqual(receipt["completed"], [])
+        self.assertTrue(extra.exists())
 
     def prepare_proof(self):
         metadata = self.root / self.bundle / "build-info.json"
@@ -380,9 +503,10 @@ class RetentionTests(unittest.TestCase):
         self.assertEqual(result["observed_absent"], result["completed"])
 
     def test_manager_route_unknown_inspection_is_not_bypassed(self):
-        def invoke(root, bundles, lock, active, users, *, apply):
+        def invoke(root, bundles, lock, active, users, *, apply, retain_metadata):
             self.assertEqual(bundles, [self.bundle])
             self.assertFalse(apply)
+            self.assertTrue(retain_metadata)
             self.assertEqual(active(), [])
             users([self.root / self.bundle / "debug/datum-gui"])
             self.fail("unknown inspection must refuse")
@@ -394,7 +518,7 @@ class RetentionTests(unittest.TestCase):
                 redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
             self.assertEqual(manager.main(), 75)
         active.assert_called_once_with(builds_only=True)
-        self.assertEqual(users.call_args.kwargs, {"include_mappings": True})
+        self.assertEqual(users.call_args.kwargs, {"uninspectable": [], "include_mappings": True})
 
     def test_selected_elf_digest_count_is_linear(self):
         bundles = [self.bundle, "target/qa/second", "target/qa/third"]
