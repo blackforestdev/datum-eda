@@ -50,7 +50,8 @@ pub(crate) use self::connectivity_queries::{
 };
 pub(crate) use self::helpers::*;
 pub(crate) use self::queries::{
-    native_erc_report_from_schematic, query_native_project_check_with_inputs,
+    native_drc_report_from_board, native_erc_report_from_schematic,
+    query_native_project_check_with_inputs,
 };
 pub(crate) use self::queries::{
     query_native_project_check, query_native_project_diagnostics, query_native_project_drawings,

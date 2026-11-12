@@ -67,7 +67,7 @@ pub(super) fn append<'a>(context: &mut InspectorContext<'a>, state: &'a ReviewWo
         InspectorField::text(
             "State",
             if current && !checks.persisted {
-                "Current read-only report — Run ERC before authoring"
+                "Current read-only report — run the selected check profile to persist evidence"
             } else if current {
                 "Current persisted result"
             } else {
@@ -138,7 +138,22 @@ pub(super) fn append<'a>(context: &mut InspectorContext<'a>, state: &'a ReviewWo
             ),
         );
     }
+    append_recorded_findings(context, checks, current);
     if !current {
+        return;
+    }
+    if checks.profile_id.as_deref() == Some("drc") {
+        append_drc_scope(context, state);
+        return;
+    }
+    if checks.profile_id.as_deref() != Some("erc") {
+        context.push(
+            section,
+            InspectorField::text(
+                "Scoped checks",
+                "Unavailable — this profile has no supported scoped projection",
+            ),
+        );
         return;
     }
     let evaluated: Vec<_> = checks
@@ -285,6 +300,151 @@ pub(super) fn append<'a>(context: &mut InspectorContext<'a>, state: &'a ReviewWo
                 ),
             ),
         );
+    }
+}
+
+/// Recorded logical findings remain readable even when they have no precise
+/// world location. A text row is evidence inspection, not a fabricated marker.
+fn append_recorded_findings<'a>(
+    context: &mut InspectorContext<'a>,
+    checks: &'a crate::CheckRunReviewState,
+    current: bool,
+) {
+    let section = InspectorSectionId::Checks;
+    if checks.findings.len() != checks.finding_count {
+        context.push(section, InspectorField::text("Finding details", format!(
+            "Incomplete — {} of {} recorded findings captured; rerun the profile for a complete report",
+            checks.findings.len(), checks.finding_count,
+        )));
+    }
+    for finding in &checks.findings {
+        context.push(
+            section,
+            InspectorField::text(
+                if current {
+                    "Finding"
+                } else {
+                    "Historical finding"
+                },
+                format!(
+                    "{} · {} · {} · {}",
+                    finding.domain, finding.severity, finding.code, finding.status
+                ),
+            ),
+        );
+        context.push(
+            section,
+            InspectorField::text("Finding rule", finding.rule_id.as_str()),
+        );
+        context.push(
+            section,
+            InspectorField::text("Finding message", finding.message.as_str()),
+        );
+        context.push(
+            section,
+            InspectorField::text(
+                "Finding target",
+                finding
+                    .target_label()
+                    .unwrap_or_else(|| "Unavailable — no recorded target identity".into()),
+            ),
+        );
+        if !finding.explanation.is_empty() {
+            context.push(
+                section,
+                InspectorField::text("Finding explanation", finding.explanation.as_str()),
+            );
+        }
+        if let Some(next) = finding.suggested_next_action.as_deref() {
+            context.push(section, InspectorField::text("Suggested action", next));
+        }
+    }
+}
+
+fn append_drc_scope(context: &mut InspectorContext<'_>, state: &ReviewWorkspaceState) {
+    use crate::AuthoredSelectionClass as C;
+    let section = InspectorSectionId::Checks;
+    context.push(section, InspectorField::text("DRC coverage", "Only the recorded rules and supported geometry are evaluated; unavailable coverage is not a clean result"));
+    let checks = &state.checks;
+    if !checks.persisted
+        || checks.findings.len() != checks.finding_count
+        || !checks
+            .coverage
+            .iter()
+            .any(|c| c.domain == "drc" && c.status == "evaluated")
+    {
+        context.push(
+            section,
+            InspectorField::text(
+                "Scoped DRC",
+                "Unavailable — complete persisted findings and evaluated DRC coverage are required",
+            ),
+        );
+        return;
+    }
+    let Some(view) = context.view else {
+        context.push(section, InspectorField::text("DRC scope", "Project-wide board report; select board objects to inspect their recorded findings"));
+        return;
+    };
+    if view.stale
+        || view.project.to_string() != state.scene.project_uuid
+        || view.revision.0 != state.scene.source_revision
+    {
+        context.push(
+            section,
+            InspectorField::text("Scoped DRC", "Unavailable — selection source is stale"),
+        );
+        return;
+    }
+    let selected: BTreeSet<_> = view
+        .scoped_members()
+        .filter(|m| {
+            m.instance_path.is_empty()
+                && matches!(
+                    m.class,
+                    C::Footprint
+                        | C::Pad
+                        | C::Track
+                        | C::Via
+                        | C::Zone
+                        | C::BoardText
+                        | C::BoardGraphic
+                        | C::BoardOutline
+                )
+        })
+        .map(|m| m.id)
+        .collect();
+    if selected.is_empty() {
+        context.push(section, InspectorField::text("Scoped DRC", "Unavailable — selected scope has no board objects; related objects are not selected"));
+        return;
+    }
+    let counts = (|| -> Result<[usize; 4], &'static str> {
+        let mut counts = [0; 4];
+        for finding in checks.findings.iter().filter(|f| f.domain == "drc") {
+            let targets = affected_targets(state, finding)?;
+            if targets
+                .iter()
+                .any(|(_, frame)| frame.as_ref().is_some_and(|p| !p.is_empty()))
+            {
+                return Err("Board finding declares a schematic occurrence frame");
+            }
+            if !targets.iter().any(|(id, _)| selected.contains(id)) {
+                continue;
+            }
+            let index = match (finding.status.as_str(), finding.severity.as_str()) {
+                ("waived" | "accepted_deviation", _) => 3,
+                ("active", "error") => 0,
+                ("active", "warning") => 1,
+                ("active", "info") => 2,
+                _ => return Err("Finding status or severity is not qualified"),
+            };
+            counts[index] += 1;
+        }
+        Ok(counts)
+    })();
+    match counts {
+        Ok([errors, warnings, infos, suppressed]) => context.push(section, InspectorField::text("Scoped DRC", format!("{errors} errors · {warnings} warnings · {infos} infos · {suppressed} suppressed; exact selected object targets only"))),
+        Err(reason) => context.push(section, InspectorField::text("Scoped DRC", format!("Unavailable — {reason}"))),
     }
 }
 

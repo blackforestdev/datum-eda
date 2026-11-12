@@ -342,8 +342,8 @@ impl Runtime {
         if let Some(action) = item.gui_local.as_deref() {
             return self.activate_gui_local_menu_action(action, surface);
         }
-        if item.is_guarded_erc() {
-            return self.start_erc_job();
+        if let Some(profile) = item.guarded_check_profile() {
+            return self.start_check_job(profile);
         }
         if let Some(handled) = self.activate_native_edit_menu(item.verb.as_deref()) {
             return handled;

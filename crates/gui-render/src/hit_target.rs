@@ -22,7 +22,10 @@ pub enum HitTarget {
     InspectorAssignPart(datum_gui_protocol::inspector_context::InspectorNavigationBasis),
     InspectorEditSymbol(datum_gui_protocol::inspector_context::InspectorNavigationBasis),
     InspectorEditLabel(datum_gui_protocol::inspector_context::InspectorNavigationBasis),
-    InspectorRunErc(datum_gui_protocol::inspector_context::InspectorActionBasis),
+    InspectorRunCheck(
+        datum_gui_protocol::inspector_context::InspectorActionBasis,
+        datum_gui_protocol::CheckProducerProfile,
+    ),
     InspectorContextScroll {
         total: usize,
         visible: usize,

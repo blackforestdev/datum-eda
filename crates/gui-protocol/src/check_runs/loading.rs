@@ -202,7 +202,12 @@ fn admit_projection(state: &crate::ReviewWorkspaceState, run: &CheckRunReviewSta
 
 fn current_persisted(state: &crate::ReviewWorkspaceState) -> bool {
     state.checks.persisted
-        && state.checks.profile_id.as_deref() == Some("erc")
+        && state
+            .checks
+            .profile_id
+            .as_deref()
+            .and_then(crate::CheckProducerProfile::from_id)
+            .is_some()
         && state.checks.project_id.as_deref() == Some(state.scene.project_uuid.as_str())
         && state.checks.model_revision.as_deref() == Some(state.scene.source_revision.as_str())
 }

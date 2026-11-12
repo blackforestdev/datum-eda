@@ -4,6 +4,7 @@ use std::io::Cursor;
 
 fn request() -> CheckProducerRequest {
     CheckProducerRequest {
+        profile: super::super::CheckProducerProfile::Erc,
         job_id: Uuid::from_u128(1),
         project_id: Uuid::from_u128(2),
         model_revision: "c".repeat(64),
@@ -190,25 +191,32 @@ fn manual_producer_clears_inherited_agent_identity_and_preserves_commit_source()
 
 #[test]
 fn candidate_output_defers_readback_and_strict_api_still_requires_it() {
-    let request = request();
-    let event = wire(&request);
-    let output = serde_json::to_vec(&serde_json::json!({
-        "project_id":request.project_id, "model_revision":request.model_revision,
-        "profile_id":"erc", "persisted":true, "check_run_id":Uuid::from_u128(3),
-    }))
-    .unwrap();
-    // Only a transport control: there is no persisted Project at this root.
-    // Any early readback fails, so the candidate path must defer it to the
-    // canonical snapshot gate; the existing strict API must still refuse.
-    let script = format!(
-        "import os,sys\nif 'show' in sys.argv: raise SystemExit(7)\nos.write(2,bytes({event:?}))\nos.write(1,bytes({output:?}))\n"
-    );
-    let cli = vec!["python3".into(), "-c".into(), script];
-    let mut accepted = Vec::new();
-    let candidate =
-        super::super::worker::produce_candidate_with_cli(&cli, &request, |v| accepted.push(v))
-            .unwrap();
-    assert_eq!(accepted, vec![request.acceptance()]);
-    assert!(request.admits_run(&candidate.run));
-    assert!(super::super::worker::run_with_cli(&cli, &request, |_| {}).is_err());
+    for profile in [
+        super::super::CheckProducerProfile::Erc,
+        super::super::CheckProducerProfile::Drc,
+    ] {
+        let mut request = request();
+        request.profile = profile;
+        let event = wire(&request);
+        let output = serde_json::to_vec(&serde_json::json!({
+            "project_id":request.project_id, "model_revision":request.model_revision,
+            "profile_id":profile.id(), "persisted":true, "check_run_id":Uuid::from_u128(3),
+        }))
+        .unwrap();
+        // Only a transport control: there is no persisted Project at this root.
+        // Any early readback fails, so the candidate path must defer it to the
+        // canonical snapshot gate; the existing strict API must still refuse.
+        let script = format!(
+            "import os,sys\nassert sys.argv[sys.argv.index('--profile')+1]=={profile_id:?}\nif 'show' in sys.argv: raise SystemExit(7)\nos.write(2,bytes({event:?}))\nos.write(1,bytes({output:?}))\n",
+            profile_id = profile.id()
+        );
+        let cli = vec!["python3".into(), "-c".into(), script];
+        let mut accepted = Vec::new();
+        let candidate =
+            super::super::worker::produce_candidate_with_cli(&cli, &request, |v| accepted.push(v))
+                .unwrap();
+        assert_eq!(accepted, vec![request.acceptance()]);
+        assert!(request.admits_run(&candidate.run));
+        assert!(super::super::worker::run_with_cli(&cli, &request, |_| {}).is_err());
+    }
 }

@@ -149,6 +149,7 @@ pub struct InspectorContext<'a> {
     pub sections: Vec<InspectorSection<'a>>,
     pub action_basis: Option<InspectorActionBasis>,
     pub rerun_available: bool,
+    pub rerun_profile: Option<crate::check_runs::producer::CheckProducerProfile>,
 }
 impl<'a> InspectorContext<'a> {
     pub fn capture(state: &'a ReviewWorkspaceState) -> Self {
@@ -171,7 +172,12 @@ impl<'a> InspectorContext<'a> {
             None
         };
         let action_basis = InspectorActionBasis::capture(state);
+        let rerun_profile = state.checks.profile_id.as_deref().map_or(
+            Some(crate::check_runs::producer::CheckProducerProfile::Erc),
+            crate::check_runs::producer::CheckProducerProfile::from_id,
+        );
         let rerun_available = action_basis.is_some()
+            && rerun_profile.is_some()
             && !matches!(
                 state.inspector_context.activity,
                 Some(
@@ -184,9 +190,7 @@ impl<'a> InspectorContext<'a> {
                 state.check_producer.phase,
                 crate::CheckProducerPhase::Starting | crate::CheckProducerPhase::Running
             )
-            && !state.schematic_authoring.active()
-            && !state.schematic_authoring.picker
-            && state.library.draft.is_none();
+            && crate::CheckProducerRequest::editor_preview_idle(state);
         let mut context = Self {
             title: view.map_or_else(|| "Document".into(), SelectionView::inspector_title),
             view,
@@ -194,6 +198,7 @@ impl<'a> InspectorContext<'a> {
             sections: Vec::new(),
             action_basis,
             rerun_available,
+            rerun_profile,
         };
         if let Some(view) = view {
             for field in view.fields() {
@@ -453,29 +458,50 @@ pub fn pane_header(
     };
     let saved = saved_state(state);
     let checks = &state.checks;
-    let erc = if matches!(
+    let pending = matches!(
         state.check_producer.phase,
         crate::CheckProducerPhase::Starting | crate::CheckProducerPhase::Running
-    ) {
+    );
+    let check_label = if pending {
+        state
+            .check_producer
+            .request
+            .as_ref()
+            .map(|r| r.profile.label())
+    } else {
+        checks
+            .profile_id
+            .as_deref()
+            .and_then(crate::CheckProducerProfile::from_id)
+            .map(|p| p.label())
+    }
+    .unwrap_or("Checks");
+    let checks_status = if pending {
         format!(
-            "ERC {}",
+            "{check_label} {}",
             if state.check_producer.phase == crate::CheckProducerPhase::Running {
                 "running"
             } else {
                 "starting"
             }
         )
-    } else if checks.check_run_id.is_some() && checks.profile_id.as_deref() == Some("erc") {
+    } else if checks.check_run_id.is_some() {
         if checks.project_id.as_deref() == Some(state.scene.project_uuid.as_str())
             && checks.model_revision.as_deref() == Some(state.scene.source_revision.as_str())
         {
             if checks.persisted {
-                format!("ERC {} Project findings", checks.finding_count)
+                format!("{check_label} {} Project findings", checks.finding_count)
             } else {
-                format!("ERC {} findings · read-only report", checks.finding_count)
+                format!(
+                    "{check_label} {} findings · read-only report",
+                    checks.finding_count
+                )
             }
         } else {
-            format!("ERC stale · {} historical findings", checks.finding_count)
+            format!(
+                "{check_label} stale · {} historical findings",
+                checks.finding_count
+            )
         }
     } else if state
         .library
@@ -483,12 +509,12 @@ pub fn pane_header(
         .as_ref()
         .is_some_and(|model| model.check_runs.is_empty())
     {
-        "ERC not run".into()
+        "Checks not run".into()
     } else {
-        "ERC unavailable".into()
+        "Checks unavailable".into()
     };
     let detail = format!(
-        "Doc: {} · Snap {} {} · {saved} · {erc}",
+        "Doc: {} · Snap {} {} · {saved} · {checks_status}",
         state.schematic_documents.document_name,
         if state.authoring.snap.enabled {
             "on"

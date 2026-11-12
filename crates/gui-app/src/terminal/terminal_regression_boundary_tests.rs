@@ -26,7 +26,7 @@ fn expected_terminal_entry(target: &HitTarget) -> bool {
     match target {
         HitTarget::BoardTransfer(_)
         | HitTarget::InspectorSectionToggle { .. }
-        | HitTarget::InspectorRunErc(_)
+        | HitTarget::InspectorRunCheck(_, _)
         | HitTarget::InspectorEditSymbol(_)
             | HitTarget::InspectorBindInterface(_)
             | HitTarget::InspectorAssignPart(_)

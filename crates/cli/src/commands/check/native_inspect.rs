@@ -431,7 +431,12 @@ fn query_native_project_check_run_with_profile_and_persistence(
         command_project_check_run_history::validate_check_job_basis(args, &model, profile_id)?;
     }
     let captured = if admission.is_some_and(|args| args.expected_project.is_some()) {
-        Some(crate::capture_native_erc_inputs(root, &model)?)
+        Some(crate::capture_native_check_inputs(
+            root,
+            &model,
+            profile_id,
+            check_profile_drc_rules(profile_id),
+        )?)
     } else {
         None
     };
@@ -439,8 +444,14 @@ fn query_native_project_check_run_with_profile_and_persistence(
         command_project_check_run_history::admit_check_job(args, &model, profile_id)?;
     }
     let (project, report) = if let Some(captured) = captured {
-        let report = crate::native_erc_report_from_schematic(&captured.schematic, captured.nets);
-        (captured.project, report)
+        match captured {
+            crate::CapturedNativeCheckInputs::Erc(captured) => {
+                let report =
+                    crate::native_erc_report_from_schematic(&captured.schematic, captured.nets);
+                (captured.project, report)
+            }
+            crate::CapturedNativeCheckInputs::Drc(captured) => (captured.project, captured.report),
+        }
     } else {
         (
             load_native_project_with_resolved_board(root)?,

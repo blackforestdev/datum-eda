@@ -162,8 +162,8 @@ pub(super) fn validate_check_job_basis(
         _ => anyhow::bail!("check job requires both expected Project and model revision"),
     }
     anyhow::ensure!(
-        args.expected_project.is_none() || profile_id == "erc",
-        "guarded check production currently supports the erc profile only"
+        args.expected_project.is_none() || matches!(profile_id, "erc" | "drc"),
+        "guarded check production supports the erc and drc profiles only"
     );
     Ok(())
 }

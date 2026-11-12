@@ -120,21 +120,30 @@ pub(super) fn rows<'a>(
             }
         }
         if section.id == InspectorSectionId::Checks {
+            let profile_label = context.rerun_profile.map(|p| p.label()).unwrap_or("check");
             rows.push(Row {
-                label: if context.rerun_available {
-                    "Rerun ERC (R)"
+                label: if context.rerun_profile.is_none() {
+                    "Check rerun unavailable — select ERC or DRC from Checks".into()
+                } else if context.rerun_available {
+                    format!("Rerun {} (R)", profile_label)
                 } else if context.action_basis.is_some() {
-                    "Rerun ERC unavailable — wait for the job or finish the editor preview"
+                    format!(
+                        "Rerun {} unavailable — wait for the job or finish the editor preview",
+                        profile_label
+                    )
                 } else {
-                    "Rerun ERC unavailable — open a current native Project"
-                }
-                .into(),
+                    format!(
+                        "Rerun {} unavailable — open a current native Project",
+                        profile_label
+                    )
+                },
                 native_field: None,
                 target: context
                     .action_basis
                     .clone()
                     .filter(|_| context.rerun_available)
-                    .map(HitTarget::InspectorRunErc),
+                    .zip(context.rerun_profile)
+                    .map(|(basis, profile)| HitTarget::InspectorRunCheck(basis, profile)),
                 active: false,
                 value: None,
             });

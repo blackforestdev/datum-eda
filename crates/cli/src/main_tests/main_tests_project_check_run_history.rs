@@ -23,6 +23,116 @@ fn check_source_bytes(root: &Path) -> std::collections::BTreeMap<PathBuf, Vec<u8
 }
 
 #[test]
+fn guarded_drc_evaluates_board_findings_and_preserves_authored_sources_on_rerun() {
+    let root = unique_project_root("datum-eda-cli-guarded-drc");
+    create_native_project(&root, Some("Guarded DRC".into())).unwrap();
+    build_native_check_fixture(&root);
+    seed_board_process_aperture_fixture(&root);
+    let model = eda_engine::substrate::ProjectResolver::new(&root)
+        .resolve()
+        .unwrap();
+    let sources: Vec<_> = model
+        .source_shards
+        .iter()
+        .map(|s| (s.path.clone(), std::fs::read(&s.path).unwrap()))
+        .collect();
+    let mut previous_id = None;
+    for _ in 0..2 {
+        let output = execute(
+            Cli::try_parse_from([
+                "eda",
+                "--format",
+                "json",
+                "check",
+                "run",
+                root.to_str().unwrap(),
+                "--profile",
+                "drc",
+                "--expected-project",
+                &model.project.project_id.to_string(),
+                "--expected-revision",
+                &model.model_revision.0,
+                "--progress-job",
+                &Uuid::new_v4().to_string(),
+            ])
+            .unwrap(),
+        )
+        .unwrap();
+        let report: serde_json::Value = serde_json::from_str(&output).unwrap();
+        assert_eq!(report["profile_id"], "drc");
+        assert_eq!(report["persisted"], true);
+        let findings = report["findings"].as_array().unwrap();
+        assert!(
+            !findings.is_empty(),
+            "actual board fixture must produce a DRC finding"
+        );
+        assert!(findings.iter().all(|f| f["domain"] == "drc"));
+        let id = Uuid::parse_str(report["check_run_id"].as_str().unwrap()).unwrap();
+        if let Some(previous) = previous_id {
+            assert_eq!(id, previous);
+        }
+        previous_id = Some(id);
+        let cold = eda_engine::substrate::ProjectResolver::new(&root)
+            .resolve()
+            .unwrap();
+        assert_eq!(cold.model_revision, model.model_revision);
+        assert_eq!(cold.check_runs[&id].profile_id, "drc");
+        assert_eq!(cold.check_runs[&id].findings.len(), findings.len());
+        for (path, bytes) in &sources {
+            assert_eq!(&std::fs::read(path).unwrap(), bytes);
+        }
+    }
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn guarded_drc_retains_captured_board_and_refuses_changed_source_for_new_and_existing_runs() {
+    for existing in [false, true] {
+        let root = unique_project_root("datum-eda-cli-drc-capture-race");
+        create_native_project(&root, Some("Captured DRC".into())).unwrap();
+        seed_board_process_aperture_fixture(&root);
+        if existing {
+            run_native_project_check_with_profile(&root, Some("drc")).unwrap();
+        }
+        let model = eda_engine::substrate::ProjectResolver::new(&root)
+            .resolve()
+            .unwrap();
+        let rules = &[eda_engine::rules::ast::RuleType::Connectivity];
+        let captured = capture_native_drc_inputs(&root, &model, rules).unwrap();
+        assert!(
+            !serde_json::to_value(&captured.report).unwrap()["drc"]
+                .as_array()
+                .unwrap()
+                .is_empty()
+        );
+        // Evaluation and source capture finish before acknowledgement. A
+        // canonical edit afterward cannot substitute new board input, and the
+        // final evidence guard must reject this previously computed report.
+        for id in captured.project.board.pads.keys() {
+            delete_native_project_board_pad(&root, id.parse().unwrap()).unwrap();
+        }
+        let report = captured.report;
+        let current = query_native_project_drc_with_rules(&root, rules).unwrap();
+        assert!(current.violations.is_empty());
+        let before_finish = check_source_bytes(&root);
+        let refusal = finish_check_run(&root, model, captured.project, report, "drc", true, true)
+            .unwrap_err()
+            .to_string();
+        assert!(
+            refusal.contains("model revision mismatch")
+                || refusal.contains("stale check producer basis"),
+            "{refusal}"
+        );
+        assert_eq!(check_source_bytes(&root), before_finish);
+        let cold = eda_engine::substrate::ProjectResolver::new(&root)
+            .resolve()
+            .unwrap();
+        assert_eq!(cold.check_runs.len(), usize::from(existing));
+        std::fs::remove_dir_all(root).unwrap();
+    }
+}
+
+#[test]
 fn guarded_check_run_refuses_foreign_and_stale_basis_before_persisting() {
     let root = unique_project_root("datum-eda-cli-guarded-check");
     create_native_project(&root, Some("Guarded ERC".to_string())).unwrap();
@@ -70,7 +180,7 @@ fn guarded_check_run_refuses_foreign_and_stale_basis_before_persisting() {
             "run",
             root.to_str().unwrap(),
             "--profile",
-            "drc",
+            "manufacturing",
             "--expected-project",
             &project,
             "--expected-revision",
@@ -81,7 +191,11 @@ fn guarded_check_run_refuses_foreign_and_stale_basis_before_persisting() {
         .unwrap(),
     )
     .unwrap_err();
-    assert!(unsupported.to_string().contains("erc profile only"));
+    assert!(
+        unsupported
+            .to_string()
+            .contains("erc and drc profiles only")
+    );
     assert_eq!(check_source_bytes(&root), before);
     assert!(
         run(&project, "stale-revision")

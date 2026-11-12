@@ -1,5 +1,6 @@
-//! Shared explicit ERC job owner. Inspection never invokes this writer.
+//! Shared explicit Check job owner. Inspection never invokes this writer.
 use super::*;
+use datum_gui_protocol::CheckProducerProfile;
 use datum_gui_protocol::{CheckProducerAcceptance, CheckProducerCandidate, CheckProducerRequest};
 use std::sync::mpsc;
 
@@ -25,13 +26,13 @@ fn prepare_readback(
 ) -> Result<Box<Ready>> {
     anyhow::ensure!(
         request.matches_workspace(&next),
-        "Project changed during ERC source refresh"
+        "Project changed during Check source refresh"
     );
     let model = next
         .library
         .basis
         .clone()
-        .ok_or_else(|| anyhow::anyhow!("ERC source model is unavailable"))?;
+        .ok_or_else(|| anyhow::anyhow!("Check source model is unavailable"))?;
     let selection =
         native_edit_selection::prepare_from_model(&mut next, inputs, model, Default::default())?;
     let run = next.checks.clone();
@@ -57,7 +58,7 @@ impl CheckWork {
         previous: datum_gui_protocol::ReviewWorkspaceState,
         inputs: native_edit_selection::Inputs,
     ) -> Result<()> {
-        anyhow::ensure!(!self.pending(), "An ERC job is already running");
+        anyhow::ensure!(!self.pending(), "A check job is already running");
         self.spawn(request, previous, inputs, None)
     }
     fn spawn(
@@ -72,7 +73,7 @@ impl CheckWork {
         let wake = self.wake.clone();
         let work = request.clone();
         std::thread::Builder::new()
-            .name("datum-erc-job".into())
+            .name("datum-check-job".into())
             .spawn(move || {
                 let result =
                     (|| -> Result<Box<Ready>> {
@@ -94,7 +95,7 @@ impl CheckWork {
     }
 }
 impl Runtime {
-    pub(super) fn start_erc_job(&mut self) -> bool {
+    pub(super) fn start_check_job(&mut self, profile: CheckProducerProfile) -> bool {
         let result = (|| -> Result<()> {
             anyhow::ensure!(
                 self.application_shutdown_started.is_none(),
@@ -102,17 +103,14 @@ impl Runtime {
             );
             anyhow::ensure!(
                 !self.native_edit.pending() && !self.project_open.pending(),
-                "Wait for the current Project operation before running ERC"
+                "Wait for the current Project operation before running Check"
             );
             anyhow::ensure!(
                 self.native_edit.preview.is_none()
-                    && !self.workspace().schematic_authoring.active()
-                    && !self.workspace().schematic_authoring.picker
-                    && self.workspace().schematic_authoring.delete_review.is_none()
-                    && self.workspace().library.draft.is_none(),
-                "Finish or cancel the current editor preview before running ERC"
+                    && CheckProducerRequest::editor_preview_idle(self.workspace()),
+                "Finish or cancel the current editor preview before running Check"
             );
-            let request = CheckProducerRequest::from_workspace(self.workspace())?;
+            let request = CheckProducerRequest::for_profile(self.workspace(), profile)?;
             let previous = self.workspace().clone();
             let inputs = native_edit_selection::Inputs::capture(self);
             self.check_work.start(request.clone(), previous, inputs)?;
@@ -124,6 +122,20 @@ impl Runtime {
         }
         self.refresh_selection_accessibility();
         self.invalidate_frame();
+        true
+    }
+
+    pub(super) fn rerun_check_job(&mut self, expected: Option<CheckProducerProfile>) -> bool {
+        let context =
+            datum_gui_protocol::inspector_context::InspectorContext::capture(self.workspace());
+        if context.rerun_available
+            && let Some(profile) = context.rerun_profile
+            && expected.is_none_or(|expected| expected == profile)
+        {
+            return self.start_check_job(profile);
+        }
+        self.log_console_refusal(ConsoleFeedbackSource::Viewport,
+            "Check rerun is unavailable; choose a supported profile in Checks after finishing the current editor operation");
         true
     }
 
@@ -151,7 +163,7 @@ impl Runtime {
                     let producer = &mut self.session.workspace_mut().check_producer;
                     producer.accept(value);
                     if !current {
-                        producer.reason = Some("ERC is running on its admitted previous source basis; completion cannot become current evidence here".into());
+                        producer.reason = Some("Check is running on its admitted previous source basis; completion cannot become current evidence here".into());
                     }
                 }
                 Event::Finished(result) => {
@@ -186,12 +198,12 @@ impl Runtime {
                                     .check_producer
                                     .complete(&request, &answer.run)
                                 {
-                                    self.session.workspace_mut().check_producer.refuse("ERC completion no longer matches its admitted source basis".into());
+                                    self.session.workspace_mut().check_producer.refuse("Check completion no longer matches its admitted source basis".into());
                                 }
                             }
                         }
                         Ok(_) => self.session.workspace_mut().check_producer.refuse(
-                            "ERC finished on another source basis; refresh the Project".into(),
+                            "Check finished on another source basis; refresh the Project".into(),
                         ),
                         Err(reason) => self.session.workspace_mut().check_producer.refuse(reason),
                     }
@@ -202,7 +214,7 @@ impl Runtime {
             self.session
                 .workspace_mut()
                 .check_producer
-                .refuse("ERC worker ended without a result".into());
+                .refuse("Check worker ended without a result".into());
         }
         if finished || disconnected {
             self.check_work.pending = None;

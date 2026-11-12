@@ -32,7 +32,7 @@ fn write(model: &mut DesignModel, root: &std::path::Path, verb: &str, params: Va
     commit_prepared(model, root, p).unwrap();
     id
 }
-fn setup(root: &std::path::Path) {
+pub(super) fn setup(root: &std::path::Path) {
     let _report = native::genesis::bootstrap_native_project(
         &root,
         native::genesis::GenesisSpec {

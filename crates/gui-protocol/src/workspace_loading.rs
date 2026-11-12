@@ -28,7 +28,7 @@ pub fn load_check_completion_workspace(
 ) -> Result<ReviewWorkspaceState> {
     anyhow::ensure!(
         request.matches_workspace(&previous) && request.admits_run(run),
-        "ERC completion source is unavailable or changed"
+        "Check completion source is unavailable or changed"
     );
     let model =
         {
@@ -38,13 +38,13 @@ pub fn load_check_completion_workspace(
             anyhow::ensure!(
                 model.project.project_id == request.project_id
                     && model.model_revision.0 == request.model_revision,
-                "Project changed during ERC source refresh"
+                "Project changed during Check source refresh"
             );
             let old = previous
                 .library
                 .basis
                 .as_ref()
-                .context("Previous ERC source model is unavailable")?;
+                .context("Previous Check source model is unavailable")?;
             // Only CheckRun evidence may differ. This proves the retained world,
             // library source identities and independent production projection still
             // describe the exact same inputs; a concurrent other mutation refuses.
@@ -55,17 +55,17 @@ pub fn load_check_completion_workspace(
                     .eq(model.source_shards.iter().filter(
                         |shard| shard.kind != eda_engine::substrate::SourceShardKind::CheckRun
                     )),
-                "Project source identities changed during ERC completion"
+                "Project source identities changed during Check completion"
             );
             let id = run
                 .check_run_id
                 .as_deref()
-                .context("ERC result has no persisted identity")?
+                .context("Check result has no persisted identity")?
                 .parse::<uuid::Uuid>()?;
             let persisted = model
                 .check_runs
                 .get(&id)
-                .context("ERC record disappeared during source refresh")?;
+                .context("Check record disappeared during source refresh")?;
             let mut current =
                 check_run_review_state_from_json(&serde_json::to_string(&serde_json::json!({
                     "contract":"check_run_record_v1", "project_id":model.project.project_id,
@@ -82,7 +82,7 @@ pub fn load_check_completion_workspace(
             }
             anyhow::ensure!(
                 current == *run,
-                "Persisted ERC facts changed during source refresh"
+                "Persisted Check facts changed during source refresh"
             );
             model
         }; // Release exclusion before pure view projection.
@@ -98,7 +98,7 @@ pub fn load_check_completion_workspace(
     let source = &next
         .backing
         .as_ref()
-        .context("ERC Project origin unavailable")?
+        .context("Check Project origin unavailable")?
         .request;
     next.supervision = load_gui_supervision_snapshot(
         source,
@@ -110,7 +110,7 @@ pub fn load_check_completion_workspace(
     )?;
     anyhow::ensure!(
         request.matches_workspace(&next),
-        "ERC completion projection changed its source basis"
+        "Check completion projection changed its source basis"
     );
     Ok(next)
 }

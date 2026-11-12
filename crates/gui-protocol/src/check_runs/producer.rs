@@ -35,8 +35,41 @@ impl CheckProducerCandidate {
 
 pub const ACCEPTED_PREFIX: &str = "DATUM_CHECK_JOB_ACCEPTED ";
 
+/// The two native profiles supported by the shared guarded producer. A profile
+/// is part of job identity, never inferred from whichever pane has focus.
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum CheckProducerProfile {
+    #[default]
+    Erc,
+    Drc,
+}
+impl CheckProducerProfile {
+    pub fn id(self) -> &'static str {
+        match self {
+            Self::Erc => "erc",
+            Self::Drc => "drc",
+        }
+    }
+    pub fn label(self) -> &'static str {
+        match self {
+            Self::Erc => "ERC",
+            Self::Drc => "DRC",
+        }
+    }
+    pub fn from_id(id: &str) -> Option<Self> {
+        match id {
+            "erc" => Some(Self::Erc),
+            "drc" => Some(Self::Drc),
+            _ => None,
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct CheckProducerRequest {
+    #[serde(default)]
+    pub profile: CheckProducerProfile,
     pub job_id: Uuid,
     pub project_id: Uuid,
     pub model_revision: String,
@@ -57,7 +90,7 @@ impl CheckProducerRequest {
             .ok_or_else(|| anyhow::anyhow!("Native Project source unavailable"))?;
         anyhow::ensure!(
             backing.request.board_file.is_none(),
-            "Guarded ERC requires a native Project"
+            "Guarded checks require a native Project"
         );
         let model = state
             .library
@@ -76,9 +109,28 @@ impl CheckProducerRequest {
         Self::source_basis(state).is_ok()
     }
 
+    /// One preview admission rule for the menu, Inspector and actual producer.
+    /// Native worker/project-open admission remains with the runtime job owner.
+    pub fn editor_preview_idle(state: &ReviewWorkspaceState) -> bool {
+        !state.schematic_authoring.active()
+            && !state.schematic_authoring.picker
+            && state.schematic_authoring.delete_review.is_none()
+            && state.library.draft.is_none()
+            && !state.authoring.gesture.is_active()
+            && state.authoring.board_route.is_none()
+    }
+
     pub fn from_workspace(state: &ReviewWorkspaceState) -> anyhow::Result<Self> {
+        Self::for_profile(state, CheckProducerProfile::Erc)
+    }
+
+    pub fn for_profile(
+        state: &ReviewWorkspaceState,
+        profile: CheckProducerProfile,
+    ) -> anyhow::Result<Self> {
         let (root, model) = Self::source_basis(state)?;
         Ok(Self {
+            profile,
             job_id: Uuid::new_v4(),
             project_id: model.project.project_id,
             model_revision: model.model_revision.0.clone(),
@@ -105,7 +157,7 @@ impl CheckProducerRequest {
             job_id: self.job_id,
             project_id: self.project_id,
             model_revision: self.model_revision.clone(),
-            profile_id: "erc".into(),
+            profile_id: self.profile.id().into(),
         }
     }
 
@@ -113,7 +165,7 @@ impl CheckProducerRequest {
         run.persisted
             && run.project_id.as_deref() == Some(self.project_id.to_string().as_str())
             && run.model_revision.as_deref() == Some(self.model_revision.as_str())
-            && run.profile_id.as_deref() == Some("erc")
+            && run.profile_id.as_deref() == Some(self.profile.id())
             && run
                 .check_run_id
                 .as_deref()
@@ -219,8 +271,38 @@ mod tests {
     use super::*;
 
     #[test]
+    fn drc_job_never_accepts_erc_acknowledgement_or_result() {
+        let request = CheckProducerRequest {
+            profile: CheckProducerProfile::Drc,
+            job_id: Uuid::new_v4(),
+            project_id: Uuid::new_v4(),
+            model_revision: "current".into(),
+            project_root: "/native".into(),
+        };
+        let mut state = CheckProducerState::default();
+        state.begin(request.clone());
+        let mut wrong = request.acceptance();
+        wrong.profile_id = "erc".into();
+        assert!(!state.accept(wrong));
+        assert_eq!(state.phase, CheckProducerPhase::Starting);
+        assert!(state.accept(request.acceptance()));
+        let mut run = CheckRunReviewState {
+            persisted: true,
+            project_id: Some(request.project_id.to_string()),
+            model_revision: Some(request.model_revision.clone()),
+            profile_id: Some("erc".into()),
+            check_run_id: Some(Uuid::new_v4().to_string()),
+            ..Default::default()
+        };
+        assert!(!state.complete(&request, &run));
+        run.profile_id = Some("drc".into());
+        assert!(state.complete(&request, &run));
+    }
+
+    #[test]
     fn starting_is_not_running_and_only_exact_producer_acceptance_advances() {
         let request = CheckProducerRequest {
+            profile: CheckProducerProfile::Erc,
             job_id: Uuid::new_v4(),
             project_id: Uuid::new_v4(),
             model_revision: "c".repeat(64),
@@ -262,6 +344,7 @@ mod tests {
     #[test]
     fn malformed_foreign_and_unrelated_process_text_never_acknowledges_a_job() {
         let request = CheckProducerRequest {
+            profile: CheckProducerProfile::Erc,
             job_id: Uuid::new_v4(),
             project_id: Uuid::new_v4(),
             model_revision: "d".repeat(64),

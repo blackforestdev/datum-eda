@@ -136,8 +136,8 @@ pub use board_text_primitives::{
 mod check_runs;
 pub mod inspector_context;
 pub use check_runs::producer::{
-    CheckProducerAcceptance, CheckProducerCandidate, CheckProducerPhase, CheckProducerRequest,
-    CheckProducerState, run as run_check_producer,
+    CheckProducerAcceptance, CheckProducerCandidate, CheckProducerPhase, CheckProducerProfile,
+    CheckProducerRequest, CheckProducerState, run as run_check_producer,
 };
 pub use check_runs::{
     CheckFindingSummary, CheckRunCoverageSummary, CheckRunProfileBasisSummary, CheckRunReviewState,

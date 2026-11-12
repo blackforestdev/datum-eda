@@ -136,56 +136,9 @@ fn native_project_from_reader(
     Ok(project)
 }
 
-/// Complete inputs retained before acknowledging a guarded ERC producer job.
-pub(crate) struct CapturedNativeErcInputs {
-    pub(crate) project: LoadedNativeProject,
-    pub(crate) schematic: Schematic,
-    pub(crate) nets: Vec<eda_engine::schematic::SchematicNetInfo>,
-}
-
-pub(crate) fn capture_native_erc_inputs(
-    root: &Path,
-    model: &DesignModel,
-) -> Result<CapturedNativeErcInputs> {
-    let mut values = BTreeMap::new();
-    for shard in &model.source_shards {
-        if matches!(
-            shard.kind,
-            SourceShardKind::ProjectManifest
-                | SourceShardKind::SchematicRoot
-                | SourceShardKind::SchematicSheet
-                | SourceShardKind::SchematicDefinition
-                | SourceShardKind::BoardRoot
-                | SourceShardKind::RulesRoot
-        ) {
-            values.insert(
-                shard.relative_path.clone(),
-                model.capture_source_shard_value(shard.shard_id)?,
-            );
-        }
-    }
-    let read = |path: &str| {
-        values
-            .get(path)
-            .cloned()
-            .ok_or_else(|| anyhow::anyhow!("missing captured source {path}"))
-    };
-    let project = native_project_from_reader(root, |kind| {
-        let shard = model
-            .source_shards
-            .iter()
-            .find(|s| s.kind == kind)
-            .ok_or_else(|| anyhow::anyhow!("missing captured source kind {kind:?}"))?;
-        read(&shard.relative_path)
-    })?;
-    let schematic = build_native_project_schematic_with_reader(&project, read)?;
-    let nets = eda_engine::connectivity::native_schematic_net_info(model, &schematic)?;
-    Ok(CapturedNativeErcInputs {
-        project,
-        schematic,
-        nets,
-    })
-}
+#[path = "check/native_inputs.rs"]
+mod native_inputs;
+pub(crate) use native_inputs::*;
 
 pub(super) fn collect_schematic_counts(
     root: &Path,
@@ -414,6 +367,13 @@ pub(crate) fn project_bound_component_pads(
 }
 
 pub(crate) fn build_native_project_board(project: &LoadedNativeProject) -> Result<Board> {
+    build_native_project_board_with_model(project, None)
+}
+
+pub(crate) fn build_native_project_board_with_model(
+    project: &LoadedNativeProject,
+    model: Option<&DesignModel>,
+) -> Result<Board> {
     let stackup_layers = project
         .board
         .stackup
@@ -444,7 +404,7 @@ pub(crate) fn build_native_project_board(project: &LoadedNativeProject) -> Resul
             Ok((pad.uuid, pad))
         })
         .collect::<Result<HashMap<Uuid, PlacedPad>>>()?;
-    for pad in project_bound_component_pads(project, None)? {
+    for pad in project_bound_component_pads(project, model)? {
         anyhow::ensure!(!pads.contains_key(&pad.uuid), "placed Pad source collision");
         pads.insert(pad.uuid, pad);
     }

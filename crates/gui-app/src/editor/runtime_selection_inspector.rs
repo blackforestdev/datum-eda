@@ -68,13 +68,13 @@ impl Runtime {
                     true
                 }
             }
-            HitTarget::InspectorRunErc(basis) => {
+            HitTarget::InspectorRunCheck(basis, profile) => {
                 if basis.is_current(self.workspace()) {
-                    self.start_erc_job()
+                    self.rerun_check_job(Some(*profile))
                 } else {
                     self.log_console_refusal(
                         ConsoleFeedbackSource::Viewport,
-                        "Inspector source changed; refresh before rerunning ERC",
+                        "Inspector source changed; refresh before rerunning checks",
                     );
                     true
                 }
@@ -284,7 +284,7 @@ impl Runtime {
                     && sections[index].0 == InspectorSectionId::Checks
                     && !event.repeat =>
             {
-                return self.start_erc_job();
+                return self.rerun_check_job(None);
             }
             Key::Named(
                 NamedKey::ArrowLeft | NamedKey::ArrowRight | NamedKey::Enter | NamedKey::Space,

@@ -1,3 +1,4 @@
+use crate::CheckProducerProfile;
 mod inventory;
 pub use inventory::*;
 pub mod accessibility;
@@ -171,12 +172,18 @@ impl GuiMenuItem {
             _ => None,
         }
     }
-    pub fn is_guarded_erc(&self) -> bool {
-        self.label == "Run ERC"
-            && matches!(
-                self.binding(),
-                GuiMenuBinding::Verb("datum.check.run_profile")
-            )
+    pub fn guarded_check_profile(&self) -> Option<CheckProducerProfile> {
+        if !matches!(
+            self.binding(),
+            GuiMenuBinding::Verb("datum.check.run_profile")
+        ) {
+            return None;
+        }
+        match self.label.as_str() {
+            "Run ERC" => Some(CheckProducerProfile::Erc),
+            "Run DRC" => Some(CheckProducerProfile::Drc),
+            _ => None,
+        }
     }
     pub fn binding(&self) -> GuiMenuBinding<'_> {
         if let Some(reason) = self.not_built.as_deref() {
@@ -205,7 +212,7 @@ impl GuiMenuItem {
     }
 
     pub fn is_enabled(&self, project_open: bool) -> bool {
-        (self.is_phase_one_enabled() || self.is_guarded_erc())
+        (self.is_phase_one_enabled() || self.guarded_check_profile().is_some())
             && (!self.requires_project || project_open)
     }
 
@@ -360,15 +367,18 @@ impl GuiMenuItem {
         if state.project_unopened && self.requires_project {
             return Some("This action requires an open Project.");
         }
-        if self.is_guarded_erc() {
+        if self.guarded_check_profile().is_some() {
             if matches!(
                 state.check_producer.phase,
                 crate::CheckProducerPhase::Starting | crate::CheckProducerPhase::Running
             ) {
-                return Some("An ERC job is already pending.");
+                return Some("A check job is already pending.");
+            }
+            if !crate::CheckProducerRequest::editor_preview_idle(state) {
+                return Some("Finish or cancel the editor preview before running checks.");
             }
             return (!crate::CheckProducerRequest::workspace_available(state))
-                .then_some("ERC requires an open native Project with a current source basis.");
+                .then_some("Checks require an open native Project with a current source basis.");
         }
         if let GuiMenuBinding::GuiLocal(key) = self.binding()
             && let Some(consumer) = action_registry::consumer(key)

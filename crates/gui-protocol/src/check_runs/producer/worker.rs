@@ -1,4 +1,4 @@
-//! One owned guarded ERC process; only actual producer acceptance means Running.
+//! One owned guarded Check process; only actual producer acceptance means Running.
 use super::*;
 use anyhow::{Context, Result};
 use std::io::Read;
@@ -28,7 +28,7 @@ pub(super) fn produce_candidate_with_cli(
         .args(prefix)
         .args(["--format", "json", "check", "run"])
         .arg(&request.project_root)
-        .args(["--profile", "erc", "--expected-project"])
+        .args(["--profile", request.profile.id(), "--expected-project"])
         .arg(request.project_id.to_string())
         .arg("--expected-revision")
         .arg(&request.model_revision)
@@ -38,12 +38,12 @@ pub(super) fn produce_candidate_with_cli(
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
         .spawn()
-        .context("Start guarded ERC producer")?;
-    let mut stdout = child.stdout.take().context("ERC output is unavailable")?;
+        .context("Start guarded Check producer")?;
+    let mut stdout = child.stdout.take().context("Check output is unavailable")?;
     let stderr = child
         .stderr
         .take()
-        .context("ERC acknowledgement stream is unavailable")?;
+        .context("Check acknowledgement stream is unavailable")?;
     let (status, output, receipt) = std::thread::scope(|scope| {
         // Both pipes must drain while the process runs; large finding output
         // cannot prevent the acceptance stream or the producer from progressing.
@@ -56,12 +56,12 @@ pub(super) fn produce_candidate_with_cli(
         let output = output.join();
         (status, output, receipt)
     });
-    let status = status.context("Wait for guarded ERC producer")?;
-    let output = output.map_err(|_| anyhow::anyhow!("ERC output reader failed"))??;
-    let mut receipt = receipt.context("Read ERC acknowledgement stream")?;
+    let status = status.context("Wait for guarded Check producer")?;
+    let output = output.map_err(|_| anyhow::anyhow!("Check output reader failed"))??;
+    let mut receipt = receipt.context("Read Check acknowledgement stream")?;
     anyhow::ensure!(
         status.success(),
-        "Guarded ERC producer exited with {status}; {} stderr bytes drained; diagnostic tail: {}",
+        "Guarded Check producer exited with {status}; {} stderr bytes drained; diagnostic tail: {}",
         receipt.stderr_bytes,
         String::from_utf8_lossy(receipt.diagnostic_tail.make_contiguous())
             .trim()
@@ -69,17 +69,17 @@ pub(super) fn produce_candidate_with_cli(
     );
     anyhow::ensure!(
         receipt.error.is_none(),
-        "ERC acceptance failed: {}",
+        "Check acceptance failed: {}",
         receipt.error.unwrap_or_default()
     );
     anyhow::ensure!(
         receipt.accepted,
-        "ERC producer did not acknowledge the requested basis"
+        "Check producer did not acknowledge the requested basis"
     );
     let produced = crate::check_run_review_state_from_json(std::str::from_utf8(&output)?)?;
     anyhow::ensure!(
         request.admits_run(&produced),
-        "ERC result does not match the admitted job"
+        "Check result does not match the admitted job"
     );
     Ok(super::CheckProducerCandidate { run: produced })
 }
@@ -95,7 +95,7 @@ pub(super) fn run_with_cli(
     let id = produced
         .check_run_id
         .as_deref()
-        .context("ERC result has no persisted identity")?;
+        .context("Check result has no persisted identity")?;
     let root = request
         .project_root
         .to_str()
@@ -110,12 +110,12 @@ pub(super) fn run_with_cli(
                 .get("model_revision")
                 .and_then(serde_json::Value::as_str)
                 == Some(request.model_revision.as_str()),
-        "Project changed before persisted ERC readback"
+        "Project changed before persisted Check readback"
     );
     let persisted = crate::check_run_review_state_from_json(&serde_json::to_string(&record)?)?;
     anyhow::ensure!(
         request.admits_run(&persisted) && persisted == produced,
-        "Persisted ERC record differs from its admitted producer result"
+        "Persisted Check record differs from its admitted producer result"
     );
     Ok(persisted)
 }

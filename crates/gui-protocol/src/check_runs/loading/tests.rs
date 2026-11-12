@@ -150,14 +150,24 @@ fn erc_disposition_report_survives_save_but_not_source_change_or_current_persist
     retain_current_check_projection(&mut state, &report);
     assert_eq!(state.checks, CheckRunReviewState::default());
     state.scene.source_revision = "current".into();
-    let persisted = CheckRunReviewState {
-        persisted: true,
-        status: Some("persisted".into()),
-        ..report.clone()
-    };
-    state.checks = persisted.clone();
-    retain_current_check_projection(&mut state, &report);
-    assert_eq!(state.checks, persisted);
+    for profile in ["erc", "drc"] {
+        let persisted = CheckRunReviewState {
+            profile_id: Some(profile.into()),
+            persisted: true,
+            status: Some("persisted".into()),
+            ..report.clone()
+        };
+        state.checks = persisted.clone();
+        retain_current_check_projection(&mut state, &report);
+        assert_eq!(
+            state.checks, persisted,
+            "current {profile} must beat an automatic read-only ERC projection"
+        );
+        assert!(current_persisted(&state));
+        state.scene.source_revision = "changed".into();
+        assert!(!current_persisted(&state));
+        state.scene.source_revision = "current".into();
+    }
 }
 
 #[test]

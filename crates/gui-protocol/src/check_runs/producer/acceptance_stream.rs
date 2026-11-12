@@ -27,7 +27,7 @@ pub(super) fn read(
         .len()
         .checked_add(serde_json::to_vec(&request.acceptance())?.len())
         .and_then(|length| length.checked_add(1))
-        .ok_or_else(|| anyhow::anyhow!("ERC acknowledgement size overflow"))?;
+        .ok_or_else(|| anyhow::anyhow!("Check acknowledgement size overflow"))?;
     let mut candidate = Vec::with_capacity(maximum);
     let mut discard = false;
     let mut receipt = StreamReceipt {
@@ -64,7 +64,7 @@ pub(super) fn read(
                         Ok(Some(_)) => {
                             receipt
                                 .error
-                                .get_or_insert_with(|| "Duplicate ERC acknowledgement".into());
+                                .get_or_insert_with(|| "Duplicate Check acknowledgement".into());
                         }
                         Ok(None) => unreachable!("candidate has full prefix"),
                         Err(error) => {
@@ -81,7 +81,7 @@ pub(super) fn read(
                 } else if candidate.len() == maximum {
                     receipt
                         .error
-                        .get_or_insert_with(|| "Oversized ERC acknowledgement".into());
+                        .get_or_insert_with(|| "Oversized Check acknowledgement".into());
                     candidate.clear();
                     discard = true;
                 } else {
@@ -95,7 +95,7 @@ pub(super) fn read(
     if candidate.starts_with(prefix) {
         receipt
             .error
-            .get_or_insert_with(|| "ERC acknowledgement has no terminating delimiter".into());
+            .get_or_insert_with(|| "Check acknowledgement has no terminating delimiter".into());
     }
     Ok(receipt)
 }

@@ -1,5 +1,23 @@
 //! Native menu availability follows the discovered writer catalog.
 use super::*;
+
+#[test]
+fn checks_menu_selects_finite_native_profile_and_refuses_unavailable_basis() {
+    use crate::check_runs::producer::CheckProducerProfile as P;
+    for (label, profile) in [("Run ERC", P::Erc), ("Run DRC", P::Drc)] {
+        let mut item = native_edit_item("datum.check.run_profile");
+        item.label = label.into();
+        assert_eq!(item.guarded_check_profile(), Some(profile));
+        assert!(item.is_enabled(true));
+        assert!(!item.is_enabled(false));
+        assert!(
+            item.unavailable_reason(&native_editable_state(&[]))
+                .is_some()
+        );
+        item.label = "Unrecognized check".into();
+        assert_eq!(item.guarded_check_profile(), None);
+    }
+}
 fn native_edit_item(verb: &str) -> GuiMenuItem {
     GuiMenuItem {
         preset: None,

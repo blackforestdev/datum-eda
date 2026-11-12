@@ -42,7 +42,7 @@ impl Runtime {
             HitTarget::MoveCoordinates => self.open_move_coordinates(),
             HitTarget::CoordinateEntry(control) => self.coordinate_field_click(*control),
             HitTarget::InspectorSectionToggle { .. }
-            | HitTarget::InspectorRunErc(_)
+            | HitTarget::InspectorRunCheck(_, _)
             | HitTarget::InspectorEditSymbol(_)
             | HitTarget::InspectorBindInterface(_)
             | HitTarget::InspectorAssignPart(_)

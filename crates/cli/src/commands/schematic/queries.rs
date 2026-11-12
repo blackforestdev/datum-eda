@@ -389,6 +389,30 @@ pub(crate) fn native_erc_report_from_schematic(
     }
 }
 
+/// DRC over the admitted native Board/model and captured waivers. The engine
+/// certifies its electrical/process sources here, before producer acknowledgement.
+/// The resulting report is owned; evaluation performs no authored writes.
+pub(crate) fn native_drc_report_from_board(
+    board: &eda_engine::board::Board,
+    model: &eda_engine::substrate::DesignModel,
+    schematic: &Schematic,
+    rules: &[RuleType],
+) -> CheckReport {
+    let drc = eda_engine::drc::run_with_current_zone_fills_and_waivers(
+        board,
+        rules,
+        model,
+        &schematic.waivers,
+    )
+    .violations;
+    CheckReport::Combined {
+        summary: summarize_native_combined_checks(&[], &[], &drc),
+        diagnostics: Vec::new(),
+        erc: Vec::new(),
+        drc,
+    }
+}
+
 fn summarize_native_combined_checks(
     diagnostics: &[ConnectivityDiagnosticInfo],
     erc: &[ErcFinding],
