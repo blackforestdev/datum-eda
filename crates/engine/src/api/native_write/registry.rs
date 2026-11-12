@@ -52,6 +52,7 @@ pub fn native_write_verbs() -> &'static [NativeWriteVerb] {
         verbs.extend_from_slice(super::project::VERBS);
         verbs.extend_from_slice(super::board_components::VERBS);
         verbs.extend_from_slice(super::board_routing::VERBS);
+        verbs.extend_from_slice(super::board_routing::zone::VERBS);
         verbs.extend_from_slice(super::waivers::VERBS);
         verbs.extend_from_slice(super::schematic_edit::VERBS);
         verbs.extend_from_slice(super::schematic_board_transfer::VERBS);
@@ -145,12 +146,14 @@ mod tests {
             ids,
             vec![
                 "datum.check.accept_deviation",
+                "datum.check.fill_zones",
                 "datum.check.waive",
                 "datum.library.acquire",
                 "datum.library.create",
                 "datum.library.edit",
                 "datum.pcb.draw_track",
                 "datum.pcb.move_component",
+                "datum.pcb.place_zone",
                 "datum.pcb.prepare_footprint_sources",
                 "datum.project.create_rule",
                 "datum.project.delete_rule",

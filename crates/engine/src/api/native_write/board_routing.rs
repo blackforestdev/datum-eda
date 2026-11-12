@@ -28,6 +28,7 @@ use super::context::{BatchComposer, PreparedWrite, WriteProvenance};
 
 pub mod route;
 pub mod stop;
+pub mod zone;
 pub(crate) use route::VERBS;
 
 macro_rules! board_routing_builders {
