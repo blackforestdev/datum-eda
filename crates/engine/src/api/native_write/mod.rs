@@ -19,6 +19,7 @@
 //!   family and this module list is final (later migrations edit only their
 //!   own family file).
 
+pub mod alignment_geometry;
 pub mod artifacts;
 pub mod board_annotations;
 pub mod board_components;
@@ -55,6 +56,7 @@ pub mod process;
 pub mod project;
 pub mod registry;
 pub mod revision;
+pub mod schematic_alignment;
 pub mod schematic_annotation;
 pub mod schematic_assignment;
 pub mod schematic_bus;

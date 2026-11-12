@@ -1377,6 +1377,121 @@
           }
         ]
       }
+    },
+    "schematic.multiselect": {
+      "cardinal": {
+        "N": {
+          "label": "Move",
+          "icon": "move",
+          "verb": "datum.schematic.move_symbol"
+        },
+        "E": {
+          "label": "Rotate",
+          "icon": "rotate",
+          "not_built": "Group rotation is available during Move; contextual preset not wired yet"
+        },
+        "S": {
+          "label": "Mirror",
+          "icon": "mirror",
+          "not_built": "Group reflection is available during Move; contextual preset not wired yet"
+        },
+        "W": {
+          "label": "Duplicate",
+          "icon": "copy",
+          "not_built": "Symbol group clipboard not yet implemented"
+        }
+      },
+      "secondary": {
+        "NE": {
+          "label": "Align",
+          "icon": "align",
+          "submenu": "Align"
+        }
+      },
+      "overflow": [],
+      "submenus": {
+        "Align": [
+          {
+            "label": "Horizontal",
+            "icon": "align-h",
+            "submenu": "Align Horizontal"
+          },
+          {
+            "label": "Vertical",
+            "icon": "align-v",
+            "submenu": "Align Vertical"
+          },
+          {
+            "label": "Distribute",
+            "icon": "distribute",
+            "not_built": "Symbol distribution is not available in this increment"
+          }
+        ],
+        "Align Horizontal": [
+          {
+            "label": "Left",
+            "icon": "align-left",
+            "verb": "datum.schematic.align_symbols",
+            "preset": {
+              "kind": "schematic_alignment",
+              "axis": "horizontal",
+              "position": "left"
+            }
+          },
+          {
+            "label": "Center",
+            "icon": "align-center-h",
+            "verb": "datum.schematic.align_symbols",
+            "preset": {
+              "kind": "schematic_alignment",
+              "axis": "horizontal",
+              "position": "center"
+            }
+          },
+          {
+            "label": "Right",
+            "icon": "align-right",
+            "verb": "datum.schematic.align_symbols",
+            "preset": {
+              "kind": "schematic_alignment",
+              "axis": "horizontal",
+              "position": "right"
+            }
+          }
+        ],
+        "Align Vertical": [
+          {
+            "label": "Top",
+            "icon": "align-top",
+            "verb": "datum.schematic.align_symbols",
+            "preset": {
+              "kind": "schematic_alignment",
+              "axis": "vertical",
+              "position": "top"
+            }
+          },
+          {
+            "label": "Center",
+            "icon": "align-center-v",
+            "verb": "datum.schematic.align_symbols",
+            "preset": {
+              "kind": "schematic_alignment",
+              "axis": "vertical",
+              "position": "center"
+            }
+          },
+          {
+            "label": "Bottom",
+            "icon": "align-bottom",
+            "verb": "datum.schematic.align_symbols",
+            "preset": {
+              "kind": "schematic_alignment",
+              "axis": "vertical",
+              "position": "bottom"
+            }
+          }
+        ]
+      }
     }
   }
 }

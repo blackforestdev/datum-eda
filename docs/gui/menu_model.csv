@@ -1,4 +1,4 @@
-surface,context,active_editor,wheel,slot,label,icon,verb,gui_local,not_built,submenu,destructive,shortcut
+surface,context,active_editor,wheel,slot,label,icon,verb,gui_local,not_built,submenu,destructive,shortcut,preset
 menubar,File,,,0,New Project,file-new,,,engine-owned genesis; no public verb,,,Ctrl+N
 menubar,File,,,1,Open Project,folder-open,,,GUI project-session model,,,Ctrl+O
 menubar,File,,,2,Import…,import,,,project import-kicad-* is CLI; no public import verb,,,Ctrl+Shift+I
@@ -203,3 +203,17 @@ marking,schematic.empty,,,SW,Place No-Connect,noconnect,datum.schematic.place_no
 marking,schematic.empty,,,NW,Place Junction,junction,datum.schematic.place_junction,,,,,
 marking,schematic.empty,,,overflow,Annotate This Sheet…,rename,,schematic.annotation.review,,,,
 marking,schematic.empty,,,overflow,Annotate Project…,rename,,schematic.annotation.project,,,,
+marking,schematic.multiselect,,,N,Move,move,datum.schematic.move_symbol,,,,,,
+marking,schematic.multiselect,,,E,Rotate,rotate,,,Group rotation is available during Move; contextual preset not wired yet,,,,
+marking,schematic.multiselect,,,S,Mirror,mirror,,,Group reflection is available during Move; contextual preset not wired yet,,,,
+marking,schematic.multiselect,,,W,Duplicate,copy,,,Symbol group clipboard not yet implemented,,,,
+marking,schematic.multiselect,,,NE,Align,align,,,,Align,,,
+marking,schematic.multiselect,,Align,0,Horizontal,align-h,,,,Align Horizontal,,,
+marking,schematic.multiselect,,Align,1,Vertical,align-v,,,,Align Vertical,,,
+marking,schematic.multiselect,,Align,2,Distribute,distribute,,,Symbol distribution is not available in this increment,,,,
+marking,schematic.multiselect,,Align Horizontal,0,Left,align-left,datum.schematic.align_symbols,,,,,,"{""kind"":""schematic_alignment"",""axis"":""horizontal"",""position"":""left""}"
+marking,schematic.multiselect,,Align Horizontal,1,Center,align-center-h,datum.schematic.align_symbols,,,,,,"{""kind"":""schematic_alignment"",""axis"":""horizontal"",""position"":""center""}"
+marking,schematic.multiselect,,Align Horizontal,2,Right,align-right,datum.schematic.align_symbols,,,,,,"{""kind"":""schematic_alignment"",""axis"":""horizontal"",""position"":""right""}"
+marking,schematic.multiselect,,Align Vertical,0,Top,align-top,datum.schematic.align_symbols,,,,,,"{""kind"":""schematic_alignment"",""axis"":""vertical"",""position"":""top""}"
+marking,schematic.multiselect,,Align Vertical,1,Center,align-center-v,datum.schematic.align_symbols,,,,,,"{""kind"":""schematic_alignment"",""axis"":""vertical"",""position"":""center""}"
+marking,schematic.multiselect,,Align Vertical,2,Bottom,align-bottom,datum.schematic.align_symbols,,,,,,"{""kind"":""schematic_alignment"",""axis"":""vertical"",""position"":""bottom""}"

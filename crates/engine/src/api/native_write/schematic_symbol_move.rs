@@ -171,7 +171,7 @@ pub(super) fn move_symbol(
     )
 }
 
-fn transform_write(
+pub(super) fn transform_write(
     context: &NativeWriteContext<'_>,
     provenance: WriteProvenance,
     sheet_id: Uuid,

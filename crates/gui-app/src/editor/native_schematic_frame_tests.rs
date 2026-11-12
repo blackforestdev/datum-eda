@@ -10,6 +10,8 @@ use std::{
     time::{Duration, Instant},
 };
 use winit::platform::wayland::EventLoopBuilderExtWayland;
+#[path = "native_schematic_frame_tests/alignment.rs"]
+mod alignment;
 #[path = "native_schematic_frame_tests/board_transfer.rs"]
 mod board_transfer;
 #[path = "native_schematic_frame_tests/context_menu.rs"]

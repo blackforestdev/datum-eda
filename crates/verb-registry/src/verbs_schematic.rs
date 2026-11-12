@@ -1,9 +1,7 @@
-//! The `datum.schematic` verb family (62 verbs), generated from the legacy
-//! hand-written MCP catalog (`tools_catalog_datum.py`) and the Python
-//! bridge argv builders (`server_runtime.py` / schematic runtime modules).
-//!
-//! Entries preserve the historical public MCP catalog order; `lib.rs`
-//! assembles all families sorted by id for deterministic projection.
+//! Schematic verbs preserve legacy CLI adapter order alongside native capabilities.
+//! The crate assembles all families sorted by ID for deterministic projection.
+#[path = "verbs_schematic_alignment.rs"]
+mod alignment;
 
 use crate::{ArgvToken, Dispatch, ParamSpec, ParamType, VerbSpec, VerbStatus};
 
@@ -20,6 +18,7 @@ macro_rules! p {
 }
 
 pub(crate) static VERBS: &[VerbSpec] = &[
+    alignment::VERB,
     VerbSpec {
         id: "datum.schematic.create_sheet",
         summary: "Create one native-project schematic sheet.",

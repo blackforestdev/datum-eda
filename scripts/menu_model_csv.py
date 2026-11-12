@@ -30,7 +30,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 JSON = ROOT / "docs" / "gui" / "menu_model.json"
 CSV = ROOT / "docs" / "gui" / "menu_model.csv"
 COLS = ["surface", "context", "active_editor", "wheel", "slot", "label", "icon",
-        "verb", "gui_local", "not_built", "submenu", "destructive", "shortcut"]
+        "verb", "gui_local", "not_built", "submenu", "destructive", "shortcut", "preset"]
 CARD = ("N", "E", "S", "W")
 DIAG = ("NE", "SE", "SW", "NW")
 
@@ -45,6 +45,8 @@ def entry_to_row(e, **base):
             r[k] = e[k]
     if e.get("destructive"):
         r["destructive"] = "y"
+    if e.get("preset") is not None:
+        r["preset"] = json.dumps(e["preset"], separators=(",", ":"))
     return r
 
 
@@ -84,6 +86,11 @@ def row_to_entry(r):
         e["destructive"] = True
     if r.get("shortcut"):
         e["shortcut"] = r["shortcut"]
+    if r.get("preset"):
+        preset = json.loads(r["preset"])
+        if not isinstance(preset, dict):
+            raise ValueError("Menu preset must be a typed JSON object")
+        e["preset"] = preset
     return e
 
 

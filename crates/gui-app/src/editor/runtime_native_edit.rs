@@ -14,6 +14,8 @@ mod actions;
 mod board_transfer;
 #[path = "runtime_native_edit/catalog.rs"]
 mod catalog;
+#[path = "runtime_schematic_alignment.rs"]
+mod schematic_alignment;
 use catalog::native_write_verb_ids;
 #[path = "runtime_native_edit/coordinates.rs"]
 mod coordinates;
@@ -337,6 +339,7 @@ impl Runtime {
             intent.instance_path = preview.instance_path();
             if let NativeEditAction::MoveSymbols { x_nm, y_nm, .. } = action {
                 intent.symbol_group = preview.group_request(PointNm { x: x_nm, y: y_nm });
+                intent.symbol_alignment = preview.alignment_request();
             }
             if let NativeEditAction::MoveDesign { x_nm, y_nm } = action {
                 match preview.design_request(PointNm { x: x_nm, y: y_nm }) {

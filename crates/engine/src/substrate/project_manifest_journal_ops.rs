@@ -19,13 +19,9 @@ pub(super) fn apply_project_manifest_operation(
         Operation::InitializeProjectDisplayUnits {
             profile, receipt, ..
         } => {
-            if manifest_value.get("project_display_units").is_some()
-                || manifest_value.get("project_units_seed_receipt").is_some()
-            {
-                return Err(EngineError::Validation(
-                    "Project Working Units are already initialized".to_string(),
-                ));
-            }
+            // Materialization can start from already-promoted source and replay
+            // an earlier journal prefix. Restore that prefix's recorded values;
+            // live one-time admission remains in the builder and inverse pass.
             set_project_manifest_field(manifest_value, "project_display_units", profile.clone())?;
             set_project_manifest_field(
                 manifest_value,
@@ -54,6 +50,10 @@ pub(super) fn apply_project_manifest_operation(
         _ => Ok(None),
     }
 }
+
+#[cfg(test)]
+#[path = "project_units_replay_tests.rs"]
+mod tests;
 
 pub(super) fn inverse_project_manifest_operation(
     manifest_value: &mut serde_json::Value,

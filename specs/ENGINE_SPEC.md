@@ -2549,3 +2549,25 @@ and filled-zone projection, with unavailable-source feedback; it does not grant
 nominal-connectivity, ECO, imported/repeated-hierarchy or full qualification
 acceptance. See `dat-initial-connected-pcb-transfer-mbzh` and the existing Library
 contract/delivery record for the actual bounded ordinary-App proof.
+
+### Native Symbol alignment and units replay — current implementation
+
+`schematic_alignment::plan_alignment` captures one complete native Symbol set in
+a unique sheet occurrence. Authenticated placed library body extents determine
+the six Horizontal/Vertical edge or center presets against selection bounds;
+captions, pin labels, attached wires and placement origins do not define those
+extents. Current support includes rectangles, circles, round-capped lines and
+zero-width polygons at supported cardinal poses. Missing or unsupported extents,
+locked members, fractional-nanometer translations and overflow refuse the set.
+`SymbolMoveSetBasis::destination_positions` translates each Symbol with its pins
+and positioned fields, then uses the existing complete contact solve and guarded
+raw-preserving writer. Preview and `datum.schematic.align_symbols` acceptance
+share the plan; distribution and other references remain unavailable.
+
+Project-manifest materialization replays a recorded units initialization onto
+promoted source without treating it as a second live initialization. The live
+builder and inverse preimage admission still reject duplicate initialization.
+Focused native source/history tests cover Symbol births, later writes, units
+updates, cold loaded history, Undo/Redo and byte-exact duplicate-init refusal.
+These outcomes support the active practical-capture goal; they do not establish
+its completion or full schematic qualification.

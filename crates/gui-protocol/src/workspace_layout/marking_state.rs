@@ -84,6 +84,18 @@ impl MarkingMenuState {
 
     pub fn schematic_context_key(&self) -> &'static str {
         use crate::AuthoredSelectionClass as C;
+        if let Some(menu) = self.selection.as_ref().filter(|m| m.schematic)
+            && let Some(subject) = &menu.inspection_subject
+            && let Ok(members) =
+                crate::footprint_move_preview::native::group::symbol_members(subject)
+            && members.len() >= 2
+            && (self.target_object_id.is_none()
+                || self
+                    .schematic_context_target()
+                    .is_some_and(|target| members.contains(target)))
+        {
+            return "schematic.multiselect";
+        }
         match self.schematic_context_target().map(|id| id.class) {
             Some(C::Symbol) => "schematic.symbol",
             Some(C::Wire) => "schematic.wire",
@@ -166,6 +178,37 @@ impl MarkingMenuState {
             }
         }
         let authoring = &state.schematic_authoring;
+        if let Some(preset) = item.preset {
+            if item.verb.as_deref() != Some("datum.schematic.align_symbols")
+                || self.menu_key != "schematic.multiselect"
+            {
+                return Err("Alignment preset has no compatible context command".into());
+            }
+            let crate::SelectionTarget::Native(view) = &state.selection else {
+                return Err("Select a complete Symbol group before aligning".into());
+            };
+            if view.stale || menu.inspection_subject.as_ref() != Some(&view.subject) {
+                return Err("Selection changed; reopen the context menu".into());
+            }
+            let request = preset
+                .alignment_request(&view.subject)
+                .map_err(|e| e.to_string())?;
+            if request
+                .symbols
+                .iter()
+                .any(|id| authoring.move_paths.get(id) != Some(&request.instance_path))
+            {
+                return Err("Alignment requires one complete current sheet occurrence".into());
+            }
+            if authoring.active() || authoring.picker || authoring.delete_review.is_some() {
+                return Err("Finish or cancel the current edit first".into());
+            }
+            return crate::gui_menu_model::native_edit_unavailable_reason(
+                state,
+                "datum.schematic.align_symbols",
+            )
+            .map_or(Ok(()), |reason| Err(reason.into()));
+        }
         if authoring.delete_review.is_some() {
             return Err("Accept or dismiss the deletion proposal first".into());
         }

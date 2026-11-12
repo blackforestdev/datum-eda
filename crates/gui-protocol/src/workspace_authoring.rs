@@ -38,6 +38,7 @@ impl ReviewWorkspaceState {
         }
         let point = self.snap_authoring_point(world);
         self.authoring.gesture = AuthoringGestureState {
+            preset: None,
             tool: self.tool,
             anchor: Some(point),
             preview: Some(point),

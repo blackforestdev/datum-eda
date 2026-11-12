@@ -1,7 +1,6 @@
 // Exhaustive ProjectCommands router; dissolved forwarding arms either run their
 // family's `args.run(format)` inherent method (impls live in the owning
 // commands/<family>/ files) or inline the short destructure-and-render body directly.
-
 use super::*;
 #[path = "gerber/layer_commands.rs"]
 mod layer_commands;
@@ -674,6 +673,7 @@ pub(crate) fn execute_project_command(
         ProjectCommands::DeleteNoConnect(args) => args.run(format),
         ProjectCommands::PlaceSymbol(args) => args.run(format),
         ProjectCommands::MoveSymbol(args) => args.run(format),
+        ProjectCommands::AlignSymbols(args) => args.run(format),
         ProjectCommands::RotateSymbol(args) => args.run(format),
         ProjectCommands::MirrorSymbol(args) => args.run(format),
         ProjectCommands::DeleteSymbol(args) => args.run(format),

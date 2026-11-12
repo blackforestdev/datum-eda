@@ -396,7 +396,7 @@ impl NativeMovePreview {
         at: PointNm,
     ) -> Option<eda_engine::api::native_write::schematic_symbol_move::SymbolMoveSetRequest> {
         match self {
-            Self::Symbols(p) => Some(p.request(at)),
+            Self::Symbols(p) if p.alignment.is_none() => Some(p.request(at)),
             _ => None,
         }
     }
@@ -511,6 +511,7 @@ impl NativeMovePreview {
             Self::Text(p) => {
                 translated_destination(p.basis.text.position, p.cursor_anchor, cursor, snap)
             }
+            Self::Symbols(p) if p.alignment.is_some() => Ok(p.reference),
             Self::Symbols(_) => checked_snap_authoring_point(cursor, snap),
             Self::Wiring(group) => group.destination(cursor, snap),
             Self::Symbol {

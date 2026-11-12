@@ -15,6 +15,7 @@ pub(super) fn parse_params(value: Value) -> Result<NativeWriteParams, String> {
             "datum.library.create"
                 | "datum.library.edit"
                 | "datum.schematic.create_sheet"
+                | "datum.schematic.align_symbols"
                 | "datum.schematic.transfer_to_pcb"
                 | "datum.pcb.prepare_footprint_sources"
         )
@@ -22,6 +23,7 @@ pub(super) fn parse_params(value: Value) -> Result<NativeWriteParams, String> {
     {
         let action = match value.get("verb").and_then(Value::as_str) {
             Some("datum.schematic.create_sheet") => "sheet creation",
+            Some("datum.schematic.align_symbols") => "Symbol alignment",
             Some("datum.schematic.transfer_to_pcb" | "datum.pcb.prepare_footprint_sources") => {
                 "PCB transfer"
             }
@@ -98,7 +100,8 @@ pub(super) fn native_write_response(
     if (library_edit
         || matches!(
             params.verb.as_str(),
-            "datum.schematic.transfer_to_pcb"
+            "datum.schematic.align_symbols"
+                | "datum.schematic.transfer_to_pcb"
                 | "datum.pcb.prepare_footprint_sources"
                 | "datum.pcb.move_component"
                 | "datum.journal.undo"
@@ -122,7 +125,8 @@ pub(super) fn native_write_response(
         || supplied_symbol_move_tip
         || matches!(
             params.verb.as_str(),
-            "datum.schematic.transfer_to_pcb"
+            "datum.schematic.align_symbols"
+                | "datum.schematic.transfer_to_pcb"
                 | "datum.pcb.prepare_footprint_sources"
                 | "datum.pcb.move_component"
                 | "datum.journal.undo"

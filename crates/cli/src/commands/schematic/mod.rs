@@ -1,3 +1,4 @@
+mod symbol_alignment;
 // commands/schematic — the schematic command family: connectivity
 // (wires/labels/junctions/ports/buses/noconnects), symbols and their
 // pool bindings, sheets, text/drawings, schematic queries, proposals,

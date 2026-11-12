@@ -2,6 +2,7 @@
 use super::*;
 fn native_edit_item(verb: &str) -> GuiMenuItem {
     GuiMenuItem {
+        preset: None,
         label: verb.to_string(),
         icon: None,
         shortcut: None,

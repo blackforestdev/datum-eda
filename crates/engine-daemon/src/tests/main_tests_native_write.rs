@@ -13,6 +13,8 @@ mod board_transfer_controls;
 mod library_reference_controls;
 #[path = "main_tests_native_write/package_creation_controls.rs"]
 mod package_creation_controls;
+#[path = "main_tests_native_write/symbol_alignment_controls.rs"]
+mod symbol_alignment_controls;
 #[path = "main_tests_native_write/symbol_move_controls.rs"]
 mod symbol_move_controls;
 

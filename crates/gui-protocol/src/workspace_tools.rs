@@ -195,6 +195,7 @@ impl Default for AuthoringSnapState {
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AuthoringGestureState {
+    pub preset: Option<crate::schematic_alignment::MenuActionPreset>,
     pub tool: WorkspaceTool,
     pub anchor: Option<PointNm>,
     pub preview: Option<PointNm>,
@@ -205,6 +206,7 @@ pub struct AuthoringGestureState {
 impl AuthoringGestureState {
     pub fn idle(tool: WorkspaceTool) -> Self {
         Self {
+            preset: None,
             tool,
             anchor: None,
             preview: None,

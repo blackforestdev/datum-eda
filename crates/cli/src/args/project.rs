@@ -420,6 +420,8 @@ pub(crate) enum ProjectCommands {
     DeleteSymbol(ProjectDeleteSymbolArgs),
     /// Move one native schematic symbol
     MoveSymbol(ProjectMoveSymbolArgs),
+    /// Align complete native Symbol bodies against their combined bounds
+    AlignSymbols(ProjectAlignSymbolsArgs),
     /// Rotate one native schematic symbol
     RotateSymbol(ProjectRotateSymbolArgs),
     /// Mirror one native schematic symbol

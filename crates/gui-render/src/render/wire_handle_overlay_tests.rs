@@ -242,6 +242,7 @@ fn armed_feedback_stays_in_the_qualified_source_and_clears_after_cancel() {
     let pane = state.ui.layout.focused;
     let basis = AuthoringViewBasis::capture_qualified_schematic(&state, pane).unwrap();
     state.authoring.gesture = datum_gui_protocol::AuthoringGestureState {
+        preset: None,
         tool: datum_gui_protocol::WorkspaceTool::Move,
         anchor: Some(PointNm { x: 0, y: 0 }),
         preview: Some(PointNm {

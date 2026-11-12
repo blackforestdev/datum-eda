@@ -26,6 +26,7 @@ fn native_edit_verb(verb: &str) -> bool {
     matches!(
         verb,
         "datum.pcb.move_component"
+            | "datum.schematic.align_symbols"
             | "datum.schematic.create_sheet"
             | "datum.schematic.place_text"
             | "datum.schematic.delete_text"
@@ -90,6 +91,7 @@ pub fn native_edit_unavailable_reason(
     if matches!(
         verb,
         "datum.schematic.place_text"
+            | "datum.schematic.align_symbols"
             | "datum.schematic.place_symbol"
             | "datum.schematic.draw_wire"
             | "datum.schematic.place_label"
@@ -117,7 +119,8 @@ pub fn native_edit_unavailable_reason(
     {
         if !matches!(
             verb,
-            "datum.schematic.place_symbol"
+            "datum.schematic.align_symbols"
+                | "datum.schematic.place_symbol"
                 | "datum.schematic.place_text"
                 | "datum.schematic.draw_wire"
                 | "datum.schematic.place_marker"

@@ -92,6 +92,10 @@ impl Runtime {
             self.dismiss_marking_menu();
             return self.activate_wire_command(command, None);
         }
+        if let Some(preset) = item.preset {
+            self.dismiss_marking_menu();
+            return self.begin_schematic_alignment(preset);
+        }
         let move_object = matches!(
             item.verb.as_deref(),
             Some("datum.schematic.move_symbol" | "datum.schematic.move")

@@ -7,6 +7,10 @@ use eda_engine::api::native_write::schematic_symbol_move::{
 use eda_engine::ir::geometry::Point;
 
 pub struct SymbolGroupPreview {
+    pub(super) alignment: Option<(
+        eda_engine::api::native_write::schematic_alignment::SymbolAlignmentRequest,
+        eda_engine::api::native_write::schematic_symbol_move::SymbolMoveSetDestination,
+    )>,
     pub(super) base: BoardReviewSceneV1,
     pub(super) basis: SymbolMoveSetBasis,
     pub(super) authoring: Box<SchematicAuthoring>,
@@ -77,6 +81,7 @@ impl SymbolGroupPreview {
             "Symbol occurrence changed; select the complete set again"
         );
         Ok(Self {
+            alignment: None,
             base: base.clone(),
             basis,
             authoring: Box::new(authoring.clone()),
@@ -98,10 +103,34 @@ impl SymbolGroupPreview {
             mirrored: self.mirrored,
         }
     }
+    pub fn with_alignment(
+        mut self,
+        model: &eda_engine::substrate::DesignModel,
+        preset: crate::schematic_alignment::MenuActionPreset,
+        subject: &SelectionSubject,
+    ) -> Result<Self> {
+        let request = preset.alignment_request(subject)?;
+        let (basis, destination) =
+            eda_engine::api::native_write::schematic_alignment::plan_alignment(model, &request)?;
+        anyhow::ensure!(
+            basis == self.basis,
+            "Alignment source changed; select the complete set again"
+        );
+        anyhow::ensure!(
+            basis.symbols != destination.symbols,
+            "Symbol alignment is unchanged"
+        );
+        self.alignment = Some((request, destination));
+        Ok(self)
+    }
     pub fn matches_subject(&self, subject: &SelectionSubject) -> bool {
         symbol_members(subject).is_ok_and(|members| members == self.members)
     }
     pub fn transform(&mut self, transform: PlacementTransform, at: PointNm) -> Result<bool> {
+        anyhow::ensure!(
+            self.alignment.is_none(),
+            "Alignment uses a fixed preset; cancel it before rotating or mirroring"
+        );
         let (rotation, mirrored) = transform.apply(self.rotation, self.mirrored);
         self.basis.destination_with_transform(
             Point::new(self.reference.x, self.reference.y),
@@ -114,12 +143,20 @@ impl SymbolGroupPreview {
         Ok(true)
     }
     pub fn scene_at(&self, at: PointNm) -> Result<BoardReviewSceneV1> {
-        let moved = self.basis.destination_with_transform(
-            Point::new(self.reference.x, self.reference.y),
-            Point::new(at.x, at.y),
-            self.rotation,
-            self.mirrored,
-        )?;
+        let moved = if let Some((_, destination)) = &self.alignment {
+            anyhow::ensure!(
+                at == self.reference,
+                "Alignment uses a fixed preset; coordinate editing is unavailable"
+            );
+            destination.clone()
+        } else {
+            self.basis.destination_with_transform(
+                Point::new(self.reference.x, self.reference.y),
+                Point::new(at.x, at.y),
+                self.rotation,
+                self.mirrored,
+            )?
+        };
         let mut source = self
             .authoring
             .source
@@ -137,5 +174,16 @@ impl SymbolGroupPreview {
         }
         self.authoring
             .project_source(&source, self.basis.sheet_id, &self.base, &self.root)
+    }
+}
+
+impl NativeMovePreview {
+    pub fn alignment_request(
+        &self,
+    ) -> Option<eda_engine::api::native_write::schematic_alignment::SymbolAlignmentRequest> {
+        match self {
+            Self::Symbols(p) => p.alignment.as_ref().map(|(request, _)| request.clone()),
+            _ => None,
+        }
     }
 }

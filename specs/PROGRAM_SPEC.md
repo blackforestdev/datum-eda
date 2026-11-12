@@ -78,6 +78,17 @@ The existing reviewed component-replacement proposal carries process-update inte
 The library-authoring contract and PM061 govern semantics and qualification;
 this inventory note changes no historical milestone or successor authority.
 
+## Current native schematic alignment CLI
+
+`datum-eda project align-symbols --root <project>` accepts the complete Symbol
+UUID set, ordered occurrence path, Horizontal Left/Center/Right or Vertical
+Top/Center/Bottom preset, and observed model revision and transaction tip.
+Its typed `datum.schematic.align_symbols` adapter uses authenticated placed-body
+extents and the shared native writer for one connected-geometry transaction.
+Only selection-bounds reference is currently supported; unsupported members,
+stale guards and an unchanged result refuse without a partial edit. Distribution
+and other reference modes remain outside this bounded implementation.
+
 ## Scope Integrity Terms
 
 The following terms are normative for scope framing across this repository:

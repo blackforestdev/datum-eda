@@ -115,6 +115,8 @@ pub struct NativeEditIntent {
         Option<eda_engine::api::native_write::schematic_delete_proposal::NativeProposalAction>,
     pub symbol_group:
         Option<eda_engine::api::native_write::schematic_symbol_move::SymbolMoveSetRequest>,
+    pub symbol_alignment:
+        Option<eda_engine::api::native_write::schematic_alignment::SymbolAlignmentRequest>,
     pub schematic: Option<crate::schematic_authoring::SchematicEditRequest>,
     pub library: Option<(
         bool,
@@ -144,6 +146,7 @@ impl NativeEditIntent {
             schematic: None,
             board_transfer: None,
             symbol_group: None,
+            symbol_alignment: None,
             proposal: None,
             library: None,
             library_acquisition: None,
@@ -444,23 +447,34 @@ impl NativeProjectClient {
                 rotation_deg,
                 mirrored,
             } => {
-                let request = intent
-                    .symbol_group
-                    .as_ref()
-                    .context("Complete Symbol transform payload missing")?;
-                anyhow::ensure!(
+                if let Some(request) = &intent.symbol_alignment {
+                    anyhow::ensure!(
+                        intent.symbol_group.is_none(),
+                        "Alignment and rigid transform payloads cannot be combined"
+                    );
                     (
-                        request.x_nm,
-                        request.y_nm,
-                        request.rotation_deg,
-                        request.mirrored
-                    ) == (x_nm, y_nm, rotation_deg, mirrored),
-                    "Symbol transform payload differs from its preview"
-                );
-                (
-                    "datum.schematic.move_symbol",
-                    serde_json::to_value(request)?,
-                )
+                        "datum.schematic.align_symbols",
+                        serde_json::to_value(request)?,
+                    )
+                } else {
+                    let request = intent
+                        .symbol_group
+                        .as_ref()
+                        .context("Complete Symbol transform payload missing")?;
+                    anyhow::ensure!(
+                        (
+                            request.x_nm,
+                            request.y_nm,
+                            request.rotation_deg,
+                            request.mirrored
+                        ) == (x_nm, y_nm, rotation_deg, mirrored),
+                        "Symbol transform payload differs from its preview"
+                    );
+                    (
+                        "datum.schematic.move_symbol",
+                        serde_json::to_value(request)?,
+                    )
+                }
             }
             NativeEditAction::MoveSymbol {
                 symbol,

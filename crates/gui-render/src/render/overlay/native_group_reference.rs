@@ -68,6 +68,7 @@ mod tests {
             CameraState::fit_to_bounds(&scene.bounds),
         );
         state.authoring.gesture = datum_gui_protocol::AuthoringGestureState {
+            preset: None,
             tool: datum_gui_protocol::WorkspaceTool::Move,
             anchor: Some(PointNm {
                 x: 2_000_000,

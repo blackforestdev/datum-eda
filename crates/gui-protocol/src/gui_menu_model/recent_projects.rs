@@ -49,6 +49,7 @@ impl RecentProjects {
                 .iter()
                 .enumerate()
                 .map(|(index, entry)| GuiMenuItem {
+                    preset: None,
                     label: format!("{} — {}", entry.name, entry.path.display()),
                     icon: Some("folder-open".into()),
                     shortcut: None,

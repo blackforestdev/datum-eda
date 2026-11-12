@@ -31,6 +31,64 @@ pub struct SymbolMoveSetDestination {
     pub wires: Vec<SchematicWire>,
 }
 impl SymbolMoveSetBasis {
+    pub(crate) fn prepare_destination(
+        &self,
+        context: &NativeWriteContext<'_>,
+        provenance: WriteProvenance,
+        destination: SymbolMoveSetDestination,
+    ) -> Result<PreparedWrite, EngineError> {
+        if destination.symbols == self.symbols {
+            return Err(invalid("Symbol alignment is unchanged"));
+        }
+        transform_write(
+            context,
+            provenance,
+            self.sheet_id,
+            &self.symbols,
+            &destination.symbols,
+            destination.wires,
+            &self.contacts,
+        )
+    }
+
+    /// Different translations share one captured contact solve and lock policy.
+    pub fn destination_positions(
+        &self,
+        positions: &[Point],
+    ) -> Result<SymbolMoveSetDestination, EngineError> {
+        if positions.len() != self.symbols.len() {
+            return Err(invalid("Alignment must address the complete Symbol set"));
+        }
+        let mut symbols = self.symbols.clone();
+        for (symbol, position) in symbols.iter_mut().zip(positions) {
+            let dx = i128::from(position.x) - i128::from(symbol.position.x);
+            let dy = i128::from(position.y) - i128::from(symbol.position.y);
+            let translate = |point: Point| -> Result<Point, EngineError> {
+                Ok(Point::new(
+                    i64::try_from(i128::from(point.x) + dx)
+                        .map_err(|_| invalid("Symbol coordinate overflow"))?,
+                    i64::try_from(i128::from(point.y) + dy)
+                        .map_err(|_| invalid("Symbol coordinate overflow"))?,
+                ))
+            };
+            symbol.position = *position;
+            for pin in &mut symbol.pins {
+                pin.position = translate(pin.position)?;
+            }
+            for field in &mut symbol.fields {
+                field.position = field.position.map(translate).transpose()?;
+            }
+        }
+        let wires = self.contacts.moved_symbols(&symbols)?;
+        if wires
+            .iter()
+            .any(|wire| self.locked_wires.contains(&wire.uuid))
+        {
+            return Err(invalid("Alignment would change a locked attached Wire"));
+        }
+        Ok(SymbolMoveSetDestination { symbols, wires })
+    }
+
     pub fn capture(
         snapshot: &ElectricalSelectionSnapshot,
         ids: &[Uuid],

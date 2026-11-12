@@ -24,6 +24,8 @@ pub struct GuiMenu {
 
 #[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
 pub struct GuiMenuItem {
+    #[serde(default)]
+    pub preset: Option<crate::schematic_alignment::MenuActionPreset>,
     pub label: String,
     #[serde(default)]
     pub icon: Option<String>,

@@ -98,6 +98,18 @@ def main():
                 entries.append((f"{name}/submenu/{sub}/{i}", e))
 
     for path, e in entries:
+        if "preset" in e:
+            preset = e["preset"]
+            valid_preset = (isinstance(preset, dict)
+                     and set(preset) == {"kind", "axis", "position"}
+                     and preset.get("kind") == "schematic_alignment"
+                     and e.get("verb") == "datum.schematic.align_symbols"
+                     and ((preset.get("axis") == "horizontal"
+                           and preset.get("position") in ("left", "center", "right"))
+                          or (preset.get("axis") == "vertical"
+                              and preset.get("position") in ("top", "center", "bottom"))))
+            if not valid_preset:
+                fail.append(f"{path}: incompatible or invalid typed menu preset")
         binds = [k for k in BINDINGS if k in e]
         if not binds:
             fail.append(f"{path}: no binding (need one of {BINDINGS})")

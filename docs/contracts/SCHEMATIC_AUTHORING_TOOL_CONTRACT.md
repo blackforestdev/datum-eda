@@ -166,6 +166,29 @@ observation; child multi-gate behavior has focused canonical proof, not a GUI
 fixture claim. Failed-write restoration has source review. Full hierarchy,
 physical/ECO workflows and full qualification remain open.
 
+### Bounded native Symbol alignment
+
+The active practical-capture work in `dat-practical-schematic-capture-jsgv` adds
+structured Horizontal Left/Center/Right and Vertical Top/Center/Bottom presets
+for a complete homogeneous Symbol selection in one unique native occurrence.
+Alignment uses authenticated placed library body extents and their union;
+captions, pin labels, attached wires and anchor extrema are not the reference.
+Supported body geometry currently includes rectangles, circles, round-capped
+lines and zero-width polygons at cardinal poses. Missing or unsupported extents,
+locks, stale source, fractional-nanometer translations or overflow refuse the
+whole set. Distribution and other reference modes remain unavailable.
+
+The existing native preview is configured as **Align Symbols** with fixed preset
+geometry; coordinate editing, grid nudging and rotate/mirror changes are not
+offered by that preview. Acceptance uses one canonical connected-geometry batch.
+The bounded ordinary root-sheet App check covers pointer compound selection,
+rendered menu traversal and acceptance, Runtime Cancel/history/Save actions,
+unchanged-source cancellation and exact cold reopening. Current proof has 20
+stages and five captures with all owned processes stopped. Engine and CLI checks
+cover unequal body edges, attached contacts, full-scope refusal and guarded
+writes. Inherited menu icon placeholders remain separately tracked; no full
+pictogram, physical HUMAN, release-runtime or practical-goal completion is claimed.
+
 ### Ordinary root and child authoring — delivered development workflow
 
 The fixed owner-selected workflow in `dat-ordinary-circuit-authoring-zvhw` has

@@ -1,5 +1,28 @@
 use crate::*;
 
+#[derive(clap::Args)]
+pub(crate) struct ProjectAlignSymbolsArgs {
+    #[arg(long = "root")]
+    pub(crate) path: PathBuf,
+    #[arg(long = "symbol", required = true)]
+    pub(crate) symbols: Vec<Uuid>,
+    #[arg(long, value_parser = ["horizontal", "vertical"])]
+    pub(crate) axis: String,
+    #[arg(long, value_parser = ["left", "center", "right", "top", "bottom"])]
+    pub(crate) position: String,
+    #[arg(long, default_value = "align", value_parser = ["align"])]
+    pub(crate) op: String,
+    #[arg(long, default_value = "selection_bounds", value_parser = ["selection_bounds"])]
+    pub(crate) reference: String,
+    #[arg(long = "instance", value_delimiter = ',')]
+    pub(crate) instance_path: Vec<Uuid>,
+    #[arg(long)]
+    pub(crate) expected_model_revision: String,
+    /// Observed transaction UUID, or 'none' for an empty journal.
+    #[arg(long)]
+    pub(crate) expected_tip_transaction: String,
+}
+
 #[derive(Clone, Copy, clap::ValueEnum, serde::Serialize)]
 #[serde(rename_all = "snake_case")]
 pub(crate) enum SchematicSymbolFieldArg {

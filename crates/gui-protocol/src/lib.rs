@@ -156,7 +156,7 @@ pub use scene_primitives::{
 #[path = "zone_fill_projection.rs"]
 mod zone_fill_projection;
 pub use zone_fill_projection::{ZoneFillProjection, ZonePrimitive};
-
+pub mod schematic_alignment;
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct ProposalOverlayPrimitive {
     pub overlay_id: String,

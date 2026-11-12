@@ -26,12 +26,12 @@ The gate is `python3 scripts/check_spec_parity.py`, wired through
 | `workflow_delivery_contract_instances` | `specs/WORKFLOW_DELIVERY_GATE_CONTRACT.md` | 6 | `a6a7114d0266bae6408f57949cf0ed65c317fcc8a91b71433d1f34a9916d4df5` |
 | `workflow_delivery_environment_selections` | `docs/decisions/PRODUCT_MECHANICS_042_BROAD_WORKFLOW_DELIVERY_ENFORCEMENT.md` | 2 | `52776ee3874773fe795616e958a8d420def65bd5aeb622c7924707316ea92252` |
 | `mcp_runtime_methods` | `specs/MCP_API_SPEC.md` | 191 | `303f5a8116598783b5a766c89c280b716f6d60e23d835d03547d46be42f77933` |
-| `cli_project_commands` | `specs/PROGRAM_SPEC.md` | 291 | `1662356fdc8515541e783c4885102679e1f98f4a207e531d0141602960f0d38a` |
+| `cli_project_commands` | `specs/PROGRAM_SPEC.md` | 292 | `c609a6dd8c334bd9ce2cff53c1b4d0924500a20f3f96a3a402dde85b39a5a19d` |
 | `engine_text_modules` | `docs/gui/DATUM_TEXT_ENGINE_PHASE_2_IMPLEMENTATION_PLAN.md` | 11 | `1233903bce862aa7ef22879e67e8cbef3bae2bf5e823bff9e53f39b4735c8059` |
 | `m7_text_visual_fixtures` | `docs/gui/DATUM_TEXT_ENGINE_FIDELITY_FIXTURES.md` | 5 | `990b4a0e4fd6bddc8a5e74b6f2ee5795f32800c2dafcc40dd31476c1515d64c8` |
 | `workspace_crates` | `specs/PROGRESS.md` | 10 | `8f610e4e2a644b1a60bbf735eca22e1193b711eb4e2bb93ad959a9a477c1279c` |
 | `daemon_dispatch_methods` | `specs/PROGRESS.md` | 44 | `f1423538b9dbfcd289c3c65c00fd2497fdb94aa0cd0cbe54c3959d9728e8d1b8` |
-| `engine_api_pub_fns` | `specs/ENGINE_SPEC.md` | 306 | `d2e3b4c94eb025b9c7d5db358b2c138be4547db30d62a4eec99bc60f8c0380de` |
+| `engine_api_pub_fns` | `specs/ENGINE_SPEC.md` | 308 | `eee643852b653e22e91c7423b01782c0278aaea42b4ef879e87a45347d3a4c35` |
 | `standards_check_surface` | `specs/CHECKING_ARCHITECTURE_SPEC.md` | 29 | `56e6d1bca3d5e3245655ab9e4f5089013b0b1368156a4b7303aabd394550f2af` |
 | `pool_library_surface` | `docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md` | 115 | `2cbc95f1de4a410dbe6fb181eec5ffe4644afcc7ef946be8254c12fae893d1d2` |
 | `erc_pin_taxonomy_surface` | `specs/ERC_SPEC.md` | 33 | `8f44622d66f182ef0d12cd5a49eb0033647eb56f1b277adc0645b5ae3033a8a9` |

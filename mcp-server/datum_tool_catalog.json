@@ -21371,6 +21371,148 @@
       "write_surface": null
     },
     {
+      "description": "Align complete native Symbol bodies in one qualified sheet occurrence.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "align-symbols"
+          },
+          {
+            "flag": "--root",
+            "param": "path"
+          },
+          {
+            "param": "symbols",
+            "repeated": "--symbol"
+          },
+          {
+            "param": "instance_path",
+            "repeated": "--instance"
+          },
+          {
+            "flag": "--axis",
+            "param": "axis"
+          },
+          {
+            "flag": "--position",
+            "param": "position"
+          },
+          {
+            "flag": "--op",
+            "param": "op"
+          },
+          {
+            "flag": "--reference",
+            "param": "reference"
+          },
+          {
+            "flag": "--expected-model-revision",
+            "param": "expected_model_revision"
+          },
+          {
+            "flag": "--expected-tip-transaction",
+            "param": "expected_tip_transaction"
+          }
+        ],
+        "kind": "cli",
+        "method": "align_symbols"
+      },
+      "dispatch_args": [
+        "path",
+        "symbols",
+        "instance_path",
+        "axis",
+        "position",
+        "op",
+        "reference",
+        "expected_model_revision",
+        "expected_tip_transaction"
+      ],
+      "dispatch_defaults": {
+        "instance_path": [],
+        "op": "align",
+        "reference": "selection_bounds"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "axis": {
+            "enum": [
+              "horizontal",
+              "vertical"
+            ]
+          },
+          "expected_model_revision": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "expected_tip_transaction": {
+            "description": "Observed transaction UUID or none for an empty journal",
+            "type": "string"
+          },
+          "instance_path": {
+            "default": [],
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "op": {
+            "default": "align",
+            "enum": [
+              "align"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "position": {
+            "enum": [
+              "left",
+              "center",
+              "right",
+              "top",
+              "bottom"
+            ]
+          },
+          "reference": {
+            "default": "selection_bounds",
+            "enum": [
+              "selection_bounds"
+            ]
+          },
+          "symbols": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "minItems": 2,
+            "type": "array",
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "path",
+          "symbols",
+          "axis",
+          "position",
+          "expected_model_revision",
+          "expected_tip_transaction"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.align_symbols",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
       "description": "Bind a parent-sheet hierarchical port to a sheet instance.",
       "dispatch": {
         "argv": [

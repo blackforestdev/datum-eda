@@ -50,20 +50,28 @@ pub(crate) fn render(
 
     quads.push(Quad::from_rect(panel, design_tokens::chrome::SURFACE_01));
     let target = gesture.target_object_id.as_deref().unwrap_or("");
+    let fixed_alignment = matches!(
+        gesture.preset,
+        Some(datum_gui_protocol::schematic_alignment::MenuActionPreset::SchematicAlignment { .. })
+    );
     let group = target.strip_prefix("schematic-symbols:");
-    let title = group
-        .map(|count| format!("Move {count} symbols · R: rotate · X/Y: flip"))
-        .unwrap_or_else(|| {
-            if target.starts_with("schematic-wiring-") {
-                "Move wiring · R: rotate · X/Y: flip".into()
-            } else if target.starts_with("schematic-text:") {
-                "Move Text · R: rotate".into()
-            } else if target.starts_with("schematic-symbol:") {
-                "Move symbol · R: rotate · X/Y: flip horiz/vert".into()
-            } else {
-                "Move".into()
-            }
-        });
+    let title = if fixed_alignment {
+        "Align Symbols".into()
+    } else {
+        group
+            .map(|count| format!("Move {count} symbols · R: rotate · X/Y: flip"))
+            .unwrap_or_else(|| {
+                if target.starts_with("schematic-wiring-") {
+                    "Move wiring · R: rotate · X/Y: flip".into()
+                } else if target.starts_with("schematic-text:") {
+                    "Move Text · R: rotate".into()
+                } else if target.starts_with("schematic-symbol:") {
+                    "Move symbol · R: rotate · X/Y: flip horiz/vert".into()
+                } else {
+                    "Move".into()
+                }
+            })
+    };
     draw_text_clipped(
         &title,
         panel.x + 10.,
@@ -95,7 +103,10 @@ pub(crate) fn render(
         text,
     );
     let enabled = owner_available && state.ui.layout.focused == basis.pane;
-    if enabled && state.ui.focus == datum_gui_protocol::ApplicationFocus::Editor(basis.pane) {
+    if !fixed_alignment
+        && enabled
+        && state.ui.focus == datum_gui_protocol::ApplicationFocus::Editor(basis.pane)
+    {
         draw_text_clipped(
             &format!(
                 "Canvas arrows: grid step {}",
@@ -110,27 +121,29 @@ pub(crate) fn render(
             text,
         );
     }
-    let button_width = 122f32.min(width - 24.);
-    let rect = RectPx {
-        x: panel.x + width - button_width - 12.,
-        y: panel.y + 42.,
-        width: button_width,
-        height: 29.,
-    };
-    let mut cache = ControlMeshCache::default();
-    button(
-        "Coordinates…",
-        rect,
-        false,
-        enabled,
-        &mut ControlPainter::new(quads, &mut cache, 1.),
-        text,
-    );
-    if enabled {
-        hits.push(HitRegion {
-            target: HitTarget::MoveCoordinates,
+    if !fixed_alignment {
+        let button_width = 122f32.min(width - 24.);
+        let rect = RectPx {
+            x: panel.x + width - button_width - 12.,
+            y: panel.y + 42.,
+            width: button_width,
+            height: 29.,
+        };
+        let mut cache = ControlMeshCache::default();
+        button(
+            "Coordinates…",
             rect,
-        });
+            false,
+            enabled,
+            &mut ControlPainter::new(quads, &mut cache, 1.),
+            text,
+        );
+        if enabled {
+            hits.push(HitRegion {
+                target: HitTarget::MoveCoordinates,
+                rect,
+            });
+        }
     }
     hit_clipping::clip_content(quads, text, hits, starts.0, starts.1, starts.2, viewport);
     Ok(())
