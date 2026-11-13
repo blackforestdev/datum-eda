@@ -3,6 +3,40 @@ use crate::schematic::{CheckDomain, CheckWaiver, Schematic, WaiverTarget};
 use std::path::Path;
 
 #[test]
+fn public_drc_reports_unsupported_selection_and_preserves_supported_checks() {
+    let mut engine = Engine::new().expect("engine should initialize");
+    engine
+        .import(&fixture_path("partial-route-demo.kicad_pcb"))
+        .expect("ordinary partial-route fixture should import");
+    let unsupported = engine
+        .run_drc(&[RuleType::HoleSize])
+        .expect("known unsupported scope should be reported");
+    assert!(
+        !unsupported.passed,
+        "an unexecuted HoleSize check must never be presented as clean"
+    );
+    assert_eq!(unsupported.unsupported_rules, vec![RuleType::HoleSize]);
+    assert!(unsupported.violations.is_empty());
+    let supported = engine
+        .run_drc(&[RuleType::Connectivity])
+        .expect("supported checking should execute");
+    assert!(supported.unsupported_rules.is_empty());
+    assert!(
+        supported
+            .violations
+            .iter()
+            .any(|finding| { finding.code == "connectivity_unrouted_net" })
+    );
+    let mixed = engine
+        .run_drc(&[RuleType::Connectivity, RuleType::HoleSize])
+        .expect("mixed selection should report partial evaluation");
+    assert!(!mixed.passed);
+    assert_eq!(mixed.unsupported_rules, vec![RuleType::HoleSize]);
+    assert_eq!(mixed.violations, supported.violations);
+    assert_eq!(mixed.summary, supported.summary);
+}
+
+#[test]
 fn import_dispatch_recognizes_kicad_and_eagle_paths() {
     let mut engine = Engine::new().expect("engine should initialize");
 

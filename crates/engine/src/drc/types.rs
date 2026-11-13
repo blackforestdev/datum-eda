@@ -50,6 +50,9 @@ pub struct DrcSummary {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct DrcReport {
     pub passed: bool,
+    /// Explicitly requested rule families that this run could not evaluate.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub unsupported_rules: Vec<RuleType>,
     pub violations: Vec<DrcViolation>,
     pub summary: DrcSummary,
 }

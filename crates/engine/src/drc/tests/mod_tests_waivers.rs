@@ -6,6 +6,87 @@ use crate::rules::ast::RuleType;
 use crate::schematic::{CheckDomain, CheckWaiver, WaiverTarget};
 use uuid::Uuid;
 
+#[test]
+fn unsupported_selection_is_incomplete_and_not_a_waivable_board_finding() {
+    let board = empty_board();
+    let waiver = CheckWaiver {
+        uuid: Uuid::new_v4(),
+        domain: CheckDomain::DRC,
+        target: WaiverTarget::Object(board.uuid),
+        rationale: "A board waiver cannot implement a missing checker".into(),
+        created_by: Some("test".into()),
+    };
+    let report = run_with_waivers(&board, &[RuleType::HoleSize, RuleType::HoleSize], &[waiver]);
+    assert!(!report.passed);
+    assert_eq!(report.unsupported_rules, vec![RuleType::HoleSize]);
+    assert!(report.violations.is_empty());
+    assert_eq!(report.summary.errors, 0);
+    assert_eq!(report.summary.waived, 0);
+    let encoded = serde_json::to_value(&report).unwrap();
+    assert_eq!(
+        encoded["unsupported_rules"],
+        serde_json::json!(["HoleSize"])
+    );
+    assert_eq!(
+        serde_json::from_value::<crate::drc::DrcReport>(encoded).unwrap(),
+        report
+    );
+
+    let supported = run_with_waivers(&board, &[RuleType::TrackWidth], &[]);
+    assert!(supported.passed);
+    assert!(supported.unsupported_rules.is_empty());
+    let legacy_shape = serde_json::to_value(&supported).unwrap();
+    assert!(legacy_shape.get("unsupported_rules").is_none());
+    assert_eq!(
+        serde_json::from_value::<crate::drc::DrcReport>(legacy_shape).unwrap(),
+        supported
+    );
+}
+
+#[test]
+fn supported_checks_and_waivers_do_not_hide_incomplete_selected_scope() {
+    let mut board = empty_board();
+    let (class_id, class) = default_net_class();
+    let net_id = Uuid::new_v4();
+    board.net_classes.insert(class_id, class);
+    board.nets.insert(net_id, Net::new(net_id, "SIG", class_id));
+    let track = Track::straight(
+        Uuid::new_v4(),
+        net_id,
+        Point::new(0, 0),
+        Point::new(1_000_000, 0),
+        100_000,
+        1,
+    );
+    let track_id = track.uuid;
+    board.tracks.insert(track_id, track);
+    let mixed = run_with_waivers(&board, &[RuleType::TrackWidth, RuleType::HoleSize], &[]);
+    assert!(!mixed.passed);
+    assert_eq!(mixed.unsupported_rules, vec![RuleType::HoleSize]);
+    assert_eq!(mixed.summary.errors, 1);
+    assert_eq!(mixed.violations.len(), 1);
+    assert_eq!(mixed.violations[0].code, "track_width_below_min");
+    assert_eq!(mixed.violations[0].objects, vec![track_id]);
+    let waiver = CheckWaiver {
+        uuid: Uuid::new_v4(),
+        domain: CheckDomain::DRC,
+        target: WaiverTarget::Object(track_id),
+        rationale: "Intentional narrow track; hole checking remains unavailable".into(),
+        created_by: Some("test".into()),
+    };
+    let mixed = run_with_waivers(
+        &board,
+        &[RuleType::TrackWidth, RuleType::HoleSize],
+        std::slice::from_ref(&waiver),
+    );
+    assert!(!mixed.passed);
+    assert_eq!(mixed.unsupported_rules, vec![RuleType::HoleSize]);
+    assert_eq!(mixed.summary.errors, 0);
+    assert_eq!(mixed.summary.waived, 1);
+    assert!(mixed.violations[0].waived);
+    assert!(run_with_waivers(&board, &[RuleType::TrackWidth], &[waiver]).passed);
+}
+
 fn default_net_class() -> (Uuid, NetClass) {
     let class_uuid = Uuid::new_v4();
     (

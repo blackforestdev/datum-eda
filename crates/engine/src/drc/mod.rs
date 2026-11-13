@@ -65,6 +65,22 @@ fn run_with_nominal_and_process_overrides(
 ) -> DrcReport {
     let run_all = selected_rules.is_empty();
     let mut violations = Vec::new();
+    let mut unsupported_rules = Vec::new();
+    for rule in selected_rules {
+        if !matches!(
+            rule,
+            RuleType::Connectivity
+                | RuleType::ClearanceCopper
+                | RuleType::TrackWidth
+                | RuleType::ViaHole
+                | RuleType::ViaAnnularRing
+                | RuleType::SilkClearance
+                | RuleType::ProcessAperture
+        ) && !unsupported_rules.contains(rule)
+        {
+            unsupported_rules.push(rule.clone());
+        }
+    }
 
     if run_all || selected_rules.contains(&RuleType::Connectivity) {
         violations.extend(connectivity.unwrap_or_else(|| checks::run_connectivity_checks(board)));
@@ -115,7 +131,8 @@ fn run_with_nominal_and_process_overrides(
     }
 
     DrcReport {
-        passed: summary.errors == 0,
+        passed: summary.errors == 0 && unsupported_rules.is_empty(),
+        unsupported_rules,
         violations,
         summary,
     }
