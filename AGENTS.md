@@ -71,6 +71,41 @@ the appointed manager only within PM059 delegation. Do not claim or advance unti
 the authorized disposition is durably recorded and state synchronized. The PM
 continues separately authorized routine work; owner absence is not a project hold.
 
+### Owner-attention notification
+
+The owner is reached by phone through the local ntfy hook. There are exactly
+three kinds of alert, each selected by an exact PM marker. Anything that is not
+one of the three is not sent. An ordinary `INPUT REQUIRED` packet does not page
+the owner by itself; route it to the appointed PM first.
+
+- **Incident** — something is broken or at risk and needs the owner's hands or
+  authority: a host or delivery path is down, a long-running capture is not
+  recording, a secret is exposed, or a serious defect is found in landed code.
+  Send whether or not other work can continue by ending the PM turn with the
+  exact marker `[NTFY INCIDENT]`.
+- **Blocked** — the PM cannot move the team forward at all without the owner:
+  an unresolved product/architecture decision, new authority, credentials,
+  destructive approval, or a genuine impasse after bounded attempts. End the
+  PM turn with the exact marker `[NTFY BLOCKED]`.
+- **Decision waiting** — an owner decision is holding up real work: an agent is
+  idle because of it, or will be within a day, although work elsewhere may
+  continue. End the PM turn with the exact marker `[NTFY DECISION WAITING]`.
+
+Rules:
+- **Only the appointed PM session emits an ntfy marker.** Every other agent
+  reports a blocker or incident to the PM. An agent may emit `[NTFY INCIDENT]`
+  itself only when the PM session cannot be reached.
+- **Repeats.** Incident and blocked: once, then again every two hours while the
+  owner has not appeared in the session, three sends at most. Decision waiting:
+  one a day at most, covering everything waiting.
+- **Never an alert:** progress, completion, audit verdicts, recoverable failures,
+  ordinary fixes or routine handoffs. Emit a test marker only when the owner
+  explicitly requests one.
+- **Fixed wording only.** The host hook converts markers to fixed messages; do
+  not put details on the marker line. No secrets, source code, hashes, figures,
+  customer/design data or approval tokens enter ntfy. The alert requests
+  attention only; detail and the recorded decision remain in the PM session.
+
 Detailed query/response, boundary, state, lease and completion procedures are owned by
 `docs/PROJECT_STATE_POLICY.md`; ordinary command recipes are in the procedures.
 
