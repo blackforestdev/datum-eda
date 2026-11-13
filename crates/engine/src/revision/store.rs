@@ -24,6 +24,8 @@ use super::{
     },
 };
 
+mod accepted_journal;
+
 const STORE_RELATIVE_PATH: &str = ".datum/revision/v1";
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -199,7 +201,7 @@ impl RevisionAuthorityStore {
         match self.inspect_with_fresh_guard(project_id, journal) {
             Ok(state) => state,
             Err(error) => RevisionStoreState::ReadOnlyDiagnostic {
-                last_complete: self.find_last_complete(project_id, journal).ok().flatten(),
+                last_complete: self.find_last_complete_fresh(project_id).ok().flatten(),
                 diagnostics: vec![IntegrityDiagnostic {
                     code: "revision_integrity_unavailable".to_string(),
                     message: error.to_string(),
@@ -276,7 +278,12 @@ impl RevisionAuthorityStore {
                 if generation.project_id == project_id
                     && journal_ids.contains(&generation.transaction_id)
                 {
-                    self.verify_staged(&entry.path(), &generation)?;
+                    self.verify_accepted_generation(
+                        project_id,
+                        journal,
+                        &generation,
+                        Some(&entry.path()),
+                    )?;
                     let index = journal
                         .iter()
                         .position(|record| record.transaction_id == generation.transaction_id)
@@ -312,71 +319,6 @@ impl RevisionAuthorityStore {
                 recovered_stages,
             })
         }
-    }
-
-    fn verify_head(
-        &self,
-        project_id: Uuid,
-        journal: &[TransactionRecord],
-        head: &IntegrityHead,
-    ) -> Result<IntegrityGeneration, EngineError> {
-        if head.schema_version != REVISION_STORE_SCHEMA_VERSION || head.project_id != project_id {
-            return Err(EngineError::Validation(
-                "revision integrity head schema/project mismatch".to_string(),
-            ));
-        }
-        if transaction_tip(journal) != Some(head.transaction_id) {
-            return Err(EngineError::Validation(format!(
-                "revision integrity head transaction {} is not the accepted journal tip",
-                head.transaction_id
-            )));
-        }
-        let generation =
-            read_json::<IntegrityGeneration>(&self.generation_path(&head.integrity_root))?;
-        self.verify_generation(&generation)?;
-        if generation.transaction_id != head.transaction_id
-            || generation.integrity_root != head.integrity_root
-        {
-            return Err(EngineError::Validation(
-                "revision integrity head does not name its generation".to_string(),
-            ));
-        }
-        Ok(generation)
-    }
-
-    fn find_last_complete(
-        &self,
-        project_id: Uuid,
-        journal: &[TransactionRecord],
-    ) -> Result<Option<IntegrityHead>, EngineError> {
-        let generations = self.root.join("generations");
-        let Ok(entries) = std::fs::read_dir(generations) else {
-            return Ok(None);
-        };
-        let journal_positions: BTreeMap<_, _> = journal
-            .iter()
-            .enumerate()
-            .map(|(index, record)| (record.transaction_id, index))
-            .collect();
-        let mut candidates = Vec::new();
-        for entry in entries.flatten() {
-            let Ok(generation) = read_json::<IntegrityGeneration>(&entry.path()) else {
-                continue;
-            };
-            let Some(index) = journal_positions.get(&generation.transaction_id).copied() else {
-                continue;
-            };
-            if generation.project_id == project_id && self.verify_generation(&generation).is_ok() {
-                candidates.push((index, generation));
-            }
-        }
-        candidates.sort_by_key(|(index, _)| *index);
-        Ok(candidates.pop().map(|(_, generation)| IntegrityHead {
-            schema_version: REVISION_STORE_SCHEMA_VERSION,
-            project_id,
-            transaction_id: generation.transaction_id,
-            integrity_root: generation.integrity_root,
-        }))
     }
 
     pub(crate) fn verify_generation(
