@@ -105,6 +105,12 @@ shared context-menu and naming controls plus a typed host New Folder/Rename
 service in both dialogs. Right-click/Menu/Shift+F10, F2 and Ctrl+Shift+N use the
 same controls. Completed host actions persist after Cancel; cancelled naming
 drafts write nothing. Protected Project/library/session paths are not relocated.
+The owner's 2026-11-13 PM063 amendment adds one shared Show hidden files
+checkbox beside Up/Home: each dialog starts unchecked, listings and Location
+suggestions omit basename-dot entries until checked, the state is per-dialog
+and transient, and explicitly typed hidden paths keep their existing resolver
+meaning. No new menu item, command identifier, Save As flow or preference
+binding is added.
 Keyboard, accessibility, loading/error
 and ordinary Wayland behavior must be demonstrated
 before acceptance in the existing [native doorway record](../reviews/workflow-delivery-rollout/native-project-doorway.md#npd-c09--browse-for-new-and-open-project).

@@ -1812,5 +1812,13 @@
     },
     "implementation_landing_commit": "35d5e014af701ea505dd0772156618cbb78d5627",
     "visual_landing_commit": "93e94e0c4ce04bde7db381d8f1a994a7b15ff28f"
+  },
+  "followup_browser_hidden_toggle_l3g0": {
+    "date": "2026-11-13",
+    "task": "dat-browser-hidden-toggle-l3g0",
+    "authority": "direct owner request recorded as PM063 amendment (Hidden entries)",
+    "scope": "One shared per-dialog Show hidden files checkbox in the New/Open browser: unchecked on each dialog open; ordinary listings and Location suggestions omit basename-dot entries until checked; unchecking removes hidden rows and clears a selection that no longer exists; explicitly typed hidden paths, collisions, permissions and Create/Open authority unchanged; transient presentation state, not a preference.",
+    "supersession": "Prospective only: the accepted 35d5e014/93e94e0c deliveries, frozen QA packages, c09_assignment.landing_verification, independent review, original pins and historical acceptance retain their original scope and remain lossless; the former unconditional dot-entry presentation and the prototype no-hidden-toggle leaf are superseded by this task only.",
+    "status": "pending: new proof, independent review and landing require actual receipts; no boolean here claims PASS for pending work"
   }
 }

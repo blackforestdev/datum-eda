@@ -551,6 +551,13 @@ otherwise a nonempty prefix-match group takes precedence over substring-only
 matches for Tab completion. Displayed substring matches remain selectable, and
 no-prefix completion keeps its existing fallback. Exact shared-prefix, Tab/focus
 and stale-query rules are shared with Open under PM063. Suggestions do not create or provide a fallback parent.
+The shared Show hidden files checkbox starts unchecked in each New/Open
+dialog; listing and suggestion entries whose basenames start with a dot are
+hidden until checked. The setting lasts only for that dialog. Explicit typed
+hidden paths and occupied-destination checks retain their existing behavior.
+This is browser presentation state, not a Global or Project preference
+([PM063](../docs/decisions/PRODUCT_MECHANICS_063_SHARED_FILE_BROWSER_ACTIONS.md),
+owner amendment 2026-11-13).
 Whenever navigation is hidden it contributes no focus, pointer or accessibility targets. A typed Location must be validated
 for Create without requiring an extra Enter; stale pending reads cannot submit
 changed input. The displayed current folder is the parent. A highlighted folder row is

@@ -704,9 +704,23 @@ layer and explicit or persisted preferred width remain visible. Persisted
 clearance feedback must disclose unavailable measurements and board-edge checks.
 Zone authoring requires explicit Net, priority and connection intent; finishing
 its boundary and explicitly filling it are separate actions. Current Filled,
-verified empty, Stale and Unsupported evidence remain distinct. The reviewed
-study describes these controls; native GUI delivery still requires ordinary
-application proof under `dat-practical-pcb-design-3qbp`.
+verified empty, Stale and Unsupported evidence remain distinct. The native
+Route/Zone GUI controls are delivered with independently accepted ordinary
+application proof under `dat-practical-pcb-design-3qbp`; full qualification
+remains open.
+
+The bounded board-outline target defines or replaces one closed simple board
+polygon through the same focused Inspector draft: board-wide Edge.Cuts scope
+with no copper-layer or Net input, shared grid/snap and project units,
+Finish/Enter closing the last edge and Escape/Cancel preserving the current
+outline. An invalid draft is refused with its reason and stays editable; a
+valid Finish is one undoable atomic replacement, and a changed source never
+writes. Route and zone Fill currently support rectangular outline geometry
+only — disclosed, not solved. The reviewed study describes these target
+controls; the native outline GUI implementation exists with bounded ordinary
+application proof recorded under `dat-practical-pcb-design-3qbp`, while final
+landing and the normal GUI refresh remain pending and full qualification
+stays open.
 
 Phase 1 proves rendering and shell usability before broader editing.
 

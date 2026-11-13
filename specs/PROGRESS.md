@@ -123,11 +123,15 @@
    *Dependencies:* `dat-integrity-incomplete-stage-188y`, `dat-journal-integrity-payload-83a3`, `dat-manual-foundation-contracts-fsw`, `dat-marking-menu-shell-g0w`, `dat-project-write-ownership-lock-0ne`. *Unblocks:* dat-native-authoring-depth-sf9. *Governing:* `docs/gui/DATUM_GUI_WRITE_PATH_PLAN.md`, `docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md`, `docs/decisions/PRODUCT_MECHANICS_017_VERB_REGISTRY.md`, `specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md`, `docs/decisions/PRODUCT_MECHANICS_051_EVIDENCE_DERIVED_PERFORMANCE_REQUIREMENTS.md`.
 - **Build native schematic and PCB authoring depth** (`NATIVE-AUTHORING`; `dat-native-authoring-depth-sf9`).
    *Bounded PCB target status:* the owner-goal `dat-practical-pcb-design-3qbp`
-   carries reviewed Route/Zone configuration studies and engine/shared drafts;
-   native Route/Zone GUI controls and their ordinary application proof remain
-   pending. PCB Layout Tool Contract and GUI Product/Design target clauses are
-   reconciled to that study. This factual note changes no Frontier selection or
-   milestone status and supplies no execution grant or full qualification.
+   has delivered the native Route/Zone GUI controls (source `711e0fc1`,
+   metadata `7a9f71bf`) with independently accepted ordinary proof (M30
+   stages, 11 captures); it now carries a reviewed board-outline authoring
+   target study whose native implementation exists and whose bounded ordinary
+   proof passed (36 stages, 9 captures, five engine checks), with final
+   landing and the normal GUI refresh pending. PCB Layout Tool Contract and GUI Product/Design
+   target clauses are reconciled to those studies. This factual note changes
+   no Frontier selection or milestone status and supplies no execution grant
+   or full qualification.
    Build manual-first native editors over the shared tooling and canonical GUI commit path after their prerequisites land. *state `blocked`; authorization `planning`.*
    *Dependencies:* `dat-advanced-routing-scope-fkpb`, `dat-drc-authored-width-rule-vz09`, `dat-drc-profile-hidden-errors-bf31`, `dat-drc-unsupported-hole-selection-r2fj`, `dat-erc-occurrence-waiver-identity-ueaz`, `dat-finding-rename-correlation-ww6e`, `dat-gerber-pad-shape-projection-3ojz`, `dat-gui-p2-cross-probe-27z`, `dat-gui-surface-specs-usb`, `dat-gui-write-path-qiu`, `dat-integrity-incomplete-stage-188y`, `dat-inventory-placement-identity-yuf4`, `dat-journal-integrity-payload-83a3`, `dat-library-graph-admission-audit-ly96`, `dat-manual-foundation-contracts-fsw`, `dat-manual-pcb-authoring-parity-5dll`, `dat-mcp-result-protocol-j9tn`, `dat-real-agent-interop-proof-x5qp`, `dat-schematic-pcb-revision-loop-cf5t`, `dat-simulation-boundary-decision-wfa`, `dat-symbol-footprint-editor-design-5gs`. *Unblocks:* none. *Governing:* `docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md`, `docs/contracts/PCB_LAYOUT_TOOL_CONTRACT.md`, `specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md`.
 <details>

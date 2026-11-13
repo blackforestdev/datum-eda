@@ -58,16 +58,17 @@
   .pane.focus{box-shadow:inset 0 0 0 1.5px var(--acc)}
   .pane-hd{display:flex;align-items:center;gap:8px;height:31px;flex:0 0 31px;padding:0 8px 0 11px;background:var(--bg);border-bottom:1px solid var(--bd-sub);overflow:hidden}
   .pane.focus .pane-hd{background:#16181f}
-  .ptitle{font-size:12.5px;color:var(--tx2);font-family:var(--mono);display:flex;align-items:center;gap:7px;white-space:nowrap}
+  .ptitle{font-size:12.5px;color:var(--tx2);font-family:var(--mono);display:flex;align-items:center;gap:7px;white-space:nowrap;flex:0 1 auto;min-width:35px;overflow:hidden}
+  .ptitle .tname{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
   .pane.focus .ptitle{color:var(--tx)}
   .modeicon{width:14px;height:14px;flex:0 0 14px}
   .pane.focus .modeicon{color:var(--acc)}
-  .pane-tools{display:flex;align-items:center;gap:2px;margin-left:6px}
+  .pane-tools{display:flex;align-items:center;gap:2px;margin-left:6px;flex:0 0 auto}
   .ptool{width:25px;height:25px;border-radius:5px;display:flex;align-items:center;justify-content:center;color:var(--tx3);cursor:pointer;position:relative}
   .ptool svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7}
   .ptool:hover{background:var(--s02);color:var(--tx)}
   .ptool.on{color:var(--acc);background:var(--acc-tint);box-shadow:inset 0 0 0 1px var(--acc)}
-  .pane-ctl{margin-left:auto;display:flex;align-items:center;gap:6px;color:var(--tx3)}
+  .pane-ctl{margin-left:auto;display:flex;align-items:center;gap:6px;color:var(--tx3);flex:0 0 auto}
   .focusdot{width:7px;height:7px;border-radius:50%;background:var(--acc);box-shadow:0 0 7px var(--acc)}
   .pane-ctl .pc{width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:4px;cursor:pointer}
   .pane-ctl .pc svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.7}
@@ -131,6 +132,8 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
 .pbtn[disabled]{opacity:.45;cursor:not-allowed;background:var(--s01);color:var(--tx3);border-color:var(--bd-sub)}
 .pbtn[disabled]:hover{background:var(--s01)}
 .btnrow{display:flex;align-items:center;gap:8px;padding:8px 13px 4px}
+.btnrow.wrap{flex-wrap:wrap}
+.btnrow.wrap .pbtn{white-space:nowrap}
 .btnrow .note{font-size:11px;color:var(--tx3);font-family:var(--mono)}
 .lrow{display:flex;gap:8px;align-items:flex-start;margin:6px 13px;padding:6px 9px;border-radius:5px;font-size:12px;line-height:1.45}
 .lrow.warn{background:#1e1608;border:1px solid var(--warn);color:var(--warn)}
@@ -188,13 +191,14 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
     <!-- PANE A: PCB (focused) -->
     <div class="pane focus">
       <div class="pane-hd">
-        <span class="ptitle"><svg class="modeicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 6h18v12H3z"/><path d="M7 6v12M17 6v12" opacity=".6"/></svg>Board · Layout</span>
+        <span class="ptitle" title="Board · Layout"><svg class="modeicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 6h18v12H3z"/><path d="M7 6v12M17 6v12" opacity=".6"/></svg><span class="tname">Board · Layout</span></span>
         <span class="pane-tools">
           <span class="ptool on" title="Select" id="tool-select"><svg viewBox="0 0 24 24"><path d="M5 3l7 17 2.2-6.8L21 11 5 3z"/></svg></span>
           <span class="ptool" title="Move"><svg viewBox="0 0 24 24"><path d="M12 4v16M4 12h16M12 4l-2.5 2.5M12 4l2.5 2.5M12 20l-2.5-2.5M12 20l2.5-2.5"/></svg></span>
           <span class="ptool" title="Route track" id="tool-route"><svg viewBox="0 0 24 24"><path d="M3 17h6l4-10h8"/></svg></span>
           <span class="ptool" title="Via"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.4"/></svg></span>
           <span class="ptool" title="Zone" id="tool-zone"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M4 9h16M9 9v10" opacity=".5"/></svg></span>
+          <span class="ptool" title="Board outline" id="tool-outline"><svg viewBox="0 0 24 24"><path d="M4 4h11l5 6v10H4z"/><path d="M15 4v6h5" opacity=".5"/></svg></span>
         </span>
         <span class="pane-ctl"><span class="focusdot" title="focused pane — owns tools + inspector"></span><span class="pc" title="Split"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M12 4v16"/></svg></span></span>
       </div>
@@ -263,6 +267,28 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
             <path d="M44 180H210V285H44Z" fill="none" stroke="var(--cu-f)" stroke-width="1.6"/>
             <circle cx="54.5" cy="186" r="8" fill="none" stroke="var(--err)" stroke-width="1.8"/>
           </g>
+          <!-- outline-state overlays (board-outline target · prototype state switch only) -->
+          <g id="ov-odraft" class="ov">
+            <path d="M36 34H324V196L252 286" fill="none" stroke="var(--edge)" stroke-width="2" stroke-dasharray="7 5"/>
+            <path d="M252 286H120" stroke="var(--edge)" stroke-width="2" stroke-dasharray="7 5"/>
+            <path d="M120 286L36 34" stroke="var(--edge)" stroke-width="1.4" stroke-dasharray="3 4" opacity=".35"/>
+            <g fill="var(--canvas)" stroke="var(--tx)" stroke-width="1.2"><rect x="32.5" y="30.5" width="7" height="7"/><rect x="320.5" y="30.5" width="7" height="7"/><rect x="320.5" y="192.5" width="7" height="7"/><rect x="248.5" y="282.5" width="7" height="7"/></g>
+            <circle cx="120" cy="286" r="6.5" fill="none" stroke="var(--acc)" stroke-width="1.6"/>
+          </g>
+          <g id="ov-oinv" class="ov">
+            <path d="M60 56L300 250L300 56L60 250" fill="none" stroke="var(--err)" stroke-width="2" stroke-dasharray="7 5"/>
+            <path d="M60 250V56" stroke="var(--err)" stroke-width="1.4" stroke-dasharray="3 4" opacity=".35"/>
+            <g fill="var(--canvas)" stroke="var(--tx)" stroke-width="1.2"><rect x="56.5" y="52.5" width="7" height="7"/><rect x="296.5" y="246.5" width="7" height="7"/><rect x="296.5" y="52.5" width="7" height="7"/><rect x="56.5" y="246.5" width="7" height="7"/></g>
+          </g>
+          <g id="ov-opend" class="ov">
+            <path d="M36 34H324V196L252 286H36Z" fill="none" stroke="var(--edge)" stroke-width="2" stroke-dasharray="7 5"/>
+            <g fill="var(--canvas)" stroke="var(--tx)" stroke-width="1.2"><rect x="32.5" y="30.5" width="7" height="7"/><rect x="320.5" y="30.5" width="7" height="7"/><rect x="320.5" y="192.5" width="7" height="7"/><rect x="248.5" y="282.5" width="7" height="7"/><rect x="32.5" y="282.5" width="7" height="7"/></g>
+            <text x="46" y="50" fill="var(--acc)" font-size="7.5" font-family="monospace">replacing…</text>
+          </g>
+          <g id="ov-ostale" class="ov">
+            <path d="M36 34H324V196L252 286H36Z" fill="none" stroke="var(--warn)" stroke-width="1.6" stroke-dasharray="6 4"/>
+            <text x="46" y="50" fill="var(--warn)" font-size="7.5" font-family="monospace">⚠ board changed</text>
+          </g>
         </svg>
       </div>
     </div>
@@ -270,7 +296,7 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
     <!-- PANE B: Schematic -->
     <div class="pane">
       <div class="pane-hd">
-        <span class="ptitle"><svg class="modeicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 4h16v16H4z"/><path d="M4 9h16" opacity=".6"/></svg>Schematic · Sheet 1/3</span>
+        <span class="ptitle" title="Schematic · Sheet 1/3"><svg class="modeicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 4h16v16H4z"/><path d="M4 9h16" opacity=".6"/></svg><span class="tname">Schematic · Sheet 1/3</span></span>
         <span class="pane-tools">
           <span class="ptool on" title="Select"><svg viewBox="0 0 24 24"><path d="M5 3l7 17 2.2-6.8L21 11 5 3z"/></svg></span>
           <span class="ptool" title="Wire"><svg viewBox="0 0 24 24"><path d="M3 6h8v12h10"/></svg></span>
@@ -530,6 +556,8 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
           </div>
           <div class="subnote">No approximate fill is produced.</div>
         </div>
+
+        <!-- istates o1–o5 (outline family) are generated by the scoped renderer in the page script; rendered controls/copy identical to the reviewed c1 states -->
       </div>
     </div>
   </div>
@@ -572,6 +600,16 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
   <span class="statusmark" data-state="open" style="margin-left:auto">zone states: ○ TARGET · engine-landed · no GUI claim</span>
 </div>
 
+<div class="statestrip hdr">
+  <span class="lab">OUTLINE STATES · gui_reconciliation</span>
+  <span class="ss-btn" data-s="o1">O1 armed · none</span>
+  <span class="ss-btn" data-s="o2">O2 drawing</span>
+  <span class="ss-btn" data-s="o3">O3 invalid</span>
+  <span class="ss-btn" data-s="o4">O4 committing</span>
+  <span class="ss-btn" data-s="o5">O5 stale</span>
+  <span class="statusmark" data-state="open" style="margin-left:auto">outline states: ○ TARGET study · implementation + proof tracked under dat-practical-pcb-design-3qbp</span>
+</div>
+
 <script>
   document.querySelectorAll('.pane').forEach(function(p){
     p.addEventListener('mousedown',function(){
@@ -596,19 +634,57 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
     z3:{tool:'Zone',sel:'zone GND',tid:'tool-zone',ov:['ov-zb','ov-zhl']},
     z4:{tool:'Zone',sel:'zone GND · filled',tid:'tool-zone',ov:['ov-zfill','ov-zempty']},
     z5:{tool:'Zone',sel:'zone GND · stale',tid:'tool-zone',ov:['ov-zstale']},
-    z6:{tool:'Zone',sel:'zone GND · unsupported',tid:'tool-zone',ov:['ov-zunsup']}
+    z6:{tool:'Zone',sel:'zone GND · unsupported',tid:'tool-zone',ov:['ov-zunsup']},
+    o1:{tool:'Board Outline',sel:'—',tid:'tool-outline',ov:[]},
+    o2:{tool:'Board Outline',sel:'outline draft · 4 vertices',tid:'tool-outline',ov:['ov-odraft']},
+    o3:{tool:'Board Outline',sel:'outline draft · invalid',tid:'tool-outline',ov:['ov-oinv']},
+    o4:{tool:'Board Outline',sel:'outline · replacing',tid:'tool-outline',ov:['ov-opend']},
+    o5:{tool:'Board Outline',sel:'outline draft · stale',tid:'tool-outline',ov:['ov-ostale']}
   };
   function setState(s){
     var st=STATES[s]; if(!st)return;
     document.querySelectorAll('.istate').forEach(function(d){d.classList.toggle('on',d.getAttribute('data-s')===s)});
     document.querySelectorAll('.ov').forEach(function(g){g.classList.toggle('on',st.ov.indexOf(g.id)>=0)});
     document.querySelectorAll('.ss-btn').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-s')===s)});
-    ['tool-select','tool-route','tool-zone'].forEach(function(id){document.getElementById(id).classList.toggle('on',id===st.tid)});
+    ['tool-select','tool-route','tool-zone','tool-outline'].forEach(function(id){document.getElementById(id).classList.toggle('on',id===st.tid)});
     document.getElementById('st-tool').innerHTML=st.tool;
     document.getElementById('st-sel').innerHTML=st.sel;
-    document.getElementById('bd-outline').style.display=(s==='r3')?'none':'';
+    document.getElementById('bd-outline').style.display=(s==='r3'||s==='o1')?'none':'';
   }
   document.querySelectorAll('.ss-btn').forEach(function(b){b.addEventListener('click',function(){setState(b.getAttribute('data-s'))})});
+  /* outline inspector family — per-state data + ONE scoped renderer (shared structure
+     written once); rendered controls and copy are identical to the reviewed c1 states */
+  var OINSP={
+    o1:{kind:'Tool · pane A',pre:['info','Click to place the first vertex. The outline is board-wide (Edge.Cuts) — no copper layer or net applies.'],
+      sect:['Tool setup',[['Scope','board — Edge.Cuts'],['!','independent of the active copper layer — nothing to pick'],['Outline','<span style="color:var(--tx3)">none defined</span>'],['Snap','grid 0.500 mm · project units mm','m']]],
+      post:['warn','No outline defined — the board-edge check is unavailable.'],btn:[[['Finish',1,1],['Cancel']],'no vertices yet']},
+    o2:{kind:'Draft · 4 vertices',sect:['Outline draft',[['Vertices','4 placed · snap grid 0.500 mm','m'],['Closure','Finish / Enter closes the last edge back to the first vertex'],['Current','retained beneath the draft — replaced only when the draft commits']]],
+      post:['warn','This draft is not rectangular. Route and zone Fill currently support a rectangular outline only — the outline itself is saved exactly as drawn.'],
+      btn:[[['Finish',1],['Cancel']],'Escape / Cancel abandons the draft — the current outline stays'],sub:'A first outline on an empty board draws the same way — with no retained edge beneath.'},
+    o3:{kind:'Draft · invalid',pre:['err','Finish refused — the outline is not a closed, simple, non‑zero‑area polygon.'],
+      sect:['Outline draft',[['Vertices','4 placed · Backspace removes the last','m'],['Current','retained — unchanged']]],
+      btn:[[['Finish',1,1],['Cancel']],'Backspace the last vertex and place again · Cancel keeps the current outline'],sub:'Nothing is saved for an invalid draft.'},
+    o4:{kind:'Replace · committing',pre:['info','Replacing the board outline — one undoable change. Undo restores the previous outline exactly.'],
+      sect:['Replacement',[['New outline','5 vertices · closed','m'],['Previous','kept until the replacement applies — then restorable with Undo']]],
+      post:['warn','Non‑rectangular outline — Route and zone Fill currently support a rectangular outline only. The saved outline is exact.']},
+    o5:{kind:'Draft · stale source',pre:['warn','The board changed while this draft was open. Nothing was written — the current outline is unchanged.'],
+      sect:['Outline draft',[['Vertices','5 placed — from the earlier board state','m'],['Current','retained — from the changed board']]],
+      btn:[[['Finish',0,1],['Restart on current board',1],['Cancel']],'',1],sub:'the draft never commits against a changed source'}
+  };
+  function olrow(p){return '<div class="lrow '+p[0]+'"><span class="gl">'+{info:'▸',warn:'⚠',err:'⛔'}[p[0]]+'</span><span>'+p[1]+'</span></div>'}
+  function oinsp(d){
+    var h='<div class="insp-title"><span class="ref">Board Outline</span><span class="kind">'+d.kind+'</span></div>'+(d.pre?olrow(d.pre):'');
+    h+='<div class="sect-hd"><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>'+d.sect[0]+'</div><div class="sect">';
+    d.sect[1].forEach(function(r){h+=(r[0]==='!')?'<div class="subnote">'+r[1]+'</div>':'<div class="kv"><span class="k">'+r[0]+'</span><span class="v"'+(r[2]?' style="font-family:var(--mono)"':'')+'>'+r[1]+'</span></div>'});
+    h+='</div>'+(d.post?olrow(d.post):'');
+    if(d.btn){h+='<div class="btnrow'+(d.btn[2]?' wrap':'')+'">';d.btn[0].forEach(function(b){h+='<button class="pbtn'+(b[1]?' primary':'')+'"'+(b[2]?' disabled':'')+'>'+b[0]+'</button>'});if(d.btn[1])h+='<span class="note">'+d.btn[1]+'</span>';h+='</div>';}
+    return h+(d.sub?'<div class="subnote">'+d.sub+'</div>':'');
+  }
+  Object.keys(OINSP).forEach(function(s){
+    var d=document.createElement('div');
+    d.className='istate';d.setAttribute('data-s',s);d.innerHTML=oinsp(OINSP[s]);
+    document.getElementById('insp').appendChild(d);
+  });
   var hp=location.hash.slice(1).split('@');
   if(hp[0]) setState(hp[0]);
   if(hp[1]==='tail'){var ins=document.getElementById('insp');ins.scrollTop=ins.scrollHeight;}

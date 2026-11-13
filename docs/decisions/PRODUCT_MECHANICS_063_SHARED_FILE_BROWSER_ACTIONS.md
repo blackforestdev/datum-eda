@@ -71,6 +71,23 @@ entering it or creating/opening a Project. Location stays the same parent;
 ordinary Enter/double-click enters a folder. Preserve Project naming, folder
 override, pinned Units and terminal sessions throughout.
 
+## Hidden entries (owner amendment, 2026-11-13)
+
+The owner's 2026-11-13 request adds one shared Show hidden files checkbox to
+the New/Open browser. Each newly opened dialog starts unchecked. Ordinary
+listings and Location suggestions omit files and folders whose basename starts
+with a dot while unchecked; checking reveals those entries, and unchecking
+removes them and clears any selection that no longer exists in the displayed
+entries. This transient presentation policy does not reject explicitly typed
+hidden paths, change access permissions, bypass occupied-destination checks,
+or change Create/Open and host-action authority. Preserve exact typed Location
+and existing query/completion/navigation rules over the visible eligible
+entries. Reuse the same control and state for file dialogs; this creates no
+new Save As workflow or saved preference. The control supports pointer and
+keyboard activation and announces its checkbox state; it is unavailable during
+naming/menu operations and busy states. This amendment supersedes the former
+unconditional dot-folder visibility and prototype no-hidden-toggle leaf only.
+
 ## Location suggestions and completion
 
 The owner's 2026-10-18 QA requests adaptive path filtering, find and Tab
@@ -87,7 +104,9 @@ exact directory listing. Roots and supported home/dot navigation anchors retain
 their resolver meaning rather than becoming parent-name queries. For a queried component,
 show matching navigable children: case-insensitive literal substring matches,
 prefix matches first, with exact filesystem spelling preserved. Matching is
-local and transient; dot-folders remain available. Reveal the same inline list
+local and transient; dot-folders participate when Show hidden files is
+checked; explicitly typed paths keep their existing resolver meaning. Reveal
+the same inline list
 for a nonempty partial query while retaining Browse. Distinguish this suggestion
 list and its parent from an ordinary directory listing. A query/no-match state
 is neutral, not a red missing-folder refusal while the user types. Real access

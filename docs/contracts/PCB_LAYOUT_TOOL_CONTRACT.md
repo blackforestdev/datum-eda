@@ -496,9 +496,18 @@ read named below folds under DatumQueryTool (`datum-eda query pcb.*`); every
 
 ### 9. set_board_outline
 
-- **Manual UI action:** define/redefine the board edge polygon
-  (Edge.Cuts). Visible undoable → direct commit; large redefinitions may
-  warrant confirmation.
+- **Manual UI action:** define or redefine the board edge polygon
+  (Edge.Cuts) with the board-wide Outline tool — no copper layer or Net
+  input applies. Place vertices on the shared grid/snap in project units;
+  Finish/Enter closes the last edge back to the first vertex, and
+  Escape/Cancel abandons the draft, preserving the current outline. An
+  invalid Finish (not closed / not simple / zero area) refuses with the
+  reason and leaves the vertices editable; nothing is written for an
+  invalid draft or against a changed source. A valid Finish is one
+  undoable replacement with the previous outline captured for undo; no
+  separate confirmation mechanism. Route and zone Fill board-edge support
+  is currently rectangular-only; a nonrectangular outline is saved
+  exactly as drawn and promises no new solver.
 - **Operation emitted:** `SetBoardOutline{ polygon }` → `commit()`.
   Replaces the authored outline; the previous outline is captured for
   undo.
@@ -514,9 +523,14 @@ read named below folds under DatumQueryTool (`datum-eda query pcb.*`); every
 - **Proof slice:** datum-test — read the current outline, set a larger
   rectangle, undo restores the original polygon byte-for-byte; an
   off-board component is flagged.
-- **Explicitly not-supported-yet:** `commit()` op missing (`layout.rs`
-  native write). Cutouts / multiple-hole outline representation is
-  minimal.
+- **Explicitly not-supported-yet:** final landing and the normal GUI
+  refresh of the implemented native outline
+  preparation/registration/controls — the canonical `SetBoardOutline`
+  operation, revision-guarded native builder, CLI and native GUI
+  implementation exist, with bounded ordinary application proof (36
+  stages, 9 captures, five engine checks) recorded under
+  `dat-practical-pcb-design-3qbp`. Cutouts / multiple-hole outline
+  representation is minimal.
 
 ---
 

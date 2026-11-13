@@ -34,6 +34,18 @@ The final acceptance below closes the doorway delivery at its reviewed scope;
 complete qualification remains separate. No successor is selected by closure.
 Historical Project/Package evidence keeps its original source. S5A remains paused.
 
+Bounded follow-up — 2026-11-13 (`dat-browser-hidden-toggle-l3g0`): the owner's
+direct request, recorded as a PM063 amendment, adds one shared per-dialog
+Show hidden files checkbox to the New/Open browser; ordinary listings and
+Location suggestions omit basename-dot entries until checked, and explicitly
+typed hidden paths keep their meaning. The accepted `35d5e014` /
+`93e94e0c` deliveries and the frozen QA packages retain their original scope;
+their unconditional dot-entry presentation and the former no-hidden-toggle
+prototype leaf are superseded prospectively by this task only. New proof,
+independent review and landing for the checkbox remain pending until actual
+receipts exist; this note does not reopen or retroactively alter accepted
+C09 history or full qualification.
+
 ## Approved terminal handoff correction — 2026-10-18
 
 <!-- AUTHORITY:NATIVE-PROJECT-DOORWAY:NPD-C09-TERMINAL-HANDOFF -->
