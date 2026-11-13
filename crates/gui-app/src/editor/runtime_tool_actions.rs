@@ -81,6 +81,11 @@ impl Runtime {
             return self.native_move_click(world, target_object_id);
         }
         match self.workspace().tool {
+            WorkspaceTool::DrawBoardZone => {
+                // The native draft is not an enabled GUI tool until its
+                // configuration and ordinary input integration are delivered.
+                return false;
+            }
             WorkspaceTool::DrawBoardTrack
                 if self.workspace().authoring.gesture.anchor.is_some() =>
             {

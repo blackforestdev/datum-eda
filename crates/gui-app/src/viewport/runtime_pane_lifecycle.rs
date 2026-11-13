@@ -26,6 +26,7 @@ impl Runtime {
                 .schematic_documents
                 .prune_views(&workspace.ui.layout);
             workspace.retire_stale_board_route();
+            workspace.retire_stale_board_zone();
             workspace.ui.layout.focused
         };
         self.set_application_focus(datum_gui_protocol::ApplicationFocus::Editor(focused_pane));
@@ -134,6 +135,7 @@ impl Runtime {
             self.prepare_focused_document();
         }
         self.session.workspace_mut().retire_stale_board_route();
+        self.session.workspace_mut().retire_stale_board_zone();
         self.set_application_focus(datum_gui_protocol::ApplicationFocus::Editor(
             retargeted_pane,
         ));

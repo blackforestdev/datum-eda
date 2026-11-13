@@ -68,6 +68,7 @@ impl ReviewWorkspaceState {
             tool: WorkspaceTool::Select,
             authoring: AuthoringToolState {
                 board_route: None,
+                board_zone: None,
                 handle_feedback: None,
                 coordinates: None,
                 snap: AuthoringSnapState::default(),

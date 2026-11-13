@@ -11,6 +11,8 @@ mod move_handle_feedback;
 pub use move_handle_feedback::{MoveHandleFeedback, MoveHandleKind};
 #[path = "board_routing.rs"]
 pub mod board_routing;
+#[path = "board_zones.rs"]
+pub mod board_zones;
 #[path = "coordinate_entry_form.rs"]
 mod coordinate_entry_form;
 pub use coordinate_entry_form::{CoordinateEntryControl, CoordinateEntryForm};
@@ -161,6 +163,7 @@ impl AuthoringViewBasis {
 pub enum WorkspaceTool {
     Select,
     DrawBoardTrack,
+    DrawBoardZone,
     PlaceBoardVia,
     PlaceBoardText,
     Move,
@@ -172,10 +175,23 @@ impl WorkspaceTool {
         match self {
             WorkspaceTool::Select => "select",
             WorkspaceTool::DrawBoardTrack => "draw-board-track",
+            WorkspaceTool::DrawBoardZone => "draw-board-zone",
             WorkspaceTool::PlaceBoardVia => "place-board-via",
             WorkspaceTool::PlaceBoardText => "place-board-text",
             WorkspaceTool::Move => "move",
             WorkspaceTool::Delete => "delete",
+        }
+    }
+
+    pub fn display_label(self) -> &'static str {
+        match self {
+            Self::Select => "SELECT",
+            Self::DrawBoardTrack => "DRAW TRACK",
+            Self::DrawBoardZone => "DRAW ZONE",
+            Self::PlaceBoardVia => "PLACE VIA",
+            Self::PlaceBoardText => "PLACE TEXT",
+            Self::Move => "MOVE",
+            Self::Delete => "DELETE",
         }
     }
 }
@@ -225,6 +241,7 @@ impl AuthoringGestureState {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AuthoringToolState {
     pub board_route: Option<board_routing::BoardRouteDraft>,
+    pub board_zone: Option<board_zones::BoardZoneDraft>,
     pub handle_feedback: Option<MoveHandleFeedback>,
     pub coordinates: Option<CoordinateEntryForm>,
     pub snap: AuthoringSnapState,

@@ -213,9 +213,9 @@ fn board_route_refuses_non_native_and_wrong_source_without_draft() {
             )
             .unwrap_err();
         let expected = match mutation {
-            0 => "Open a native Project before routing",
+            0 => "Open a native Project before board authoring",
             2 => "Board source view is stale",
-            _ => "Routing requires a native Project",
+            _ => "Board authoring requires a native Project",
         };
         assert_eq!(
             reason, expected,

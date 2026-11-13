@@ -2,6 +2,50 @@
 use super::*;
 
 #[test]
+fn board_zone_payload_requires_exclusive_action_and_source_headers() {
+    use crate::workspace_tools::board_zones::NativeZoneEdit;
+    use eda_engine::api::native_write::board_routing::zone::{BoardBasis, FillRequest};
+    let basis = BoardBasis {
+        project: Uuid::new_v4(),
+        board: Uuid::new_v4(),
+        revision: eda_engine::substrate::ModelRevision("current".into()),
+        tip: Some(Uuid::new_v4()),
+    };
+    let mut intent = NativeEditIntent::new(
+        PathBuf::from("/native/project"),
+        basis.project,
+        basis.revision.0.clone(),
+        basis.tip,
+        NativeEditAction::BoardZone,
+    );
+    assert!(intent.validate_zone_payload().is_err());
+    intent.board_zone = Some(NativeZoneEdit::Fill(FillRequest {
+        basis,
+        zone: None,
+        net: None,
+    }));
+    assert!(intent.validate_zone_payload().is_ok());
+    for change in 0..6 {
+        let mut bad = intent.clone();
+        match change {
+            0 => bad.action = NativeEditAction::Save,
+            1 => bad.project_id = Uuid::new_v4(),
+            2 => bad.expected_revision = "old".into(),
+            3 => bad.expected_tip = None,
+            4 => bad.instance_path.push(Uuid::new_v4()),
+            _ => bad.board_zone = None,
+        }
+        assert!(bad.validate_zone_payload().is_err());
+    }
+    let mut other = intent;
+    other.action = NativeEditAction::BoardRoute;
+    assert!(other.validate_zone_payload().is_err());
+    other.board_zone = None;
+    other.action = NativeEditAction::Save;
+    assert!(other.validate_zone_payload().is_ok());
+}
+
+#[test]
 fn board_route_payload_requires_matching_action_basis_and_exclusive_editor() {
     use eda_engine::api::native_write::board_routing::route::{RouteBasis, RouteRequest};
     let project = Uuid::new_v4();

@@ -776,14 +776,7 @@ fn push_board_text_property_row(
 }
 
 fn workspace_tool_label(tool: WorkspaceTool) -> &'static str {
-    match tool {
-        WorkspaceTool::Select => "SELECT",
-        WorkspaceTool::DrawBoardTrack => "DRAW TRACK",
-        WorkspaceTool::PlaceBoardVia => "PLACE VIA",
-        WorkspaceTool::PlaceBoardText => "PLACE TEXT",
-        WorkspaceTool::Move => "MOVE",
-        WorkspaceTool::Delete => "DELETE",
-    }
+    tool.display_label()
 }
 
 #[path = "text_presentation.rs"]

@@ -118,6 +118,7 @@ impl CheckProducerRequest {
             && state.library.draft.is_none()
             && !state.authoring.gesture.is_active()
             && state.authoring.board_route.is_none()
+            && state.authoring.board_zone.is_none()
     }
 
     pub fn from_workspace(state: &ReviewWorkspaceState) -> anyhow::Result<Self> {

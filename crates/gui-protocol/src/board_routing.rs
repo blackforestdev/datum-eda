@@ -180,16 +180,16 @@ impl BoardRouteDraft {
     }
 }
 
-fn native_root(state: &ReviewWorkspaceState) -> Result<PathBuf, String> {
+pub(super) fn native_root(state: &ReviewWorkspaceState) -> Result<PathBuf, String> {
     let backing = state
         .backing
         .as_ref()
-        .ok_or("Open a native Project before routing")?;
+        .ok_or("Open a native Project before board authoring")?;
     if state.project_unopened
         || backing.request.board_file.is_some()
         || backing.request.kicad_board_source.is_some()
     {
-        return Err("Routing requires a native Project".into());
+        return Err("Board authoring requires a native Project".into());
     }
     Ok(backing.request.project_root.clone())
 }
