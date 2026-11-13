@@ -64,6 +64,10 @@ the same change.
   inline-editable rows (no dialogs); collapsible grouped sections (Identity /
   Placement / Nets / Checks); key-value rows with mono tabular values for
   coordinates.
+  Route/Zone configuration follows the focused pane in these same grouped rows,
+  with explicit authored settings, derived clearance/status readback and local
+  availability warnings. Finish Boundary and Fill remain distinct actions;
+  long forms keep their settings and actions reachable by Inspector scrolling.
 - **Layers panel**: Ableton colored-track-row idiom — swatch + name + visibility,
   active layer accented.
 - **Type & density**: dense but legible — ~25px rows, chrome text ~13.5–14.5px,

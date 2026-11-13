@@ -12,6 +12,11 @@ PRODUCT_MECHANICS 000-012
 > Dated code counts and open questions below are their recorded audit context;
 > current implementation coverage is tracked separately in PROGRESS.
 
+The bounded Route/Zone configuration targets below refine the dated tool audit;
+historical missing-operation lists do not override them. Engine and shared-draft
+support is recorded under `dat-practical-pcb-design-3qbp`; the reviewed visual
+study does not establish delivery of native Route/Zone GUI controls.
+
 ## Driven by
 
 - `docs/decisions/PRODUCT_MECHANICS_000..012` (ratified product mechanics)
@@ -315,9 +320,12 @@ read named below folds under DatumQueryTool (`datum-eda query pcb.*`); every
 
 ### 4. draw_track / delete_track
 
-- **Manual UI action:** interactive route — click a pad, click waypoints,
-  double-click to commit the chain; width/layer come from the active net
-  class. Local visible undoable → direct commit per completed route as an
+- **Manual UI action:** start from a clicked Pad's resolved Net on the current
+  conductive layer, then place waypoints and finish the chain. Show an applicable
+  persisted preferred width when available; otherwise require explicit width.
+  The bounded interaction uses Stop/refuse with persisted-clearance feedback;
+  unavailable measurements and an undefined board outline remain explicit.
+  Local visible undoable → direct commit per completed route as an
   `OperationBatch` of segments (+ vias).
 - **Operation emitted:** `AddTrack{ net_id, layer, points[], width }`
   (+ `AddVia` on a layer change) as an `OperationBatch` → `commit()`.
@@ -376,11 +384,16 @@ read named below folds under DatumQueryTool (`datum-eda query pcb.*`); every
 
 ### 6. author_zone / edit_zone / delete_zone
 
-- **Manual UI action:** draw a polygon pour boundary on a layer, set net
-  + priority + clearance. Authors ONLY the boundary, NOT copper. Local
-  undoable → direct commit.
-- **Operation emitted:** `AddZone{ net_id, layer, polygon, priority,
-  clearance }` or `SetZone{ zone_id, replacement }` → `commit()`.
+- **Manual UI action:** explicitly choose Net, conductive layer, numeric Zone
+  priority (`u32`) and Solid/Thermal connection intent with its dimensions, then
+  draw and finish the polygon boundary or cancel. Show effective clearance from
+  persisted rules/classes; the bounded fill uses the maximum actual persisted
+  minimum across current board Nets conservatively. Clearance is derived, not
+  a separate authored Zone field. Authors ONLY the boundary, NOT copper. Local
+  undoable → direct commit. Thermal intent does not imply thermal-fill support;
+  overlapping-zone priority composition remains unsupported by the bounded fill.
+- **Operation emitted:** `AddZone` with the existing Zone boundary, Net, layer,
+  priority and thermal fields, or `SetZone{ zone_id, replacement }` → `commit()`.
   `Zone.polygon` is the authored boundary; `ZoneFill` is derived and is NOT
   created here.
 - **CLI command:** current native-project surface is `datum-eda project
@@ -435,6 +448,10 @@ read named below folds under DatumQueryTool (`datum-eda query pcb.*`); every
 - **Proof slice:** datum-test — author a zone (`Unfilled`) → `fill-zones`
   → `ZoneFill{Filled}` with islands; move a component → `ZoneFill` marked
   `Stale` (not silently wrong); export uses only `Filled` copper.
+  A successful version-2 `Filled` result may also have zero islands, as the
+  PM054 reconciliation below specifies. Present Unfilled, current Filled
+  (including verified empty), Stale and recorded Unsupported distinctly;
+  Unsupported produces no approximate copper and preserves the authored boundary.
 - **Explicitly not-supported-yet:** the real pour solver remains
   unimplemented beyond the bounded same-net and single rectangular pad/via
   cutout envelope: no general clearance subtraction, antipads, thermal spokes,
@@ -571,6 +588,10 @@ read named below folds under DatumQueryTool (`datum-eda query pcb.*`); every
   Inspector, edit shared properties (width, net, layer, side, value,
   reference, LOCKED) across the selection. Each commit goes through the
   typed op for that property.
+  Focus-owned Route/Zone configuration uses this same Inspector. Distinguish
+  authored inputs from effective clearance, available measurements and fill
+  evidence; missing evidence is not a successful check. Native Rule priority
+  retains its existing `u64` range, independently of Zone priority (`u32`).
 - **Operation emitted:** Selection is NOT an Operation (consumer state,
   per the spine — never journaled; exposed read-only via
   DatumQueryTool `selection.describe`). Edits emit the relevant typed op:

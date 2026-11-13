@@ -682,6 +682,16 @@ The PCB editor target is:
 - DRC/check integration;
 - manufacturing visibility.
 
+The bounded Route/Zone target configures shared authoring through the focused
+pane's Inspector. A clicked Pad determines the route Net; the current conductive
+layer and explicit or persisted preferred width remain visible. Persisted
+clearance feedback must disclose unavailable measurements and board-edge checks.
+Zone authoring requires explicit Net, priority and connection intent; finishing
+its boundary and explicitly filling it are separate actions. Current Filled,
+verified empty, Stale and Unsupported evidence remain distinct. The reviewed
+study describes these controls; native GUI delivery still requires ordinary
+application proof under `dat-practical-pcb-design-3qbp`.
+
 Phase 1 proves rendering and shell usability before broader editing.
 
 ## Manufacturing And Checks Target

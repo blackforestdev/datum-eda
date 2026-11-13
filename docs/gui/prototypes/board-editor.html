@@ -56,7 +56,7 @@
   .split{flex:1;display:flex;min-width:0;background:var(--bd-str);gap:1px}
   .pane{flex:1;min-width:0;display:flex;flex-direction:column;background:var(--canvas);position:relative}
   .pane.focus{box-shadow:inset 0 0 0 1.5px var(--acc)}
-  .pane-hd{display:flex;align-items:center;gap:8px;height:31px;flex:0 0 31px;padding:0 8px 0 11px;background:var(--bg);border-bottom:1px solid var(--bd-sub)}
+  .pane-hd{display:flex;align-items:center;gap:8px;height:31px;flex:0 0 31px;padding:0 8px 0 11px;background:var(--bg);border-bottom:1px solid var(--bd-sub);overflow:hidden}
   .pane.focus .pane-hd{background:#16181f}
   .ptitle{font-size:12.5px;color:var(--tx2);font-family:var(--mono);display:flex;align-items:center;gap:7px;white-space:nowrap}
   .pane.focus .ptitle{color:var(--tx)}
@@ -118,6 +118,32 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
 .statusmark[data-state="approved"]{color:#4FA75A}
 .statusmark[data-state="open"]{color:#E0A23A}
 .statusmark[data-state="retired"]{color:#717885}
+
+/* ---- route-state reconciliation (gui_reconciliation · pcb-goal-recovery) ---- */
+.istate{display:none}
+.istate.on{display:block}
+.ov{display:none}
+.ov.on{display:block}
+.pbtn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--bd-str);border-radius:5px;background:var(--s02);color:var(--tx);font-size:12.5px;padding:4px 12px;cursor:pointer;font-family:inherit}
+.pbtn:hover{background:var(--s03)}
+.pbtn.primary{background:var(--acc);border-color:var(--acc);color:var(--onAccent);font-weight:600}
+.pbtn.primary:hover{background:var(--acc-h)}
+.pbtn[disabled]{opacity:.45;cursor:not-allowed;background:var(--s01);color:var(--tx3);border-color:var(--bd-sub)}
+.pbtn[disabled]:hover{background:var(--s01)}
+.btnrow{display:flex;align-items:center;gap:8px;padding:8px 13px 4px}
+.btnrow .note{font-size:11px;color:var(--tx3);font-family:var(--mono)}
+.lrow{display:flex;gap:8px;align-items:flex-start;margin:6px 13px;padding:6px 9px;border-radius:5px;font-size:12px;line-height:1.45}
+.lrow.warn{background:#1e1608;border:1px solid var(--warn);color:var(--warn)}
+.lrow.err{background:#241112;border:1px solid var(--err);color:var(--err)}
+.lrow.info{background:#121a26;border:1px solid var(--info);color:var(--info)}
+.lrow .gl{flex:0 0 auto}
+.subnote{padding:1px 13px 6px;font-size:11px;color:var(--tx3);font-family:var(--mono);line-height:1.4}
+.statestrip{flex:0 0 auto;min-height:30px;display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;background:var(--bg);border-top:1px dashed var(--bd-str);padding:3px 10px;font-family:var(--mono);font-size:11px;color:var(--tx3);user-select:none}
+.ss-btn,.statestrip .lab,.statestrip .statusmark{white-space:nowrap}
+.statestrip .lab{letter-spacing:.05em;margin-right:4px}
+.ss-btn{border:1px solid var(--bd-sub);border-radius:4px;padding:2px 9px;cursor:pointer;color:var(--tx2);background:var(--s01)}
+.ss-btn:hover{color:var(--tx);background:var(--s02)}
+.ss-btn.on{color:var(--acc);border-color:var(--acc);background:var(--acc-tint)}
 </style>
 
 <div class="menubar hdr">
@@ -164,11 +190,11 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
       <div class="pane-hd">
         <span class="ptitle"><svg class="modeicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 6h18v12H3z"/><path d="M7 6v12M17 6v12" opacity=".6"/></svg>Board · Layout</span>
         <span class="pane-tools">
-          <span class="ptool on" title="Select"><svg viewBox="0 0 24 24"><path d="M5 3l7 17 2.2-6.8L21 11 5 3z"/></svg></span>
+          <span class="ptool on" title="Select" id="tool-select"><svg viewBox="0 0 24 24"><path d="M5 3l7 17 2.2-6.8L21 11 5 3z"/></svg></span>
           <span class="ptool" title="Move"><svg viewBox="0 0 24 24"><path d="M12 4v16M4 12h16M12 4l-2.5 2.5M12 4l2.5 2.5M12 20l-2.5-2.5M12 20l2.5-2.5"/></svg></span>
-          <span class="ptool" title="Route track"><svg viewBox="0 0 24 24"><path d="M3 17h6l4-10h8"/></svg></span>
+          <span class="ptool" title="Route track" id="tool-route"><svg viewBox="0 0 24 24"><path d="M3 17h6l4-10h8"/></svg></span>
           <span class="ptool" title="Via"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.4"/></svg></span>
-          <span class="ptool" title="Zone"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M4 9h16M9 9v10" opacity=".5"/></svg></span>
+          <span class="ptool" title="Zone" id="tool-zone"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M4 9h16M9 9v10" opacity=".5"/></svg></span>
         </span>
         <span class="pane-ctl"><span class="focusdot" title="focused pane — owns tools + inspector"></span><span class="pc" title="Split"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M12 4v16"/></svg></span></span>
       </div>
@@ -176,7 +202,8 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
         <svg class="cv" viewBox="0 0 360 320" preserveAspectRatio="xMidYMid meet">
           <defs><pattern id="grid" width="16" height="16" patternUnits="userSpaceOnUse"><path d="M16 0H0V16" fill="none" stroke="#171A20" stroke-width="1"/></pattern>
             <filter id="glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="2.6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
-          <rect x="20" y="18" width="320" height="284" rx="6" fill="#0E1013" stroke="var(--edge)" stroke-opacity=".8" stroke-width="1.4"/>
+          <rect x="20" y="18" width="320" height="284" rx="6" fill="#0E1013"/>
+          <rect id="bd-outline" x="20" y="18" width="320" height="284" rx="6" fill="none" stroke="var(--edge)" stroke-opacity=".8" stroke-width="1.4"/>
           <rect x="20" y="18" width="320" height="284" rx="6" fill="url(#grid)"/>
           <line x1="80" y1="150" x2="150" y2="140" stroke="var(--rat)" stroke-width="1" stroke-dasharray="4 4" opacity=".7"/>
           <path d="M110 108 H150" stroke="var(--cu-b)" stroke-width="4" fill="none" stroke-linecap="round"/>
@@ -191,6 +218,50 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
             <rect x="150" y="110" width="56" height="56" rx="3" fill="#161a24" stroke="var(--acc)" stroke-width="1.8"/>
             <g fill="var(--pad)"><rect x="156" y="104" width="6" height="8"/><rect x="166" y="104" width="6" height="8"/><rect x="176" y="104" width="6" height="8"/><rect x="186" y="104" width="6" height="8"/><rect x="196" y="104" width="6" height="8"/><rect x="156" y="164" width="6" height="8"/><rect x="166" y="164" width="6" height="8"/><rect x="176" y="164" width="6" height="8"/><rect x="186" y="164" width="6" height="8"/><rect x="196" y="164" width="6" height="8"/><rect x="144" y="116" width="8" height="6"/><rect x="144" y="126" width="8" height="6"/><rect x="144" y="136" width="8" height="6"/><rect x="144" y="146" width="8" height="6"/><rect x="204" y="116" width="8" height="6"/><rect x="204" y="126" width="8" height="6"/><rect x="204" y="136" width="8" height="6"/><rect x="204" y="146" width="8" height="6"/></g>
             <text x="178" y="142" fill="var(--silk)" font-size="9" text-anchor="middle" font-family="monospace">U1</text>
+          </g>
+          <!-- route-state overlays (gui_reconciliation · shown by prototype state switch only) -->
+          <g id="ov-start" class="ov">
+            <circle cx="148" cy="139" r="7" fill="none" stroke="var(--acc)" stroke-width="1.6"/>
+            <text x="148" y="158" fill="var(--acc)" font-size="7" text-anchor="middle" font-family="monospace">U1.31</text>
+          </g>
+          <g id="ov-rat" class="ov">
+            <line x1="144" y1="139" x2="62" y2="150" stroke="var(--rat)" stroke-width="1.2" stroke-dasharray="4 4"/>
+          </g>
+          <g id="ov-prev" class="ov">
+            <path d="M144 139H100V150H64" stroke="var(--cu-f)" stroke-width="4" fill="none" stroke-linecap="round" stroke-dasharray="7 5" opacity=".85"/>
+            <g fill="none" stroke="var(--tx)" stroke-width="1.3"><rect x="96.5" y="135.5" width="7" height="7"/><rect x="96.5" y="146.5" width="7" height="7"/></g>
+            <circle cx="59" cy="150" r="6.5" fill="none" stroke="var(--acc)" stroke-width="1.6"/>
+          </g>
+          <g id="ov-block" class="ov">
+            <path d="M144 139H100V132" stroke="var(--cu-f)" stroke-width="4" fill="none" stroke-linecap="round" stroke-dasharray="7 5" opacity=".85"/>
+            <path d="M100 132H70" stroke="var(--err)" stroke-width="4" fill="none" stroke-linecap="round" stroke-dasharray="7 5"/>
+            <g fill="none" stroke="var(--tx)" stroke-width="1.3"><rect x="96.5" y="135.5" width="7" height="7"/><rect x="96.5" y="128.5" width="7" height="7"/></g>
+            <circle cx="54.5" cy="132" r="8" fill="none" stroke="var(--err)" stroke-width="1.8"/>
+          </g>
+          <!-- zone-state overlays (queued Zone request · prototype state switch only) -->
+          <g id="ov-zb" class="ov">
+            <path d="M70 230H210V285H70Z" fill="none" stroke="var(--cu-f)" stroke-width="1.6"/>
+            <g fill="var(--canvas)" stroke="var(--tx)" stroke-width="1.2"><rect x="66.5" y="226.5" width="7" height="7"/><rect x="206.5" y="226.5" width="7" height="7"/><rect x="206.5" y="281.5" width="7" height="7"/><rect x="66.5" y="281.5" width="7" height="7"/></g>
+            <text x="78" y="245" fill="var(--cu-f)" font-size="7.5" font-family="monospace">GND</text>
+          </g>
+          <g id="ov-zhl" class="ov">
+            <path d="M70 230H210V285H70Z" fill="none" stroke="var(--acc)" stroke-width="1.2" stroke-dasharray="5 4"/>
+          </g>
+          <g id="ov-zfill" class="ov">
+            <path d="M70 230H210V285H70Z" fill="var(--cu-f)" fill-opacity=".3" stroke="var(--cu-f)" stroke-width="1.6"/>
+            <text x="78" y="245" fill="var(--silk)" font-size="7.5" font-family="monospace">GND</text>
+          </g>
+          <g id="ov-zempty" class="ov">
+            <path d="M232 240H300V285H232Z" fill="none" stroke="var(--cu-f)" stroke-width="1.4"/>
+            <text x="266" y="266" fill="var(--tx3)" font-size="8" text-anchor="middle" font-family="monospace">∅ empty</text>
+          </g>
+          <g id="ov-zstale" class="ov">
+            <path d="M70 230H210V285H70Z" fill="var(--cu-f)" fill-opacity=".12" stroke="var(--warn)" stroke-width="1.6" stroke-dasharray="6 4"/>
+            <text x="78" y="245" fill="var(--warn)" font-size="7.5" font-family="monospace">GND ⚠ stale</text>
+          </g>
+          <g id="ov-zunsup" class="ov">
+            <path d="M44 180H210V285H44Z" fill="none" stroke="var(--cu-f)" stroke-width="1.6"/>
+            <circle cx="54.5" cy="186" r="8" fill="none" stroke="var(--err)" stroke-width="1.8"/>
           </g>
         </svg>
       </div>
@@ -277,6 +348,7 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
     <div class="panel grow" style="border-bottom:none">
       <div class="panel-hd"><span>Inspector</span><span class="follows">follows <b>pane A</b></span></div>
       <div class="panel-bd" style="padding:0" id="insp">
+        <div class="istate on" data-s="comp">
         <div class="insp-title"><span class="ref">U1</span><span class="kind">Component · LQFP‑48</span><span class="statusmark" data-state="retired">○ HISTORICAL STUDY · not a live decision</span></div>
         <div class="xprobe"><svg viewBox="0 0 24 24"><path d="M4 7h6M4 7v10M4 17h6M20 7h-6M20 7v10M20 17h-6M10 12h4"/></svg>Cross‑probed — highlighted in Schematic (pane B)</div>
         <div class="sect-hd"><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>Identity</div>
@@ -297,6 +369,167 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
           <div class="kv" style="grid-template-columns:16px 1fr"><span style="color:var(--warn)">⚠</span><span class="v" style="font-size:13px">Pin 31 SPI2_SCK unrouted (ratsnest)</span></div>
           <div class="kv" style="grid-template-columns:16px 1fr"><span style="color:var(--warn)">⚠</span><span class="v" style="font-size:13px">Courtyard clearance to R4: 0.18 mm</span></div>
         </div>
+        </div><!-- /istate comp -->
+
+        <!-- R1 · Route armed, before first click -->
+        <div class="istate" data-s="r1">
+          <div class="insp-title"><span class="ref">Route Track</span><span class="kind">Tool · pane A</span></div>
+          <div class="lrow info"><span class="gl">▸</span><span>Pick a connected pad — routing starts at the pad center and uses that pad's net.</span></div>
+          <div class="sect-hd"><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>Tool setup</div>
+          <div class="sect">
+            <div class="kv"><span class="k">Width</span><span class="v"><input class="field mono focus" value=""><span class="unit"> mm</span></span></div>
+            <div class="subnote">no saved preferred width — enter a value</div>
+            <div class="kv"><span class="k">Layer</span><span class="v">F.Cu (top)</span></div>
+            <div class="subnote">from the Layers panel — follows pane A</div>
+            <div class="kv"><span class="k">Net</span><span class="v" style="color:var(--tx3)">— set by the start pad</span></div>
+            <div class="kv"><span class="k">Clearance</span><span class="v" style="color:var(--tx3)">— resolved once the net is known</span></div>
+          </div>
+        </div>
+
+        <!-- R2 · start pad mapped, no applicable clearance → persisted Rule setup -->
+        <div class="istate" data-s="r2">
+          <div class="insp-title"><span class="ref">SPI2_SCK</span><span class="kind">Route Track · start U1.31</span></div>
+          <div class="lrow warn"><span class="gl">⚠</span><span>No clearance rule matches net SPI2_SCK on F.Cu. Create one to continue routing.</span></div>
+          <div class="sect-hd"><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>New clearance rule</div>
+          <div class="sect">
+            <div class="kv"><span class="k">Clearance</span><span class="v"><input class="field mono focus" value=""><span class="unit"> mm</span></span></div>
+            <div class="subnote">required — saved as a rule, not a one-off value</div>
+            <div class="kv"><span class="k">Scope</span><span class="v" style="font-family:var(--mono)">net SPI2_SCK</span></div>
+            <div class="kv"><span class="k">Priority</span><span class="v"><input class="field mono" value="0"></span></div>
+            <div class="subnote">numeric — the highest matching priority wins; equal matches are refused as ambiguous</div>
+            <div class="kv"><span class="k">Source</span><span class="v">new rule — saved to the design rules</span></div>
+          </div>
+          <div class="btnrow"><button class="pbtn primary" disabled>Apply</button><button class="pbtn">Cancel</button><span class="note">Cancel discards the draft; an applied rule stays saved</span></div>
+          <div class="sect-hd"><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>Tool setup</div>
+          <div class="sect">
+            <div class="kv"><span class="k">Width</span><span class="v"><input class="field mono" value="0.250"><span class="unit"> mm</span></span></div>
+            <div class="kv"><span class="k">Layer</span><span class="v">F.Cu (top)</span></div>
+          </div>
+        </div>
+
+        <!-- R3 · configured route preview -->
+        <div class="istate" data-s="r3">
+          <div class="insp-title"><span class="ref">SPI2_SCK</span><span class="kind">Route Track · 3 segments</span></div>
+          <div class="sect-hd"><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>Route draft</div>
+          <div class="sect">
+            <div class="kv"><span class="k">Width</span><span class="v"><input class="field mono" value="0.250"><span class="unit"> mm</span></span></div>
+            <div class="kv"><span class="k">Clearance</span><span class="v" style="font-family:var(--mono)">0.200 mm</span></div>
+            <div class="subnote">net rule SPI2_SCK — saved · priority 0</div>
+            <div class="kv"><span class="k">Layer</span><span class="v">F.Cu (top)</span></div>
+            <div class="kv"><span class="k">Snap</span><span class="v" style="font-family:var(--mono)">pad J1.2 — pad center</span></div>
+            <div class="kv"><span class="k">Vertices</span><span class="v" style="font-family:var(--mono)">2 placed · posture 90°</span></div>
+          </div>
+          <div class="lrow warn"><span class="gl">⚠</span><span>No board outline defined — the board-edge check is unavailable.</span></div>
+          <div class="btnrow"><button class="pbtn primary">Finish</button><button class="pbtn">Cancel</button><span class="note">Finish saves the route · Cancel discards the draft</span></div>
+          <div class="subnote">Local check only — full DRC runs from Checks.</div>
+        </div>
+
+        <!-- R4 · blocked route, Finish disabled, draft editable -->
+        <div class="istate" data-s="r4">
+          <div class="insp-title"><span class="ref">SPI2_SCK</span><span class="kind">Route Track · blocked</span></div>
+          <div class="lrow err"><span class="gl">⛔</span><span>Stopped — segment 3 violates the required clearance to pad J1.1 (net NRST · F.Cu): minimum 0.200 mm, net rule SPI2_SCK · priority 0.</span></div>
+          <div class="sect-hd"><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>Route draft</div>
+          <div class="sect">
+            <div class="kv"><span class="k">Width</span><span class="v"><input class="field mono" value="0.250"><span class="unit"> mm</span></span></div>
+            <div class="kv"><span class="k">Clearance</span><span class="v" style="font-family:var(--mono)">0.200 mm</span></div>
+            <div class="subnote">net rule SPI2_SCK — saved · priority 0</div>
+            <div class="kv"><span class="k">Layer</span><span class="v">F.Cu (top)</span></div>
+            <div class="kv"><span class="k">Vertices</span><span class="v" style="font-family:var(--mono)">2 placed · blocked segment editable</span></div>
+          </div>
+          <div class="btnrow"><button class="pbtn primary" disabled>Finish</button><button class="pbtn">Cancel</button><span class="note">blocked — reroute or Backspace the last vertex</span></div>
+          <div class="subnote">Draft stays editable; Cancel discards it. Local check only — full DRC runs from Checks.</div>
+        </div>
+
+        <!-- Z1 · Zone draft settings, before first vertex -->
+        <div class="istate" data-s="z1">
+          <div class="insp-title"><span class="ref">Zone</span><span class="kind">Tool · pane A</span></div>
+          <div class="lrow info"><span class="gl">▸</span><span>Pick the zone's net, then click to place the first boundary vertex.</span></div>
+          <div class="sect-hd"><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>Zone setup</div>
+          <div class="sect">
+            <div class="kv"><span class="k">Net</span><span class="v"><input class="field mono focus" value="GND"></span></div>
+            <div class="subnote">explicit — no net is chosen for you</div>
+            <div class="kv"><span class="k">Layer</span><span class="v">F.Cu (top)</span></div>
+            <div class="subnote">from the Layers panel — follows pane A</div>
+            <div class="kv"><span class="k">Priority</span><span class="v"><input class="field mono" value="0"></span></div>
+            <div class="subnote">numeric — explicit, no default is chosen for you</div>
+            <div class="kv"><span class="k">Clearance</span><span class="v" style="font-family:var(--mono)">0.200 mm</span></div>
+            <div class="subnote">readback — largest saved minimum (net rule SPI2_SCK · priority 0)</div>
+            <div class="kv"><span class="k">Thermal</span><span class="v"><select class="field"><option selected>thermal relief — spokes</option><option>solid</option></select></span></div>
+            <div class="subnote">explicit choice — example value, nothing is picked for you</div>
+            <div class="kv"><span class="k">Spoke width</span><span class="v"><input class="field mono" value="0.300"><span class="unit"> mm</span></span></div>
+            <div class="kv"><span class="k">Spoke gap</span><span class="v"><input class="field mono" value="0.250"><span class="unit"> mm</span></span></div>
+            <div class="subnote">recorded as authoring intent — thermal fill is currently unsupported</div>
+          </div>
+          <div class="btnrow"><button class="pbtn primary" disabled>Finish Boundary</button><button class="pbtn">Cancel</button><span class="note">draft incomplete — no vertices yet</span></div>
+          <div class="subnote">Boundary only — filling is a separate, explicit action.</div>
+        </div>
+
+        <!-- Z2 · authored boundary, Unfilled -->
+        <div class="istate" data-s="z2">
+          <div class="insp-title"><span class="ref">GND</span><span class="kind">Zone · F.Cu · Unfilled</span></div>
+          <div class="sect-hd"><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>Zone</div>
+          <div class="sect">
+            <div class="kv"><span class="k">Net</span><span class="v" style="font-family:var(--mono)">GND</span></div>
+            <div class="kv"><span class="k">Layer</span><span class="v">F.Cu (top)</span></div>
+            <div class="kv"><span class="k">Vertices</span><span class="v" style="font-family:var(--mono)">4</span></div>
+            <div class="kv"><span class="k">Status</span><span class="v">Unfilled — boundary authored</span></div>
+          </div>
+          <div class="btnrow"><button class="pbtn primary">Fill</button><span class="note">a zone never fills on its own</span></div>
+        </div>
+
+        <!-- Z3 · distinct explicit Fill action -->
+        <div class="istate" data-s="z3">
+          <div class="insp-title"><span class="ref">GND</span><span class="kind">Fill Zone · F.Cu</span></div>
+          <div class="sect-hd"><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>Fill</div>
+          <div class="sect">
+            <div class="kv"><span class="k">Net</span><span class="v" style="font-family:var(--mono)">GND</span></div>
+            <div class="kv"><span class="k">Layer</span><span class="v">F.Cu (top)</span></div>
+            <div class="kv"><span class="k">Clearance</span><span class="v" style="font-family:var(--mono)">0.200 mm</span></div>
+            <div class="subnote">largest saved minimum across nets — conservative (net rule SPI2_SCK · priority 0)</div>
+          </div>
+          <div class="btnrow"><button class="pbtn primary">Fill</button><button class="pbtn">Cancel</button><span class="note">Cancel leaves the zone unfilled</span></div>
+          <div class="subnote">Filling never changes the authored boundary.</div>
+        </div>
+
+        <!-- Z4 · current Filled + authenticated empty neighbor -->
+        <div class="istate" data-s="z4">
+          <div class="insp-title"><span class="ref">GND</span><span class="kind">Zone · F.Cu · Filled</span></div>
+          <div class="sect-hd"><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>Zone</div>
+          <div class="sect">
+            <div class="kv"><span class="k">Net</span><span class="v" style="font-family:var(--mono)">GND</span></div>
+            <div class="kv"><span class="k">Layer</span><span class="v">F.Cu (top)</span></div>
+            <div class="kv"><span class="k">Fill</span><span class="v">current — rev a3f19c</span></div>
+            <div class="kv"><span class="k">Islands</span><span class="v" style="font-family:var(--mono)">1</span></div>
+          </div>
+          <div class="lrow info"><span class="gl">▸</span><span>The second GND zone filled empty — a verified result with no copper, not an error.</span></div>
+          <div class="btnrow"><button class="pbtn">Refill</button><span class="note">re-runs the fill explicitly</span></div>
+        </div>
+
+        <!-- Z5 · stale fill -->
+        <div class="istate" data-s="z5">
+          <div class="insp-title"><span class="ref">GND</span><span class="kind">Zone · F.Cu · Stale</span></div>
+          <div class="lrow warn"><span class="gl">⚠</span><span>Fill is stale — the board changed after this fill. Checks do not treat a stale fill as current copper.</span></div>
+          <div class="sect-hd"><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>Zone</div>
+          <div class="sect">
+            <div class="kv"><span class="k">Net</span><span class="v" style="font-family:var(--mono)">GND</span></div>
+            <div class="kv"><span class="k">Layer</span><span class="v">F.Cu (top)</span></div>
+            <div class="kv"><span class="k">Fill</span><span class="v">stale — from an earlier revision</span></div>
+          </div>
+          <div class="btnrow"><button class="pbtn primary">Refill</button><span class="note">refilling never changes the boundary</span></div>
+        </div>
+
+        <!-- Z6 · unsupported projection, fill refused -->
+        <div class="istate" data-s="z6">
+          <div class="insp-title"><span class="ref">GND</span><span class="kind">Zone · F.Cu · Unsupported</span></div>
+          <div class="lrow err"><span class="gl">⛔</span><span>Fill unsupported — pad J1.4 (F.Cu) has an unsupported shape projection inside this zone. No copper was produced; the boundary is unchanged.</span></div>
+          <div class="sect-hd"><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>Zone</div>
+          <div class="sect">
+            <div class="kv"><span class="k">Net</span><span class="v" style="font-family:var(--mono)">GND</span></div>
+            <div class="kv"><span class="k">Layer</span><span class="v">F.Cu (top)</span></div>
+            <div class="kv"><span class="k">Status</span><span class="v">Unsupported — recorded fill result · boundary kept, editable</span></div>
+          </div>
+          <div class="subnote">No approximate fill is produced.</div>
+        </div>
       </div>
     </div>
   </div>
@@ -309,13 +542,34 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
 
 <div class="status hdr">
   <span class="seg"><span class="lab">focus</span><span class="accc">pane A · Board</span></span>
-  <span class="seg"><span class="lab">Tool</span>Select</span>
-  <span class="seg"><span class="lab">Sel</span>U1 <span class="lab">(both panes)</span></span>
+  <span class="seg"><span class="lab">Tool</span><span id="st-tool">Select</span></span>
+  <span class="seg"><span class="lab">Sel</span><span id="st-sel">U1 <span class="lab">(both panes)</span></span></span>
   <span class="seg"><span class="lab">Grid</span>0.500 mm</span>
   <span class="push seg"></span>
   <span class="seg warnc">DRC 2 ⚠</span>
   <span class="seg" style="border:none"><span class="lab">rev</span>a3f19c</span>
   <span class="ver">Datum EDA — split view · design pass 3</span>
+</div>
+
+<div class="statestrip hdr">
+  <span class="lab">ROUTE STATES · gui_reconciliation (prototype switch — not product UI)</span>
+  <span class="ss-btn on" data-s="comp">Component — current</span>
+  <span class="ss-btn" data-s="r1">R1 armed</span>
+  <span class="ss-btn" data-s="r2">R2 rule setup</span>
+  <span class="ss-btn" data-s="r3">R3 preview</span>
+  <span class="ss-btn" data-s="r4">R4 blocked</span>
+  <span class="statusmark" data-state="open" style="margin-left:auto">route states: ○ TARGET · engine-landed · no GUI claim</span>
+</div>
+
+<div class="statestrip hdr">
+  <span class="lab">ZONE STATES · gui_reconciliation</span>
+  <span class="ss-btn" data-s="z1">Z1 draft settings</span>
+  <span class="ss-btn" data-s="z2">Z2 unfilled</span>
+  <span class="ss-btn" data-s="z3">Z3 explicit fill</span>
+  <span class="ss-btn" data-s="z4">Z4 filled + empty</span>
+  <span class="ss-btn" data-s="z5">Z5 stale</span>
+  <span class="ss-btn" data-s="z6">Z6 unsupported</span>
+  <span class="statusmark" data-state="open" style="margin-left:auto">zone states: ○ TARGET · engine-landed · no GUI claim</span>
 </div>
 
 <script>
@@ -330,4 +584,32 @@ letter-spacing:.06em;border-radius:4px;padding:2px 9px;border:1px solid currentC
     h.classList.toggle('collapsed');
     var s=h.nextElementSibling; if(s&&s.classList.contains('sect')) s.style.display=h.classList.contains('collapsed')?'none':'';
   });
+  /* route-state switch (gui_reconciliation) — states addressable as #comp/#r1..#r4 */
+  var STATES={
+    comp:{tool:'Select',sel:'U1 <span class="lab">(both panes)</span>',tid:'tool-select',ov:[]},
+    r1:{tool:'Route Track',sel:'—',tid:'tool-route',ov:[]},
+    r2:{tool:'Route Track',sel:'pad U1.31 · SPI2_SCK',tid:'tool-route',ov:['ov-start','ov-rat']},
+    r3:{tool:'Route Track',sel:'draft · 2 vertices',tid:'tool-route',ov:['ov-start','ov-prev']},
+    r4:{tool:'Route Track',sel:'draft · blocked',tid:'tool-route',ov:['ov-start','ov-block']},
+    z1:{tool:'Zone',sel:'—',tid:'tool-zone',ov:[]},
+    z2:{tool:'Zone',sel:'zone GND · unfilled',tid:'tool-zone',ov:['ov-zb']},
+    z3:{tool:'Zone',sel:'zone GND',tid:'tool-zone',ov:['ov-zb','ov-zhl']},
+    z4:{tool:'Zone',sel:'zone GND · filled',tid:'tool-zone',ov:['ov-zfill','ov-zempty']},
+    z5:{tool:'Zone',sel:'zone GND · stale',tid:'tool-zone',ov:['ov-zstale']},
+    z6:{tool:'Zone',sel:'zone GND · unsupported',tid:'tool-zone',ov:['ov-zunsup']}
+  };
+  function setState(s){
+    var st=STATES[s]; if(!st)return;
+    document.querySelectorAll('.istate').forEach(function(d){d.classList.toggle('on',d.getAttribute('data-s')===s)});
+    document.querySelectorAll('.ov').forEach(function(g){g.classList.toggle('on',st.ov.indexOf(g.id)>=0)});
+    document.querySelectorAll('.ss-btn').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-s')===s)});
+    ['tool-select','tool-route','tool-zone'].forEach(function(id){document.getElementById(id).classList.toggle('on',id===st.tid)});
+    document.getElementById('st-tool').innerHTML=st.tool;
+    document.getElementById('st-sel').innerHTML=st.sel;
+    document.getElementById('bd-outline').style.display=(s==='r3')?'none':'';
+  }
+  document.querySelectorAll('.ss-btn').forEach(function(b){b.addEventListener('click',function(){setState(b.getAttribute('data-s'))})});
+  var hp=location.hash.slice(1).split('@');
+  if(hp[0]) setState(hp[0]);
+  if(hp[1]==='tail'){var ins=document.getElementById('insp');ins.scrollTop=ins.scrollHeight;}
 </script>
