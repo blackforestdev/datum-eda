@@ -9,7 +9,8 @@ use eda_engine::rules::ast::RuleType;
 use eda_engine::substrate::zone_fill_copper_projection_zones;
 
 use crate::{
-    DiagnosticsView, UnroutedView, build_native_project_board, build_native_project_schematic,
+    DiagnosticsView, UnroutedView, build_native_project_board,
+    build_native_project_board_with_model, build_native_project_schematic,
     load_native_project_with_resolved_board_and_model, summarize_native_board_checks,
 };
 
@@ -39,7 +40,7 @@ pub(crate) fn query_native_project_drc_with_rules(
     rules: &[RuleType],
 ) -> Result<DrcReport> {
     let (project, model) = load_native_project_with_resolved_board_and_model(root)?;
-    let board = build_native_project_board(&project)?;
+    let board = build_native_project_board_with_model(&project, Some(&model))?;
     let schematic = build_native_project_schematic(&project)?;
     Ok(eda_engine::drc::run_with_current_zone_fills_and_waivers(
         &board,

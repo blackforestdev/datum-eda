@@ -2,6 +2,9 @@ use super::*;
 use eda_engine::schematic::WaiverTarget;
 use eda_engine::substrate::{DesignModel, ProjectResolver, SourceShardKind};
 
+#[path = "project/native_rule_projection.rs"]
+mod native_rule_projection;
+
 pub(super) fn ensure_project_root(root: &Path) -> Result<()> {
     if root.exists() {
         if !root.is_dir() {
@@ -481,13 +484,7 @@ pub(crate) fn build_native_project_board_with_model(
         .cloned()
         .map(|value| serde_json::from_value(value).context("failed to parse board text"))
         .collect::<Result<Vec<BoardText>>>()?;
-    let rules = project
-        .rules
-        .rules
-        .iter()
-        .cloned()
-        .map(|value| serde_json::from_value(value).context("failed to parse board rule"))
-        .collect::<Result<Vec<Rule>>>()?;
+    let rules = native_rule_projection::legacy_board_rules(project, model)?;
 
     Ok(Board {
         uuid: project.board.uuid,

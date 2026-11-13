@@ -3,6 +3,7 @@ use super::*;
 use crate::api::native_write::registry::{NativeWriteContext, find_native_write_verb};
 use crate::api::native_write::schematic_board_transfer::{TransferChoice, TransferRequest};
 use crate::api::native_write::{self as native, commit_prepared};
+use crate::board::NetClass;
 use crate::substrate::{
     CommitSource, ElectricalOccurrence, ElectricalSelectionSnapshot, ProjectResolver,
 };

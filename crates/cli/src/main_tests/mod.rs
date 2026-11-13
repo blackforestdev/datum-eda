@@ -33,6 +33,7 @@ mod main_tests_project_bom_export;
 mod main_tests_project_bom_inspect;
 mod main_tests_project_bom_validate;
 mod main_tests_project_drc;
+mod main_tests_project_drc_width_rules;
 mod main_tests_project_drill_compare;
 mod main_tests_project_drill_export;
 mod main_tests_project_drill_hole_classes;
@@ -351,3 +352,5 @@ mod main_tests_units;
 mod main_tests_erc_disposition;
 
 mod main_tests_saved_part_default_map;
+
+mod main_tests_project_native_clearance;

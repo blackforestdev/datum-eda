@@ -3,10 +3,10 @@
 use super::{BatchComposer, PreparedWrite, WriteProvenance};
 use crate::api::native_write::registry::{NativeWriteContext, NativeWriteVerb, parse_verb_params};
 use crate::board::query_pad::QueryPadGeometry;
-use crate::board::{Net, NetClass, Stackup, StackupLayerType, Track, occupied_copper};
+use crate::board::{Net, Stackup, StackupLayerType, Track, occupied_copper};
 use crate::error::EngineError;
 use crate::ir::geometry::Point;
-use crate::rules::eval::{ScopeEvalContext, eval_scope_m2};
+pub(super) use crate::rules::native_policy::selected_rule;
 use crate::substrate::{
     DesignModel, ModelRevision, Operation, SourceShardKind,
     component_pad_source::{self as source, ComponentPadMaterializationStatus},
@@ -74,8 +74,8 @@ pub fn capture_route_basis(
             "Starting Pad Net identity does not match its source",
         ));
     }
-    let (minimum_width_nm, preferred_width_nm, maximum_width_nm) =
-        width_policy(model, &board, &net_source, layer)?;
+    let policy =
+        crate::rules::native_policy::track_width_policy(model, &board, &net_source, layer)?;
     Ok(RouteBasis {
         project: model.project.project_id,
         board: serde_json::from_value(board["uuid"].clone())?,
@@ -85,9 +85,9 @@ pub fn capture_route_basis(
         net,
         start,
         layer,
-        preferred_width_nm,
-        minimum_width_nm,
-        maximum_width_nm,
+        preferred_width_nm: policy.preferred,
+        minimum_width_nm: policy.minimum,
+        maximum_width_nm: policy.maximum,
         clearance: super::stop::clearance_policy(model, &net_source, layer)?,
     })
 }
@@ -140,88 +140,6 @@ fn terminal(
         return Err(invalid("Pad Net has no current board source"));
     }
     Ok((pad.position, net))
-}
-
-fn width_policy(
-    model: &DesignModel,
-    board: &serde_json::Value,
-    net: &Net,
-    layer: i32,
-) -> Result<(Option<i64>, Option<i64>, Option<i64>), EngineError> {
-    let class = if net.class.is_nil() {
-        None
-    } else {
-        let value = board["net_classes"]
-            .get(net.class.to_string())
-            .ok_or_else(|| invalid("Net class source is unavailable"))?;
-        let class: NetClass = serde_json::from_value(value.clone())?;
-        if class.uuid != net.class {
-            return Err(invalid("Net class identity differs from its source"));
-        }
-        Some(class)
-    };
-    if let Some(rule) = selected_rule(model, "track_width", net, layer)? {
-        let parameter = |name: &str| {
-            rule["params"][name]
-                .as_i64()
-                .ok_or_else(|| invalid("Track width parameter is not an integer"))
-        };
-        return Ok((
-            Some(parameter("min_nm")?),
-            Some(parameter("preferred_nm")?),
-            Some(parameter("max_nm")?),
-        ));
-    }
-    if let Some(class) = class {
-        if class.track_width <= 0 {
-            return Err(invalid("Net class width source is invalid"));
-        }
-        // Retain the existing native DRC interpretation of class track_width.
-        return Ok((Some(class.track_width), Some(class.track_width), None));
-    }
-    Ok((None, None, None))
-}
-
-/// Existing native rule schema and supported scope evaluation. No fallback or
-/// implicit resolution of an ambiguous/unsupported rule is supplied here.
-pub(super) fn selected_rule(
-    model: &DesignModel,
-    kind: &str,
-    net: &Net,
-    layer: i32,
-) -> Result<Option<serde_json::Value>, EngineError> {
-    let rules = model.materialized_source_shard_value(SourceShardKind::RulesRoot)?;
-    let rules = rules["rules"]
-        .as_array()
-        .ok_or_else(|| invalid("Rules source has no rule array"))?;
-    let context = ScopeEvalContext {
-        net: Some(net.uuid),
-        net_class: Some(net.class),
-        layer: Some(layer),
-    };
-    let mut applicable = Vec::new();
-    for rule in rules {
-        crate::substrate::validate_native_project_rule_payload(rule)?;
-        if rule["enabled"] == true
-            && rule["rule_type"] == kind
-            && eval_scope_m2(&serde_json::from_value(rule["scope"].clone())?, context)?
-        {
-            applicable.push(rule);
-        }
-    }
-    applicable.sort_by_key(|r| std::cmp::Reverse(r["priority"].as_u64()));
-    if let Some(rule) = applicable.first() {
-        if applicable
-            .get(1)
-            .is_some_and(|other| other["priority"] == rule["priority"])
-        {
-            return Err(invalid(format!(
-                "{kind} rules have ambiguous equal priority"
-            )));
-        }
-        return Ok(Some((*rule).clone()));
-    }
-    Ok(None)
 }
 
 /// Prepare exactly one complete straight-segment chain. No autorouting, derived

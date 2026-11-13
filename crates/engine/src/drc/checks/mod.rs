@@ -125,48 +125,15 @@ pub(super) fn run_connectivity_checks(board: &Board) -> Vec<DrcViolation> {
 mod nominal_clearance;
 pub(super) use nominal_clearance::run_clearance_checks;
 pub(super) use nominal_clearance::run_clearance_checks_with_zone_copper;
+pub(super) use nominal_clearance::run_native_clearance_checks_with_zone_copper;
 
-pub(super) fn run_track_width_checks(board: &Board) -> Vec<DrcViolation> {
-    let mut violations = Vec::new();
-    let mut tracks: Vec<&Track> = board.tracks.values().collect();
-    tracks.sort_by_key(|track| track.uuid);
+mod native_clearance_policy;
+pub(super) use native_clearance_policy::{
+    has_native_clearance_policy, native_clearance_unavailable,
+};
 
-    for track in tracks {
-        let required = required_track_width_nm(board, track.net);
-        if track.width < required {
-            let location = midpoint(track.from, track.to);
-            let violation_location = DrcLocation {
-                x_nm: location.x,
-                y_nm: location.y,
-                layer: Some(track.layer),
-            };
-            violations.push(DrcViolation {
-                id: stable_violation_id(
-                    "track_width_below_min",
-                    RuleType::TrackWidth,
-                    Some(&violation_location),
-                    &[track.uuid],
-                ),
-                code: "track_width_below_min".into(),
-                rule_type: RuleType::TrackWidth,
-                severity: DrcSeverity::Error,
-                message: format!(
-                    "track width {}nm is below required {}nm on layer {}",
-                    track.width, required, track.layer
-                ),
-                location: Some(violation_location),
-                objects: vec![track.uuid],
-                fingerprint: None,
-                standards_basis: Some("datum.process_aperture_and_geometry.current".to_string()),
-                rule_revision: Some("v1".to_string()),
-                import_key: None,
-                waived: false,
-            });
-        }
-    }
-
-    violations
-}
+mod track_width;
+pub(super) use track_width::{run_native_track_width_checks, run_track_width_checks};
 
 pub(super) fn run_via_hole_checks(board: &Board) -> Vec<DrcViolation> {
     let mut violations = Vec::new();
@@ -565,15 +532,6 @@ fn required_clearance_nm(board: &Board, net_a: Uuid, net_b: Uuid) -> i64 {
         (None, Some(b)) => b,
         (None, None) => 100_000, // 0.1mm fallback
     }
-}
-
-fn required_track_width_nm(board: &Board, net_uuid: Uuid) -> i64 {
-    let from_class = || -> Option<i64> {
-        let net = board.nets.get(&net_uuid)?;
-        let class = board.net_classes.get(&net.class)?;
-        Some(class.track_width)
-    };
-    from_class().filter(|value| *value > 0).unwrap_or(100_000)
 }
 
 fn required_via_hole_range_nm(board: &Board, net_uuid: Uuid) -> (i64, i64) {

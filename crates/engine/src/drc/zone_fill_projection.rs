@@ -42,9 +42,16 @@ pub fn run_with_current_zone_fills_and_waivers(
 ) -> DrcReport {
     use crate::board::nominal_geometry::GeometryError;
     use crate::substrate::ElectricalSelectionSnapshot;
-    let need_nominal = (selected_rules.is_empty()
-        || selected_rules.contains(&RuleType::ClearanceCopper))
-        && board.tracks.values().any(|t| t.midpoint.is_some());
+    let clearance_requested =
+        selected_rules.is_empty() || selected_rules.contains(&RuleType::ClearanceCopper);
+    let native_policy =
+        clearance_requested.then(|| super::checks::has_native_clearance_policy(model));
+    let native_clearance = match &native_policy {
+        None | Some(Ok(false)) => false,
+        Some(Ok(true)) | Some(Err(_)) => true,
+    };
+    let need_nominal = clearance_requested
+        && (native_clearance || board.tracks.values().any(|t| t.midpoint.is_some()));
     let need_connectivity =
         selected_rules.is_empty() || selected_rules.contains(&RuleType::Connectivity);
     let snapshot = (need_nominal || need_connectivity)
@@ -95,9 +102,20 @@ pub fn run_with_current_zone_fills_and_waivers(
                 (*id, value)
             })
             .collect();
-        Some(super::checks::run_clearance_checks_with_zone_copper(
-            board, &copper,
-        ))
+        Some(match native_policy {
+            Some(Err(error)) => vec![super::checks::native_clearance_unavailable(
+                board.uuid,
+                error.to_string(),
+            )],
+            Some(Ok(true)) if !certified => vec![super::checks::native_clearance_unavailable(
+                board.uuid,
+                "Unverified native Board/clearance source basis".into(),
+            )],
+            Some(Ok(true)) => {
+                super::checks::run_native_clearance_checks_with_zone_copper(board, &copper, model)
+            }
+            _ => super::checks::run_clearance_checks_with_zone_copper(board, &copper),
+        })
     } else {
         None
     };
@@ -112,6 +130,8 @@ pub fn run_with_current_zone_fills_and_waivers(
         clearance,
         connectivity,
         super::native_process::checks(model, selected_rules),
+        (selected_rules.is_empty() || selected_rules.contains(&RuleType::TrackWidth))
+            .then(|| super::checks::run_native_track_width_checks(board, model)),
     )
 }
 fn same<T: PartialEq>(a: &BTreeMap<Uuid, T>, b: &std::collections::HashMap<Uuid, T>) -> bool {

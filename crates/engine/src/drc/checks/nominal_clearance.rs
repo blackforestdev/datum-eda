@@ -1,6 +1,8 @@
 //! Exact nominal Track clearance. Arithmetic/capability errors remain findings.
+use super::native_clearance_policy::{ClearancePolicies, ComparisonError};
 use super::*;
 use crate::board::{nominal_geometry::DistanceBoundary, track_contact::tracks_within};
+use crate::substrate::DesignModel;
 
 pub(in crate::drc) fn run_clearance_checks(board: &Board) -> Vec<DrcViolation> {
     run_clearance_checks_with_zone_copper(board, &std::collections::BTreeMap::new())
@@ -12,7 +14,30 @@ pub(in crate::drc) fn run_clearance_checks_with_zone_copper(
         Result<Vec<crate::ir::geometry::Polygon>, crate::board::nominal_geometry::GeometryError>,
     >,
 ) -> Vec<DrcViolation> {
-    let mut violations = arc_peer_findings(board, copper);
+    run_with_policy(board, copper, None)
+}
+
+pub(in crate::drc) fn run_native_clearance_checks_with_zone_copper(
+    board: &Board,
+    copper: &std::collections::BTreeMap<
+        Uuid,
+        Result<Vec<crate::ir::geometry::Polygon>, crate::board::nominal_geometry::GeometryError>,
+    >,
+    model: &DesignModel,
+) -> Vec<DrcViolation> {
+    run_with_policy(board, copper, Some(model))
+}
+
+fn run_with_policy(
+    board: &Board,
+    copper: &std::collections::BTreeMap<
+        Uuid,
+        Result<Vec<crate::ir::geometry::Polygon>, crate::board::nominal_geometry::GeometryError>,
+    >,
+    model: Option<&DesignModel>,
+) -> Vec<DrcViolation> {
+    let policy = ClearancePolicies::capture(board, model);
+    let mut violations = arc_peer_findings(board, copper, &policy);
     let mut tracks: Vec<&Track> = board.tracks.values().collect();
     tracks.sort_by_key(|track| track.uuid);
 
@@ -24,8 +49,14 @@ pub(in crate::drc) fn run_clearance_checks_with_zone_copper(
                 continue;
             }
 
-            let required = required_clearance_nm(board, a.net, b.net);
-            let result = tracks_within(a, b, required, DistanceBoundary::Strict);
+            let (required, result) = match policy.required(a.net, b.net, a.layer) {
+                Ok(required) => (
+                    Some(required),
+                    tracks_within(a, b, required, DistanceBoundary::Strict)
+                        .map_err(ComparisonError::from),
+                ),
+                Err(error) => (None, Err(error)),
+            };
             if matches!(result, Ok(false)) {
                 continue;
             }
@@ -45,6 +76,7 @@ pub(in crate::drc) fn run_clearance_checks_with_zone_copper(
                 };
                 let (code, message) = match result {
                     Ok(true) => {
+                        let required = required.expect("a completed comparison has a policy");
                         let message = if a.midpoint.is_none() && b.midpoint.is_none() {
                             // Preserve the established straight report/fingerprint. The
                             // rounded diagnostic is not the classification predicate.
@@ -102,6 +134,7 @@ fn arc_peer_findings(
         Uuid,
         Result<Vec<crate::ir::geometry::Polygon>, crate::board::nominal_geometry::GeometryError>,
     >,
+    policy: &ClearancePolicies<'_>,
 ) -> Vec<DrcViolation> {
     use crate::board::nominal_geometry::GeometryError;
     use crate::board::occupied_copper::{
@@ -120,24 +153,24 @@ fn arc_peer_findings(
             if pad.net == Some(arc.net) {
                 continue;
             }
-            let classification = (|| {
+            let classification = (|| -> Result<bool, ComparisonError> {
                 let layers = pad_layers(&board.stackup, pad)?;
                 track_layers(&board.stackup, arc)?;
                 if !layers.contains(&arc.layer) {
                     return Ok(false);
                 }
                 let Some(net) = pad.net else {
-                    return Err(GeometryError::UnknownNetAssignment);
+                    return Err(GeometryError::UnknownNetAssignment.into());
                 };
                 if !board.nets.contains_key(&net) || !board.nets.contains_key(&arc.net) {
-                    return Err(GeometryError::UnknownNetAssignment);
+                    return Err(GeometryError::UnknownNetAssignment.into());
                 }
-                track_pad_within(
+                Ok(track_pad_within(
                     arc,
                     pad,
-                    required_clearance_nm(board, arc.net, net),
+                    policy.required(arc.net, net, arc.layer)?,
                     DistanceBoundary::Strict,
-                )
+                )?)
             })();
             peers.insert(pad.uuid, classification);
         }
@@ -145,27 +178,27 @@ fn arc_peer_findings(
             if via.net == arc.net {
                 continue;
             }
-            let classification = (|| {
+            let classification = (|| -> Result<bool, ComparisonError> {
                 let layers = via_layers(&board.stackup, via)?;
                 track_layers(&board.stackup, arc)?;
                 if !layers.contains(&arc.layer) {
                     return Ok(false);
                 }
                 if !board.nets.contains_key(&via.net) || !board.nets.contains_key(&arc.net) {
-                    return Err(GeometryError::UnknownNetAssignment);
+                    return Err(GeometryError::UnknownNetAssignment.into());
                 }
-                track_via_within(
+                Ok(track_via_within(
                     arc,
                     via,
-                    required_clearance_nm(board, arc.net, via.net),
+                    policy.required(arc.net, via.net, arc.layer)?,
                     DistanceBoundary::Strict,
-                )
+                )?)
             })();
             peers.insert(via.uuid, classification);
         }
         for zone in board.zones.values() {
             if zone.net != arc.net && zone.layer == arc.layer {
-                let classification = (|| {
+                let classification = (|| -> Result<bool, ComparisonError> {
                     let polygons = copper
                         .get(&zone.uuid)
                         .ok_or(GeometryError::UnverifiedFillBasis)?
@@ -177,14 +210,14 @@ fn arc_peer_findings(
                     crate::board::occupied_copper::conductive_layer(&board.stackup, zone.layer)?;
                     track_layers(&board.stackup, arc)?;
                     if !board.nets.contains_key(&zone.net) || !board.nets.contains_key(&arc.net) {
-                        return Err(GeometryError::UnknownNetAssignment);
+                        return Err(GeometryError::UnknownNetAssignment.into());
                     }
                     let mut violates = false;
                     for p in polygons {
                         violates |= crate::board::occupied_copper::track_polygon_within(
                             arc,
                             p,
-                            required_clearance_nm(board, arc.net, zone.net),
+                            policy.required(arc.net, zone.net, arc.layer)?,
                             DistanceBoundary::Strict,
                         )?;
                     }

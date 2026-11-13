@@ -50,6 +50,7 @@ fn run_with_nominal_overrides(
         clearance,
         connectivity,
         None,
+        None,
     )
 }
 
@@ -60,6 +61,7 @@ fn run_with_nominal_and_process_overrides(
     clearance: Option<Vec<DrcViolation>>,
     connectivity: Option<Vec<DrcViolation>>,
     process: Option<Vec<DrcViolation>>,
+    width: Option<Vec<DrcViolation>>,
 ) -> DrcReport {
     let run_all = selected_rules.is_empty();
     let mut violations = Vec::new();
@@ -71,7 +73,7 @@ fn run_with_nominal_and_process_overrides(
         violations.extend(clearance.unwrap_or_else(|| checks::run_clearance_checks(board)));
     }
     if run_all || selected_rules.contains(&RuleType::TrackWidth) {
-        violations.extend(checks::run_track_width_checks(board));
+        violations.extend(width.unwrap_or_else(|| checks::run_track_width_checks(board)));
     }
     if run_all || selected_rules.contains(&RuleType::ViaHole) {
         violations.extend(checks::run_via_hole_checks(board));
@@ -163,6 +165,9 @@ mod tests {
 
     #[path = "mod_tests_connectivity_and_clearance.rs"]
     mod connectivity_and_clearance;
+
+    #[path = "track_width_rules.rs"]
+    mod track_width_rules;
 
     #[path = "mod_tests_dimensions_and_silk.rs"]
     mod dimensions_and_silk;
