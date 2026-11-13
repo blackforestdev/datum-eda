@@ -131,7 +131,11 @@ covers current and subsequently admitted tasks until revoked. Its declared decis
 kinds may include the four existing routine kinds, `owner_reserved` for explicitly
 classified project decisions, and `decision_classification` for classifying a
 previously unclassified boundary. Legacy task-scoped appointments retain their
-original limits; no appointment is inferred from a job title or an agent's claim.
+original limits. A bounded routine sub-project may instead name exact existing
+`issue_ids` with empty `task_keys`; it receives only the four routine decision
+kinds and cannot route or accept an entire Frontier milestone. Its witness must
+match those exact identities. No appointment is inferred from a job title or an
+agent's claim.
 
 Under a verified standing appointment, the manager is the final decision-maker
 for covered product choices, visual assessment, implementation authorization,
@@ -495,3 +499,26 @@ Obtain distinct review of the exact policy, routing implementation and positive/
 
 <!-- REQ:PM-AUTOMATION-CORRECTION:PA-C03 -->
 Verify installed policy and routing, synchronize the existing project records and hand control back to the appointed project manager. Permission to decide never supplies missing proof. History rewriting remains a separately approved, coordinated operation.
+
+
+### Owner-appointed audit repair sub-project manager — 2026-11-12
+
+<!-- EVIDENCE:PM059:AUDIT-REPAIR-SUBPROJECT -->
+{"owner_appointed":true,"session":"01a1ce7f-685d-73e3-b9a9-ca5869501473","task_keys":[],"issue_ids":["dat-mcp-result-protocol-j9tn","dat-revision-query-semantics-o8zs","dat-impact-converging-observations-wnsu","dat-drc-authored-width-rule-vz09","dat-drc-profile-hidden-errors-bf31","dat-drc-unsupported-hole-selection-r2fj","dat-finding-rename-correlation-ww6e","dat-erc-occurrence-waiver-identity-ueaz","dat-gerber-pad-shape-projection-3ojz","dat-inventory-placement-identity-yuf4","dat-release-authority-attestation-b150","dat-journal-integrity-payload-83a3"],"decision_kinds":["review_provisioning","review_receipt","continuation","objective_acceptance"]}
+
+The owner explicitly told session `01a1ce7f-685d-73e3-b9a9-ca5869501473`: “you are the PM on this sub-project,” and directed it to advance to the next
+repair after satisfactory completion until the bounded set is done. Actual
+authority and execution records live in `dat-audit-twelve-repairs-9a5c` and the
+twelve existing issues named above. This appoints the manager for CA-01, CA-02,
+CA-03 and CA-11 through CA-19 only. It may assign implementers, provision actual
+independent review, accept proven bounded corrections and select the next issue
+within that set without repeated owner confirmation. CA-12 starts the sequence
+and requires actual end-to-end isolated-application testing with inspected visual
+proofs before exit. Other issues require proof appropriate to their real exposed
+workflow; no unavailable GUI or literal human observation is fabricated.
+
+The standing project manager and unrelated ownership remain unchanged. This
+appointment neither reauthorizes quarantined Revision product scope nor grants
+new mechanisms, dependencies, standards adoption, broader phase acceptance,
+source-lane exceptions or waived evidence. Corrections to existing code can be
+assessed inside their bounded grants; wider re-entry retains its own authority.

@@ -323,6 +323,46 @@ class WorkAuthorityTests(unittest.TestCase):
         self.item['completion']['steps'][0]['decision_authority']['kind'] = 'continuation'
         self.assertIn('invalid governed decision classification', '\n'.join(self.failures()))
 
+    def routine_appointment(self, **changes):
+        witness = {'owner_appointed': True, 'session': 'bounded-manager',
+                   'task_keys': [], 'issue_ids': ['dat-intake'],
+                   'decision_kinds': ['review_receipt', 'objective_acceptance']}
+        witness.update(changes)
+        marker = '<!-- ROUTINE-APPOINTMENT -->'
+        source = self.root / self.doc
+        source.write_text(source.read_text() + '\n' + marker + '\n' + json.dumps(witness) + '\n')
+        self.manifest['management_appointments'] = {'routine': {
+            **{k: v for k, v in witness.items() if k != 'owner_appointed'},
+            'source_ref': {'path': self.doc, 'marker': marker}}}
+        return self.manifest['management_appointments']['routine']
+
+    def test_routine_issue_appointment_validates_and_does_not_delegate_whole_phase(self):
+        self.appointment()
+        self.routine_appointment()
+        self.item['decision_routing']['TEST-C01']['appointment'] = 'routine'
+        self.assertEqual(self.failures(), [])
+        view = status.next_view(self.item, self.issue, self.manifest['management_appointments'])
+        self.assertTrue(view['owner_input_required'])
+
+    def test_routine_appointment_rejects_unknown_duplicate_and_mixed_scope(self):
+        for changes in [{'issue_ids': ['missing']}, {'issue_ids': ['dat-intake', 'dat-intake']},
+                        {'task_keys': ['alignment']}, {'task_keys': ['*']},
+                        {'issue_ids': []}, {'decision_kinds': ['owner_reserved']}]:
+            with self.subTest(changes=changes):
+                self.routine_appointment(**changes)
+                failures = validate_appointments(self.root, self.manifest,
+                                                 self.fixture.governance['entries'],
+                                                 {x['id']: x for x in self.fixture.issues})
+                self.assertIn('exact tasks', '\n'.join(failures))
+
+    def test_routine_scope_must_match_actual_source_witness(self):
+        appointment = self.routine_appointment()
+        appointment['issue_ids'] = ['dat-next']
+        failures = validate_appointments(self.root, self.manifest,
+                                         self.fixture.governance['entries'],
+                                         {x['id']: x for x in self.fixture.issues})
+        self.assertIn('exact owner appointment/scope receipt', '\n'.join(failures))
+
     def test_helpers_refuse_malformed_shapes_without_tracebacks(self):
         for malformed in [None, [], 'bad']:
             self.item['completion'] = malformed

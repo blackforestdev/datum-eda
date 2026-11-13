@@ -128,7 +128,7 @@ def validate_selection(root: Path, manifest: dict, selected: list, governed: dic
     return failures
 
 
-def validate_appointments(root: Path, manifest: dict, governed: dict) -> list[str]:
+def validate_appointments(root: Path, manifest: dict, governed: dict, issues: dict | None = None) -> list[str]:
     appointments = manifest.get("management_appointments", {})
     if not isinstance(appointments, dict):
         return ["management_appointments must be an object"]
@@ -137,16 +137,24 @@ def validate_appointments(root: Path, manifest: dict, governed: dict) -> list[st
     fields = {"session", "task_keys", "decision_kinds", "source_ref"}
     for name, appointment in appointments.items():
         label = f"appointment {name}"
-        if not text(name) or not isinstance(appointment, dict) or set(appointment) != fields:
+        routine_scope = isinstance(appointment, dict) and "issue_ids" in appointment
+        expected_fields = fields | ({"issue_ids"} if routine_scope else set())
+        if not text(name) or not isinstance(appointment, dict) or set(appointment) != expected_fields:
             failures.append(f"{label}: invalid appointment shape")
             continue
         kinds, keys = appointment.get("decision_kinds"), appointment.get("task_keys")
         project_scope = keys == ["*"]
-        allowed_kinds = DECISIONS | ({"owner_reserved", "decision_classification"} if project_scope else set())
+        allowed_kinds = DECISIONS | ({"owner_reserved", "decision_classification"} if project_scope and not routine_scope else set())
+        valid_keys = (keys == [] if routine_scope else
+                      isinstance(keys, list) and bool(keys)
+                      and (project_scope or all(isinstance(k, str) and k in tasks for k in keys)))
+        issue_ids = appointment.get("issue_ids", [])
+        valid_ids = (not routine_scope or isinstance(issue_ids, list) and bool(issue_ids)
+                     and all(isinstance(key, str) and key in (issues or {}) for key in issue_ids)
+                     and len(issue_ids) == len(set(issue_ids)))
         if (not text(appointment.get("session")) or not isinstance(kinds, list) or not kinds
                 or any(not isinstance(k, str) or k not in allowed_kinds for k in kinds)
-                or len(kinds) != len(set(kinds)) or not isinstance(keys, list) or not keys
-                or (not project_scope and any(not isinstance(k, str) or k not in tasks for k in keys))
+                or len(kinds) != len(set(kinds)) or not valid_keys or not valid_ids
                 or len(keys) != len(set(keys))):
             failures.append(f"{label}: needs named session, exact tasks and only delegated decision kinds")
             continue
@@ -157,6 +165,8 @@ def validate_appointments(root: Path, manifest: dict, governed: dict) -> list[st
             receipt = None
         expected = {"owner_appointed": True, "session": appointment["session"],
                     "task_keys": keys, "decision_kinds": kinds}
+        if routine_scope:
+            expected["issue_ids"] = issue_ids
         if not isinstance(receipt, dict) or receipt.get("owner_appointed") is not True or receipt != expected:
             failures.append(f"{label}: exact owner appointment/scope receipt does not resolve")
     if sum(isinstance(a, dict) and a.get("task_keys") == ["*"]

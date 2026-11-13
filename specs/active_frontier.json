@@ -19279,6 +19279,34 @@
       "task_keys": [
         "*"
       ]
+    },
+    "audit-repair-subproject": {
+      "session": "01a1ce7f-685d-73e3-b9a9-ca5869501473",
+      "task_keys": [],
+      "issue_ids": [
+        "dat-mcp-result-protocol-j9tn",
+        "dat-revision-query-semantics-o8zs",
+        "dat-impact-converging-observations-wnsu",
+        "dat-drc-authored-width-rule-vz09",
+        "dat-drc-profile-hidden-errors-bf31",
+        "dat-drc-unsupported-hole-selection-r2fj",
+        "dat-finding-rename-correlation-ww6e",
+        "dat-erc-occurrence-waiver-identity-ueaz",
+        "dat-gerber-pad-shape-projection-3ojz",
+        "dat-inventory-placement-identity-yuf4",
+        "dat-release-authority-attestation-b150",
+        "dat-journal-integrity-payload-83a3"
+      ],
+      "decision_kinds": [
+        "review_provisioning",
+        "review_receipt",
+        "continuation",
+        "objective_acceptance"
+      ],
+      "source_ref": {
+        "path": "docs/decisions/PRODUCT_MECHANICS_059_DELEGATED_FEATURE_DELIVERY.md",
+        "marker": "<!-- EVIDENCE:PM059:AUDIT-REPAIR-SUBPROJECT -->"
+      }
     }
   },
   "policy_decision": "docs/decisions/PRODUCT_MECHANICS_025_PROJECT_STATE_AUTHORITY.md",

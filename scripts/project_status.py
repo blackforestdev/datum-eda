@@ -384,7 +384,7 @@ def validate(root: Path, now: datetime | None = None, *, delivery_checks: bool =
         failures.extend(selector_failures(root, manifest))
     failures.extend(validate_selection(root, manifest, next_items, governed))
     failures.extend(validate_cancellation_history(root, manifest))
-    failures.extend(validate_appointments(root, manifest, governed))
+    failures.extend(validate_appointments(root, manifest, governed, issues))
     if orders and orders != set(range(len(orders))):
         failures.append("frontier order values must be contiguous from 0")
     failures.extend(claim_scope_failures(root, active_claims))

@@ -276,6 +276,10 @@ allowed `decision_kinds` and governed `source_ref`. Immediately after that uniqu
 literal marker, a JSON witness must exactly match `owner_appointed:true`, session,
 task keys and decision kinds. This is an independently reviewed transcription of
 actual owner appointment; structure alone cannot establish authenticity.
+Bounded routine sub-project appointments may additionally name exact `issue_ids`
+with empty `task_keys`; the IDs must resolve in the canonical tracker and match
+the witness exactly. Mixed issue/milestone scope is rejected, and this form grants
+only the four routine kinds, never whole-milestone routing or standing authority.
 
 A verified standing project appointment uses the sole task key `"*"`; mixed
 wildcard/list scopes and multiple standing project managers fail validation.
