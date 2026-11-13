@@ -469,3 +469,85 @@ fn authored_zone_inspector_reads_captured_identity_policy_units_and_stale_state(
             .any(|h| h.target == HitTarget::BoardAuthoring(Control::Fill))
     );
 }
+
+#[test]
+fn outline_form_has_no_net_layer_fields_and_preserves_stale_cancel_restart() {
+    use datum_gui_protocol::board_authoring_controls::BoardToolKind;
+    let mut fixture = NativeForm::zone();
+    fixture.state.cancel_authoring_gesture();
+    fixture
+        .state
+        .backing
+        .as_mut()
+        .unwrap()
+        .native_write_verbs
+        .insert("datum.pcb.set_outline".into());
+    fixture.state.ui.filters.active_layer_id = None;
+    fixture.state.begin_board_outline().unwrap();
+    fixture.state.authoring.board_controls =
+        Some(BoardAuthoringControls::capture(&fixture.state, BoardToolKind::Outline).unwrap());
+    for (x, y) in [(0, 0), (2000000, 0), (0, 2000000)] {
+        fixture
+            .state
+            .append_board_outline_vertex(datum_gui_protocol::PointNm { x, y })
+            .unwrap();
+    }
+    for stale in [false, true] {
+        if stale {
+            fixture.state.scene.source_revision.push_str("changed");
+        }
+        let mut found = Vec::new();
+        for width in [180., 300.] {
+            for offset in 0..200 {
+                fixture.state.ui.selection_inspector.scroll_offset = offset;
+                let mut quads = Vec::new();
+                let mut text = Vec::new();
+                let mut hits = Vec::new();
+                let panel = RectPx {
+                    x: 0.,
+                    y: 0.,
+                    width,
+                    height: 220.,
+                };
+                assert!(render(&fixture.state, panel, &mut quads, &mut text, &mut hits).unwrap());
+                for hit in hits {
+                    if let HitTarget::BoardAuthoring(control) = hit.target {
+                        assert!(!matches!(
+                            control,
+                            Control::Field(_) | Control::ApplyRule | Control::Thermal
+                        ));
+                        if stale {
+                            assert_ne!(control, Control::Finish);
+                        }
+                        assert!(
+                            hit.rect.x >= panel.x
+                                && hit.rect.x + hit.rect.width <= panel.x + panel.width
+                        );
+                        assert!(
+                            hit.rect.y >= panel.y
+                                && hit.rect.y + hit.rect.height <= panel.y + panel.height
+                        );
+                        found.push(control);
+                    }
+                }
+            }
+        }
+        assert!(found.contains(&Control::Cancel));
+        assert!(found.contains(&if stale {
+            Control::Outline
+        } else {
+            Control::Finish
+        }));
+        assert_eq!(
+            fixture
+                .state
+                .authoring
+                .board_outline
+                .as_ref()
+                .unwrap()
+                .vertices()
+                .len(),
+            3
+        );
+    }
+}

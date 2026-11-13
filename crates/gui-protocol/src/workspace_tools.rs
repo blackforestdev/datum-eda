@@ -11,6 +11,8 @@ mod move_handle_feedback;
 pub use move_handle_feedback::{MoveHandleFeedback, MoveHandleKind};
 #[path = "board_authoring_controls.rs"]
 pub mod board_authoring_controls;
+#[path = "board_outline.rs"]
+pub mod board_outline;
 #[path = "board_routing.rs"]
 pub mod board_routing;
 #[path = "board_zones.rs"]
@@ -166,6 +168,7 @@ pub enum WorkspaceTool {
     Select,
     DrawBoardTrack,
     DrawBoardZone,
+    DrawBoardOutline,
     PlaceBoardVia,
     PlaceBoardText,
     Move,
@@ -178,6 +181,7 @@ impl WorkspaceTool {
             WorkspaceTool::Select => "select",
             WorkspaceTool::DrawBoardTrack => "draw-board-track",
             WorkspaceTool::DrawBoardZone => "draw-board-zone",
+            WorkspaceTool::DrawBoardOutline => "draw-board-outline",
             WorkspaceTool::PlaceBoardVia => "place-board-via",
             WorkspaceTool::PlaceBoardText => "place-board-text",
             WorkspaceTool::Move => "move",
@@ -190,6 +194,7 @@ impl WorkspaceTool {
             Self::Select => "SELECT",
             Self::DrawBoardTrack => "DRAW TRACK",
             Self::DrawBoardZone => "DRAW ZONE",
+            Self::DrawBoardOutline => "BOARD OUTLINE",
             Self::PlaceBoardVia => "PLACE VIA",
             Self::PlaceBoardText => "PLACE TEXT",
             Self::Move => "MOVE",
@@ -245,6 +250,7 @@ pub struct AuthoringToolState {
     pub board_controls: Option<board_authoring_controls::BoardAuthoringControls>,
     pub board_route: Option<board_routing::BoardRouteDraft>,
     pub board_zone: Option<board_zones::BoardZoneDraft>,
+    pub board_outline: Option<board_outline::BoardOutlineDraft>,
     pub handle_feedback: Option<MoveHandleFeedback>,
     pub coordinates: Option<CoordinateEntryForm>,
     pub snap: AuthoringSnapState,

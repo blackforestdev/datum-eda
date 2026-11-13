@@ -3,6 +3,7 @@ use super::*;
 impl Runtime {
     pub(crate) fn handle_board_control(&mut self, control: BoardControl) -> bool {
         match control {
+            BoardControl::Outline => return self.begin_native_board_tool(BoardToolKind::Outline),
             BoardControl::Route => return self.begin_native_board_tool(BoardToolKind::Route),
             BoardControl::Zone => return self.begin_native_board_tool(BoardToolKind::Zone),
             BoardControl::Fill => {
@@ -106,6 +107,7 @@ impl Runtime {
                 return self.queue_native_edit(match kind {
                     BoardToolKind::Route => NativeEditAction::BoardRoute,
                     BoardToolKind::Zone => NativeEditAction::BoardZone,
+                    BoardToolKind::Outline => NativeEditAction::BoardOutline,
                 });
             }
             _ => {}
@@ -121,6 +123,7 @@ impl Runtime {
         if matches!(
             action,
             NativeEditAction::BoardRoute
+                | NativeEditAction::BoardOutline
                 | NativeEditAction::BoardZone
                 | NativeEditAction::CreateBoardClearance
         ) && let Some(setup) = &mut self.session.workspace_mut().authoring.board_controls
@@ -137,6 +140,7 @@ impl Runtime {
         if !matches!(
             intent.action,
             NativeEditAction::BoardRoute
+                | NativeEditAction::BoardOutline
                 | NativeEditAction::BoardZone
                 | NativeEditAction::CreateBoardClearance
         ) {
@@ -144,6 +148,9 @@ impl Runtime {
         }
         if let Some(route) = &mut previous.board_route {
             route.release_pending();
+        }
+        if let Some(outline) = &mut previous.board_outline {
+            outline.release_pending();
         }
         if let Some(zone) = &mut previous.board_zone {
             zone.release_pending();
@@ -170,6 +177,7 @@ impl Runtime {
                 self.session.workspace_mut().set_tool(match setup.kind {
                     BoardToolKind::Route => WorkspaceTool::DrawBoardTrack,
                     BoardToolKind::Zone => WorkspaceTool::DrawBoardZone,
+                    BoardToolKind::Outline => WorkspaceTool::DrawBoardOutline,
                 });
                 if let Some(old_route) = route {
                     if let Err(error) = self.session.workspace_mut().begin_board_route(
@@ -197,6 +205,7 @@ impl Runtime {
             && !matches!(
                 action,
                 NativeEditAction::BoardRoute
+                    | NativeEditAction::BoardOutline
                     | NativeEditAction::BoardZone
                     | NativeEditAction::CreateBoardClearance
             )
@@ -213,6 +222,9 @@ impl Runtime {
         let state = self.session.workspace_mut();
         if let Some(route) = &mut state.authoring.board_route {
             route.release_pending();
+        }
+        if let Some(outline) = &mut state.authoring.board_outline {
+            outline.release_pending();
         }
         if let Some(zone) = &mut state.authoring.board_zone {
             zone.release_pending();

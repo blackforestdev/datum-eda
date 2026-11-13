@@ -13,6 +13,7 @@
 //! `{ "vertices": [{"x","y"}...], "closed": bool }` and the stackup as
 //! `{ "layers": [<serde StackupLayer>...] }`.
 
+pub mod outline;
 pub mod source_profile;
 
 use crate::board::StackupLayer;

@@ -40,6 +40,7 @@ impl Runtime {
             "datum.journal.undo" => self.queue_native_history(false),
             "datum.journal.redo" => self.queue_native_history(true),
             "datum.pcb.draw_track" => self.set_workspace_tool(WorkspaceTool::DrawBoardTrack),
+            "datum.pcb.set_outline" => self.set_workspace_tool(WorkspaceTool::DrawBoardOutline),
             "datum.pcb.place_zone" => self.set_workspace_tool(WorkspaceTool::DrawBoardZone),
             "datum.check.fill_zones" => self.handle_board_control(datum_gui_protocol::board_authoring_controls::BoardControl::Fill),
             "datum.pcb.move_component" => self.set_workspace_tool(WorkspaceTool::Move),

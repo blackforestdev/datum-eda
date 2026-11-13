@@ -29,6 +29,7 @@ pub enum BoardControl {
     Field(BoardField),
     Route,
     Zone,
+    Outline,
     Thermal,
     Posture,
     Finish,
@@ -40,6 +41,7 @@ pub enum BoardControl {
 pub enum BoardToolKind {
     Route,
     Zone,
+    Outline,
 }
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct BoardFieldBuffer {
@@ -81,51 +83,58 @@ impl BoardAuthoringControls {
             .map_err(|e| e.to_string())?
             .resolve()
             .map_err(|e| format!("Project units unavailable: {e:?}"))?;
-        let selected = state
-            .ui
-            .filters
-            .active_layer_id
-            .as_deref()
-            .ok_or("Choose a copper layer")?;
-        let layer = state
-            .scene
-            .layers
-            .iter()
-            .find(|l| l.layer_id == selected)
-            .ok_or("Selected layer is unavailable")?;
-        let id: i32 = selected
-            .strip_prefix('L')
-            .ok_or("Choose a native copper layer")?
-            .parse()
-            .map_err(|_| "Invalid native layer")?;
-        let board = model
-            .capture_source_shard_value(
-                model
-                    .source_shards
-                    .iter()
-                    .find(|s| s.kind == eda_engine::substrate::SourceShardKind::BoardRoot)
-                    .ok_or("Captured Board source unavailable")?
-                    .shard_id,
-            )
-            .map_err(|e| e.to_string())?;
-        let stackup: eda_engine::board::Stackup =
-            serde_json::from_value(board["stackup"].clone()).map_err(|e| e.to_string())?;
-        if stackup
-            .layers
-            .iter()
-            .filter(|l| l.id == id && l.layer_type == eda_engine::board::StackupLayerType::Copper)
-            .count()
-            != 1
-        {
-            return Err("Choose one existing copper layer".into());
-        }
+        let (id, layer_name) = if kind == BoardToolKind::Outline {
+            (0, "board · Edge.Cuts".to_string())
+        } else {
+            let selected = state
+                .ui
+                .filters
+                .active_layer_id
+                .as_deref()
+                .ok_or("Choose a copper layer")?;
+            let layer = state
+                .scene
+                .layers
+                .iter()
+                .find(|l| l.layer_id == selected)
+                .ok_or("Selected layer is unavailable")?;
+            let id: i32 = selected
+                .strip_prefix('L')
+                .ok_or("Choose a native copper layer")?
+                .parse()
+                .map_err(|_| "Invalid native layer")?;
+            let board = model
+                .capture_source_shard_value(
+                    model
+                        .source_shards
+                        .iter()
+                        .find(|s| s.kind == eda_engine::substrate::SourceShardKind::BoardRoot)
+                        .ok_or("Captured Board source unavailable")?
+                        .shard_id,
+                )
+                .map_err(|e| e.to_string())?;
+            let stackup: eda_engine::board::Stackup =
+                serde_json::from_value(board["stackup"].clone()).map_err(|e| e.to_string())?;
+            if stackup
+                .layers
+                .iter()
+                .filter(|l| {
+                    l.id == id && l.layer_type == eda_engine::board::StackupLayerType::Copper
+                })
+                .count()
+                != 1
+            {
+                return Err("Choose one existing copper layer".into());
+            }
+            (id, layer.name.clone())
+        };
         Ok(Self {
             basis,
             root,
             tip: eda_engine::revision::transaction_tip(&model.journal),
             units,
             layer: id,
-            layer_name: layer.name.clone(),
+            layer_name,
             kind,
             fields: std::array::from_fn(|_| BoardFieldBuffer::default()),
             focus: None,
@@ -151,8 +160,9 @@ impl BoardAuthoringControls {
                 eda_engine::revision::transaction_tip(&model.journal) == self.tip
             })
             && self.basis.is_current(state, state.ui.layout.focused)
-            && state.ui.filters.active_layer_id.as_deref()
-                == Some(format!("L{}", self.layer).as_str())
+            && (self.kind == BoardToolKind::Outline
+                || state.ui.filters.active_layer_id.as_deref()
+                    == Some(format!("L{}", self.layer).as_str()))
     }
     /// Refresh this transient projection on Net/source changes, never in paint.
     /// It enables presentation only; Finish recaptures its canonical intent.

@@ -51,6 +51,7 @@ pub fn native_write_verbs() -> &'static [NativeWriteVerb] {
         let mut verbs: Vec<NativeWriteVerb> = Vec::new();
         verbs.extend_from_slice(super::project::VERBS);
         verbs.extend_from_slice(super::board_components::VERBS);
+        verbs.extend_from_slice(super::board_layout::outline::VERBS);
         verbs.extend_from_slice(super::board_routing::VERBS);
         verbs.extend_from_slice(super::board_routing::zone::VERBS);
         verbs.extend_from_slice(super::waivers::VERBS);
@@ -155,6 +156,7 @@ mod tests {
                 "datum.pcb.move_component",
                 "datum.pcb.place_zone",
                 "datum.pcb.prepare_footprint_sources",
+                "datum.pcb.set_outline",
                 "datum.project.create_rule",
                 "datum.project.delete_rule",
                 "datum.project.set_display_units",

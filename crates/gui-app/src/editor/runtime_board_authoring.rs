@@ -28,6 +28,7 @@ impl Runtime {
         let verb = match kind {
             BoardToolKind::Route => "datum.pcb.draw_track",
             BoardToolKind::Zone => "datum.pcb.place_zone",
+            BoardToolKind::Outline => "datum.pcb.set_outline",
         };
         if !state
             .backing
@@ -48,6 +49,7 @@ impl Runtime {
         workspace.set_tool(match kind {
             BoardToolKind::Route => WorkspaceTool::DrawBoardTrack,
             BoardToolKind::Zone => WorkspaceTool::DrawBoardZone,
+            BoardToolKind::Outline => WorkspaceTool::DrawBoardOutline,
         });
         workspace.inspector_context.owner =
             datum_gui_protocol::inspector_context::InspectorOwner::Selection;
@@ -81,11 +83,16 @@ impl Runtime {
         }
         if self.workspace().authoring.board_route.is_none()
             && self.workspace().authoring.board_zone.is_none()
+            && self.workspace().authoring.board_outline.is_none()
         {
             return true;
         }
         let target = self.authoring_target_object_id(world);
-        let snapped = self.board_contact_point(world, target.as_deref());
+        let snapped = if self.workspace().tool == WorkspaceTool::DrawBoardOutline {
+            self.workspace().snap_authoring_point(world)
+        } else {
+            self.board_contact_point(world, target.as_deref())
+        };
         let workspace = self.session.workspace_mut();
         // Contacts retain their exact source centre; all other points use the
         // same grid resolver as the rest of the workspace authoring gesture.
@@ -121,8 +128,22 @@ impl Runtime {
                 "Board source, pane or layer changed; cancel and restart the tool",
             );
         }
-        let point = self.board_contact_point(world, target.as_deref());
+        let point = if setup.kind == BoardToolKind::Outline {
+            self.workspace().snap_authoring_point(world)
+        } else {
+            self.board_contact_point(world, target.as_deref())
+        };
         let result = match setup.kind {
+            BoardToolKind::Outline => {
+                if self.workspace().authoring.board_outline.is_none() {
+                    if let Err(error) = self.session.workspace_mut().begin_board_outline() {
+                        return self.board_authoring_error(error);
+                    }
+                }
+                self.session
+                    .workspace_mut()
+                    .append_board_outline_vertex(point)
+            }
             BoardToolKind::Route => {
                 if self.workspace().authoring.board_route.is_none() {
                     let pad = target
@@ -223,6 +244,15 @@ impl Runtime {
             .as_mut()
             .unwrap()
             .focus = None;
+        if setup.kind == BoardToolKind::Outline {
+            self.session
+                .workspace_mut()
+                .authoring
+                .board_controls
+                .as_mut()
+                .unwrap()
+                .refusal = None;
+        }
         self.refresh_board_route_stop();
         self.invalidate_scene();
         true
@@ -283,6 +313,7 @@ impl Runtime {
         if !matches!(
             action,
             NativeEditAction::BoardRoute
+                | NativeEditAction::BoardOutline
                 | NativeEditAction::BoardZone
                 | NativeEditAction::CreateBoardClearance
         ) {
@@ -345,6 +376,11 @@ impl Runtime {
                 self.session.workspace_mut().authoring.board_route = Some(draft);
                 intent.map(Some)
             }
+            NativeEditAction::BoardOutline => self
+                .session
+                .workspace_mut()
+                .prepare_board_outline()
+                .map(Some),
             NativeEditAction::BoardZone => self
                 .session
                 .workspace_mut()
@@ -363,6 +399,9 @@ impl Runtime {
                             .net
                     }
                     BoardToolKind::Zone => setup.zone_net(self.workspace())?,
+                    BoardToolKind::Outline => {
+                        return Err("Outline has no Net or clearance rule".into());
+                    }
                 };
                 let model = self
                     .workspace()

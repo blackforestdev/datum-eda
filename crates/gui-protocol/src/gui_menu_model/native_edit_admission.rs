@@ -17,6 +17,7 @@ pub(super) fn native_edit_verb(verb: &str) -> bool {
         "datum.pcb.move_component"
             | "datum.pcb.draw_track"
             | "datum.pcb.place_zone"
+            | "datum.pcb.set_outline"
             | "datum.check.fill_zones"
             | "datum.schematic.align_symbols"
             | "datum.schematic.create_sheet"
@@ -101,7 +102,10 @@ pub fn native_edit_unavailable_reason(
     }
     if matches!(
         verb,
-        "datum.pcb.draw_track" | "datum.pcb.place_zone" | "datum.check.fill_zones"
+        "datum.pcb.draw_track"
+            | "datum.pcb.place_zone"
+            | "datum.pcb.set_outline"
+            | "datum.check.fill_zones"
     ) {
         if state.ui.layout.focused_content() != crate::PaneContent::Board {
             return Some("Focus a native Board first.");

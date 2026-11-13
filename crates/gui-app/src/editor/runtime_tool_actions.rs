@@ -4,9 +4,15 @@ use crate::*;
 impl Runtime {
     pub(crate) fn set_workspace_tool(&mut self, tool: WorkspaceTool) -> bool {
         use datum_gui_protocol::board_authoring_controls::BoardToolKind;
+        if self.workspace().authoring.board_controls.is_some() && self.native_edit.pending() {
+            return true;
+        }
         match tool {
             WorkspaceTool::DrawBoardTrack => {
                 return self.begin_native_board_tool(BoardToolKind::Route);
+            }
+            WorkspaceTool::DrawBoardOutline => {
+                return self.begin_native_board_tool(BoardToolKind::Outline);
             }
             WorkspaceTool::DrawBoardZone => {
                 return self.begin_native_board_tool(BoardToolKind::Zone);
@@ -101,9 +107,9 @@ impl Runtime {
             return self.native_move_click(world, target_object_id);
         }
         match self.workspace().tool {
-            WorkspaceTool::DrawBoardZone => {
-                // The native draft is not an enabled GUI tool until its
-                // configuration and ordinary input integration are delivered.
+            WorkspaceTool::DrawBoardZone | WorkspaceTool::DrawBoardOutline => {
+                // Configured native boundaries dispatch through board_controls
+                // above; an unconfigured tool has no canvas mutation intent.
                 return false;
             }
             WorkspaceTool::DrawBoardTrack

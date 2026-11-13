@@ -28,6 +28,25 @@ impl Runtime {
             return self.handle_board_control(BoardControl::Cancel);
         }
         if !self.board_authoring_current() {
+            let setup = self.workspace().authoring.board_controls.as_ref().unwrap();
+            if setup.kind == BoardToolKind::Outline {
+                match key {
+                    Key::Named(NamedKey::Tab) => {
+                        return self.focus_next_board_control(self.modifiers.shift_key());
+                    }
+                    Key::Named(NamedKey::Enter | NamedKey::Space) => {
+                        let recovery = setup.focus.filter(|control| {
+                            matches!(control, BoardControl::Outline | BoardControl::Cancel)
+                        });
+                        let enabled = recovery.filter(|control| self.presented_hits.regions().iter().any(|hit| {
+                            matches!(&hit.target, HitTarget::BoardAuthoringNavigation { basis, kind, offsets, .. }
+                                if *basis == setup.basis && *kind == setup.kind && offsets.iter().any(|(c,_,_)| c == control))
+                        }));
+                        return enabled.is_none_or(|control| self.handle_board_control(control));
+                    }
+                    _ => {}
+                }
+            }
             return self.board_authoring_error("Board source changed; cancel and restart");
         }
         if self.handle_shared_editor_input(key, state) {
@@ -53,6 +72,11 @@ impl Runtime {
                     if let Some(route) = &mut self.session.workspace_mut().authoring.board_route {
                         route.remove_last_vertex();
                         Ok(())
+                    } else if self.workspace().authoring.board_outline.is_some() {
+                        self.session
+                            .workspace_mut()
+                            .remove_board_outline_vertex()
+                            .map(|_| ())
                     } else if self.workspace().authoring.board_zone.is_some() {
                         self.session
                             .workspace_mut()
@@ -63,6 +87,15 @@ impl Runtime {
                     };
                 if let Err(error) = result {
                     return self.board_authoring_error(error);
+                }
+                if self.workspace().tool == WorkspaceTool::DrawBoardOutline {
+                    self.session
+                        .workspace_mut()
+                        .authoring
+                        .board_controls
+                        .as_mut()
+                        .unwrap()
+                        .refusal = None;
                 }
                 self.refresh_board_route_stop();
                 self.invalidate_scene();
@@ -93,10 +126,16 @@ impl Runtime {
                 }
                 _ => None,
             });
-        let Some((controls, total, visible)) = layout else {
+        let Some((mut controls, total, visible)) = layout else {
             self.invalidate_frame();
             return true;
         };
+        // A stale draft can navigate only its rendered, enabled recovery actions.
+        if !self.board_authoring_current() {
+            controls.retain(|(control, _, _)| {
+                matches!(control, BoardControl::Outline | BoardControl::Cancel)
+            });
+        }
         let focused = setup
             .focus
             .and_then(|focus| controls.iter().position(|(c, _, _)| *c == focus));

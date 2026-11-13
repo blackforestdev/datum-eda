@@ -10,6 +10,7 @@ impl ReviewWorkspaceState {
         self.authoring.coordinates = None;
         self.authoring.board_route = None;
         self.authoring.board_zone = None;
+        self.authoring.board_outline = None;
         self.authoring.handle_feedback = None;
         self.tool = tool;
         self.authoring.gesture = AuthoringGestureState::idle(tool);
@@ -97,9 +98,15 @@ impl ReviewWorkspaceState {
         let had_controls = self.authoring.board_controls.take().is_some();
         let had_route = self.authoring.board_route.take().is_some();
         let had_zone = self.authoring.board_zone.take().is_some();
+        let had_outline = self.authoring.board_outline.take().is_some();
         self.authoring.handle_feedback = None;
         self.authoring.coordinates = None;
-        if !self.authoring.gesture.is_active() && !had_route && !had_zone && !had_controls {
+        if !self.authoring.gesture.is_active()
+            && !had_route
+            && !had_zone
+            && !had_outline
+            && !had_controls
+        {
             return false;
         }
         self.authoring.gesture = AuthoringGestureState::idle(self.tool);

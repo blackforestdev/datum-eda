@@ -14,7 +14,7 @@ use std::collections::BTreeMap;
 use uuid::Uuid;
 use winit::keyboard::{Key, NamedKey};
 
-fn fixture(root: &std::path::Path) -> Uuid {
+fn fixture(root: &std::path::Path, with_outline: bool) -> Uuid {
     super::board_transfer::setup(root);
     let proof = || {
         WriteProvenance::new(
@@ -78,19 +78,21 @@ fn fixture(root: &std::path::Path) -> Uuid {
     commit_prepared(&mut model, root, p).unwrap();
     let p = native::schematic_board_transfer::prepare_transfer(&model, proof(), &request).unwrap();
     commit_prepared(&mut model, root, p).unwrap();
-    let p = native::board_layout::build_set_board_outline(
-        &model,
-        proof(),
-        plan.board_id,
-        &Polygon::new(vec![
-            Point::new(0, 0),
-            Point::new(10000000, 0),
-            Point::new(10000000, 6000000),
-            Point::new(0, 6000000),
-        ]),
-    )
-    .unwrap();
-    commit_prepared(&mut model, root, p).unwrap();
+    if with_outline {
+        let p = native::board_layout::build_set_board_outline(
+            &model,
+            proof(),
+            plan.board_id,
+            &Polygon::new(vec![
+                Point::new(0, 0),
+                Point::new(10000000, 0),
+                Point::new(10000000, 6000000),
+                Point::new(0, 6000000),
+            ]),
+        )
+        .unwrap();
+        commit_prepared(&mut model, root, p).unwrap();
+    }
     let board = model
         .materialized_source_shard_value(SourceShardKind::BoardRoot)
         .unwrap();
@@ -112,6 +114,7 @@ struct Workflow {
     net: Uuid,
     step: usize,
     saved: BTreeMap<PathBuf, Vec<u8>>,
+    outline_only: bool,
 }
 impl Workflow {
     fn model(&self) -> DesignModel {
@@ -160,9 +163,9 @@ impl Workflow {
         let hits = r.presented_hits.regions();
         if hits.iter().any(|h| {
             let toolbar = h.rect.height == 25.
-                && h.rect.width == 53.
+                && h.rect.width >= 32.
                 && header.contains(h.rect.x, h.rect.y)
-                && header.contains(h.rect.x + 52., h.rect.y + 24.);
+                && header.contains(h.rect.x + h.rect.width - 1., h.rect.y + 24.);
             h.target == HitTarget::BoardAuthoring(control) && (h.rect.height >= 29. || toolbar)
         }) {
             return true;
@@ -286,6 +289,9 @@ impl Workflow {
             return;
         }
         assert!(!r.native_edit.blocked);
+        if self.outline_only {
+            return self.advance_outline(events);
+        }
         eprintln!("native-board-controls stage={}", self.step);
         let required = match self.step {
             1 => Some(C::Route),
@@ -646,51 +652,10 @@ impl ApplicationHandler for Workflow {
         });
     }
 }
+#[path = "native_board_outline_frame_tests.rs"]
+mod outline;
 #[test]
 #[ignore = "requires fresh owned DATUM_BOARD_TOOL_PROJECT and isolated native Wayland"]
 fn ordinary_app_native_route_rule_zone_fill_history_save_cold() {
-    let root = PathBuf::from(std::env::var_os("DATUM_BOARD_TOOL_PROJECT").unwrap());
-    let output = PathBuf::from(std::env::var_os("DATUM_BOARD_TOOL_OUTPUT").unwrap());
-    std::fs::create_dir_all(&output).unwrap();
-    let net = fixture(&root);
-    let model = ProjectResolver::new(&root).resolve().unwrap();
-    let path = model
-        .source_shards
-        .iter()
-        .find(|s| s.kind == SourceShardKind::BoardRoot)
-        .unwrap()
-        .path
-        .clone();
-    let args = <GuiArgs as clap::Parser>::try_parse_from([
-        "datum-gui",
-        "--project-root",
-        root.to_str().unwrap(),
-    ])
-    .unwrap();
-    let events = EventLoop::<()>::with_user_event()
-        .with_wayland()
-        .with_any_thread(true)
-        .build()
-        .unwrap();
-    let host = Fixture {
-        app: App::new(args, events.create_proxy()),
-        stage: 0,
-        since: Instant::now(),
-        preimage: std::fs::read(&path).unwrap(),
-        path,
-        wired: None,
-        failure: None,
-        wire_only: false,
-    };
-    let mut workflow = Workflow {
-        host,
-        root,
-        output,
-        net,
-        step: 0,
-        saved: BTreeMap::new(),
-    };
-    events.run_app(&mut workflow).unwrap();
-    assert_eq!(workflow.host.failure, None);
-    assert_eq!(workflow.step, 30);
+    outline::run(false);
 }

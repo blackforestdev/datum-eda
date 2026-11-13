@@ -46,6 +46,7 @@ pub(super) fn render(
     let title = match setup.kind {
         BoardToolKind::Route => "Route Track",
         BoardToolKind::Zone => "Zone",
+        BoardToolKind::Outline => "Board Outline",
     };
     inspector_chrome::push_inspector_title_band(
         rect,
@@ -57,6 +58,52 @@ pub(super) fn render(
     )?;
     let mut rows = Vec::new();
     match setup.kind {
+        BoardToolKind::Outline => {
+            paragraph(
+                &mut rows,
+                "Scope: board · Edge.Cuts. No copper layer or Net applies.",
+                rect.width,
+            )?;
+            let count = state
+                .authoring
+                .board_outline
+                .as_ref()
+                .map_or(0, |d| d.vertices().len());
+            paragraph(
+                &mut rows,
+                &format!(
+                    "Outline draft: {count} placed vertices · grid {}",
+                    datum_gui_protocol::inspector_context::snap_grid_for(
+                        state,
+                        datum_gui_protocol::PaneContent::Board,
+                    )
+                ),
+                rect.width,
+            )?;
+            paragraph(
+                &mut rows,
+                "Finish / Enter closes the last edge back to the first vertex. The current outline stays until the replacement commits; Undo restores it exactly.",
+                rect.width,
+            )?;
+            paragraph(
+                &mut rows,
+                "Route and zone Fill currently support rectangular outlines only. Other simple outlines are saved exactly as drawn.",
+                rect.width,
+            )?;
+            if count == 0 {
+                paragraph(&mut rows, "Click to place the first vertex.", rect.width)?;
+            }
+            if count >= 3 {
+                if let Some(reason) = state
+                    .authoring
+                    .board_outline
+                    .as_ref()
+                    .and_then(|d| d.geometry_error())
+                {
+                    paragraph(&mut rows, reason, rect.width)?;
+                }
+            }
+        }
         BoardToolKind::Route => rows.push(FormRow::Field(Field::Width, "Width")),
         BoardToolKind::Zone => {
             rows.extend([
@@ -120,6 +167,7 @@ pub(super) fn render(
             .as_ref()
             .is_some_and(|r| r.basis().clearance.is_none()),
         BoardToolKind::Zone => setup.needs_clearance_rule,
+        BoardToolKind::Outline => false,
     };
     if needs_rule {
         paragraph(
@@ -174,6 +222,8 @@ pub(super) fn render(
             &mut rows,
             if setup.pending {
                 "Applying edit…"
+            } else if setup.kind == BoardToolKind::Outline {
+                "Source changed. Nothing written by this draft. Cancel or restart on the current board."
             } else {
                 "Source, pane or layer changed. Cancel and restart."
             },
@@ -183,8 +233,20 @@ pub(super) fn render(
     if let Some(reason) = &setup.refusal {
         paragraph(&mut rows, reason, rect.width)?;
     }
+    if !current && !setup.pending && setup.kind == BoardToolKind::Outline {
+        rows.push(FormRow::Action(
+            "Restart on current board".into(),
+            Control::Outline,
+            true,
+        ));
+    }
     let can_finish = current
         && match setup.kind {
+            BoardToolKind::Outline => state
+                .authoring
+                .board_outline
+                .as_ref()
+                .is_some_and(|d| d.geometry_error().is_none()),
             BoardToolKind::Route => {
                 setup.refusal.is_none()
                     && state.authoring.board_route.as_ref().is_some_and(|r| {
@@ -200,7 +262,7 @@ pub(super) fn render(
             }
         };
     rows.push(FormRow::Action(
-        if setup.kind == BoardToolKind::Route {
+        if setup.kind != BoardToolKind::Zone {
             "Finish"
         } else {
             "Finish Boundary"

@@ -3,6 +3,7 @@
 use super::board_routing::native_root;
 use crate::native_edit_client::{NativeEditAction, NativeEditIntent};
 use crate::{AuthoringViewBasis, PaneContent, PointNm, ReviewWorkspaceState, WorkspaceTool};
+use anyhow::Context;
 use eda_engine::api::native_write::{
     WriteProvenance,
     board_routing::zone::{
@@ -335,3 +336,39 @@ pub fn captured_zone_clearance(
 #[cfg(test)]
 #[path = "board_zones_tests.rs"]
 mod tests;
+
+impl NativeEditIntent {
+    pub(crate) fn validate_zone_payload(&self) -> anyhow::Result<()> {
+        if !matches!(self.action, NativeEditAction::BoardZone) {
+            anyhow::ensure!(
+                self.board_zone.is_none(),
+                "Zone payload does not match edit action"
+            );
+            return Ok(());
+        }
+        let request = self
+            .board_zone
+            .as_ref()
+            .context("Zone edit payload missing")?;
+        let basis = request.basis();
+        anyhow::ensure!(
+            basis.project == self.project_id
+                && basis.revision.0 == self.expected_revision
+                && basis.tip == self.expected_tip,
+            "Zone source basis does not match prepared intent"
+        );
+        anyhow::ensure!(
+            self.proposal.is_none()
+                && self.schematic.is_none()
+                && self.library.is_none()
+                && self.library_acquisition.is_none()
+                && self.board_transfer.is_none()
+                && self.board_route.is_none()
+                && self.symbol_group.is_none()
+                && self.symbol_alignment.is_none()
+                && self.instance_path.is_empty(),
+            "Zone intent contains another editor's payload"
+        );
+        Ok(())
+    }
+}

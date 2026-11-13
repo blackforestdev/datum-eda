@@ -487,16 +487,25 @@ fn render_board_tools(
     use datum_gui_protocol::board_authoring_controls::BoardControl;
     let starts = (quads.len(), text.len(), hits.len());
     let mut x = header.x + header.width - RIGHT_INSET_PX - reserve(header);
-    for (label, target) in [
-        ("Sel", HitTarget::SetWorkspaceTool(WorkspaceTool::Select)),
-        ("Route", HitTarget::BoardAuthoring(BoardControl::Route)),
-        ("Zone", HitTarget::BoardAuthoring(BoardControl::Zone)),
-        ("Fill", HitTarget::BoardAuthoring(BoardControl::Fill)),
+    for (label, width, target) in [
+        (
+            "Sel",
+            32.,
+            HitTarget::SetWorkspaceTool(WorkspaceTool::Select),
+        ),
+        ("Route", 45., HitTarget::BoardAuthoring(BoardControl::Route)),
+        ("Zone", 40., HitTarget::BoardAuthoring(BoardControl::Zone)),
+        ("Fill", 32., HitTarget::BoardAuthoring(BoardControl::Fill)),
+        (
+            "Outline",
+            55.,
+            HitTarget::BoardAuthoring(BoardControl::Outline),
+        ),
     ] {
         let rect = RectPx {
             x,
             y: header.y + 3.,
-            width: 53.,
+            width,
             height: 25.,
         };
         quads.push(Quad::from_rect(rect, design_tokens::chrome::SURFACE_02));
@@ -513,6 +522,7 @@ fn render_board_tools(
             HitTarget::BoardAuthoring(BoardControl::Route) => Some("datum.pcb.draw_track"),
             HitTarget::BoardAuthoring(BoardControl::Zone) => Some("datum.pcb.place_zone"),
             HitTarget::BoardAuthoring(BoardControl::Fill) => Some("datum.check.fill_zones"),
+            HitTarget::BoardAuthoring(BoardControl::Outline) => Some("datum.pcb.set_outline"),
             _ => None,
         };
         let available = verb.is_none_or(|verb| {
@@ -525,7 +535,7 @@ fn render_board_tools(
         if focused && state.ui.layout.focused == pane && available {
             hits.push(HitRegion { rect, target });
         }
-        x += 55.;
+        x += width + 2.;
     }
     crate::hit_clipping::clip_content(quads, text, hits, starts.0, starts.1, starts.2, header);
 }

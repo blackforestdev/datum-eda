@@ -70,6 +70,7 @@ impl ReviewWorkspaceState {
                 board_controls: None,
                 board_route: None,
                 board_zone: None,
+                board_outline: None,
                 handle_feedback: None,
                 coordinates: None,
                 snap: AuthoringSnapState::default(),

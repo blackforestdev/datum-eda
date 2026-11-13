@@ -265,3 +265,217 @@ fn zone_cached_projection_tracks_net_edits_and_invalidated_source_without_defaul
     assert!(setup.resolved_zone_net.is_err());
     assert!(setup.zone_clearance_label().is_err());
 }
+
+#[test]
+fn outline_uses_project_units_without_a_copper_layer_and_retains_invalid_draft() {
+    let mut f = Fixture::new();
+    f.state
+        .backing
+        .as_mut()
+        .unwrap()
+        .native_write_verbs
+        .insert("datum.pcb.set_outline".into());
+    f.state.ui.filters.active_layer_id = None;
+    let form = BoardAuthoringControls::capture(&f.state, BoardToolKind::Outline).unwrap();
+    assert!(form.fields.iter().all(|v| v.text.is_empty()));
+    f.state.begin_board_outline().unwrap();
+    f.state.authoring.board_controls = Some(form);
+    assert!(
+        f.state
+            .authoring
+            .board_controls
+            .as_ref()
+            .unwrap()
+            .current(&f.state)
+    );
+    let before = std::fs::read(f.root.join("board/board.json")).unwrap();
+    let tip =
+        eda_engine::revision::transaction_tip(&f.state.library.basis.as_ref().unwrap().journal);
+    for (x, y) in [(0, 0), (2000000, 2000000), (0, 2000000), (2000000, 0)] {
+        f.state
+            .append_board_outline_vertex(crate::PointNm { x, y })
+            .unwrap();
+    }
+    assert!(f.state.prepare_board_outline().is_err());
+    assert_eq!(
+        f.state
+            .authoring
+            .board_outline
+            .as_ref()
+            .unwrap()
+            .vertices()
+            .len(),
+        4
+    );
+    assert!(!f.state.authoring.board_outline.as_ref().unwrap().pending());
+    assert_eq!(
+        std::fs::read(f.root.join("board/board.json")).unwrap(),
+        before
+    );
+    assert_eq!(
+        eda_engine::revision::transaction_tip(&f.state.library.basis.as_ref().unwrap().journal),
+        tip
+    );
+    f.state.remove_board_outline_vertex().unwrap();
+    assert!(
+        f.state
+            .authoring
+            .board_outline
+            .as_ref()
+            .unwrap()
+            .geometry_error()
+            .is_none()
+    );
+    // A copper-layer switch does not stale a board-wide Outline draft.
+    f.state.ui.filters.active_layer_id = Some("L999".into());
+    assert!(
+        f.state
+            .authoring
+            .board_controls
+            .as_ref()
+            .unwrap()
+            .current(&f.state)
+    );
+    let intent = f.state.prepare_board_outline().unwrap();
+    assert!(intent.validate_outline_payload().is_ok());
+    assert!(f.state.authoring.board_outline.as_ref().unwrap().pending());
+    assert!(
+        f.state
+            .append_board_outline_vertex(crate::PointNm { x: 3000000, y: 0 })
+            .is_err()
+    );
+    assert!(f.state.remove_board_outline_vertex().is_err());
+    let mut bad = intent.clone();
+    bad.expected_revision.push_str("stale");
+    assert!(bad.validate_outline_payload().is_err());
+    bad = intent.clone();
+    bad.action = crate::native_edit_client::NativeEditAction::BoardZone;
+    assert!(bad.validate_outline_payload().is_err());
+    f.state
+        .authoring
+        .board_outline
+        .as_mut()
+        .unwrap()
+        .release_pending();
+    assert!(f.state.cancel_authoring_gesture());
+    assert!(f.state.authoring.board_outline.is_none());
+    assert_eq!(
+        std::fs::read(f.root.join("board/board.json")).unwrap(),
+        before
+    );
+}
+
+#[test]
+fn outline_source_change_retains_vertices_and_refuses_finish_without_writing() {
+    let mut f = Fixture::new();
+    f.state
+        .backing
+        .as_mut()
+        .unwrap()
+        .native_write_verbs
+        .insert("datum.pcb.set_outline".into());
+    f.state.begin_board_outline().unwrap();
+    for (x, y) in [(0, 0), (2000000, 0), (0, 2000000)] {
+        f.state
+            .append_board_outline_vertex(crate::PointNm { x, y })
+            .unwrap();
+    }
+    let before = std::fs::read(f.root.join("board/board.json")).unwrap();
+    f.state.scene.source_revision.push_str("changed");
+    assert!(
+        !f.state
+            .authoring
+            .board_outline
+            .as_ref()
+            .unwrap()
+            .is_current(&f.state)
+    );
+    assert!(f.state.prepare_board_outline().is_err());
+    assert_eq!(
+        f.state
+            .authoring
+            .board_outline
+            .as_ref()
+            .unwrap()
+            .vertices()
+            .len(),
+        3
+    );
+    assert_eq!(
+        std::fs::read(f.root.join("board/board.json")).unwrap(),
+        before
+    );
+    f.state.cancel_authoring_gesture();
+    assert!(f.state.authoring.board_outline.is_none());
+}
+
+#[test]
+fn outline_range_refusal_is_distinct_and_cache_tracks_backspace_and_new_vertices() {
+    let mut f = Fixture::new();
+    f.state
+        .backing
+        .as_mut()
+        .unwrap()
+        .native_write_verbs
+        .insert("datum.pcb.set_outline".into());
+    f.state.authoring.snap.enabled = false;
+    f.state.begin_board_outline().unwrap();
+    let before = std::fs::read(f.root.join("board/board.json")).unwrap();
+    for (x, y) in [
+        (i64::MIN, i64::MIN),
+        (i64::MAX, i64::MIN),
+        (i64::MAX, i64::MAX),
+    ] {
+        f.state
+            .append_board_outline_vertex(crate::PointNm { x, y })
+            .unwrap();
+    }
+    let draft = f.state.authoring.board_outline.as_ref().unwrap();
+    assert_eq!(
+        eda_engine::board::occupied_copper::validate_polygon(&draft.polygon()),
+        Err(eda_engine::board::nominal_geometry::GeometryError::ArithmeticRange)
+    );
+    let reason = draft.geometry_error().unwrap();
+    assert!(reason.contains("ArithmeticRange"));
+    assert!(!reason.contains("three vertices"));
+    // Finish independently refuses the same unavailable arithmetic without a write.
+    assert!(
+        f.state
+            .prepare_board_outline()
+            .unwrap_err()
+            .contains("ArithmeticRange")
+    );
+    assert!(!f.state.authoring.board_outline.as_ref().unwrap().pending());
+    f.state.remove_board_outline_vertex().unwrap();
+    assert!(
+        f.state
+            .authoring
+            .board_outline
+            .as_ref()
+            .unwrap()
+            .geometry_error()
+            .unwrap()
+            .contains("simple")
+    );
+    f.state.remove_board_outline_vertex().unwrap();
+    f.state.remove_board_outline_vertex().unwrap();
+    for (x, y) in [(0, 0), (1000000, 0), (0, 1000000)] {
+        f.state
+            .append_board_outline_vertex(crate::PointNm { x, y })
+            .unwrap();
+    }
+    assert!(
+        f.state
+            .authoring
+            .board_outline
+            .as_ref()
+            .unwrap()
+            .geometry_error()
+            .is_none()
+    );
+    assert_eq!(
+        std::fs::read(f.root.join("board/board.json")).unwrap(),
+        before
+    );
+    f.state.cancel_authoring_gesture();
+}
