@@ -223,6 +223,14 @@ class StdioToolHost:
     def _call_tool(self, name: str, arguments: dict[str, Any]) -> dict[str, Any]:
         invocation = None
         try:
+            if name == "datum.revision.query":
+                unsupported = set(arguments) - {
+                    "project_root", "query", "as_of_sequence", "expected_model_revision"
+                }
+                if unsupported:
+                    raise ValueError(
+                        "unsupported revision query arguments: " + ", ".join(sorted(unsupported))
+                    )
             authorized_capability = authorize_tool_call(
                 self._agent_grant,
                 self._discovery,
@@ -354,6 +362,18 @@ def _datum_target_envelope(name: str, result: Any) -> dict[str, Any]:
         "context": _datum_result_context(result),
         "result": normalized,
     }
+    if (
+        name == "datum.revision.query"
+        and isinstance(result, dict)
+        and isinstance(result.get("refusal"), dict)
+    ):
+        refusal = result["refusal"]
+        envelope["ok"] = False
+        envelope["error"] = {
+            "code": refusal.get("code"),
+            "message": refusal.get("remediation"),
+            "details": refusal,
+        }
     if isinstance(result, dict):
         # Transitional compatibility while callers migrate to `result`.
         for key, value in result.items():

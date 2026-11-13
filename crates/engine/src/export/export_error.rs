@@ -3,6 +3,13 @@ use thiserror::Error;
 #[derive(Debug, Error)]
 pub enum ExportError {
     #[error(
+        "Pad {source_id} shape {shape:?} has no exact supported copper aperture; output refused"
+    )]
+    UnsupportedPadShape {
+        source_id: uuid::Uuid,
+        shape: crate::board::PadShape,
+    },
+    #[error(
         "Pad {source_id} process manufacturing refused: {reason}; no approximate output is permitted"
     )]
     RefusedProcessGeometry {

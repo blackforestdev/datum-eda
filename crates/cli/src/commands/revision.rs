@@ -89,9 +89,84 @@ mod tests {
             }),
         )
         .unwrap();
-        assert_eq!(code, 0);
-        assert!(text_output.contains("revision query: configuration_current"));
-        assert!(text_output.contains("records: 0"));
+        assert_eq!(code, 1);
+        assert!(text_output.contains("revision query refused: unsupported_algorithm"));
+        assert!(!text_output.contains("records:"));
         let _ = std::fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn cli_current_and_historical_refusals_preserve_engine_packet() {
+        let root = std::env::temp_dir().join(format!(
+            "datum_cli_revision_refusal_{}",
+            uuid::Uuid::new_v4()
+        ));
+        std::fs::create_dir_all(&root).unwrap();
+        let report = bootstrap_native_project(
+            &root,
+            GenesisSpec {
+                project_name: "Revision refusal CLI".into(),
+                existing_ids: None,
+            },
+        )
+        .unwrap();
+        for as_of_sequence in [None, Some(0), Some(99)] {
+            let request = eda_engine::api::native_write::revision::RevisionQueryRequest {
+                project_id: report.project_uuid,
+                query: "release_readiness".into(),
+                as_of_sequence,
+                expected_model_revision: None,
+            };
+            let expected =
+                eda_engine::api::native_write::revision::query_revision_authority(&root, &request)
+                    .unwrap();
+            let (output, code) = execute_revision_command(
+                &OutputFormat::Json,
+                RevisionCommands::Query(RevisionQueryArgs {
+                    path: root.clone(),
+                    query: request.query.clone(),
+                    as_of_sequence,
+                    expected_model_revision: None,
+                }),
+            )
+            .unwrap();
+            assert_eq!(code, 1);
+            assert_eq!(
+                serde_json::from_str::<serde_json::Value>(&output).unwrap(),
+                serde_json::to_value(expected).unwrap()
+            );
+        }
+        let _ = std::fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn cli_admits_revision_query_but_rejects_unsupported_selectors() {
+        use clap::Parser;
+        assert!(
+            crate::Cli::try_parse_from([
+                "datum-eda",
+                "revision",
+                "query",
+                "project",
+                "release_readiness",
+                "--as-of-sequence",
+                "0"
+            ])
+            .is_ok()
+        );
+        for selector in ["--subject", "--subject-id", "--baseline-id", "--release-id"] {
+            let error = crate::Cli::try_parse_from([
+                "datum-eda",
+                "revision",
+                "query",
+                "project",
+                "release_readiness",
+                selector,
+                "unsupported",
+            ])
+            .err()
+            .unwrap();
+            assert_eq!(error.kind(), clap::error::ErrorKind::UnknownArgument);
+        }
     }
 }

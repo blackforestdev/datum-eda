@@ -90,17 +90,19 @@ fn project_export_pnp_writes_deterministic_csv_from_board_components() {
     let lines = csv.lines().collect::<Vec<_>>();
     assert_eq!(
         lines[0],
-        "component_instance_uuid,component_instance_role,component_instance_label,reference,x_nm,y_nm,rotation_deg,layer,side,package_uuid,part_uuid,value,locked"
+        "component_instance_uuid,component_instance_role,component_instance_label,reference,x_nm,y_nm,rotation_deg,layer,side,package_uuid,part_uuid,value,locked,placement_uuid"
     );
     assert_eq!(
         lines[1],
         format!(
-            ",,,U1,1000,1500,90,1,top,{u1_package_uuid},{u1_part_uuid},\"SOIC-8, \"\"Analog\"\"\",false"
+            ",,,U1,1000,1500,90,1,top,{u1_package_uuid},{u1_part_uuid},\"SOIC-8, \"\"Analog\"\"\",false,{u1_uuid}"
         )
     );
     assert_eq!(
         lines[2],
-        format!(",,,U2,2000,3000,180,31,bottom,{u2_package_uuid},{u2_part_uuid},MCU,true")
+        format!(
+            ",,,U2,2000,3000,180,31,bottom,{u2_package_uuid},{u2_part_uuid},MCU,true,{u2_uuid}"
+        )
     );
 
     let _ = std::fs::remove_dir_all(&root);

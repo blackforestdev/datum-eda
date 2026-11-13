@@ -50,7 +50,7 @@ CODEOWNERS identifies protected ownership; its presence does not prove approval 
 remote branch protection. No approval or green structural check supplies missing
 behavioral proof.
 
-Current debt inventory: 65 legacy source entries retain 66 recorded metric
+Current debt inventory: 64 legacy source entries retain 65 recorded metric
 ceilings. UNIT-I03B moved
 Project-root operation application into its cohesive dispatch owner and returned
 `operation_application.rs` to the normal production budget. Its stale ledger

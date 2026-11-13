@@ -274,6 +274,139 @@ fn transitive_affected_disjoint_unaffected_and_missing_graph_unknown_are_durable
     assert!(unknown[0].witness_paths.is_empty());
 }
 
+fn converging_impact_graph() -> (DependencySnapshotData, Vec<SemanticDeltaData>) {
+    let refs = graph_refs();
+    let mut graph = complete_graph();
+    let edge = |id: &str, source, target, observation: &str| DependencyEdge {
+        edge_id: id.to_string(),
+        source,
+        target,
+        sensitivity: vec![observation.to_string()],
+        ..graph.edges[0].clone()
+    };
+    graph.edges = vec![
+        edge("a-geometry", refs[0], refs[2], "geometry"),
+        edge("b-electrical", refs[1], refs[2], "electrical"),
+        edge("c-consumer", refs[2], refs[6], "electrical"),
+        edge("d-clearance", refs[2], refs[3], "clearance"),
+    ];
+    let deltas = [(refs[0], "geometry"), (refs[1], "electrical")]
+        .into_iter()
+        .map(|(subject, observation)| SemanticDeltaData {
+            from_configuration: working("before"),
+            to_configuration: working("after"),
+            subject,
+            changed_observations: vec![observation.to_string()],
+            administrative_observations: Vec::new(),
+            evaluator_id: "design-delta".to_string(),
+            evaluator_revision: "1".to_string(),
+        })
+        .collect();
+    (capture_dependency_snapshot(graph), deltas)
+}
+
+#[test]
+fn converging_sources_preserve_later_observations_and_actual_witnesses() {
+    let refs = graph_refs();
+    let (graph, deltas) = converging_impact_graph();
+    assert!(validate_dependency_snapshot(&graph).is_empty());
+    assert!(refs[0] < refs[1]); // Geometry reaches the merge first.
+    let impacts = evaluate_subject_impacts(&graph, &deltas, &[refs[6], refs[3], refs[9]]);
+    let affected = impacts
+        .iter()
+        .find(|impact| impact.subject == refs[6])
+        .unwrap();
+    assert_eq!(affected.result, ImpactResult::Affected);
+    assert_eq!(affected.changed_observations, vec!["electrical"]);
+    assert_eq!(
+        affected.witness_paths,
+        vec![vec!["b-electrical", "c-consumer"]]
+    );
+    let disjoint = impacts
+        .iter()
+        .find(|impact| impact.subject == refs[3])
+        .unwrap();
+    assert_eq!(disjoint.result, ImpactResult::Unaffected);
+    assert!(disjoint.changed_observations.is_empty());
+    assert_eq!(
+        disjoint.witness_paths,
+        vec![vec!["b-electrical", "d-clearance"]]
+    );
+    let unreachable = impacts
+        .iter()
+        .find(|impact| impact.subject == refs[9])
+        .unwrap();
+    assert_eq!(unreachable.result, ImpactResult::Unaffected);
+    assert_eq!(
+        unreachable.witness_paths,
+        vec![vec!["complete_graph:no_path"]]
+    );
+
+    let mut incomplete = graph.clone();
+    incomplete.graph_complete = false;
+    incomplete
+        .unresolved_inputs
+        .push("unresolved producer".to_string());
+    assert!(validate_dependency_snapshot(&incomplete).is_empty());
+    let unknown = evaluate_subject_impacts(&incomplete, &deltas, &[refs[6]]);
+    assert_eq!(unknown[0].result, ImpactResult::ImpactUnknown);
+    assert_eq!(unknown[0].reason_code, "graph_incomplete");
+    assert!(unknown[0].witness_paths.is_empty());
+    assert!(unknown[0].changed_observations.is_empty());
+
+    let mut missing_evaluator = graph;
+    missing_evaluator.edges[2].evaluator_revision.clear();
+    let unknown = evaluate_subject_impacts(&missing_evaluator, &deltas, &[refs[6]]);
+    assert_eq!(unknown[0].result, ImpactResult::ImpactUnknown);
+    assert_eq!(unknown[0].reason_code, "evaluator_missing");
+    assert!(unknown[0].witness_paths.is_empty());
+}
+
+#[test]
+fn converging_observations_terminate_cycles_without_fabricating_witnesses() {
+    let refs = graph_refs();
+    let (mut graph, mut deltas) = converging_impact_graph();
+    // Also deliver an already processed observation on the later source path.
+    deltas[1].changed_observations.push("geometry".to_string());
+    graph.edges[1].sensitivity = vec!["electrical".to_string(), "geometry".to_string()];
+    assert_eq!(graph.edges[1].edge_id, "b-electrical");
+    for (id, source, target) in [
+        ("e-cycle-out", refs[2], refs[4]),
+        ("f-cycle-back", refs[4], refs[2]),
+    ] {
+        graph.edges.push(DependencyEdge {
+            edge_id: id.to_string(),
+            source,
+            target,
+            sensitivity: vec!["electrical".to_string(), "geometry".to_string()],
+            ..graph.edges[0].clone()
+        });
+    }
+    let graph = capture_dependency_snapshot(graph);
+    assert!(validate_dependency_snapshot(&graph).is_empty());
+    // The unreachable subject forces queue exhaustion, including the back edges.
+    let impacts = evaluate_subject_impacts(&graph, &deltas, &[refs[6], refs[9]]);
+    let affected = impacts
+        .iter()
+        .find(|impact| impact.subject == refs[6])
+        .unwrap();
+    assert_eq!(affected.result, ImpactResult::Affected);
+    assert_eq!(affected.changed_observations, vec!["electrical"]);
+    assert_eq!(
+        affected.witness_paths,
+        vec![vec!["b-electrical", "c-consumer"]]
+    );
+    let unreachable = impacts
+        .iter()
+        .find(|impact| impact.subject == refs[9])
+        .unwrap();
+    assert_eq!(unreachable.result, ImpactResult::Unaffected);
+    assert_eq!(
+        unreachable.witness_paths,
+        vec![vec!["complete_graph:no_path"]]
+    );
+}
+
 #[test]
 fn freshness_distinguishes_current_differing_missing_and_unsupported_inputs() {
     let refs = graph_refs();

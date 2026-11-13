@@ -90,15 +90,17 @@ fn project_export_bom_writes_deterministic_csv_from_board_components() {
     let lines = csv.lines().collect::<Vec<_>>();
     assert_eq!(
         lines[0],
-        "component_instance_uuid,component_instance_role,component_instance_label,reference,value,part_uuid,package_uuid,layer,x_nm,y_nm,rotation_deg,locked"
+        "component_instance_uuid,component_instance_role,component_instance_label,reference,value,part_uuid,package_uuid,layer,x_nm,y_nm,rotation_deg,locked,placement_uuid"
     );
     assert_eq!(
         lines[1],
-        format!(",,,C1,\"1uF, \"\"X7R\"\"\",{c1_part_uuid},{c1_package_uuid},1,1000,1500,90,false")
+        format!(
+            ",,,C1,\"1uF, \"\"X7R\"\"\",{c1_part_uuid},{c1_package_uuid},1,1000,1500,90,false,{c1_uuid}"
+        )
     );
     assert_eq!(
         lines[2],
-        format!(",,,C2,10uF,{c2_part_uuid},{c2_package_uuid},31,2000,3000,180,true")
+        format!(",,,C2,10uF,{c2_part_uuid},{c2_package_uuid},31,2000,3000,180,true,{c2_uuid}")
     );
 
     let _ = std::fs::remove_dir_all(&root);

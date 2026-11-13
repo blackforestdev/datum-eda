@@ -300,3 +300,75 @@ fn rational_center_refusal_carries_source_bound_error_witness() {
     }
     // Refusal remains unpassed mandatory positive T04 coverage.
 }
+
+fn shape_regression_pad(shape: PadShape, rotation: i32, ratio: u32) -> PlacedPad {
+    serde_json::from_value(serde_json::json!({
+        "uuid": uuid::Uuid::from_u128(1601),
+        "package": uuid::Uuid::nil(), "name": "CA16", "net": null,
+        "position": {"x": 500000, "y": 250000}, "layer": 1,
+        "shape": shape, "diameter": 1000000, "width": 2000000, "height": 1000000,
+        "rotation": rotation, "roundrect_rratio_ppm": ratio
+    }))
+    .unwrap()
+}
+
+#[test]
+fn copper_refuses_oval_and_roundrect_in_every_degree_without_rectangle_substitution() {
+    for shape in [PadShape::Oval, PadShape::RoundRect] {
+        for ratio in [0, 1, 250_000, 500_000] {
+            for rotation in (-360..=360).chain([i32::MIN, i32::MAX]) {
+                let pad = shape_regression_pad(shape, rotation, ratio);
+                // A valid accepted pad precedes the unsupported pad: no partial
+                // layer may escape when unsupported geometry is encountered.
+                let mut circle = shape_regression_pad(PadShape::Circle, 0, ratio);
+                circle.uuid = uuid::Uuid::from_u128(1600);
+                let id = pad.uuid;
+                let pads = [circle, pad];
+                let error = render_rs274x_copper_layer(1, &pads, &[], &[], &[])
+                    .expect_err("authored shape must not silently become rectangular copper");
+                assert!(
+                    matches!(error, ExportError::UnsupportedPadShape { source_id, shape: actual }
+                    if source_id == id && actual == shape),
+                    "shape={shape:?} rotation={rotation} ratio={ratio}: {error:?}"
+                );
+            }
+        }
+    }
+}
+
+#[test]
+fn copper_retains_circle_and_quarter_turn_rectangle_geometry() {
+    for rotation in [0, 90, 180, 270, -90, 450] {
+        let pad = shape_regression_pad(PadShape::Rect, rotation, 250_000);
+        let original = pad.clone();
+        let gerber = render_rs274x_copper_layer(1, std::slice::from_ref(&pad), &[], &[], &[])
+            .expect("quarter-turn rectangles remain supported");
+        let dimensions = if rotation.rem_euclid(180) == 0 {
+            "2.000000X1.000000"
+        } else {
+            "1.000000X2.000000"
+        };
+        assert!(gerber.contains(&format!("%ADD10R,{dimensions}*%")));
+        assert!(gerber.contains("X500000Y250000D03*"));
+        assert_eq!(pad, original);
+    }
+    for rotation in [0, 37, 90, -90, i32::MIN, i32::MAX] {
+        let pad = shape_regression_pad(PadShape::Circle, rotation, 250_000);
+        let gerber = render_rs274x_copper_layer(1, &[pad], &[], &[], &[]).unwrap();
+        assert!(gerber.contains("%ADD10C,1.000000*%"));
+        assert!(!gerber.contains("%ADD10R"));
+    }
+}
+
+#[test]
+fn copper_retains_arbitrary_rectangle_rotation_refusal() {
+    for rotation in [1, 37, 89, 91, -37, i32::MIN, i32::MAX] {
+        let pad = shape_regression_pad(PadShape::Rect, rotation, 250_000);
+        let id = pad.uuid;
+        let error = render_rs274x_copper_layer(1, &[pad], &[], &[], &[]).unwrap_err();
+        assert!(
+            matches!(error, ExportError::UnsupportedPadRotation { source_id, rotation: actual }
+            if source_id == id && actual == rotation)
+        );
+    }
+}

@@ -9,12 +9,12 @@
 use std::path::Path;
 
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
+use serde_json::Value;
 use uuid::Uuid;
 
 use crate::{error::EngineError, substrate::ProjectResolver};
 
-use super::{AuthorityResolution, AuthoritySnapshot, RevisionAuthorityStore, transaction_tip};
+use super::{AuthorityResolution, RevisionAuthorityStore, transaction_tip};
 
 pub const REVISION_PUBLIC_OPERATIONS: &[&str] = &[
     "accept_external_change_candidate",
@@ -305,12 +305,8 @@ pub fn query_revision_authority(
 
     let resolution =
         RevisionAuthorityStore::new(project_root).resolve_authority(request.project_id);
-    let result = match resolution {
-        AuthorityResolution::Unconfigured => json!({
-            "authority_state": "unmanaged",
-            "records": [],
-            "events": [],
-        }),
+    match resolution {
+        AuthorityResolution::Unconfigured | AuthorityResolution::Resolved { .. } => {}
         AuthorityResolution::ReadOnlyDiagnostic { diagnostics, .. } => {
             return Ok(RevisionQueryResponse {
                 schema_version: 1,
@@ -332,18 +328,20 @@ pub fn query_revision_authority(
                 }),
             });
         }
-        AuthorityResolution::Resolved { snapshot } => query_snapshot(&snapshot, request),
-    };
-    Ok(RevisionQueryResponse {
-        schema_version: 1,
-        project_id: request.project_id,
+    }
+    // A verified snapshot is authority data, not an answer to a named engineering query.
+    Ok(refused(
+        request,
         model_revision,
-        transaction_tip: tip,
-        query: request.query.clone(),
-        as_of_sequence: request.as_of_sequence,
-        result: Some(result),
-        refusal: None,
-    })
+        tip,
+        "unsupported_algorithm",
+        vec![format!("engineering evaluation for {}", request.query)],
+        vec![format!(
+            "named query {} has no public evaluator",
+            request.query
+        )],
+        "use revision.catalog for discovery; this named query is not implemented",
+    ))
 }
 
 pub fn render_revision_query_human(response: &RevisionQueryResponse) -> String {
@@ -365,28 +363,6 @@ pub fn render_revision_query_human(response: &RevisionQueryResponse) -> String {
         "revision query: {}\nproject: {}\nmodel revision: {}\nrecords: {}",
         response.query, response.project_id, response.model_revision, count
     )
-}
-
-fn query_snapshot(snapshot: &AuthoritySnapshot, request: &RevisionQueryRequest) -> Value {
-    let records: Vec<_> = match request.as_of_sequence {
-        Some(sequence) => snapshot.as_of(sequence).into_iter().cloned().collect(),
-        None => snapshot.records.clone(),
-    };
-    let events: Vec<_> = snapshot
-        .events
-        .iter()
-        .filter(|event| {
-            request
-                .as_of_sequence
-                .is_none_or(|sequence| event.sequence <= sequence)
-        })
-        .cloned()
-        .collect();
-    json!({
-        "authority_state": "managed",
-        "records": records,
-        "events": events,
-    })
 }
 
 fn refused(
@@ -477,7 +453,7 @@ mod tests {
     }
 
     #[test]
-    fn unmanaged_query_is_prompt_free_and_stale_refusal_is_deterministic() {
+    fn unmanaged_query_refuses_and_stale_refusal_is_deterministic() {
         let (root, project_id) = project("unmanaged");
         let request = RevisionQueryRequest {
             project_id,
@@ -486,11 +462,8 @@ mod tests {
             expected_model_revision: None,
         };
         let response = query_revision_authority(&root, &request).unwrap();
-        assert_eq!(
-            response.result.as_ref().unwrap()["authority_state"],
-            "unmanaged"
-        );
-        assert!(response.refusal.is_none());
+        assert!(response.result.is_none());
+        assert_eq!(response.refusal.unwrap().code, "unsupported_algorithm");
         let stale = RevisionQueryRequest {
             expected_model_revision: Some("stale".into()),
             ..request
@@ -500,5 +473,149 @@ mod tests {
         assert_eq!(left.refusal, right.refusal);
         assert_eq!(left.refusal.unwrap().code, "context_stale");
         let _ = std::fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn managed_named_queries_refuse_current_and_history_without_inventory_leak() {
+        use crate::revision::{
+            ActorIdentityData, ActorIdentityId, ActorKind, AuthorityRecordBody, RevisionMutation,
+            apply_revision_mutations,
+        };
+        use crate::substrate::{CommitProvenance, CommitSource, Operation, OperationBatch};
+
+        let (root, project_id) = project("managed");
+        let mut model = ProjectResolver::new(&root).resolve().unwrap();
+        model
+            .commit_journaled(
+                &root,
+                OperationBatch {
+                    batch_id: Uuid::new_v4(),
+                    expected_model_revision: Some(model.model_revision.clone()),
+                    provenance: CommitProvenance {
+                        actor: "revision-test".into(),
+                        source: CommitSource::Test,
+                        reason: "establish ordinary transaction for managed authority".into(),
+                    },
+                    operations: vec![Operation::SetProjectName {
+                        project_id,
+                        name: "Managed revision".into(),
+                    }],
+                },
+            )
+            .unwrap();
+        let store = RevisionAuthorityStore::new(&root);
+        apply_revision_mutations(
+            &store,
+            project_id,
+            vec![RevisionMutation::RegisterActorIdentity(
+                AuthorityRecordBody {
+                    schema_version: 1,
+                    id: ActorIdentityId(Uuid::new_v4()),
+                    project_id,
+                    display_name: None,
+                    physical_locator: None,
+                    references: vec![],
+                    semantics: ActorIdentityData {
+                        kind: ActorKind::Person,
+                        stable_name: "revision-query-test".into(),
+                    },
+                },
+            )],
+        )
+        .unwrap();
+        let AuthorityResolution::Resolved { snapshot } = store.resolve_authority(project_id) else {
+            panic!("managed authority must resolve before query");
+        };
+        assert_eq!(snapshot.records.len(), 1);
+        assert_eq!(snapshot.events.len(), 1);
+        let model = ProjectResolver::new(&root).resolve().unwrap();
+        let head_path = root.join(".datum/revision/v1/head.json");
+        let before = std::fs::read(&head_path).unwrap();
+        for query in REVISION_PUBLIC_QUERIES {
+            for as_of_sequence in [None, Some(0), Some(99)] {
+                let request = RevisionQueryRequest {
+                    project_id,
+                    query: (*query).into(),
+                    as_of_sequence,
+                    expected_model_revision: Some(model.model_revision.0.clone()),
+                };
+                let response = query_revision_authority(&root, &request).unwrap();
+                assert_eq!(response.project_id, project_id);
+                assert_eq!(response.query, *query);
+                assert_eq!(response.as_of_sequence, as_of_sequence);
+                assert_eq!(response.model_revision, model.model_revision.0);
+                assert_eq!(response.transaction_tip, transaction_tip(&model.journal));
+                assert!(response.result.is_none());
+                let refusal = response.refusal.unwrap();
+                assert_eq!(refusal.code, "unsupported_algorithm");
+                assert!(refusal.current_facts[0].contains(query));
+            }
+        }
+        assert_eq!(std::fs::read(&head_path).unwrap(), before);
+        assert_eq!(
+            store.resolve_authority(project_id),
+            AuthorityResolution::Resolved { snapshot }
+        );
+
+        let mut request = RevisionQueryRequest {
+            project_id,
+            query: "release_readiness".into(),
+            as_of_sequence: Some(0),
+            expected_model_revision: None,
+        };
+        request.project_id = Uuid::new_v4();
+        assert_eq!(
+            query_revision_authority(&root, &request)
+                .unwrap()
+                .refusal
+                .unwrap()
+                .code,
+            "project_mismatch"
+        );
+        request.project_id = project_id;
+        request.query = "not_a_revision_query".into();
+        assert_eq!(
+            query_revision_authority(&root, &request)
+                .unwrap()
+                .refusal
+                .unwrap()
+                .code,
+            "unknown_query"
+        );
+        request.query = "release_readiness".into();
+        request.expected_model_revision = Some("stale".into());
+        assert_eq!(
+            query_revision_authority(&root, &request)
+                .unwrap()
+                .refusal
+                .unwrap()
+                .code,
+            "context_stale"
+        );
+        request.expected_model_revision = None;
+        store
+            .install_authority_bytes_for_test(project_id, br#"{"schema_version":99}"#)
+            .unwrap();
+        let response = query_revision_authority(&root, &request).unwrap();
+        assert!(response.result.is_none());
+        assert_eq!(response.as_of_sequence, Some(0));
+        assert_eq!(
+            response.refusal.unwrap().code,
+            "authority_integrity_unavailable"
+        );
+        let _ = std::fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn unsupported_subject_selectors_are_not_discarded() {
+        for selector in ["subject", "subject_id", "baseline_id", "release_id"] {
+            let mut value =
+                serde_json::json!({"project_id": Uuid::new_v4(), "query": "release_readiness"});
+            value[selector] = serde_json::json!("unsupported");
+            assert!(
+                serde_json::from_value::<RevisionQueryRequest>(value).is_err(),
+                "{selector}"
+            );
+        }
     }
 }

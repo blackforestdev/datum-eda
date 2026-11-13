@@ -10,6 +10,15 @@ pub fn render_rs274x_copper_layer(
     zones: &[Zone],
     vias: &[Via],
 ) -> Result<String, ExportError> {
+    // Refuse authored shapes before aperture lowering can substitute rectangles.
+    for pad in pads {
+        if matches!(pad.shape, PadShape::Oval | PadShape::RoundRect) {
+            return Err(ExportError::UnsupportedPadShape {
+                source_id: pad.uuid,
+                shape: pad.shape,
+            });
+        }
+    }
     // Quarter turns have an exact rectangular aperture representation. Keep
     // authored dimensions untouched; rotate only the output aperture basis.
     let mut output_pads = pads.to_vec();

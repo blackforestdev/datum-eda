@@ -1,5 +1,7 @@
 #[path = "main_tests_project_gerber_arc_witness.rs"]
 mod arc_witness;
+#[path = "main_tests_project_gerber_pad_shapes.rs"]
+mod pad_shapes;
 use super::*;
 use eda_engine::ir::serialization::to_json_deterministic;
 

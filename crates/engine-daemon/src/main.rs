@@ -145,6 +145,7 @@ struct NativeDescribeParams {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct RevisionQueryParams {
     project_root: PathBuf,
     query: String,

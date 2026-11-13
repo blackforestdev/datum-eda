@@ -193,7 +193,7 @@ fn project_report_manufacturing_summarizes_supported_outputs_from_persisted_stat
 }
 
 #[test]
-fn project_bom_and_pnp_are_keyed_by_component_instance_identity() {
+fn project_bom_and_pnp_distinguish_component_instance_children_and_role_drift() {
     let root = unique_project_root("datum-eda-cli-project-manufacturing-component-instance");
     create_native_project(
         &root,
@@ -278,160 +278,104 @@ fn project_bom_and_pnp_are_keyed_by_component_instance_identity() {
         "layer": 1,
         "locked": false
     });
+    let child_package_id = Uuid::new_v4();
+    board["packages"][child_package_id.to_string()] =
+        board["packages"][package_id.to_string()].clone();
+    board["packages"][child_package_id.to_string()]["uuid"] = serde_json::json!(child_package_id);
+    board["packages"][child_package_id.to_string()]["reference"] = serde_json::json!("U1B");
     std::fs::write(
         root.join("board/board.json"),
         format!("{}\n", to_json_deterministic(&board).unwrap()),
     )
     .unwrap();
+    let run = |args: Vec<String>| -> serde_json::Value {
+        let mut command = vec![
+            "datum-eda".to_string(),
+            "--format".to_string(),
+            "json".to_string(),
+            "project".to_string(),
+        ];
+        command.extend(args);
+        serde_json::from_str(&execute(Cli::try_parse_from(command).unwrap()).unwrap()).unwrap()
+    };
+    // The public binding command currently selects one package; seed the resolver's
+    // supported multi-package state, then exercise public export/compare on it.
     let component_instance_dir = root.join(".datum/component_instances");
     std::fs::create_dir_all(&component_instance_dir).unwrap();
     std::fs::write(
         component_instance_dir.join(format!("{component_instance_id}.json")),
-        format!(
-            "{}\n",
-            to_json_deterministic(&serde_json::json!({
-                "schema_version": 1,
-                "component_instance": {
-                    "uuid": component_instance_id,
-                    "object_revision": 0,
-                    "placed_symbol_refs": [{ "object_id": symbol_id, "object_revision": 0 }],
-                    "placed_package_refs": [{ "object_id": package_id, "object_revision": 0 }],
-                    "placed_package_roles": {
-                        package_id.to_string(): { "role": "physical_package", "label": "main" }
-                    }
+        format!("{}\n", to_json_deterministic(&serde_json::json!({
+            "schema_version": 1,
+            "component_instance": {
+                "uuid": component_instance_id,
+                "object_revision": 0,
+                "placed_symbol_refs": [{ "object_id": symbol_id, "object_revision": 0 }],
+                "placed_package_refs": [
+                    { "object_id": package_id, "object_revision": 0 },
+                    { "object_id": child_package_id, "object_revision": 0 }
+                ],
+                "placed_package_roles": {
+                    package_id.to_string(): { "role": "physical_package", "label": "main" },
+                    child_package_id.to_string(): { "role": "physical_package", "label": "child" }
                 }
-            }))
-            .unwrap()
-        ),
+            }
+        })).unwrap()),
     )
     .unwrap();
-
-    let bom_path = root.join("component-instance-bom.csv");
-    let pnp_path = root.join("component-instance-pnp.csv");
-    execute(
-        Cli::try_parse_from([
-            "eda",
-            "--format",
-            "json",
-            "project",
-            "export-bom",
-            root.to_str().unwrap(),
-            "--out",
-            bom_path.to_str().unwrap(),
-        ])
-        .expect("CLI should parse"),
-    )
-    .expect("BOM export should succeed");
-    execute(
-        Cli::try_parse_from([
-            "eda",
-            "--format",
-            "json",
-            "project",
-            "export-pnp",
-            root.to_str().unwrap(),
-            "--out",
-            pnp_path.to_str().unwrap(),
-        ])
-        .expect("CLI should parse"),
-    )
-    .expect("PnP export should succeed");
-
-    let bom_csv = std::fs::read_to_string(&bom_path).unwrap();
-    let pnp_csv = std::fs::read_to_string(&pnp_path).unwrap();
-    let role_header =
-        "component_instance_uuid,component_instance_role,component_instance_label,reference,";
-    assert!(bom_csv.starts_with(role_header));
-    assert!(pnp_csv.starts_with(role_header));
-    let role_row = format!("{component_instance_id},physical_package,main,U1,");
-    assert!(bom_csv.contains(&role_row));
-    assert!(pnp_csv.contains(&role_row));
-
-    std::fs::write(
-        &bom_path,
-        bom_csv.replace(",physical_package,main,", ",alternate,backup,"),
-    )
-    .unwrap();
-    std::fs::write(
-        &pnp_path,
-        pnp_csv.replace(",physical_package,main,", ",alternate,backup,"),
-    )
-    .unwrap();
-
-    let bom_compare = execute(
-        Cli::try_parse_from([
-            "eda",
-            "--format",
-            "json",
-            "project",
-            "compare-bom",
-            root.to_str().unwrap(),
-            "--bom",
-            bom_path.to_str().unwrap(),
-        ])
-        .expect("CLI should parse"),
-    )
-    .expect("BOM compare should succeed");
-    let bom_report: serde_json::Value = serde_json::from_str(&bom_compare).unwrap();
-    assert_eq!(bom_report["missing_count"], 0);
-    assert_eq!(bom_report["extra_count"], 0);
-    assert_eq!(bom_report["drift_count"], 1);
-    assert_eq!(
-        bom_report["drift"][0]["identity"],
-        component_instance_id.to_string()
-    );
-    assert_eq!(
-        bom_report["drift"][0]["component_instance_uuid"],
-        component_instance_id.to_string()
-    );
-    let bom_fields = bom_report["drift"][0]["fields"].as_array().unwrap();
-    assert!(
-        bom_fields
-            .iter()
-            .any(|field| field == "component_instance_role")
-    );
-    assert!(
-        bom_fields
-            .iter()
-            .any(|field| field == "component_instance_label")
-    );
-    let pnp_compare = execute(
-        Cli::try_parse_from([
-            "eda",
-            "--format",
-            "json",
-            "project",
-            "compare-pnp",
-            root.to_str().unwrap(),
-            "--pnp",
-            pnp_path.to_str().unwrap(),
-        ])
-        .expect("CLI should parse"),
-    )
-    .expect("PnP compare should succeed");
-    let pnp_report: serde_json::Value = serde_json::from_str(&pnp_compare).unwrap();
-    assert_eq!(pnp_report["missing_count"], 0);
-    assert_eq!(pnp_report["extra_count"], 0);
-    assert_eq!(pnp_report["drift_count"], 1);
-    assert_eq!(
-        pnp_report["drift"][0]["identity"],
-        component_instance_id.to_string()
-    );
-    assert_eq!(
-        pnp_report["drift"][0]["component_instance_uuid"],
-        component_instance_id.to_string()
-    );
-    let pnp_fields = pnp_report["drift"][0]["fields"].as_array().unwrap();
-    assert!(
-        pnp_fields
-            .iter()
-            .any(|field| field == "component_instance_role")
-    );
-    assert!(
-        pnp_fields
-            .iter()
-            .any(|field| field == "component_instance_label")
-    );
+    for kind in ["bom", "pnp"] {
+        let path = root.join(format!("{kind}.csv"));
+        let exported = run(vec![
+            format!("export-{kind}"),
+            root.display().to_string(),
+            "--out".to_string(),
+            path.display().to_string(),
+        ]);
+        assert_eq!(exported["rows"], 2);
+        assert_eq!(std::fs::read_to_string(&path).unwrap().lines().count(), 3);
+        let report = run(vec![
+            format!("compare-{kind}"),
+            root.display().to_string(),
+            format!("--{kind}"),
+            path.display().to_string(),
+        ]);
+        assert_eq!(report["matched_count"], 2);
+        assert_eq!(report["missing_count"], 0);
+        assert_eq!(report["extra_count"], 0);
+        assert_eq!(report["drift_count"], 0);
+    }
+    for kind in ["bom", "pnp"] {
+        let path = root.join(format!("{kind}.csv"));
+        let csv = std::fs::read_to_string(&path).unwrap();
+        std::fs::write(
+            &path,
+            csv.replace(",physical_package,child,", ",alternate,backup,"),
+        )
+        .unwrap();
+        let report = run(vec![
+            format!("compare-{kind}"),
+            root.display().to_string(),
+            format!("--{kind}"),
+            path.display().to_string(),
+        ]);
+        assert_eq!(report["expected_count"], 2);
+        assert_eq!(report["actual_count"], 2);
+        assert_eq!(
+            report["matched"],
+            serde_json::json!([package_id.to_string()])
+        );
+        assert_eq!(report["missing_count"], 0);
+        assert_eq!(report["extra_count"], 0);
+        assert_eq!(report["drift_count"], 1);
+        assert_eq!(report["drift"][0]["identity"], child_package_id.to_string());
+        assert_eq!(
+            report["drift"][0]["component_instance_uuid"],
+            component_instance_id.to_string()
+        );
+        assert_eq!(
+            report["drift"][0]["fields"],
+            serde_json::json!(["component_instance_role", "component_instance_label"])
+        );
+    }
     let _ = std::fs::remove_dir_all(&root);
 }
 

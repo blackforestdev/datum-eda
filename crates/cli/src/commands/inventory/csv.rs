@@ -7,9 +7,14 @@ use crate::{csv_escape, parse_csv_line};
 
 use super::inventory::{NativeBomRow, NativePnpRow};
 
+pub(super) struct ParsedInventoryRows<T> {
+    pub(super) rows: Vec<T>,
+    pub(super) placement_identity: bool,
+}
+
 pub(super) fn render_expected_native_project_bom_csv_rows(rows: &[NativeBomRow]) -> String {
     let mut csv = String::from(
-        "component_instance_uuid,component_instance_role,component_instance_label,reference,value,part_uuid,package_uuid,layer,x_nm,y_nm,rotation_deg,locked\n",
+        "component_instance_uuid,component_instance_role,component_instance_label,reference,value,part_uuid,package_uuid,layer,x_nm,y_nm,rotation_deg,locked,placement_uuid\n",
     );
     for row in rows {
         let row = [
@@ -29,6 +34,9 @@ pub(super) fn render_expected_native_project_bom_csv_rows(rows: &[NativeBomRow])
             row.y_nm.to_string(),
             row.rotation_deg.to_string(),
             row.locked.to_string(),
+            row.placement_uuid
+                .expect("exported rows have placement identity")
+                .to_string(),
         ]
         .join(",");
         csv.push_str(&row);
@@ -39,7 +47,7 @@ pub(super) fn render_expected_native_project_bom_csv_rows(rows: &[NativeBomRow])
 
 pub(super) fn render_expected_native_project_pnp_csv_rows(rows: &[NativePnpRow]) -> String {
     let mut csv = String::from(
-        "component_instance_uuid,component_instance_role,component_instance_label,reference,x_nm,y_nm,rotation_deg,layer,side,package_uuid,part_uuid,value,locked\n",
+        "component_instance_uuid,component_instance_role,component_instance_label,reference,x_nm,y_nm,rotation_deg,layer,side,package_uuid,part_uuid,value,locked,placement_uuid\n",
     );
     for row in rows {
         let row = [
@@ -60,6 +68,9 @@ pub(super) fn render_expected_native_project_pnp_csv_rows(rows: &[NativePnpRow])
             csv_escape(&row.part_uuid),
             csv_escape(&row.value),
             row.locked.to_string(),
+            row.placement_uuid
+                .expect("exported rows have placement identity")
+                .to_string(),
         ]
         .join(",");
         csv.push_str(&row);
@@ -68,14 +79,16 @@ pub(super) fn render_expected_native_project_pnp_csv_rows(rows: &[NativePnpRow])
     csv
 }
 
-pub(super) fn parse_bom_csv(path: &Path) -> Result<Vec<NativeBomRow>> {
+pub(super) fn parse_bom_csv(path: &Path) -> Result<ParsedInventoryRows<NativeBomRow>> {
     let contents = std::fs::read_to_string(path)
         .with_context(|| format!("failed to read {}", path.display()))?;
     let mut lines = contents.lines();
     let header = lines
         .next()
         .ok_or_else(|| anyhow::anyhow!("missing BOM CSV header in {}", path.display()))?;
-    let component_instance_columns = match header {
+    let placement_identity = header.ends_with(",placement_uuid");
+    let legacy_header = header.strip_suffix(",placement_uuid").unwrap_or(header);
+    let component_instance_columns = match legacy_header {
         "component_instance_uuid,component_instance_role,component_instance_label,reference,value,part_uuid,package_uuid,layer,x_nm,y_nm,rotation_deg,locked" => {
             3
         }
@@ -93,12 +106,17 @@ pub(super) fn parse_bom_csv(path: &Path) -> Result<Vec<NativeBomRow>> {
         }
         let fields = parse_csv_line(line)
             .with_context(|| format!("failed to parse BOM CSV row in {}", path.display()))?;
-        let expected_len = 9 + component_instance_columns;
+        let expected_len = 9 + component_instance_columns + usize::from(placement_identity);
         if fields.len() != expected_len {
             bail!("unexpected BOM CSV column count in {}", path.display());
         }
         let offset = component_instance_columns;
         rows.push(NativeBomRow {
+            placement_uuid: if placement_identity {
+                Some(Uuid::parse_str(&fields[expected_len - 1]).context("invalid placement_uuid")?)
+            } else {
+                None
+            },
             component_instance_uuid: parse_optional_uuid(&fields[0..component_instance_columns]),
             component_instance_role: parse_optional_field(&fields, 1, component_instance_columns),
             component_instance_label: parse_optional_field(&fields, 2, component_instance_columns),
@@ -113,17 +131,22 @@ pub(super) fn parse_bom_csv(path: &Path) -> Result<Vec<NativeBomRow>> {
             locked: fields[offset + 8].parse().context("invalid locked")?,
         });
     }
-    Ok(rows)
+    Ok(ParsedInventoryRows {
+        rows,
+        placement_identity,
+    })
 }
 
-pub(super) fn parse_pnp_csv(path: &Path) -> Result<Vec<NativePnpRow>> {
+pub(super) fn parse_pnp_csv(path: &Path) -> Result<ParsedInventoryRows<NativePnpRow>> {
     let contents = std::fs::read_to_string(path)
         .with_context(|| format!("failed to read {}", path.display()))?;
     let mut lines = contents.lines();
     let header = lines
         .next()
         .ok_or_else(|| anyhow::anyhow!("missing PnP CSV header in {}", path.display()))?;
-    let component_instance_columns = match header {
+    let placement_identity = header.ends_with(",placement_uuid");
+    let legacy_header = header.strip_suffix(",placement_uuid").unwrap_or(header);
+    let component_instance_columns = match legacy_header {
         "component_instance_uuid,component_instance_role,component_instance_label,reference,x_nm,y_nm,rotation_deg,layer,side,package_uuid,part_uuid,value,locked" => {
             3
         }
@@ -141,12 +164,17 @@ pub(super) fn parse_pnp_csv(path: &Path) -> Result<Vec<NativePnpRow>> {
         }
         let fields = parse_csv_line(line)
             .with_context(|| format!("failed to parse PnP CSV row in {}", path.display()))?;
-        let expected_len = 10 + component_instance_columns;
+        let expected_len = 10 + component_instance_columns + usize::from(placement_identity);
         if fields.len() != expected_len {
             bail!("unexpected PnP CSV column count in {}", path.display());
         }
         let offset = component_instance_columns;
         rows.push(NativePnpRow {
+            placement_uuid: if placement_identity {
+                Some(Uuid::parse_str(&fields[expected_len - 1]).context("invalid placement_uuid")?)
+            } else {
+                None
+            },
             component_instance_uuid: parse_optional_uuid(&fields[0..component_instance_columns]),
             component_instance_role: parse_optional_field(&fields, 1, component_instance_columns),
             component_instance_label: parse_optional_field(&fields, 2, component_instance_columns),
@@ -162,7 +190,10 @@ pub(super) fn parse_pnp_csv(path: &Path) -> Result<Vec<NativePnpRow>> {
             locked: fields[offset + 9].parse().context("invalid locked")?,
         });
     }
-    Ok(rows)
+    Ok(ParsedInventoryRows {
+        rows,
+        placement_identity,
+    })
 }
 
 fn parse_optional_field(fields: &[String], index: usize, available: usize) -> Option<String> {

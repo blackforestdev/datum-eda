@@ -53,12 +53,21 @@ fn evaluate_subject(
         .iter()
         .map(|(source, observations)| (*source, observations.clone(), Vec::<String>::new()))
         .collect();
-    let mut visited = BTreeSet::new();
+    let mut processed: BTreeMap<AuthorityRef, BTreeSet<String>> = BTreeMap::new();
     let mut disjoint_witness = None;
-    while let Some((node, observations, path)) = queue.pop_front() {
-        if !visited.insert(node) {
-            continue;
+    while let Some((node, mut observations, path)) = queue.pop_front() {
+        // Only suppress observations already propagated from this node. Each queue
+        // entry keeps its own real witness; observations from other paths are not merged.
+        if let Some(seen) = processed.get(&node) {
+            observations = observations.difference(seen).cloned().collect();
+            if observations.is_empty() {
+                continue;
+            }
         }
+        processed
+            .entry(node)
+            .or_default()
+            .extend(observations.iter().cloned());
         for edge in snapshot.edges.iter().filter(|edge| edge.source == node) {
             let mut next_path = path.clone();
             next_path.push(edge.edge_id.clone());

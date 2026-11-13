@@ -10,6 +10,7 @@ from unittest.mock import patch
 
 from server_runtime import JsonRpcError, JsonRpcResponse
 from stdio_tool_host import StdioToolHost
+from tools_catalog_data import TOOL_BY_NAME
 from test_support import FakeDaemonClient
 from test_agent_capability import ScopedHostFixture
 
@@ -110,6 +111,69 @@ class TestStdioResultProtocol(unittest.TestCase):
                     {"jsonrpc": "2.0", "id": 3, "method": "tools/call", "params": params})
                 self.assertEqual(response["error"]["code"], -32602)
                 self.assertNotIn("result", response)
+
+    def test_revision_query_stays_quarantined_at_active_admission(self):
+        self.assertNotIn("datum.revision.query", TOOL_BY_NAME)
+        host = StdioToolHost(FakeDaemonClient())
+        for version in VERSIONS:
+            response = self.exchange(host, version, "datum.revision.query",
+                                     {"project_root": "p", "query": "release_readiness"})
+            self.assertEqual(response["error"]["code"], -32602)
+            self.assertIn("unknown tool", response["error"]["message"])
+            self.assertNotIn("result", response)
+
+    def test_revision_refusal_adapter_preserves_complete_current_and_history_packet(self):
+        # Adapter-only unit: this test descriptor is removed after each case.
+        # It does not restore the quarantined production catalog or run Rust.
+        spec = {"name": "datum.revision.query", "x_dispatch_method": "revision_query",
+                "x_dispatch_args": ["project_root", "query", "as_of_sequence", "expected_model_revision"],
+                "inputSchema": {"properties": {"project_root": {}, "query": {},
+                    "as_of_sequence": {}, "expected_model_revision": {}},
+                    "required": ["project_root", "query"]}}
+        for version in VERSIONS:
+            for sequence in (None, 0, 99):
+                original = {"schema_version": 1, "project_id": "p", "model_revision": "r",
+                    "transaction_tip": "t", "query": "release_readiness", "as_of_sequence": sequence,
+                    "result": None, "refusal": {"code": "unsupported_algorithm",
+                        "affected_identities": ["p"], "controlling_policy_or_requirement": "PM-037 public revision service",
+                        "expected_facts": ["engineering evaluation for release_readiness"],
+                        "current_facts": ["no public evaluator"], "witness": ["engine revision public service"],
+                        "remediation": "use revision.catalog for discovery"}}
+                before = json.loads(json.dumps(original))
+                daemon = FakeDaemonClient()
+                with self.subTest(version=version, sequence=sequence), patch.dict(TOOL_BY_NAME, {"datum.revision.query": spec}), patch.object(
+                    daemon, "revision_query", create=True, return_value=JsonRpcResponse("2.0", 1, original, None)
+                ) as call:
+                    payload = receive_tool_result(self.exchange(StdioToolHost(daemon), version,
+                        "datum.revision.query", {"project_root": "p", "query": "release_readiness",
+                        "as_of_sequence": sequence, "expected_model_revision": "r"}), failed=True)
+                    call.assert_called_once_with("p", "release_readiness", sequence, "r")
+                self.assertFalse(payload["ok"])
+                self.assertEqual(payload["result"], before)
+                self.assertEqual(payload["error"]["details"], before["refusal"])
+                self.assertEqual(payload["error"]["code"], "unsupported_algorithm")
+                self.assertEqual(payload["context"]["project_id"], "p")
+                self.assertEqual(payload["context"]["model_revision"], "r")
+                self.assertEqual(original, before)
+        self.assertNotIn("datum.revision.query", TOOL_BY_NAME)
+
+    def test_revision_adapter_rejects_selectors_before_dispatch_drops_them(self):
+        spec = {"name": "datum.revision.query", "x_dispatch_method": "revision_query",
+                "x_dispatch_args": ["project_root", "query"],
+                "inputSchema": {"properties": {"project_root": {}, "query": {}},
+                    "required": ["project_root", "query"]}}
+        for selector in ("subject", "subject_id", "baseline_id", "release_id"):
+            daemon = FakeDaemonClient()
+            with self.subTest(selector=selector), patch.dict(TOOL_BY_NAME, {"datum.revision.query": spec}), patch.object(
+                daemon, "revision_query", create=True
+            ) as call:
+                payload = receive_tool_result(self.exchange(StdioToolHost(daemon), VERSIONS[-1],
+                    "datum.revision.query", {"project_root": "p", "query": "release_readiness",
+                    selector: "unsupported"}), failed=True)
+                call.assert_not_called()
+            self.assertFalse(payload["ok"])
+            self.assertIn(selector, payload["error"]["message"])
+        self.assertNotIn("datum.revision.query", TOOL_BY_NAME)
 
     def test_receiver_rejects_original_nonstandard_json_block(self):
         with self.assertRaises(AssertionError):
