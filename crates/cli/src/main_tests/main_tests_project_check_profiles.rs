@@ -151,6 +151,16 @@ fn drc_profile_reports_clearance_and_silkscreen_coverage_as_evaluated() {
     .expect("drc profile check should succeed");
     let report: serde_json::Value = serde_json::from_str(&output).unwrap();
     assert_eq!(report["profile_id"], "drc");
+    assert_eq!(
+        report["profile_basis"]["domains"],
+        serde_json::json!(["drc", "standards"])
+    );
+    assert!(report["coverage"].as_array().unwrap().iter().any(|entry| {
+        entry["rule_id"] == "process_aperture_policy" && entry["status"] == "evaluated"
+    }));
+    assert!(report["coverage"].as_array().unwrap().iter().any(|entry| {
+        entry["rule_id"] == "zone_fill_state" && entry["status"] == "filtered_by_profile"
+    }));
     assert!(report["coverage"].as_array().unwrap().iter().any(|entry| {
         entry["domain"] == "drc"
             && entry["rule_id"] == "clearance_copper"
@@ -315,4 +325,154 @@ fn check_run_rejects_unsupported_profile() {
     );
 
     let _ = std::fs::remove_dir_all(&root);
+}
+
+fn physical_profile_run(root: &Path, profile: &str) -> serde_json::Value {
+    let output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "check",
+            "run",
+            root.to_str().unwrap(),
+            "--profile",
+            profile,
+        ])
+        .unwrap(),
+    )
+    .unwrap();
+    serde_json::from_str(&output).unwrap()
+}
+
+#[test]
+fn physical_profile_errors_survive_normalization_disposition_and_reopen() {
+    let root = unique_project_root("datum-eda-cli-physical-profile-errors");
+    create_native_project(&root, Some("Physical profile errors".into())).unwrap();
+    let net = super::main_tests_project_drc::seed_board_drc_fixture(&root);
+    let board_path = root.join("board/board.json");
+    let mut board: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(&board_path).unwrap()).unwrap();
+    board["packages"] = serde_json::json!({});
+    board["pads"] = serde_json::json!({});
+    let track = Uuid::new_v4().to_string();
+    let via = Uuid::new_v4().to_string();
+    board["tracks"][&track] = serde_json::json!({
+        "uuid": track, "net": net, "from": {"x": 0, "y": 0},
+        "to": {"x": 1000000, "y": 0}, "width": 100000, "layer": 1
+    });
+    board["vias"][&via] = serde_json::json!({
+        "uuid": via, "net": net, "position": {"x": 1000000, "y": 0},
+        "drill": 100000, "diameter": 200000, "from_layer": 1, "to_layer": 1
+    });
+    std::fs::write(&board_path, serde_json::to_vec_pretty(&board).unwrap()).unwrap();
+    let codes = [
+        "track_width_below_min",
+        "via_hole_out_of_range",
+        "via_annular_below_min",
+    ];
+    let mut fingerprints = Vec::new();
+    for profile in ["drc", "standards", "release"] {
+        let report = physical_profile_run(&root, profile);
+        let findings = report["findings"].as_array().unwrap();
+        for code in codes {
+            assert!(
+                report["raw_report"]["drc"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .any(|f| f["code"] == code && f["severity"] == "error"),
+                "raw {profile}: {code}"
+            );
+            let finding = findings
+                .iter()
+                .find(|f| f["code"] == code)
+                .unwrap_or_else(|| panic!("{profile} dropped emitted {code}"));
+            assert_eq!(finding["severity"], "error");
+            assert_eq!(finding["domain"], "standards");
+            if profile == "drc" {
+                fingerprints.push(finding["fingerprint"].as_str().unwrap().to_string());
+            } else {
+                assert!(
+                    fingerprints.contains(&finding["fingerprint"].as_str().unwrap().to_string())
+                );
+            }
+        }
+        assert!(report["summary"]["errors"].as_u64().unwrap() >= 3);
+        assert_eq!(report["status"], "error");
+        let id = Uuid::parse_str(report["check_run_id"].as_str().unwrap()).unwrap();
+        let cold = eda_engine::substrate::ProjectResolver::new(&root)
+            .resolve()
+            .unwrap();
+        let saved = &cold.check_runs[&id];
+        assert_eq!(saved.status, "error");
+        assert_eq!(saved.summary, report["summary"]);
+        for code in codes {
+            assert!(
+                saved
+                    .findings
+                    .iter()
+                    .any(|f| f.code == code && f.severity == "error")
+            );
+        }
+    }
+    for (command, flag, fingerprint) in [
+        ("waive", "--created-by", &fingerprints[0]),
+        ("accept-deviation", "--accepted-by", &fingerprints[1]),
+    ] {
+        let output = execute(
+            Cli::try_parse_from([
+                "eda",
+                "--format",
+                "json",
+                "check",
+                command,
+                root.to_str().unwrap(),
+                "--fingerprint",
+                fingerprint,
+                "--rationale",
+                "Intentional test disposition",
+                flag,
+                "cli-test",
+            ])
+            .unwrap(),
+        )
+        .unwrap();
+        let draft = serde_json::from_str(&output).unwrap();
+        super::main_tests_project_check_run_drc_lifecycle::accept_disposition_draft(&root, &draft);
+    }
+    for profile in ["drc", "standards", "release"] {
+        let report = physical_profile_run(&root, profile);
+        for (index, status, refs) in [
+            (0, "waived", "waiver_refs"),
+            (1, "accepted_deviation", "deviation_refs"),
+        ] {
+            let finding = report["findings"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|f| f["fingerprint"] == fingerprints[index])
+                .unwrap();
+            assert_eq!(finding["status"], status);
+            assert_eq!(finding[refs].as_array().unwrap().len(), 1);
+        }
+        assert_eq!(report["summary"]["waived"], 1);
+        assert!(report["summary"]["errors"].as_u64().unwrap() >= 1);
+    }
+    board["tracks"][&track]["width"] = serde_json::json!(200000);
+    board["vias"][&via]["drill"] = serde_json::json!(300000);
+    board["vias"][&via]["diameter"] = serde_json::json!(600000);
+    std::fs::write(&board_path, serde_json::to_vec_pretty(&board).unwrap()).unwrap();
+    for profile in ["drc", "standards", "release"] {
+        let report = physical_profile_run(&root, profile);
+        assert!(
+            report["findings"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .all(|f| !codes.contains(&f["code"].as_str().unwrap()))
+        );
+        assert_eq!(report["summary"]["errors"], 0, "{profile}: {report}");
+    }
+    std::fs::remove_dir_all(root).unwrap();
 }

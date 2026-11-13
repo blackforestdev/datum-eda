@@ -35,6 +35,9 @@ pub(crate) struct CheckRunArgs {
     /// Refuse production unless the resolved model revision matches this basis
     #[arg(long, requires = "expected_project")]
     pub(crate) expected_revision: Option<String>,
+    /// Native DRC must evaluate this exact resolved zone-copper input basis
+    #[arg(long, requires_all = ["expected_project", "expected_revision"])]
+    pub(crate) expected_zone_copper_fingerprint: Option<String>,
     /// Emit a producer-acceptance event on stderr for this guarded background job
     #[arg(long, requires_all = ["expected_project", "expected_revision"])]
     pub(crate) progress_job: Option<Uuid>,

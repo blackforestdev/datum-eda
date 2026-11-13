@@ -4,6 +4,81 @@ const PROJECT: &str = "f5c84dbb-dafc-4caf-ba86-b3b6c894651b";
 const CURRENT: &str = "cc1b83c4-3106-57de-9e0f-74349dde78a0";
 const OLD: &str = "2f808923-15a2-5910-b40e-b79052754aff";
 
+#[test]
+fn history_prefers_actual_current_copper_basis_over_same_revision_legacy_and_stale_rows() {
+    use eda_engine::api::native_write::{
+        WriteProvenance,
+        board_routing::zone::{FillRequest, capture_board_basis, prepare_fill},
+        commit_prepared,
+    };
+    use eda_engine::substrate::{CheckRun, CommitSource, ProjectResolver};
+    let root =
+        std::env::temp_dir().join(format!("datum-drc-history-basis-{}", uuid::Uuid::new_v4()));
+    crate::known_good_demo::write_known_good_demo_project(&root).unwrap();
+    let mut model = ProjectResolver::new(&root).resolve().unwrap();
+    let revision = model.model_revision.clone();
+    let old = model.native_drc_zone_copper_basis().unwrap();
+    let request = FillRequest {
+        basis: capture_board_basis(&model).unwrap(),
+        zone: Some("00000000-0000-0000-0000-00000000c211".parse().unwrap()),
+        net: None,
+    };
+    let prepared = prepare_fill(
+        &model,
+        WriteProvenance::new(
+            "loader-test",
+            CommitSource::Test,
+            "Explicit fill before readback",
+        ),
+        &request,
+    )
+    .unwrap();
+    commit_prepared(&mut model, &root, prepared).unwrap();
+    model = ProjectResolver::new(&root).resolve().unwrap();
+    assert_eq!(model.model_revision, revision);
+    let current = model.native_drc_zone_copper_basis().unwrap();
+    assert_ne!(old, current);
+    let mut unknown = current.clone();
+    unknown["version"] = json!(2);
+    let mut rows = Vec::new();
+    // These are selector controls over an actual native fill basis. They do
+    // not claim that the empty finding payloads are analysis results.
+    for (index, basis) in [Some(current), Some(old), Some(unknown), None]
+        .into_iter()
+        .enumerate()
+    {
+        let id = uuid::Uuid::from_u128(index as u128 + 1);
+        let mut raw = json!({});
+        if let Some(basis) = basis {
+            raw[CheckRun::NATIVE_DRC_ZONE_COPPER_BASIS_KEY] = basis;
+        }
+        let run:CheckRun=serde_json::from_value(json!({"schema_version":1,"check_run_id":id,"project_id":model.project.project_id,"model_revision":revision,"profile_id":"drc","status":"ok","summary":{},"finding_count":0,"findings":[],"proposal_refs":[],"raw_report":raw})).unwrap();
+        model.check_runs.insert(id, run);
+        rows.push(json!({"check_run_id":id,"project_id":model.project.project_id,"model_revision":revision,"profile_id":"drc"}));
+    }
+    let history = json!({"contract":"check_run_list_v1","project_id":model.project.project_id,"model_revision":revision,"check_runs":rows});
+    let (_, candidate) = history_candidate_with_model(&history, Some(&model));
+    assert_eq!(
+        candidate.unwrap().id,
+        uuid::Uuid::from_u128(1).to_string(),
+        "stable ID order must not qualify stale copper"
+    );
+    model.check_runs.remove(&uuid::Uuid::from_u128(1));
+    let (empty, candidate) = history_candidate_with_model(&history, Some(&model));
+    let candidate = candidate.unwrap();
+    assert_eq!(
+        candidate.id,
+        uuid::Uuid::from_u128(4).to_string(),
+        "legacy evidence stays readable without current qualification"
+    );
+    let legacy = &model.check_runs[&uuid::Uuid::from_u128(4)];
+    let value = json!({"contract":"check_run_record_v1","project_id":model.project.project_id,"model_revision":revision,"check_run":legacy});
+    let loaded = admit_record(empty, &candidate, &value).unwrap();
+    assert_eq!(loaded.profile_id.as_deref(), Some("drc"));
+    assert!(loaded.native_drc_zone_copper_basis.is_none());
+    std::fs::remove_dir_all(root).unwrap();
+}
+
 fn history() -> Value {
     json!({"contract":"check_run_list_v1", "project_id":PROJECT,"model_revision":"current",
         "latest_check_run_id":OLD,"check_runs":[
@@ -163,9 +238,9 @@ fn erc_disposition_report_survives_save_but_not_source_change_or_current_persist
             state.checks, persisted,
             "current {profile} must beat an automatic read-only ERC projection"
         );
-        assert!(current_persisted(&state));
+        assert!(saved_on_authored_basis(&state));
         state.scene.source_revision = "changed".into();
-        assert!(!current_persisted(&state));
+        assert!(!saved_on_authored_basis(&state));
         state.scene.source_revision = "current".into();
     }
 }

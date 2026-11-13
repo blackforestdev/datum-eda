@@ -1,3 +1,4 @@
+mod input_basis;
 pub(crate) mod loading;
 pub mod marker;
 pub mod producer;
@@ -35,6 +36,8 @@ pub struct CheckRunReviewState {
     pub profile_basis: CheckRunProfileBasisSummary,
     #[serde(default)]
     pub coverage: Vec<CheckRunCoverageSummary>,
+    #[serde(default)]
+    pub native_drc_zone_copper_basis: Option<Value>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
@@ -183,6 +186,7 @@ pub fn check_run_review_state_from_json(payload: &str) -> Result<CheckRunReviewS
             proposal_links: envelope.proposal_links,
             profile_basis: envelope.profile_basis,
             coverage: envelope.coverage,
+            raw_report: envelope.raw_report,
         }
         .into_state(None, None),
     })
@@ -355,6 +359,8 @@ struct CheckRunEnvelope {
     profile_basis: CheckRunProfileBasisSummary,
     #[serde(default)]
     coverage: Vec<CheckRunCoverageSummary>,
+    #[serde(default)]
+    raw_report: Value,
 }
 
 #[derive(Debug, Clone, Deserialize, PartialEq, Eq, Default)]
@@ -408,6 +414,7 @@ impl CheckContextRunSummary {
             proposal_links: Vec::new(),
             profile_basis: self.profile_basis,
             coverage: self.coverage,
+            native_drc_zone_copper_basis: None,
         }
     }
 }
@@ -440,35 +447,8 @@ struct CheckRunPayload {
     profile_basis: CheckRunProfileBasisSummary,
     #[serde(default)]
     coverage: Vec<CheckRunCoverageSummary>,
-}
-
-impl CheckRunPayload {
-    fn into_state(
-        self,
-        fallback_project_id: Option<String>,
-        fallback_model_revision: Option<String>,
-    ) -> CheckRunReviewState {
-        let finding_count = if self.finding_count == 0 {
-            self.findings.len()
-        } else {
-            self.finding_count
-        };
-        CheckRunReviewState {
-            check_run_id: self.check_run_id,
-            project_id: self.project_id.or(fallback_project_id),
-            model_revision: self.model_revision.or(fallback_model_revision),
-            profile_id: self.profile_id,
-            status: self.status,
-            persisted: self.persisted,
-            summary: self.summary,
-            finding_count,
-            findings: self.findings,
-            proposal_refs: self.proposal_refs,
-            proposal_links: self.proposal_links,
-            profile_basis: self.profile_basis,
-            coverage: self.coverage,
-        }
-    }
+    #[serde(default)]
+    raw_report: Value,
 }
 
 #[cfg(test)]

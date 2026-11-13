@@ -60,8 +60,8 @@ pub(super) fn append<'a>(context: &mut InspectorContext<'a>, state: &'a ReviewWo
         );
         return;
     };
-    let current = checks.project_id.as_deref() == Some(state.scene.project_uuid.as_str())
-        && checks.model_revision.as_deref() == Some(state.scene.source_revision.as_str());
+    let qualification = checks.qualification(state);
+    let current = qualification.is_ok();
     context.push(
         section,
         InspectorField::text(
@@ -70,11 +70,16 @@ pub(super) fn append<'a>(context: &mut InspectorContext<'a>, state: &'a ReviewWo
                 "Current read-only report — run the selected check profile to persist evidence"
             } else if current {
                 "Current persisted result"
+            } else if checks.profile_id.as_deref() == Some("drc") {
+                "Not current — historical or unqualified DRC; rerun on current basis"
             } else {
                 "Stale — historical result; rerun on current basis"
             },
         ),
     );
+    if let Err(reason) = qualification {
+        context.push(section, InspectorField::text("Report basis", reason));
+    }
     context.push(section, InspectorField::text("Run UUID", id));
     context.push(
         section,
@@ -420,7 +425,11 @@ fn append_drc_scope(context: &mut InspectorContext<'_>, state: &ReviewWorkspaceS
     }
     let counts = (|| -> Result<[usize; 4], &'static str> {
         let mut counts = [0; 4];
-        for finding in checks.findings.iter().filter(|f| f.domain == "drc") {
+        for finding in checks
+            .findings
+            .iter()
+            .filter(|f| f.source == "drc" || f.domain == "drc")
+        {
             let targets = affected_targets(state, finding)?;
             if targets
                 .iter()

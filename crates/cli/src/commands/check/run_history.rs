@@ -132,12 +132,16 @@ pub(super) fn admit_check_job(
     validate_check_job_basis(args, model, profile_id)?;
     if let Some(job) = args.progress_job {
         use std::io::Write;
-        let accepted = serde_json::json!({
+        let mut accepted = serde_json::json!({
             "job_id": job,
             "project_id": model.project.project_id,
             "model_revision": model.model_revision.0,
             "profile_id": profile_id,
         });
+        if profile_id == "drc" {
+            accepted["zone_copper_fingerprint"] =
+                serde_json::json!(model.native_drc_zone_copper_fingerprint()?);
+        }
         writeln!(
             std::io::stderr().lock(),
             "DATUM_CHECK_JOB_ACCEPTED {accepted}"
@@ -165,6 +169,24 @@ pub(super) fn validate_check_job_basis(
         args.expected_project.is_none() || matches!(profile_id, "erc" | "drc"),
         "guarded check production supports the erc and drc profiles only"
     );
+    match args.expected_zone_copper_fingerprint.as_deref() {
+        Some(expected) => {
+            anyhow::ensure!(
+                profile_id == "drc",
+                "Zone-copper input basis belongs to native DRC only"
+            );
+            eda_engine::substrate::CheckRun::validate_native_drc_zone_copper_fingerprint(expected)
+                .map_err(anyhow::Error::msg)?;
+            anyhow::ensure!(
+                model.native_drc_zone_copper_fingerprint()? == expected,
+                "Native DRC zone copper changed; refresh before running DRC"
+            );
+        }
+        None => anyhow::ensure!(
+            args.expected_project.is_none() || profile_id != "drc",
+            "Guarded native DRC requires an expected zone-copper fingerprint"
+        ),
+    }
     Ok(())
 }
 
@@ -320,10 +342,19 @@ pub(crate) fn finish_check_run(
     let summary = summarize_check_run_findings(&findings);
     let profile_basis = profile_basis_for_check_run(profile_id);
     let coverage = check_run_coverage_for_profile(profile_id);
-    let run_material = format!(
+    let mut run_material = format!(
         "datum-eda:check-run:{}:{}:{}",
         model.project.project_id, model.model_revision.0, profile_id
     );
+    let mut raw_report = serde_json::to_value(&report)?;
+    if profile_id == "drc" {
+        let basis = model.native_drc_zone_copper_basis()?;
+        let fingerprint =
+            eda_engine::substrate::CheckRun::native_drc_zone_copper_basis_fingerprint(Some(&basis))
+                .map_err(anyhow::Error::msg)?;
+        run_material.push_str(&format!(":native-drc-zone-copper-v1:{fingerprint}"));
+        raw_report[eda_engine::substrate::CheckRun::NATIVE_DRC_ZONE_COPPER_BASIS_KEY] = basis;
+    }
     let view = NativeProjectCheckRunView {
         contract: "check_run_v1",
         persisted: persist,
@@ -339,7 +370,7 @@ pub(crate) fn finish_check_run(
         proposal_links,
         profile_basis,
         coverage,
-        raw_report: report,
+        raw_report,
     };
     if persist {
         commit_check_run_evidence(root, &mut model, &view, guarded)?;

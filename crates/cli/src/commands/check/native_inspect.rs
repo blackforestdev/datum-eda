@@ -430,16 +430,17 @@ fn query_native_project_check_run_with_profile_and_persistence(
     if let Some(args) = admission {
         command_project_check_run_history::validate_check_job_basis(args, &model, profile_id)?;
     }
-    let captured = if admission.is_some_and(|args| args.expected_project.is_some()) {
-        Some(crate::capture_native_check_inputs(
-            root,
-            &model,
-            profile_id,
-            check_profile_drc_rules(profile_id),
-        )?)
-    } else {
-        None
-    };
+    let captured =
+        if profile_id == "drc" || admission.is_some_and(|args| args.expected_project.is_some()) {
+            Some(crate::capture_native_check_inputs(
+                root,
+                &model,
+                profile_id,
+                check_profile_drc_rules(profile_id),
+            )?)
+        } else {
+            None
+        };
     if let Some(args) = admission {
         command_project_check_run_history::admit_check_job(args, &model, profile_id)?;
     }
@@ -482,7 +483,7 @@ fn commit_check_run_evidence(
 ) -> Result<()> {
     let check_run = native_check_run_to_substrate(&model.project.project_id, view)?;
     if model.check_runs.contains_key(&check_run.check_run_id) {
-        if guarded {
+        if guarded || view.profile_id == "drc" {
             // The no-write branch still needs final basis admission. This read
             // verifies currentness only; it never supplies report input values.
             let current = ProjectResolver::new(root).resolve()?;
@@ -491,8 +492,26 @@ fn commit_check_run_evidence(
                     && current.model_revision == model.model_revision,
                 "stale check producer basis before existing-run reuse"
             );
+            if view.profile_id == "drc" {
+                current
+                    .qualify_native_drc_zone_copper_basis(
+                        check_run
+                            .raw_report
+                            .get(eda_engine::substrate::CheckRun::NATIVE_DRC_ZONE_COPPER_BASIS_KEY),
+                    )
+                    .map_err(anyhow::Error::msg)?;
+                if current.check_runs.get(&check_run.check_run_id) == Some(&check_run) {
+                    return Ok(());
+                }
+            } else {
+                return Ok(());
+            }
+        } else {
+            return Ok(());
         }
-        return Ok(());
+        // Native DRC idempotence is exact evidence equality. A changed producer
+        // result at the same input identity refreshes through SetCheckRun and
+        // retains its previous payload for canonical Undo/Redo.
     }
     let prepared = eda_engine::api::native_write::artifacts::build_set_check_run(
         model,

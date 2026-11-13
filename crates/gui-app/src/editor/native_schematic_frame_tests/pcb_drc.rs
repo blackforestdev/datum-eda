@@ -1,12 +1,20 @@
 //! One ordinary native DRC report/rerun workflow. Public API circuit/transfer
 //! preparation is fixture setup, not claimed as GUI schematic or PCB editing.
 use super::*;
+#[path = "pcb_drc/physical.rs"]
+mod physical;
 use datum_gui_protocol::CheckProducerProfile;
 use eda_engine::api::native_write::{
-    self as native, WriteProvenance, commit_prepared,
+    self as native, WriteProvenance,
+    board_routing::zone::{
+        FillRequest, ZoneRequest, capture_board_basis, capture_zone_basis, prepare_fill,
+        prepare_zone,
+    },
+    commit_prepared,
     registry::{NativeWriteContext, find_native_write_verb},
     schematic_board_transfer::{TransferChoice, TransferRequest, plan_transfer},
 };
+use eda_engine::ir::geometry::{Point, Polygon};
 use eda_engine::substrate::{
     CommitSource, DesignModel, Operation, ProjectResolver, SourceShardKind,
 };
@@ -14,7 +22,7 @@ use serde_json::json;
 use std::collections::BTreeMap;
 use uuid::Uuid;
 
-fn prepare_connected_board(root: &std::path::Path) {
+fn prepare_connected_board(root: &std::path::Path) -> Uuid {
     super::board_transfer::setup(root);
     let mut model = ProjectResolver::new(root).resolve().unwrap();
     let provenance = || {
@@ -85,6 +93,61 @@ fn prepare_connected_board(root: &std::path::Path) {
     let prepared =
         native::schematic_board_transfer::prepare_transfer(&model, provenance(), &request).unwrap();
     commit_prepared(&mut model, root, prepared).unwrap();
+    // Public canonical fixture preparation, not GUI outline/Zone delivery.
+    let prepared = native::board_layout::build_set_board_outline(
+        &model,
+        provenance(),
+        plan.board_id,
+        &Polygon::new(vec![
+            Point::new(0, 0),
+            Point::new(10_000_000, 0),
+            Point::new(10_000_000, 6_000_000),
+            Point::new(0, 6_000_000),
+        ]),
+    )
+    .unwrap();
+    commit_prepared(&mut model, root, prepared).unwrap();
+    let board = model
+        .materialized_source_shard_value(SourceShardKind::BoardRoot)
+        .unwrap();
+    let package: Uuid = board["packages"]
+        .as_object()
+        .unwrap()
+        .values()
+        .find(|p| p["reference"] == "U1")
+        .unwrap()["uuid"]
+        .as_str()
+        .unwrap()
+        .parse()
+        .unwrap();
+    let projection =
+        eda_engine::substrate::component_pad_source::component_pad_projection(&model, &board)
+            .unwrap();
+    let net = projection
+        .pads
+        .values()
+        .find(|p| p.package == package && p.name == "1")
+        .unwrap()
+        .net
+        .unwrap();
+    let zone = ZoneRequest {
+        basis: capture_zone_basis(&model, net, 1).unwrap(),
+        polygon: Polygon::new(vec![
+            Point::new(1_000_000, 1_000_000),
+            Point::new(9_000_000, 1_000_000),
+            Point::new(9_000_000, 4_000_000),
+            Point::new(1_000_000, 4_000_000),
+        ]),
+        priority: 0,
+        thermal_relief: false,
+        thermal_gap_nm: 0,
+        thermal_spoke_width_nm: 0,
+        edit_seed: Uuid::new_v4(),
+    };
+    let prepared = prepare_zone(&model, provenance(), &zone).unwrap();
+    let id = prepared.primary_object_id.unwrap();
+    commit_prepared(&mut model, root, prepared).unwrap();
+    id
 }
 
 struct Workflow {
@@ -97,8 +160,24 @@ struct Workflow {
     journal_before: usize,
     fingerprint: String,
     run: String,
+    zone: Uuid,
+    filled: bool,
+    expected_generated: usize,
+    physical: physical::PhysicalCase,
 }
 impl Workflow {
+    fn reopen(&mut self, events: &ActiveEventLoop) {
+        let args = <GuiArgs as clap::Parser>::try_parse_from([
+            "datum-gui",
+            "--project-root",
+            self.root.to_str().unwrap(),
+        ])
+        .unwrap();
+        let proxy = self.host.app.terminal_event_proxy.clone();
+        self.host.app = App::new(args, proxy);
+        self.host.app.resumed(events);
+    }
+
     fn scroll_inspector(&mut self, events: &ActiveEventLoop, pages: f32) {
         let r = self.host.app.runtime.as_ref().unwrap();
         let (rect, total) = r
@@ -154,12 +233,20 @@ impl Workflow {
             assert_eq!(&std::fs::read(path).unwrap(), bytes, "{}", path.display());
         }
         let model = self.model();
-        assert_eq!(model.journal.len(), self.journal_before + 1);
+        assert_eq!(
+            model.journal.len(),
+            self.journal_before + self.expected_generated
+        );
         assert!(
             model.journal[self.journal_before..]
                 .iter()
                 .flat_map(|t| &t.operations)
-                .all(|op| matches!(op, Operation::SetCheckRun { .. }))
+                .all(|op| matches!(
+                    op,
+                    Operation::SetCheckRun { .. }
+                        | Operation::SetZoneFill { .. }
+                        | Operation::GuardObjectRevision { .. }
+                ))
         );
     }
     fn menu(&mut self, group: &str, label: &str) {
@@ -192,17 +279,26 @@ impl Workflow {
             Some(model.model_revision.0.as_str())
         );
         assert_eq!(checks.check_run_id.as_deref(), Some(self.run.as_str()));
-        assert!(
-            checks
-                .findings
-                .iter()
-                .any(|f| f.fingerprint == self.fingerprint
-                    && f.domain == "drc"
-                    && f.code == "connectivity_unrouted_net")
-        );
+        assert!(checks.is_current(self.host.app.runtime.as_ref().unwrap().workspace()));
+        model
+            .qualify_native_drc_zone_copper_basis(checks.native_drc_zone_copper_basis.as_ref())
+            .unwrap();
+        if !self.filled {
+            assert!(
+                checks
+                    .findings
+                    .iter()
+                    .any(|f| f.fingerprint == self.fingerprint
+                        && f.domain == "drc"
+                        && f.code == "nominal_connectivity_unavailable"
+                        && f.message.contains("Unfilled"))
+            );
+        }
         let id = Uuid::parse_str(&self.run).unwrap();
         assert_eq!(model.check_runs[&id].profile_id, "drc");
         self.assert_authored_unchanged();
+        self.physical
+            .assert_report(self.host.app.runtime.as_ref().unwrap().workspace());
     }
     fn advance(&mut self, events: &ActiveEventLoop) {
         let Some(r) = self.host.app.runtime.as_ref() else {
@@ -236,8 +332,12 @@ impl Workflow {
                 self.fingerprint = checks
                     .findings
                     .iter()
-                    .find(|f| f.code == "connectivity_unrouted_net" && f.domain == "drc")
-                    .expect("real unrouted native board finding")
+                    .find(|f| {
+                        f.code == "nominal_connectivity_unavailable"
+                            && f.primary_target["id"] == self.zone.to_string()
+                            && f.message.contains("Unfilled")
+                    })
+                    .expect("real unfilled Zone connectivity diagnostic")
                     .fingerprint
                     .clone();
                 self.current_report();
@@ -302,18 +402,83 @@ impl Workflow {
             }
             6 => {
                 self.current_report();
+                let mut model = self.model();
+                let revision = model.model_revision.clone();
+                let fill = FillRequest {
+                    basis: capture_board_basis(&model).unwrap(),
+                    zone: Some(self.zone),
+                    net: None,
+                };
+                let provenance = WriteProvenance::new(
+                    "pcb-drc-fixture",
+                    CommitSource::Test,
+                    "Explicit fixture fill between GUI check runs",
+                );
+                let prepared = prepare_fill(&model, provenance, &fill).unwrap();
+                commit_prepared(&mut model, &self.root, prepared).unwrap();
+                model = self.model();
+                assert_eq!(model.model_revision, revision);
+                assert!(
+                    !model
+                        .current_zone_fill(self.zone)
+                        .expect("actual bounded Filled copper")
+                        .islands
+                        .is_empty()
+                );
+                self.filled = true;
+                self.expected_generated = 2;
+                self.assert_authored_unchanged();
                 self.saved = self.snapshot();
-                let args = <GuiArgs as clap::Parser>::try_parse_from([
-                    "datum-gui",
-                    "--project-root",
-                    self.root.to_str().unwrap(),
-                ])
-                .unwrap();
-                let proxy = self.host.app.terminal_event_proxy.clone();
-                self.host.app = App::new(args, proxy);
-                self.host.app.resumed(events);
+                self.reopen(events);
             }
             7 => {
+                assert_eq!(
+                    r.workspace().checks.check_run_id.as_deref(),
+                    Some(self.run.as_str())
+                );
+                assert!(!r.workspace().checks.is_current(r.workspace()));
+                let context =
+                    datum_gui_protocol::inspector_context::InspectorContext::capture(r.workspace());
+                assert!(context.sections.iter().flat_map(|s| &s.fields).any(|f| {
+                    f.label == "Report basis"
+                        && context
+                            .field_text(f, usize::MAX)
+                            .contains("Zone copper inputs changed")
+                }));
+                assert_eq!(
+                    self.snapshot(),
+                    self.saved,
+                    "cold inspection does not automatically rerun DRC"
+                );
+                self.assert_authored_unchanged();
+                std::fs::write(
+                    self.output.join("after-fill-stale-report.json"),
+                    serde_json::to_vec_pretty(&r.workspace().checks).unwrap(),
+                )
+                .unwrap();
+                self.capture("drc-after-fill-stale");
+                self.menu("Checks", "Run DRC");
+            }
+            8 => {
+                let next = r.workspace().checks.check_run_id.clone().unwrap();
+                assert_ne!(next, self.run);
+                self.run = next;
+                self.expected_generated = 3;
+                self.current_report();
+                std::fs::write(
+                    self.output.join("after-fill-current-report.json"),
+                    serde_json::to_vec_pretty(&r.workspace().checks).unwrap(),
+                )
+                .unwrap();
+                self.capture("drc-after-fill-current");
+                self.menu("File", "Save");
+            }
+            9 => {
+                self.current_report();
+                self.saved = self.snapshot();
+                self.reopen(events);
+            }
+            10 => {
                 let report = serde_json::to_vec_pretty(&r.workspace().checks).unwrap();
                 self.current_report();
                 assert_eq!(
@@ -323,6 +488,73 @@ impl Workflow {
                 );
                 self.capture("drc-cold");
                 std::fs::write(self.output.join("cold-report.json"), report).unwrap();
+                self.menu("View", "Fit to Board");
+            }
+            11 => {
+                let target = self.physical.marker_target(r.workspace());
+                self.host.control(events, target);
+            }
+            12 => {
+                self.physical.assert_selected(r.workspace());
+                self.capture(self.physical.capture_name());
+                self.current_report();
+                if self.physical.next_marker() {
+                    self.step = 10;
+                } else {
+                    let model = self.physical.correct(&self.root, &self.run);
+                    let board = model
+                        .source_shards
+                        .iter()
+                        .find(|s| s.kind == SourceShardKind::BoardRoot)
+                        .unwrap();
+                    for (path, bytes) in &self.authored {
+                        if path != &board.path {
+                            assert_eq!(&std::fs::read(path).unwrap(), bytes);
+                        }
+                    }
+                    self.authored = model
+                        .source_shards
+                        .iter()
+                        .filter(|s| {
+                            !matches!(
+                                s.kind,
+                                SourceShardKind::CheckRun | SourceShardKind::ZoneFill
+                            )
+                        })
+                        .map(|s| (s.path.clone(), std::fs::read(&s.path).unwrap()))
+                        .collect();
+                    self.journal_before = model.journal.len();
+                    self.expected_generated = 0;
+                    self.reopen(events);
+                }
+            }
+            13 => {
+                assert!(!r.workspace().checks.is_current(r.workspace()));
+                self.capture("physical-correction-stale");
+                self.menu("Checks", "Run DRC");
+            }
+            14 => {
+                let next = r.workspace().checks.check_run_id.clone().unwrap();
+                assert_ne!(next, self.run);
+                self.run = next;
+                self.expected_generated = 1;
+                self.current_report();
+                self.physical.assert_history(&self.model(), &self.run);
+                self.capture("physical-corrected");
+                self.menu("File", "Save");
+            }
+            15 => {
+                self.current_report();
+                self.saved = self.snapshot();
+                self.reopen(events);
+            }
+            16 => {
+                let report = serde_json::to_vec_pretty(&r.workspace().checks).unwrap();
+                self.current_report();
+                self.physical.assert_history(&self.model(), &self.run);
+                assert_eq!(self.snapshot(), self.saved);
+                self.capture("physical-corrected-cold");
+                std::fs::write(self.output.join("physical-cold-report.json"), report).unwrap();
                 events.exit();
             }
             _ => unreachable!(),
@@ -394,12 +626,18 @@ fn ordinary_app_native_pcb_drc_finding_rerun_save_cold() {
     let root = PathBuf::from(std::env::var_os("DATUM_PCB_DRC_PROJECT").unwrap());
     let output = PathBuf::from(std::env::var_os("DATUM_PCB_DRC_OUTPUT").unwrap());
     std::fs::create_dir_all(&output).unwrap();
-    prepare_connected_board(&root);
+    let zone = prepare_connected_board(&root);
+    let physical = physical::PhysicalCase::prepare(&root, zone);
     let model = ProjectResolver::new(&root).resolve().unwrap();
     let authored = model
         .source_shards
         .iter()
-        .filter(|s| s.kind != SourceShardKind::CheckRun)
+        .filter(|s| {
+            !matches!(
+                s.kind,
+                SourceShardKind::CheckRun | SourceShardKind::ZoneFill
+            )
+        })
         .map(|s| (s.path.clone(), std::fs::read(&s.path).unwrap()))
         .collect();
     let path = model
@@ -440,6 +678,10 @@ fn ordinary_app_native_pcb_drc_finding_rerun_save_cold() {
         journal_before: model.journal.len(),
         fingerprint: String::new(),
         run: String::new(),
+        zone,
+        filled: false,
+        expected_generated: 1,
+        physical,
     };
     events.run_app(&mut workflow).unwrap();
     assert!(
@@ -447,5 +689,5 @@ fn ordinary_app_native_pcb_drc_finding_rerun_save_cold() {
         "{:?}",
         workflow.host.failure
     );
-    assert_eq!(workflow.step, 8);
+    assert_eq!(workflow.step, 17);
 }

@@ -3,6 +3,9 @@ use super::main_tests_project_check::{
 };
 use super::*;
 
+#[path = "main_tests_project_check_run_history/copper_basis.rs"]
+mod copper_basis;
+
 fn check_source_bytes(root: &Path) -> std::collections::BTreeMap<PathBuf, Vec<u8>> {
     fn visit(root: &Path, dir: &Path, out: &mut std::collections::BTreeMap<PathBuf, Vec<u8>>) {
         for entry in std::fs::read_dir(dir).unwrap() {
@@ -36,6 +39,7 @@ fn guarded_drc_evaluates_board_findings_and_preserves_authored_sources_on_rerun(
         .iter()
         .map(|s| (s.path.clone(), std::fs::read(&s.path).unwrap()))
         .collect();
+    let zone_copper_fingerprint = model.native_drc_zone_copper_fingerprint().unwrap();
     let mut previous_id = None;
     for _ in 0..2 {
         let output = execute(
@@ -52,6 +56,8 @@ fn guarded_drc_evaluates_board_findings_and_preserves_authored_sources_on_rerun(
                 &model.project.project_id.to_string(),
                 "--expected-revision",
                 &model.model_revision.0,
+                "--expected-zone-copper-fingerprint",
+                &zone_copper_fingerprint,
                 "--progress-job",
                 &Uuid::new_v4().to_string(),
             ])
@@ -66,7 +72,7 @@ fn guarded_drc_evaluates_board_findings_and_preserves_authored_sources_on_rerun(
             !findings.is_empty(),
             "actual board fixture must produce a DRC finding"
         );
-        assert!(findings.iter().all(|f| f["domain"] == "drc"));
+        assert!(findings.iter().all(|f| f["source"] == "drc"));
         let id = Uuid::parse_str(report["check_run_id"].as_str().unwrap()).unwrap();
         if let Some(previous) = previous_id {
             assert_eq!(id, previous);

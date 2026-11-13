@@ -486,9 +486,7 @@ pub fn pane_header(
             }
         )
     } else if checks.check_run_id.is_some() {
-        if checks.project_id.as_deref() == Some(state.scene.project_uuid.as_str())
-            && checks.model_revision.as_deref() == Some(state.scene.source_revision.as_str())
-        {
+        if checks.is_current(state) {
             if checks.persisted {
                 format!("{check_label} {} Project findings", checks.finding_count)
             } else {
@@ -499,7 +497,12 @@ pub fn pane_header(
             }
         } else {
             format!(
-                "{check_label} stale · {} historical findings",
+                "{check_label} {} · {} historical findings",
+                if checks.profile_id.as_deref() == Some("drc") {
+                    "not current"
+                } else {
+                    "stale"
+                },
                 checks.finding_count
             )
         }

@@ -9,6 +9,7 @@ fn request() -> CheckProducerRequest {
         project_id: Uuid::from_u128(2),
         model_revision: "c".repeat(64),
         project_root: "/transport-control".into(),
+        zone_copper_fingerprint: None,
     }
 }
 fn wire(request: &CheckProducerRequest) -> Vec<u8> {
@@ -197,10 +198,16 @@ fn candidate_output_defers_readback_and_strict_api_still_requires_it() {
     ] {
         let mut request = request();
         request.profile = profile;
+        if profile == super::super::CheckProducerProfile::Drc {
+            request.zone_copper_fingerprint = Some(format!("sha256:{}", "a".repeat(64)));
+        }
         let event = wire(&request);
         let output = serde_json::to_vec(&serde_json::json!({
             "project_id":request.project_id, "model_revision":request.model_revision,
             "profile_id":profile.id(), "persisted":true, "check_run_id":Uuid::from_u128(3),
+            "raw_report": if profile == super::super::CheckProducerProfile::Drc {
+                serde_json::json!({"native_drc_zone_copper_basis":{"version":1,"scope":"resolved_zone_fills","fingerprint":request.zone_copper_fingerprint}})
+            } else { serde_json::json!({}) },
         }))
         .unwrap();
         // Only a transport control: there is no persisted Project at this root.

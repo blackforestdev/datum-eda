@@ -89,9 +89,11 @@ pub fn capture(
         if matches.next().is_some() {
             return Err("Finding identity is ambiguous in this report");
         }
-        let current = run.model_revision.as_deref() == Some(state.scene.source_revision.as_str())
+        let current = run.is_current(state)
             && view.is_none_or(|v| !v.stale && v.revision.0 == state.scene.source_revision);
-        let currentness = if !current {
+        let currentness = if !current && run.profile_id.as_deref() == Some("drc") {
+            "Not current — historical or unqualified DRC; rerun checks"
+        } else if !current {
             "Stale — historical report; rerun checks"
         } else if run.persisted {
             "Current persisted result"

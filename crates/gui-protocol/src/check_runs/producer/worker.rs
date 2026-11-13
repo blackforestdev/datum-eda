@@ -19,8 +19,10 @@ pub(super) fn produce_candidate_with_cli(
     request: &CheckProducerRequest,
     mut accepted: impl FnMut(CheckProducerAcceptance),
 ) -> Result<super::CheckProducerCandidate> {
+    request.validate_input_basis()?;
     let (program, prefix) = cli.split_first().context("Check producer is unavailable")?;
-    let mut child = Command::new(program)
+    let mut command = Command::new(program);
+    command
         // This request comes from the explicit manual GUI action and contains
         // no agent launch identity. Ambient parent metadata cannot name it.
         // Agent CLI/MCP provenance and commit-source policy remain unchanged.
@@ -33,7 +35,11 @@ pub(super) fn produce_candidate_with_cli(
         .arg("--expected-revision")
         .arg(&request.model_revision)
         .arg("--progress-job")
-        .arg(request.job_id.to_string())
+        .arg(request.job_id.to_string());
+    if let Some(fingerprint) = &request.zone_copper_fingerprint {
+        command.args(["--expected-zone-copper-fingerprint", fingerprint]);
+    }
+    let mut child = command
         .stdin(Stdio::null())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())

@@ -12,6 +12,10 @@ use super::{
 
 pub const CHECK_RUN_SCHEMA_VERSION: u64 = 1;
 
+#[path = "check_run_input_basis.rs"]
+mod input_basis;
+pub use input_basis::CheckRunProfileBasis;
+
 fn default_check_run_schema_version() -> u64 {
     CHECK_RUN_SCHEMA_VERSION
 }
@@ -81,20 +85,6 @@ pub struct CheckRun {
     #[serde(default)]
     pub coverage: Vec<CheckRunCoverageEntry>,
     pub raw_report: serde_json::Value,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
-pub struct CheckRunProfileBasis {
-    #[serde(default)]
-    pub profile_id: String,
-    #[serde(default)]
-    pub domains: Vec<String>,
-    #[serde(default)]
-    pub description: String,
-    #[serde(default)]
-    pub standards_basis: Option<String>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub standards_basis_detail: Option<StandardsBasis>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

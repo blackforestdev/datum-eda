@@ -47,6 +47,15 @@ fn drc_report_retains_profile_for_rerun_and_never_presents_scoped_erc() {
         model_revision: Some(state.scene.source_revision.clone()),
         check_run_id: Some(Uuid::new_v4().to_string()),
         profile_id: Some("drc".into()),
+        native_drc_zone_copper_basis: Some(
+            state
+                .library
+                .basis
+                .as_ref()
+                .unwrap()
+                .native_drc_zone_copper_basis()
+                .unwrap(),
+        ),
         persisted: true,
         coverage: vec![crate::CheckRunCoverageSummary {
             domain: "drc".into(),

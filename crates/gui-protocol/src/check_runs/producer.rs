@@ -74,37 +74,11 @@ pub struct CheckProducerRequest {
     pub project_id: Uuid,
     pub model_revision: String,
     pub project_root: PathBuf,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub zone_copper_fingerprint: Option<String>,
 }
 
 impl CheckProducerRequest {
-    fn source_basis(
-        state: &ReviewWorkspaceState,
-    ) -> anyhow::Result<(&std::path::Path, &eda_engine::substrate::DesignModel)> {
-        anyhow::ensure!(
-            !state.project_unopened,
-            "Open a native Project before running checks"
-        );
-        let backing = state
-            .backing
-            .as_ref()
-            .ok_or_else(|| anyhow::anyhow!("Native Project source unavailable"))?;
-        anyhow::ensure!(
-            backing.request.board_file.is_none(),
-            "Guarded checks require a native Project"
-        );
-        let model = state
-            .library
-            .basis
-            .as_ref()
-            .ok_or_else(|| anyhow::anyhow!("Current Project basis unavailable"))?;
-        anyhow::ensure!(
-            state.scene.project_uuid == model.project.project_id.to_string()
-                && state.scene.source_revision == model.model_revision.0,
-            "Project view basis is stale"
-        );
-        Ok((&backing.request.project_root, model))
-    }
-
     pub fn workspace_available(state: &ReviewWorkspaceState) -> bool {
         Self::source_basis(state).is_ok()
     }
@@ -124,54 +98,6 @@ impl CheckProducerRequest {
     pub fn from_workspace(state: &ReviewWorkspaceState) -> anyhow::Result<Self> {
         Self::for_profile(state, CheckProducerProfile::Erc)
     }
-
-    pub fn for_profile(
-        state: &ReviewWorkspaceState,
-        profile: CheckProducerProfile,
-    ) -> anyhow::Result<Self> {
-        let (root, model) = Self::source_basis(state)?;
-        Ok(Self {
-            profile,
-            job_id: Uuid::new_v4(),
-            project_id: model.project.project_id,
-            model_revision: model.model_revision.0.clone(),
-            project_root: root.to_owned(),
-        })
-    }
-
-    pub fn matches_workspace(&self, state: &ReviewWorkspaceState) -> bool {
-        state
-            .backing
-            .as_ref()
-            .is_some_and(|backing| backing.request.project_root == self.project_root)
-            && !state.project_unopened
-            && state.scene.project_uuid == self.project_id.to_string()
-            && state.scene.source_revision == self.model_revision
-            && state.library.basis.as_ref().is_some_and(|model| {
-                model.project.project_id == self.project_id
-                    && model.model_revision.0 == self.model_revision
-            })
-    }
-
-    pub fn acceptance(&self) -> CheckProducerAcceptance {
-        CheckProducerAcceptance {
-            job_id: self.job_id,
-            project_id: self.project_id,
-            model_revision: self.model_revision.clone(),
-            profile_id: self.profile.id().into(),
-        }
-    }
-
-    pub fn admits_run(&self, run: &CheckRunReviewState) -> bool {
-        run.persisted
-            && run.project_id.as_deref() == Some(self.project_id.to_string().as_str())
-            && run.model_revision.as_deref() == Some(self.model_revision.as_str())
-            && run.profile_id.as_deref() == Some(self.profile.id())
-            && run
-                .check_run_id
-                .as_deref()
-                .is_some_and(|id| Uuid::parse_str(id).is_ok())
-    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -181,16 +107,19 @@ pub struct CheckProducerAcceptance {
     pub project_id: Uuid,
     pub model_revision: String,
     pub profile_id: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub zone_copper_fingerprint: Option<String>,
 }
 
 impl CheckProducerAcceptance {
-    /// The producer emits one canonical JSON value with four fixed typed fields.
+    /// ERC retains its four fixed fields; native DRC also binds zone copper.
     /// Its maximum wire length is derived from this exact requested value, not
     /// an arbitrary output or performance limit. Other stderr is not authority.
     pub fn decode(line: &str, request: &CheckProducerRequest) -> anyhow::Result<Option<Self>> {
         let Some(value) = line.strip_prefix(ACCEPTED_PREFIX) else {
             return Ok(None);
         };
+        request.validate_input_basis()?;
         let expected = request.acceptance();
         anyhow::ensure!(
             value.len() <= serde_json::to_vec(&expected)?.len(),
@@ -279,6 +208,7 @@ mod tests {
             project_id: Uuid::new_v4(),
             model_revision: "current".into(),
             project_root: "/native".into(),
+            zone_copper_fingerprint: Some(format!("sha256:{}", "a".repeat(64))),
         };
         let mut state = CheckProducerState::default();
         state.begin(request.clone());
@@ -297,6 +227,17 @@ mod tests {
         };
         assert!(!state.complete(&request, &run));
         run.profile_id = Some("drc".into());
+        assert!(
+            !state.complete(&request, &run),
+            "Legacy DRC lacks the actual input receipt"
+        );
+        run.native_drc_zone_copper_basis = Some(
+            serde_json::json!({"version":2,"scope":"resolved_zone_fills","fingerprint":request.zone_copper_fingerprint}),
+        );
+        assert!(!state.complete(&request, &run));
+        run.native_drc_zone_copper_basis = Some(
+            serde_json::json!({"version":1,"scope":"resolved_zone_fills","fingerprint":request.zone_copper_fingerprint}),
+        );
         assert!(state.complete(&request, &run));
     }
 
@@ -308,6 +249,7 @@ mod tests {
             project_id: Uuid::new_v4(),
             model_revision: "c".repeat(64),
             project_root: PathBuf::from("/owned/native-project"),
+            zone_copper_fingerprint: None,
         };
         let mut state = CheckProducerState::default();
         state.begin(request.clone());
@@ -350,6 +292,7 @@ mod tests {
             project_id: Uuid::new_v4(),
             model_revision: "d".repeat(64),
             project_root: PathBuf::from("/owned/native-project"),
+            zone_copper_fingerprint: None,
         };
         assert!(
             CheckProducerAcceptance::decode("terminal session Running", &request)

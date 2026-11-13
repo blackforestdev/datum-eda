@@ -31,8 +31,46 @@ impl MarkerProjectionIndex {
         visible: impl Fn(&str) -> bool,
         documents: Option<&crate::schematic_documents::SchematicDocuments>,
     ) -> Self {
+        // A scene stamp cannot establish native DRC generated-copper inputs.
+        // Existing scene-only callers retain ERC/legacy projection behavior.
+        Self::capture_with_basis(
+            scene,
+            checks,
+            surface,
+            visible,
+            documents,
+            checks.profile_id.as_deref() != Some("drc"),
+        )
+    }
+
+    pub fn capture_native(
+        scene: &BoardReviewSceneV1,
+        state: &crate::ReviewWorkspaceState,
+        surface: crate::PaneContent,
+        visible: impl Fn(&str) -> bool,
+        documents: Option<&crate::schematic_documents::SchematicDocuments>,
+    ) -> Self {
+        Self::capture_with_basis(
+            scene,
+            &state.checks,
+            surface,
+            visible,
+            documents,
+            state.checks.is_current(state),
+        )
+    }
+
+    fn capture_with_basis(
+        scene: &BoardReviewSceneV1,
+        checks: &CheckRunReviewState,
+        surface: crate::PaneContent,
+        visible: impl Fn(&str) -> bool,
+        documents: Option<&crate::schematic_documents::SchematicDocuments>,
+        qualified_basis: bool,
+    ) -> Self {
         let documents = documents.filter(|documents| documents.project.is_some());
-        let current = checks.project_id.as_deref() == Some(scene.project_uuid.as_str())
+        let current = qualified_basis
+            && checks.project_id.as_deref() == Some(scene.project_uuid.as_str())
             && (documents.is_none() || checks.persisted)
             && checks.model_revision.as_deref() == Some(scene.source_revision.as_str())
             && matches!(
@@ -205,7 +243,7 @@ impl MarkerProjectionIndex {
             return Err("Finding fingerprint is unavailable or ambiguous");
         }
         if (self.schematic && finding.domain != "erc")
-            || (!self.schematic && finding.domain != "drc")
+            || (!self.schematic && finding.domain != "drc" && finding.source != "drc")
         {
             return Err("Finding domain has no marker on this surface");
         }

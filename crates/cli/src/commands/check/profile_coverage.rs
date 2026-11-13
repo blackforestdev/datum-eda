@@ -43,7 +43,9 @@ pub(crate) fn filter_check_run_findings_for_profile(
     findings.retain(|finding| match profile_id {
         NATIVE_COMBINED_CHECK_PROFILE | RELEASE_CHECK_PROFILE => true,
         ERC_CHECK_PROFILE => finding.domain == "erc",
-        DRC_CHECK_PROFILE => finding.domain == "drc",
+        // Physical checks can also carry a standards domain. Keep every result
+        // of the selected DRC rules without changing its identity or disposition.
+        DRC_CHECK_PROFILE => finding.source == "drc",
         MANUFACTURING_CHECK_PROFILE => finding.domain == "manufacturing",
         STANDARDS_CHECK_PROFILE => finding.domain == "standards",
         _ => true,
@@ -204,7 +206,7 @@ fn native_check_profile_descriptors() -> Vec<NativeProjectCheckProfileView> {
             profile_id: "drc",
             name: "DRC",
             status: "supported",
-            domains: vec!["drc"],
+            domains: vec!["drc", "standards"],
             description: "Physical-rule focused profile over board geometry findings.",
             selection_supported: true,
         },
@@ -283,7 +285,7 @@ fn coverage_status_for_profile(profile_id: &str, domain: &str, rule_id: &str) ->
             }
         }
         DRC_CHECK_PROFILE => {
-            if domain == "drc" {
+            if domain == "drc" || (domain == "standards" && rule_id == "process_aperture_policy") {
                 "evaluated"
             } else {
                 "filtered_by_profile"

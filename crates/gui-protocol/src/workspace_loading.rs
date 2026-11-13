@@ -290,7 +290,7 @@ pub(super) fn load_workspace(
     {
         CheckRunReviewState::default()
     } else {
-        check_runs::loading::load(&cli, request)?
+        check_runs::loading::load_with_model(&cli, request, model.as_deref())?
     };
     if let Some(model) = model.as_deref() {
         crate::inspector_context::finding::capture_dispositions(&mut state.checks, model)?;

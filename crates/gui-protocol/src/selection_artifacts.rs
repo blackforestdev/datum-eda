@@ -213,6 +213,14 @@ pub fn build_workspace_selection_view(
         V::Common(serde_json::json!(view.subject.kind())),
     );
     if let SelectionSubject::Diagnostic(id) = &view.subject {
+        view.stale = !state.checks.is_current(state);
+        fields.insert(
+            "native_input_qualification".into(),
+            match state.checks.qualification(state) {
+                Ok(()) => V::Common(serde_json::json!("current")),
+                Err(reason) => V::Unavailable(reason),
+            },
+        );
         let finding = state
             .checks
             .findings
@@ -237,9 +245,9 @@ pub fn build_workspace_selection_view(
             ),
         ] {
             let projection = scene.map(|scene| {
-                crate::check_runs::marker::MarkerProjectionIndex::capture_qualified(
+                crate::check_runs::marker::MarkerProjectionIndex::capture_native(
                     scene,
-                    &state.checks,
+                    state,
                     content,
                     visible,
                     Some(&state.schematic_documents),
@@ -292,7 +300,7 @@ pub fn build_workspace_selection_view(
         }));
     }
     fields.insert("artifact_basis".into(),V::Common(match &view.subject {
-        SelectionSubject::Diagnostic(_)=>serde_json::json!({"check_run_id":state.checks.check_run_id,"model_revision":state.checks.model_revision,"status":state.checks.status}),
+        SelectionSubject::Diagnostic(_)=>serde_json::json!({"check_run_id":state.checks.check_run_id,"model_revision":state.checks.model_revision,"status":state.checks.status,"native_drc_zone_copper_basis":state.checks.native_drc_zone_copper_basis}),
         _=>serde_json::json!({"review_source":state.review.review_source,"artifact_path":state.review.artifact_path,"producer_revision":state.review.producer_revision,"source_fingerprint":state.review.source_fingerprint,"producer_proposal_ref":state.review.producer_proposal.as_ref().map(|p| serde_json::json!({"proposal_id":p.proposal_id,"prepared_against":p.prepared_against})),"canonical_status":state.review.producer_proposal.as_ref().and_then(|p|model.proposals.get(&p.proposal_id)).map(|p|p.status),"status":state.review.status}),
     }));
     // Related target payloads remain producing evidence/navigation, never

@@ -22,9 +22,9 @@ pub(super) fn push(
     );
     let start = out.len();
     let hit_start = hits.len();
-    let anchors = marker::MarkerProjectionIndex::capture_qualified(
+    let anchors = marker::MarkerProjectionIndex::capture_native(
         scene,
-        &state.checks,
+        state,
         surface,
         |l| layer_visible(state, l),
         Some(&state.schematic_documents),

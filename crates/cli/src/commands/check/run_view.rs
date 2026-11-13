@@ -5,7 +5,7 @@ use super::command_project_check_finding_identity::{
 };
 use super::command_project_check_targets::{check_primary_target, check_related_targets};
 use anyhow::{Result, bail};
-use eda_engine::api::{CheckCodeCount, CheckReport, CheckStatus, CheckSummary};
+use eda_engine::api::{CheckCodeCount, CheckStatus, CheckSummary};
 use eda_engine::ir::serialization::to_json_deterministic;
 use eda_engine::rules::ast::RuleType;
 use eda_engine::schematic::{
@@ -36,7 +36,7 @@ pub(crate) struct NativeProjectCheckRunView {
     pub(crate) proposal_links: Vec<NativeProjectCheckProposalLinkView>,
     pub(crate) profile_basis: CheckRunProfileBasis,
     pub(crate) coverage: Vec<CheckRunCoverageEntry>,
-    pub(crate) raw_report: CheckReport,
+    pub(crate) raw_report: serde_json::Value,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -185,7 +185,7 @@ pub(crate) fn native_check_run_to_substrate(
             .collect(),
         profile_basis: view.profile_basis.clone(),
         coverage: view.coverage.clone(),
-        raw_report: serde_json::to_value(&view.raw_report)?,
+        raw_report: view.raw_report.clone(),
     })
 }
 
