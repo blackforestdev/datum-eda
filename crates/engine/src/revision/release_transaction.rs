@@ -170,6 +170,14 @@ pub fn prepare_release_configuration(
         "release_readiness_blocked: a typed readiness finding remains uncleared",
     )?;
     require_release_attestations(snapshot, request.candidate_id, &candidate)?;
+    super::approval::validate_selected_release_authority(
+        snapshot,
+        request.release_authority_attestation,
+        request.candidate_id,
+        &candidate,
+        request.released_at,
+    )
+    .map_err(|diagnostic| refusal(&diagnostic.code, &diagnostic.message))?;
     require_exact_candidate_inputs(&candidate)?;
     require_unique_revision_labels(snapshot, &candidate)?;
 

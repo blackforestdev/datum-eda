@@ -232,6 +232,91 @@ pub fn evaluate_approval_policy(
     }
 }
 
+/// Checks selected release authorization only; this does not verify signatures.
+pub(crate) fn validate_selected_release_authority(
+    snapshot: &AuthoritySnapshot,
+    selected: ApprovalAttestationId,
+    candidate_id: super::ReleaseCandidateId,
+    candidate: &super::ReleaseCandidateData,
+    instant: i64,
+) -> Result<(), AuthorityDiagnostic> {
+    let refuse = || {
+        diag(
+            "revision_selected_release_authority_invalid",
+            "selected attestation does not authorize this exact release candidate",
+        )
+    };
+    let attestation = snapshot
+        .records
+        .iter()
+        .find_map(|record| match record {
+            AuthorityRecord::ApprovalAttestation(body) if body.id == selected => {
+                Some(&body.semantics)
+            }
+            _ => None,
+        })
+        .ok_or_else(refuse)?;
+    let super::ProjectRevisionPolicyResolution::Managed { policy_ref, policy } =
+        super::resolve_project_revision_policy(Some(snapshot))
+    else {
+        return Err(refuse());
+    };
+    let target = AuthorityRef::ReleaseCandidate(candidate_id);
+    if attestation.target != target
+        || attestation.target_digest != candidate.evaluation_digest
+        || attestation.intent != ApprovalIntent::Release
+        || attestation.disposition != AttestationDisposition::Active
+        || !matches!(
+            query_attestation_standing(snapshot, selected),
+            AttestationStanding::Active
+        )
+        || policy_ref != AuthorityRef::ProjectRevisionPolicy(candidate.approval_policy)
+        || attestation.policy_id != candidate.approval_policy
+        || attestation.policy_version != policy.policy_version
+        || attestation.asserted_at > instant
+        || policy
+            .required_method_classes
+            .by_intent
+            .get(&ApprovalIntent::Release)
+            .is_some_and(|methods| !methods.contains(&attestation.method_class))
+    {
+        return Err(refuse());
+    }
+    // The actor and the exact named assignment must exist. Another effective
+    // assignment for this actor must never rescue the selected assignment.
+    let actor_exists = snapshot.records.iter().any(|record| {
+        matches!(record,
+        AuthorityRecord::ActorIdentity(body) if body.id == attestation.actor_id)
+    });
+    let assignment_in_project = snapshot.records.iter().any(|record| {
+        matches!(record,
+        AuthorityRecord::RoleAssignment(body) if body.id == attestation.role_assignment_id
+            && !matches!(body.semantics.scope, RoleScope::Project(id) if id != snapshot.project_id))
+    });
+    let scope = RoleScope::Authority(target);
+    let authorized = |capability| {
+        matching_assignment(
+            snapshot,
+            attestation.role_assignment_id,
+            attestation.actor_id,
+            capability,
+            scope,
+            instant,
+        ) && matching_assignment(
+            snapshot,
+            attestation.role_assignment_id,
+            attestation.actor_id,
+            capability,
+            scope,
+            attestation.asserted_at,
+        )
+    };
+    if !actor_exists || !assignment_in_project || !authorized(super::Capability::ReleaseAuthority) {
+        return Err(refuse());
+    }
+    Ok(())
+}
+
 fn matching_assignment(
     snapshot: &AuthoritySnapshot,
     role_assignment_id: RoleAssignmentId,

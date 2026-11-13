@@ -4,6 +4,8 @@ use uuid::Uuid;
 
 use super::*;
 
+mod selected_authority;
+
 fn id(value: u128) -> Uuid {
     Uuid::from_u128(value)
 }
@@ -219,6 +221,7 @@ fn candidate_fixture(
     mut snapshot: AuthoritySnapshot,
     allocations: Vec<ProposedRevisionAllocation>,
 ) -> (AuthoritySnapshot, ReleaseConfigurationRequest) {
+    selected_authority::append_release_actor(&mut snapshot);
     let project_id = snapshot.project_id;
     let candidate_id = ReleaseCandidateId(id(30));
     let attestation_id = ApprovalAttestationId(id(31));
