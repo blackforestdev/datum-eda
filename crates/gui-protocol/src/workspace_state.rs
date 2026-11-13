@@ -67,6 +67,7 @@ impl ReviewWorkspaceState {
             active_review_target_id,
             tool: WorkspaceTool::Select,
             authoring: AuthoringToolState {
+                board_controls: None,
                 board_route: None,
                 board_zone: None,
                 handle_feedback: None,

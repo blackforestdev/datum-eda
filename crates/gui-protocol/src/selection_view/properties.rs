@@ -57,6 +57,10 @@ pub(super) fn fields(class: Class) -> &'static [(&'static str, &'static str)] {
             ("board_layer", "layer"),
             ("board_net_id", "net"),
             ("priority", "priority"),
+            ("zone_boundary", "polygon"),
+            ("thermal_relief", "thermal_relief"),
+            ("thermal_gap_nm", "thermal_gap"),
+            ("thermal_spoke_width_nm", "thermal_spoke_width"),
         ],
         Class::BoardText => &[
             ("text", "text"),
@@ -124,6 +128,10 @@ pub(super) fn values(class: Class, value: &Value) -> BTreeMap<String, Value> {
         serde_json::from_value::<eda_engine::board::BoardText>(value.clone())
             .ok()
             .and_then(|text| serde_json::to_value(text).ok())
+    } else if class == Class::Zone {
+        serde_json::from_value::<eda_engine::board::Zone>(value.clone())
+            .ok()
+            .and_then(|zone| serde_json::to_value(zone).ok())
     } else {
         None
     };

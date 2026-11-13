@@ -23,6 +23,7 @@ fn library_body_and_controls_remain_outside_board_clip_after_selection_compositi
         source_digest: "display-fixture".into(),
         source_path: "display-fixture.kicad_sym".into(),
         notices: Vec::new(),
+        footprint: None,
         unit: r#"{"pins":{}}"#.parse().unwrap(),
         symbol: r#"{
             "uuid":"70000000-0000-4000-8000-000000000001", "name":"Body preview",

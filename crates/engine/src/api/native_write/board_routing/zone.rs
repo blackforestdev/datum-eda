@@ -107,6 +107,75 @@ pub fn capture_zone_basis(
     })
 }
 
+/// Transient readback of the existing bounded fill policy, never authored data.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ZoneClearanceReadback {
+    pub minimum_nm: i64,
+    pub sources: Vec<super::stop::ClearancePolicy>,
+}
+fn required_zone_clearance(basis: &ZoneBasis) -> Result<&super::stop::ClearancePolicy, String> {
+    basis
+        .clearance
+        .as_ref()
+        .filter(|p| p.minimum_nm > 0)
+        .ok_or_else(|| {
+            "Configure a positive persisted clearance Rule or NetClass before filling".into()
+        })
+}
+fn conservative_clearance<'a>(
+    model: &DesignModel,
+    own: &super::stop::ClearancePolicy,
+    layer: i32,
+    nets: impl Iterator<Item = &'a Net>,
+) -> Result<ZoneClearanceReadback, String> {
+    let mut result = ZoneClearanceReadback {
+        minimum_nm: own.minimum_nm,
+        sources: vec![own.clone()],
+    };
+    for net in nets {
+        if let Some(policy) = super::stop::clearance_policy(model, net, layer)
+            .map_err(|e| format!("Native Zone fill source unavailable: {e}"))?
+        {
+            if policy.minimum_nm <= 0 {
+                return Err(format!("Net {} has a nonpositive clearance rule", net.uuid));
+            }
+            if policy.minimum_nm > result.minimum_nm {
+                result.minimum_nm = policy.minimum_nm;
+                result.sources.clear();
+            }
+            if policy.minimum_nm == result.minimum_nm && !result.sources.contains(&policy) {
+                result.sources.push(policy);
+            }
+        }
+    }
+    Ok(result)
+}
+/// Read the same conservative policy as Fill, without a boundary, geometry
+/// calculation or write. Every source read is qualified by the captured model.
+pub fn capture_zone_clearance_readback(
+    model: &DesignModel,
+    net: Uuid,
+    layer: i32,
+) -> Result<ZoneClearanceReadback, EngineError> {
+    let shard = model
+        .source_shards
+        .iter()
+        .find(|s| s.kind == SourceShardKind::BoardRoot)
+        .ok_or_else(|| invalid("Captured Board source unavailable"))?;
+    model.capture_source_shard_value(shard.shard_id)?;
+    let basis = capture_zone_basis(model, net, layer)?;
+    let own = required_zone_clearance(&basis).map_err(invalid)?;
+    let snapshot = ElectricalSelectionSnapshot::capture(model)
+        .map_err(|e| invalid(format!("Electrical source unavailable: {e:?}")))?;
+    let board = snapshot
+        .board_source()
+        .map_err(|e| invalid(format!("Current copper source unavailable: {e:?}")))?;
+    if board.uuid != basis.source.board {
+        return Err(invalid("Board source identity changed"));
+    }
+    conservative_clearance(model, own, layer, board.nets.values()).map_err(invalid)
+}
+
 /// One authored boundary only. Unsupported fill geometry may still be authored;
 /// its subsequent explicit fill reports Unsupported rather than inventing copper.
 pub fn prepare_zone(
@@ -232,13 +301,7 @@ fn fill_context(
     zone: &Zone,
     basis: &ZoneBasis,
 ) -> Result<ZoneFillCopperContext, String> {
-    let fail = |e: EngineError| format!("Native Zone fill source unavailable: {e}");
-    let clearance = basis
-        .clearance
-        .as_ref()
-        .filter(|p| p.minimum_nm > 0)
-        .ok_or("Configure a positive persisted clearance Rule or NetClass before filling")?
-        .minimum_nm;
+    let own_clearance = required_zone_clearance(basis)?;
     let outline: Polygon =
         serde_json::from_value(value["outline"].clone()).map_err(|e| e.to_string())?;
     let bounds = rectangular_outline(&outline)?;
@@ -275,15 +338,8 @@ fn fill_context(
         }
     }
     context.keepouts.retain(|k| k.kind == "copper");
-    let mut maximum_clearance = clearance;
-    for net in board.nets.values() {
-        if let Some(policy) = super::stop::clearance_policy(model, net, zone.layer).map_err(fail)? {
-            if policy.minimum_nm <= 0 {
-                return Err(format!("Net {} has a nonpositive clearance rule", net.uuid));
-            }
-            maximum_clearance = maximum_clearance.max(policy.minimum_nm);
-        }
-    }
+    let maximum_clearance =
+        conservative_clearance(model, own_clearance, zone.layer, board.nets.values())?.minimum_nm;
     for other in zones
         .values()
         .filter(|other| other.uuid != zone.uuid && other.layer == zone.layer)

@@ -136,6 +136,8 @@ fn render_viewport_panes_logical(
                         leaf.rect.header,
                         focused,
                     )
+                } else if leaf.content == datum_gui_protocol::PaneContent::Board {
+                    crate::menu_chrome::pane_tools::reserve(leaf.rect.header)
                 } else {
                     0.0
                 },

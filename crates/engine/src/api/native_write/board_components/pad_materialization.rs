@@ -10,6 +10,7 @@ use crate::substrate::{
     },
 };
 use std::collections::{BTreeMap, BTreeSet};
+mod aperture;
 mod component_binding;
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum PadLandPatternSource {
@@ -374,39 +375,13 @@ fn materialize(
             layer: pad.layer,
             aperture: aperture.clone(),
             drill_nm: padstack.drill_nm,
-            layer_span: padstack.layer_span,
+            layer_span: padstack.layer_span.clone(),
             plated: padstack.plated,
         };
-        let (shape, diameter_nm, width_nm, height_nm) = match aperture {
-            crate::pool::PadstackAperture::Circle { diameter_nm } => {
-                (crate::board::PadShape::Circle, diameter_nm, 0, 0)
-            }
-            crate::pool::PadstackAperture::Rect {
-                width_nm,
-                height_nm,
-            } => (crate::board::PadShape::Rect, 0, width_nm, height_nm),
-        };
+        let (shape, diameter_nm, width_nm, height_nm, roundrect_rratio_ppm) =
+            aperture::dimensions(&aperture)?;
         if request.adopt_existing {
-            let matches: Vec<_> = previous
-                .iter()
-                .filter(|old| {
-                    old.uuid == pad.uuid
-                        && old.name == pad.name
-                        && old.position == pad.position
-                        && old.padstack == pad.padstack
-                        && old.layer == pad.layer
-                        && old.drill_nm == padstack.drill_nm
-                        && old.shape == Some(shape)
-                        && old.diameter_nm == diameter_nm
-                        && old.width_nm == width_nm
-                        && old.height_nm == height_nm
-                })
-                .collect();
-            if matches.len() != 1 {
-                return Err(invalid(
-                    "legacy frozen geometry has no exact pinned source correspondence",
-                ));
-            }
+            aperture::validate_legacy(&previous, &pad, &padstack, &aperture)?;
         }
         let uuid = if let Some(id) = supplied.get(&pad.uuid) {
             *id
@@ -436,6 +411,7 @@ fn materialize(
             diameter_nm,
             width_nm,
             height_nm,
+            roundrect_rratio_ppm,
             source_binding: Some(ComponentPadSourceBinding {
                 project_id: model.project.project_id,
                 board_id,

@@ -4,6 +4,18 @@ use datum_gui_protocol::WorkspaceTool;
 pub use datum_gui_viewport::CameraState;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum HitTarget {
+    BoardAuthoring(datum_gui_protocol::board_authoring_controls::BoardControl),
+    BoardAuthoringNavigation {
+        basis: datum_gui_protocol::AuthoringViewBasis,
+        kind: datum_gui_protocol::board_authoring_controls::BoardToolKind,
+        offsets: Vec<(
+            datum_gui_protocol::board_authoring_controls::BoardControl,
+            usize,
+            usize,
+        )>,
+        total: usize,
+        visible: usize,
+    },
     BoardTransfer(datum_gui_protocol::board_transfer::BoardTransferAction),
     InspectorSectionNavigation {
         basis: datum_gui_protocol::inspector_context::InspectorNavigationBasis,

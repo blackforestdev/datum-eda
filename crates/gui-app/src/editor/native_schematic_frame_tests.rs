@@ -18,6 +18,8 @@ mod block_clipboard;
 mod board_transfer;
 #[path = "native_schematic_frame_tests/context_menu.rs"]
 mod context_menu;
+#[path = "native_board_authoring_frame_tests.rs"]
+mod pcb_authoring;
 #[path = "native_schematic_frame_tests/pcb_drc.rs"]
 mod pcb_drc;
 #[path = "native_schematic_frame_tests/pcb_width_rules.rs"]

@@ -119,4 +119,6 @@ pub(crate) struct NativeComponentPad {
     pub(crate) width_nm: i64,
     #[serde(default)]
     pub(crate) height_nm: i64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) roundrect_rratio_ppm: Option<u32>,
 }

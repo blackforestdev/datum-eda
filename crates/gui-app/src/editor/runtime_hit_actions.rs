@@ -2,6 +2,9 @@
 use super::*;
 impl Runtime {
     pub(super) fn select_hit_target_inner(&mut self, target: &HitTarget) -> bool {
+        if let HitTarget::BoardAuthoring(control) = target {
+            return self.handle_board_control(*control);
+        }
         if let Some(handled) = self.activate_schematic_navigation_target(target) {
             return handled;
         }
@@ -38,6 +41,8 @@ impl Runtime {
             return handled;
         }
         match target {
+            HitTarget::BoardAuthoringNavigation { .. } => true,
+            HitTarget::BoardAuthoring(control) => self.handle_board_control(*control),
             HitTarget::BoardTransfer(action) => self.handle_board_transfer(*action),
             HitTarget::MoveCoordinates => self.open_move_coordinates(),
             HitTarget::CoordinateEntry(control) => self.coordinate_field_click(*control),

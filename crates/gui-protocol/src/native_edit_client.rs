@@ -12,6 +12,9 @@ use std::{
 };
 use uuid::Uuid;
 
+#[path = "native_board_rule.rs"]
+pub mod board_rule;
+
 #[path = "native_proposal_client.rs"]
 mod proposal;
 
@@ -73,6 +76,7 @@ pub enum NativeEditAction {
     LibraryAcquire,
     BoardTransfer,
     BoardRoute,
+    CreateBoardClearance,
     BoardZone,
     PrepareBoardSources {
         board: Uuid,
@@ -101,6 +105,7 @@ impl NativeEditAction {
             | Self::Library
             | Self::LibraryAcquire
             | Self::BoardTransfer
+            | Self::CreateBoardClearance
             | Self::BoardRoute
             | Self::BoardZone
             | Self::PrepareBoardSources { .. } => false,
@@ -109,6 +114,7 @@ impl NativeEditAction {
 }
 #[derive(Clone, Debug)]
 pub struct NativeEditIntent {
+    pub clearance_rule: Option<board_rule::BoardClearanceRule>,
     pub project_root: PathBuf,
     pub project_id: Uuid,
     pub expected_revision: String,
@@ -151,6 +157,7 @@ impl NativeEditIntent {
             request_id: Uuid::new_v4(),
             schematic: None,
             board_transfer: None,
+            clearance_rule: None,
             board_route: None,
             board_zone: None,
             symbol_group: None,
@@ -403,6 +410,7 @@ impl NativeProjectClient {
 
     pub fn execute(&self, intent: &NativeEditIntent) -> Result<NativeEditReceipt> {
         intent.validate_zone_payload()?;
+        intent.validate_board_rule_payload()?;
         intent.validate_route_payload()?;
         let initial = self.describe(&intent.project_root)?;
         if initial.get("transaction_tip") != Some(&json!(intent.expected_tip)) {
@@ -481,6 +489,10 @@ impl NativeProjectClient {
                         .as_ref()
                         .context("Transfer review missing")?,
                 )?,
+            ),
+            NativeEditAction::CreateBoardClearance => (
+                "datum.project.create_rule",
+                json!({"rule":intent.clearance_rule.as_ref().context("Clearance rule missing")?.value()?}),
             ),
             NativeEditAction::BoardRoute => (
                 "datum.pcb.draw_track",

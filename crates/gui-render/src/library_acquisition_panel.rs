@@ -1,6 +1,8 @@
 //! Local-source acquisition in the existing library pane and focus sequence.
 use super::*;
 use crate::global_preferences_primitives::{ControlMeshCache, ControlPainter};
+#[path = "library_footprint_preview.rs"]
+mod footprint;
 
 pub(super) fn render(p: &mut Painter<'_>) {
     let a = p.state.library.acquisition.as_ref().unwrap();
@@ -12,12 +14,20 @@ pub(super) fn render(p: &mut Painter<'_>) {
             "Choose a symbol to inspect"
         });
     } else {
-        p.line("Browse KiCad symbols");
-        p.line("Library folder or .kicad_sym file");
+        p.line(if a.footprints {
+            "Browse KiCad footprints"
+        } else {
+            "Browse KiCad symbols"
+        });
+        p.line(if a.footprints {
+            "Library folder, .pretty folder or .kicad_mod file"
+        } else {
+            "Library folder or .kicad_sym file"
+        });
         field(p, &a.path, a.path_editor, C::AcquirePath);
         p.button("Refresh source", C::AcquireLoad);
     }
-    p.line("Search symbols (Ctrl+F)");
+    p.line(&format!("Search {}s (Ctrl+F)", a.object_label()));
     field(p, &a.search, a.search_editor, C::AcquireSearch);
     if a.placement_pane.is_some() {
         p.button("Project symbols…", C::ProjectSymbols);
@@ -45,28 +55,39 @@ pub(super) fn render(p: &mut Painter<'_>) {
             x: p.rect.x + 8.,
             y: p.y,
             width: (p.rect.width - 16.).max(0.),
-            height: 120.,
+            height: if a.footprints { 210. } else { 120. },
         };
-        super::super::library_preview::electrical::symbol(
-            &preview.symbol,
-            Some(&preview.unit),
-            rect,
-            p.quads,
-            p.text,
-        );
+        if let Some(physical) = &preview.footprint {
+            footprint::render(physical, rect, p.quads, p.text);
+        } else {
+            super::super::library_preview::electrical::symbol(
+                &preview.symbol,
+                Some(&preview.unit),
+                rect,
+                p.quads,
+                p.text,
+            );
+        }
         p.y += rect.height;
     }
     if a.loading {
         p.line("Reading local source…");
     } else if !a.loaded {
-        p.line("Choose a library folder or .kicad_sym file, then refresh");
+        p.line("Choose a library source, then refresh");
     } else if a.names.is_empty() {
-        p.line("This source contains no named symbols");
+        p.line(&format!(
+            "This source contains no named {}s",
+            a.object_label()
+        ));
     } else {
         let results = a.results();
-        p.line(&format!("{} matching symbols", results.len()));
+        p.line(&format!("{} matching {}s", results.len(), a.object_label()));
         if results.is_empty() {
-            p.line("No matching symbols. Try a name such as resistor or capacitor.");
+            p.line(if a.footprints {
+                "No matching footprints. Try R_0603, SOT or connector."
+            } else {
+                "No matching symbols. Try a name such as resistor or capacitor."
+            });
         }
         for index in results.iter().skip(a.offset).take(4) {
             p.button(
@@ -163,6 +184,13 @@ pub(super) fn inspector(p: &mut Painter<'_>) {
             preview.source_path.display()
         ));
         p.line(&format!("Source hash: {}", preview.source_digest));
+        if let Some(physical) = &preview.footprint {
+            p.line(&format!(
+                "{} padstacks · manual Part binding after acquisition",
+                physical.padstacks.len()
+            ));
+            p.line("Source dimensions retained; manufacturer qualification unknown");
+        }
         for pin in preview
             .unit
             .get("pins")

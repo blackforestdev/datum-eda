@@ -386,9 +386,11 @@ pub fn build_selection_view_for_documents(
             if value.get("locked").and_then(Value::as_bool) == Some(true) {
                 result.locked.insert(id.clone());
             }
-            result
-                .values
-                .insert(id.clone(), properties::values(id.class, value));
+            let mut values = properties::values(id.class, value);
+            if id.class == Class::Zone {
+                crate::board_zones::append_zone_inspection(model, value, &mut values);
+            }
+            result.values.insert(id.clone(), values);
         }
     }
     let (represented, rendered) = presentation::compile(

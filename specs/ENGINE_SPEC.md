@@ -2495,6 +2495,30 @@ Project profile revision/hash evidence. Inspection does not mutate the model.
 These APIs do not establish ordinary GUI availability or qualification. The
 engine API inventory at that checkpoint was 261 unique public function names.
 
+The bounded local-footprint increment `dat-kicad-footprint-library-k0i9` adds
+`kicad_footprint_library` source discovery/conversion and the
+`kicad_footprint` format to the existing `datum.library.acquire` request. Preview
+is read-only; preparation rechecks the selected name and source hash before one
+Package/Footprint/Padstack closure and its provenance are committed through the
+same writer and journal. Repeated identities refuse rather than updating saved
+definitions. This source-library path leaves board/project compatibility import
+unchanged.
+
+Supported native copper includes the exact `round_rect` aperture and frozen
+corner ratio. Source conversion preserves supported cardinal geometry or
+refuses; it does not turn unsupported pads into rectangles. Explicit source
+process overrides are limited to version `20241229`; absent inputs remain
+inherited and explicit zero is retained. Required inputs for an enabled paste
+opening refuse if inheritance remains partial or the source ratio is nonzero;
+suppressed process membership stays suppressed. The footprint-level `solder_paste_margin_ratio` alias is currently unsupported
+and refuses explicitly; the supported root spelling is `solder_paste_ratio`. Native rounded process resolution
+retains exact radius only at zero offset/ratio; rounded offsets/scaling and
+rounded process CAM remain explicit refusals. Source text, 3D and rights limits
+remain disclosed rather than becoming qualification. Engine checks retain their
+recorded candidate scope. Separate independently accepted ordinary App proof
+(`run04`, frozen M candidate) covers installed R0603 acquisition, cancel, history
+and Save/cold reopen; full library qualification remains separate.
+
 
 ### Complete root-sheet annotation API
 

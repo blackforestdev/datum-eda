@@ -273,6 +273,30 @@ Rules:
 
 ### Library foundation target schema
 
+**Bounded local-footprint implementation (`dat-kicad-footprint-library-k0i9`).**
+The current typed Padstack aperture also accepts
+`round_rect { width_nm, height_nm, rratio_ppm }`: positive dimensions and a
+radius ratio from 0 through 500000 ppm. Radius is retained exactly as
+`min(width_nm, height_nm) * rratio_ppm / 1000000`. Existing Circle/Rect payloads retain their
+meaning. Bound rounded placed-Pad records retain an explicit optional
+`roundrect_rratio_ppm` and the matching frozen aperture; a missing or changed
+rounded ratio refuses rather than borrowing a default. Producers omit the field
+for newly materialized Circle/Rect records; existing absent values remain readable.
+This bounded addition retains the
+existing declared file/profile versions; it is not a migration or an assertion
+that older readers support the new aperture variant.
+
+Local KiCad footprint acquisition writes one Package, its Footprint and required
+Padstacks through the existing atomic pool writer, with source hash/provenance,
+original footprint text and Import Map identities retained in canonical history.
+Missing process inputs remain unresolved. Exact rounded effective geometry is
+currently limited to zero offset and zero paste ratio; unsupported rounded
+offsets/scaling and rounded process CAM output refuse. Engine proof applies at
+the task's recorded candidate only. Independently accepted bounded ordinary App
+proof (`run04`, frozen M candidate) covers installed R0603 search/preview/cancel,
+explicit acquisition, Undo/Redo, Save and cold reopen with exact canonical
+geometry/provenance retained; it does not establish full library qualification.
+
 The native library target is governed by
 `docs/decisions/PRODUCT_MECHANICS_008_LIBRARY_COMPONENT_SYSTEM.md` and
 `docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md`. Current package-compatible

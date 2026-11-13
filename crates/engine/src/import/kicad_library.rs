@@ -5,7 +5,7 @@ mod convert;
 mod geometry;
 mod pins;
 mod resolve;
-mod sexpr;
+pub(crate) mod sexpr;
 
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};

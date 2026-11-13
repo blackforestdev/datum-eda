@@ -86,6 +86,21 @@ impl Fixture {
                     width_nm.integer_nm().unwrap(),
                     height_nm.integer_nm().unwrap(),
                 ),
+                A::RoundRect {
+                    width_nm,
+                    height_nm,
+                    radius_nm,
+                } => {
+                    assert!(radius_nm.sign().unwrap() >= 0);
+                    let diameter = radius_nm.add(*radius_nm).unwrap();
+                    assert!(!diameter.compare(*width_nm).unwrap().is_gt());
+                    assert!(!diameter.compare(*height_nm).unwrap().is_gt());
+                    (
+                        "RoundRect",
+                        width_nm.integer_nm().unwrap(),
+                        height_nm.integer_nm().unwrap(),
+                    )
+                }
                 A::Suppressed => ("Suppressed", 0, 0),
             }
         }

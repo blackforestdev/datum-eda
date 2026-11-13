@@ -5,6 +5,8 @@ use datum_gui_protocol::{ReviewWorkspaceState, SceneBounds};
 
 #[path = "library_electrical_preview.rs"]
 pub(crate) mod electrical;
+#[path = "library_footprint_outlines.rs"]
+mod outlines;
 #[path = "library_package_preview.rs"]
 mod package;
 
@@ -40,6 +42,27 @@ pub(crate) fn render(
         );
         return;
     }
+    render_geometry(&state.library, kind, raw, rect, quads, text);
+}
+
+pub(crate) fn render_footprint(
+    library: &datum_gui_protocol::library_browser::LibraryBrowser,
+    raw: &Value,
+    rect: RectPx,
+    quads: &mut Vec<Quad>,
+    text: &mut Vec<TextRun>,
+) {
+    render_geometry(library, "footprints", raw, rect, quads, text);
+}
+
+fn render_geometry(
+    library: &datum_gui_protocol::library_browser::LibraryBrowser,
+    kind: &str,
+    raw: &Value,
+    rect: RectPx,
+    quads: &mut Vec<Quad>,
+    text: &mut Vec<TextRun>,
+) {
     let starts = (quads.len(), text.len());
     let mut pads = Vec::new();
     if kind == "padstacks" {
@@ -55,8 +78,7 @@ pub(crate) fn render(
                 .get("padstack")
                 .and_then(Value::as_str)
                 .and_then(|s| uuid::Uuid::parse_str(s).ok());
-            let choices = state
-                .library
+            let choices = library
                 .entries
                 .iter()
                 .filter(|e| Some(e.id) == id && e.kind == "padstacks")
@@ -96,15 +118,29 @@ pub(crate) fn render(
             .pointer("/circle/diameter_nm")
             .and_then(Value::as_i64)
         {
-            Some((d, d, true))
+            Some((d, d, true, 0))
+        } else if let (Some(w), Some(h), Some(ratio)) = (
+            aperture
+                .pointer("/round_rect/width_nm")
+                .and_then(Value::as_i64),
+            aperture
+                .pointer("/round_rect/height_nm")
+                .and_then(Value::as_i64),
+            aperture
+                .pointer("/round_rect/rratio_ppm")
+                .and_then(Value::as_i64),
+        ) {
+            (0..=500_000)
+                .contains(&ratio)
+                .then_some((w, h, false, ratio))
         } else {
             aperture
                 .pointer("/rect/width_nm")
                 .and_then(Value::as_i64)
                 .zip(aperture.pointer("/rect/height_nm").and_then(Value::as_i64))
-                .map(|(w, h)| (w, h, false))
+                .map(|(w, h)| (w, h, false, 0))
         };
-        if let Some((w, h, circle)) = shape.filter(|(w, h, _)| *w > 0 && *h > 0)
+        if let Some((w, h, circle, ratio)) = shape.filter(|(w, h, _, _)| *w > 0 && *h > 0)
             && let (Some(min_x), Some(min_y), Some(max_x), Some(max_y)) = (
                 x.checked_sub(w / 2),
                 y.checked_sub(h / 2),
@@ -121,13 +157,14 @@ pub(crate) fn render(
                 },
                 circle,
                 stack.get("drill_nm").and_then(Value::as_i64),
+                ratio,
             ));
         }
     }
     let pad = raw
         .get("pads")
         .and_then(Value::as_object)
-        .and_then(|p| p.values().nth(state.library.preview_pad));
+        .and_then(|p| p.values().nth(library.preview_pad));
     let name = pad
         .and_then(|p| p.get("name"))
         .or_else(|| raw.get("name"))
@@ -137,10 +174,7 @@ pub(crate) fn render(
         messages
             .push("Package geometry · process inspection belongs to Footprint / Padstack".into());
     } else {
-        match state
-            .library
-            .process_inspection(kind, raw, state.library.preview_pad)
-        {
+        match library.process_inspection(kind, raw, library.preview_pad) {
             Ok(e) => {
                 messages.push(format!("{name} · Mask {}", aperture_label(&e.mask)));
                 messages.push(format!("Paste {}", aperture_label(&e.paste)));
@@ -184,19 +218,44 @@ pub(crate) fn render(
         ..rect
     };
     if !shapes.is_empty() && geometry.height > 10. {
-        let bounds = SceneBounds {
+        let mut bounds = SceneBounds {
             min_x: shapes.iter().map(|s| s.0.min_x).min().unwrap(),
             min_y: shapes.iter().map(|s| s.0.min_y).min().unwrap(),
             max_x: shapes.iter().map(|s| s.0.max_x).max().unwrap(),
             max_y: shapes.iter().map(|s| s.0.max_y).max().unwrap(),
         };
+        for (path, width) in outlines::paths(raw) {
+            for p in path {
+                let width = width.max(0);
+                let margin = width / 2 + width % 2;
+                bounds.min_x = bounds.min_x.min(p.x.saturating_sub(margin));
+                bounds.min_y = bounds.min_y.min(p.y.saturating_sub(margin));
+                bounds.max_x = bounds.max_x.max(p.x.saturating_add(margin));
+                bounds.max_y = bounds.max_y.max(p.y.saturating_add(margin));
+            }
+        }
         let mut camera = CameraState::fit_to_bounds(&bounds);
         camera.zoom = 0.75;
         let projection = Projection::new(geometry, &bounds, camera);
-        for (bounds, circle, drill) in shapes {
+        outlines::render(raw, &projection, quads);
+        for (bounds, circle, drill, ratio) in shapes {
             let r = projection.project_rect(bounds);
             if circle {
                 push_projected_ellipse(quads, r, design_tokens::content::COPPER_FRONT, 48);
+            } else if ratio > 0 {
+                let radius = r.width.min(r.height) * ratio as f32 / 1_000_000.0;
+                let points = rounded_rect_points(
+                    (r.x + r.width / 2., r.y + r.height / 2.),
+                    r.width,
+                    r.height,
+                    0.,
+                    radius,
+                );
+                world_primitives::push_convex_polygon_fill(
+                    quads,
+                    &points,
+                    design_tokens::content::COPPER_FRONT,
+                );
             } else {
                 quads.push(Quad::from_rect(r, design_tokens::content::COPPER_FRONT));
             }
@@ -254,5 +313,15 @@ fn aperture_label(aperture: &eda_engine::pool::process::EffectiveProcessAperture
             width_nm,
             height_nm,
         } => format!("Rect {} × {}", exact(*width_nm), exact(*height_nm)),
+        A::RoundRect {
+            width_nm,
+            height_nm,
+            radius_nm,
+        } => format!(
+            "RoundRect {} × {} · radius {}",
+            exact(*width_nm),
+            exact(*height_nm),
+            exact(*radius_nm)
+        ),
     }
 }

@@ -199,6 +199,18 @@ pub(super) fn render(
     }
     let panes = layout.viewport_panes(&state.ui.layout);
     for pane in &panes.panes {
+        if pane.content == PaneContent::Board {
+            render_board_tools(
+                state,
+                pane.id,
+                pane.rect.header,
+                pane.id == panes.focused,
+                quads,
+                text,
+                hits,
+            );
+            continue;
+        }
         if pane.content != PaneContent::Schematic {
             continue;
         }
@@ -461,4 +473,59 @@ mod tests {
             TEXT_ACCENT
         );
     }
+}
+
+fn render_board_tools(
+    state: &ReviewWorkspaceState,
+    pane: datum_gui_protocol::PaneId,
+    header: RectPx,
+    focused: bool,
+    quads: &mut Vec<Quad>,
+    text: &mut Vec<TextRun>,
+    hits: &mut Vec<HitRegion>,
+) {
+    use datum_gui_protocol::board_authoring_controls::BoardControl;
+    let starts = (quads.len(), text.len(), hits.len());
+    let mut x = header.x + header.width - RIGHT_INSET_PX - reserve(header);
+    for (label, target) in [
+        ("Sel", HitTarget::SetWorkspaceTool(WorkspaceTool::Select)),
+        ("Route", HitTarget::BoardAuthoring(BoardControl::Route)),
+        ("Zone", HitTarget::BoardAuthoring(BoardControl::Zone)),
+        ("Fill", HitTarget::BoardAuthoring(BoardControl::Fill)),
+    ] {
+        let rect = RectPx {
+            x,
+            y: header.y + 3.,
+            width: 53.,
+            height: 25.,
+        };
+        quads.push(Quad::from_rect(rect, design_tokens::chrome::SURFACE_02));
+        draw_text(
+            label,
+            x + 6.,
+            rect.y + 7.,
+            11.,
+            if focused { TEXT_PRIMARY } else { TEXT_MUTED },
+            TextFace::Ui,
+            text,
+        );
+        let verb = match &target {
+            HitTarget::BoardAuthoring(BoardControl::Route) => Some("datum.pcb.draw_track"),
+            HitTarget::BoardAuthoring(BoardControl::Zone) => Some("datum.pcb.place_zone"),
+            HitTarget::BoardAuthoring(BoardControl::Fill) => Some("datum.check.fill_zones"),
+            _ => None,
+        };
+        let available = verb.is_none_or(|verb| {
+            datum_gui_protocol::gui_menu_model::native_project_edit_available(state)
+                && state
+                    .backing
+                    .as_ref()
+                    .is_some_and(|b| b.native_write_verbs.contains(verb))
+        });
+        if focused && state.ui.layout.focused == pane && available {
+            hits.push(HitRegion { rect, target });
+        }
+        x += 55.;
+    }
+    crate::hit_clipping::clip_content(quads, text, hits, starts.0, starts.1, starts.2, header);
 }

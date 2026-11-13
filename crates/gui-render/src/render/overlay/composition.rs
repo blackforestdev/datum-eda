@@ -1,5 +1,7 @@
 //! Shared proposal/review composition and hit channel owner.
 use super::*;
+#[path = "board_authoring.rs"]
+mod board_authoring;
 #[path = "native_group_reference.rs"]
 mod native_group_reference;
 #[path = "native_proposal_review.rs"]
@@ -19,6 +21,7 @@ pub(super) fn push_scene_overlay_and_hits(
 ) {
     let board_field = inset_rect(scene_viewport, 10.0, 10.0, 10.0, 10.0);
     let projection = Projection::new(board_field, &scene.bounds, camera);
+    board_authoring::render(out, state, scene, &projection);
     let active_move_component_uuid: Option<String> = None;
     let preview_affected_ids = proposal_preview_affected_ids(state);
     native_selection_overlay::push_lightweight_selection_overlay(out, scene, state, &projection);

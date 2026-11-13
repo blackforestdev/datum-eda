@@ -157,9 +157,12 @@ pub fn preserved_placed_process(raw: &Value) -> Result<PlacedProcessGeometry, En
         require("shape")?;
         match pad.shape {
             PadShape::Circle => require("diameter")?,
-            PadShape::Rect => {
+            PadShape::Rect | PadShape::RoundRect => {
                 require("width")?;
                 require("height")?;
+                if pad.shape == PadShape::RoundRect {
+                    require("roundrect_rratio_ppm")?;
+                }
             }
             _ => {
                 return Err(invalid(format!(
@@ -175,6 +178,10 @@ pub fn preserved_placed_process(raw: &Value) -> Result<PlacedProcessGeometry, En
         (true, PadShape::Rect) => {
             serde_json::json!({"rect": {"width_nm": pad.width, "height_nm": pad.height}})
         }
+        (true, PadShape::RoundRect) => serde_json::json!({"round_rect": {
+            "width_nm": pad.width, "height_nm": pad.height,
+            "rratio_ppm": pad.roundrect_rratio_ppm,
+        }}),
         _ => {
             return Err(invalid(format!(
                 "Pad {}: unsupported retained process shape",

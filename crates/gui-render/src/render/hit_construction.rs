@@ -10,6 +10,10 @@ pub(super) enum Shape<'a> {
         path: &'a [PointNm],
         half_width_nm: f32,
     },
+    ClosedPolyline {
+        path: &'a [PointNm],
+        half_width_nm: f32,
+    },
     Polygon(&'a [PointNm]),
     SymbolOutline(super::coordinate_hit::symbol_outlines::Outline<'a>),
     Contours {
@@ -32,10 +36,17 @@ fn bytes<T>(len: usize) -> anyhow::Result<usize> {
     Ok(allocation_bytes(Layout::array::<T>(len)?))
 }
 
+fn closed_len(path: &[PointNm]) -> anyhow::Result<usize> {
+    path.len()
+        .checked_add(usize::from(!path.is_empty() && path.first() != path.last()))
+        .ok_or_else(|| anyhow::anyhow!("closed hit path overflow"))
+}
+
 impl Region<'_> {
     fn payload_bytes(&self) -> anyhow::Result<usize> {
         let path = match self.shape {
             Shape::Polyline { path, .. } | Shape::Polygon(path) => bytes::<PointNm>(path.len())?,
+            Shape::ClosedPolyline { path, .. } => bytes::<PointNm>(closed_len(path)?)?,
             Shape::SymbolOutline(outline) => bytes::<PointNm>(outline.len())?,
             Shape::Contours { outer, holes } => {
                 let mut size = bytes::<PointNm>(outer.len())?
@@ -79,6 +90,22 @@ impl Region<'_> {
                     half_width_nm,
                 },
                 Shape::Polygon(path) => WorldHitShape::Polygon(copy_slice(path)?),
+                Shape::ClosedPolyline {
+                    path,
+                    half_width_nm,
+                } => {
+                    let mut owned = Vec::new();
+                    let len = closed_len(path)?;
+                    owned.try_reserve_exact(len)?;
+                    owned.extend_from_slice(path);
+                    if len > path.len() {
+                        owned.push(path[0]);
+                    }
+                    WorldHitShape::Polyline {
+                        path: owned,
+                        half_width_nm,
+                    }
+                }
                 Shape::SymbolOutline(outline) => WorldHitShape::Polygon(outline.into_points()?),
                 Shape::Contours { outer, holes } => {
                     let mut owned = Vec::new();

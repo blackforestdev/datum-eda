@@ -135,6 +135,8 @@ use runtime_capture::run_offscreen_visual_test;
 #[cfg(test)]
 #[path = "editor/marking_menu_native_proof_tests.rs"]
 mod marking_menu_native_proof_tests;
+#[path = "editor/runtime_board_authoring.rs"]
+mod runtime_board_authoring;
 #[path = "editor/runtime_board_text_edit.rs"]
 mod runtime_board_text_edit;
 #[path = "viewport/runtime_camera_fit_targets.rs"]

@@ -19,6 +19,7 @@ use uuid::Uuid;
 mod electrical;
 mod entity;
 mod package;
+mod padstack;
 mod part;
 mod pin_pad_map;
 pub use electrical::ElectricalDraft;
@@ -151,104 +152,7 @@ impl LibraryDraft {
         } else if kind == "packages" {
             draft.package_fields(raw);
         } else if kind == "padstacks" {
-            let aperture = raw.get("aperture").unwrap_or(&Value::Null);
-            let shape = if aperture.get("circle").is_some() {
-                "circle"
-            } else if aperture.get("rect").is_some() {
-                "rect"
-            } else {
-                ""
-            };
-            draft.field(
-                "shape",
-                "Copper shape",
-                Some(&json!(shape)),
-                choices(&[("circle", "Circle"), ("rect", "Rect")]),
-            );
-            draft.field(
-                "width",
-                "Diameter / width (nm)",
-                aperture
-                    .pointer("/circle/diameter_nm")
-                    .or_else(|| aperture.pointer("/rect/width_nm")),
-                vec![],
-            );
-            draft.field(
-                "height",
-                "Rect height (nm)",
-                aperture.pointer("/rect/height_nm"),
-                vec![],
-            );
-            draft.field(
-                "drill",
-                "Drill diameter (nm; blank = absent)",
-                raw.get("drill_nm"),
-                vec![],
-            );
-            draft.field(
-                "plated",
-                "Plating",
-                raw.get("plated"),
-                choices(&[("true", "Plated"), ("false", "Unplated")]),
-            );
-            draft.field(
-                "span",
-                "Layer span",
-                raw.get("layer_span"),
-                choices(&[("pad_layer", "Pad layer"), ("through", "Through")]),
-            );
-            for (key, label, options) in [
-                (
-                    "mask",
-                    "Mask policy",
-                    choices(&[
-                        ("inherit", "Inherit"),
-                        ("exposed", "Exposed"),
-                        ("tented", "Tented"),
-                        ("expansion_nm", "Expansion"),
-                    ]),
-                ),
-                (
-                    "paste",
-                    "Paste policy",
-                    choices(&[
-                        ("inherit", "Inherit"),
-                        ("none", "Suppressed"),
-                        ("aperture", "Copper aperture"),
-                        ("expansion_nm", "Expansion"),
-                    ]),
-                ),
-            ] {
-                let source = raw.get(if key == "mask" {
-                    "mask_policy"
-                } else {
-                    "paste_policy"
-                });
-                let policy = source
-                    .and_then(Value::as_str)
-                    .map(str::to_owned)
-                    .or_else(|| {
-                        source
-                            .filter(|v| v.get("expansion_nm").is_some())
-                            .map(|_| "expansion_nm".into())
-                    })
-                    .unwrap_or_default();
-                draft.field(key, label, Some(&json!(policy)), options);
-                draft.field(
-                    if key == "mask" {
-                        "mask_margin"
-                    } else {
-                        "paste_margin"
-                    },
-                    if key == "mask" {
-                        "Mask expansion (nm)"
-                    } else {
-                        "Paste expansion (nm)"
-                    },
-                    source.and_then(|v| v.get("expansion_nm")),
-                    vec![],
-                );
-            }
+            draft.padstack_fields(raw);
         } else {
             draft.pads = raw
                 .get("pads")
@@ -436,56 +340,7 @@ impl LibraryDraft {
         } else if self.kind == "packages" {
             self.package_request(&mut fields)?;
         } else if self.kind == "padstacks" {
-            if changed(&["shape", "width", "height"]) {
-                let aperture = match self.value("shape") {
-                    "circle" => json!({"circle":{"diameter_nm":self.length("width")?}}),
-                    "rect" => {
-                        json!({"rect":{"width_nm":self.length("width")?,"height_nm":self.length("height")?}})
-                    }
-                    _ => return Err("Choose Circle or Rect copper geometry".into()),
-                };
-                fields.insert("aperture".into(), aperture);
-            }
-            for (key, target) in [
-                ("drill", "drill_nm"),
-                ("plated", "plated"),
-                ("span", "layer_span"),
-            ] {
-                if self.dirty.contains(key) || self.create && !self.value(key).is_empty() {
-                    let v = match key {
-                        "drill" => {
-                            if self.value(key).is_empty() {
-                                Value::Null
-                            } else {
-                                json!(self.length(key)?)
-                            }
-                        }
-                        "plated" => match self.value(key) {
-                            "true" => json!(true),
-                            "false" => json!(false),
-                            _ => return Err("Choose a plating value".into()),
-                        },
-                        _ => json!(self.value(key)),
-                    };
-                    fields.insert(target.into(), v);
-                }
-            }
-            for (key, margin, target) in [
-                ("mask", "mask_margin", "mask_policy"),
-                ("paste", "paste_margin", "paste_policy"),
-            ] {
-                if self.dirty.contains(key)
-                    || self.dirty.contains(margin)
-                    || self.create && !self.value(key).is_empty()
-                {
-                    let v = if self.value(key) == "expansion_nm" {
-                        json!({"expansion_nm":self.length(margin)?})
-                    } else {
-                        json!(self.value(key))
-                    };
-                    fields.insert(target.into(), v);
-                }
-            }
+            self.padstack_request(&mut fields)?;
         } else {
             if changed(&["package"]) {
                 fields.insert("package".into(), json!(self.uuid("package")?));

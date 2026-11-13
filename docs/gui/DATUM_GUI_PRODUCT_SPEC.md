@@ -330,7 +330,7 @@ Unavailable fields are shown honestly; absent metadata is never fabricated.
 | Part | Manufacturer/orderable identity, lifecycle, parametrics, datasheet/qualification metadata, Entity and physical/map/model options | Native metadata/binding builders exist; complete orderable-part browser/editor pending |
 | Package | Physical body and terminals, family/code, dimensions/tolerances, height, mounting and model references | Creation GUI supports existing metadata, optional nominal dimensions/heights and terminal identity/name/role with envelope preview; saved-Package editing, tolerances, terminal positions and models remain pending |
 | Footprint | Package link, positioned pads and Padstack links, origin, courtyard, silk/fab/assembly/mechanical and process geometry | Typed pad/courtyard/basic silk authoring and bounded chip/SOIC slices exist; complete editor and process consumption pending |
-| Padstack | Copper by layer, drill/plating/span, annular/thermal/anti-pad and separate mask/paste policy | Current library apertures are Circle/Rect with bounded process fields; broader geometry and systematic consumption pending |
+| Padstack | Copper by layer, drill/plating/span, annular/thermal/anti-pad and separate mask/paste policy | Native apertures include Circle/Rect and bounded RoundRect data with explicit corner ratio; the local acquisition workflow below has bounded ordinary App proof, while broader geometry and systematic consumption remain targets |
 | PinPadMap | Physical pad to gate-qualified logical pin, referenced Part/Footprint and relevant Unit/Entity/Symbol/Package context | Typed gate-aware map authoring/diagnostics exist; complete map-table GUI and placed-update flow pending |
 
 Package body/terminals and Footprint lands remain separate objects. Logical Unit
@@ -451,6 +451,22 @@ full eight-kind authoring and the broader workflows below remain
 targets. Reuse existing native/CLI and narrow-picker evidence only at its exact
 scope. Each delivery must identify its actual machine check,
 integration workflow and visual/accessibility receipt; no prose row is a PASS.
+
+The local footprint increment `dat-kicad-footprint-library-k0i9` configures the
+existing Library acquisition and per-kind forms for installed KiCad footprint
+sources and bounded rounded-pad data. The implementation keeps source preview
+separate from Project definitions; only an explicit successful acquisition of a
+unique refreshed target selects its Footprint (or Symbol for symbol acquisition)
+and clears stale filtering. Unrelated/refused refreshes preserve prior context.
+Copper and supported outlines are previewed with text/3D/process limitations
+disclosed, not replaced by approval or manufacturing claims. This is bounded
+development availability: independently accepted ordinary App proof (`run04`,
+frozen M candidate) covers installed R0603 search/rounded preview/cancel, explicit
+acquisition and typed target selection, Undo/Redo, Save and cold reopen with
+unchanged canonical geometry/provenance. It is not HUMAN or full visual/assistive
+qualification.
+It supplies no bundled library, complete Part/PCB-transfer qualification or
+positive rounded CAM claim, and changes no existing control/visual mechanism.
 
 The creation-only Package increment also has ordinary App proof for an initially
 empty native Project, canonical create/Undo/Redo/Save/reopen, named selection by

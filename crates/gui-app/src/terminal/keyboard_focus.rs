@@ -323,11 +323,9 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
         app.request_workspace_redraw();
         return true;
     }
-    if app
-        .runtime
-        .as_mut()
-        .is_some_and(|runtime| runtime.handle_schematic_key(event))
-    {
+    if app.runtime.as_mut().is_some_and(|runtime| {
+        runtime.handle_board_authoring_key(event) || runtime.handle_schematic_key(event)
+    }) {
         app.request_workspace_redraw();
         return true;
     }

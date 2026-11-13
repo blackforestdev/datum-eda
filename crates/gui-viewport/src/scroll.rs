@@ -35,6 +35,30 @@ pub fn revealed_row_offset(offset: usize, total: usize, visible: usize, row: usi
     }
 }
 
+/// Reveal a whole control with minimal movement in either direction. A span
+/// larger than the viewport is anchored at its first row and remains stable.
+pub fn revealed_row_span_offset(
+    offset: usize,
+    total: usize,
+    visible: usize,
+    first: usize,
+    span: usize,
+) -> usize {
+    if span == 0 {
+        return offset.min(maximum_row_offset(total, visible));
+    }
+    if total == 0 || visible == 0 {
+        return 0;
+    }
+    let first = first.min(total - 1);
+    let last = first.saturating_add(span - 1).min(total - 1);
+    if last - first + 1 > visible {
+        return first.min(maximum_row_offset(total, visible));
+    }
+    let start = revealed_row_offset(offset, total, visible, first);
+    revealed_row_offset(start, total, visible, last)
+}
+
 fn maximum_row_offset(total: usize, visible: usize) -> usize {
     if visible == 0 {
         0
@@ -361,5 +385,31 @@ mod tests {
         assert_eq!(s.offset(), 200.0);
         assert!(!s.wheel(f32::NAN));
         assert_eq!(s.offset(), 200.0);
+    }
+}
+
+#[cfg(test)]
+mod control_span_tests {
+    use super::revealed_row_span_offset;
+    #[test]
+    fn control_reveal_preserves_full_span_forward_reverse_and_wrap() {
+        assert_eq!(revealed_row_span_offset(0, 100, 4, 10, 3), 9);
+        assert_eq!(revealed_row_span_offset(50, 100, 4, 10, 3), 10);
+        assert_eq!(revealed_row_span_offset(96, 100, 4, 0, 2), 0);
+        assert_eq!(revealed_row_span_offset(0, 100, 4, 98, 2), 96);
+        assert_eq!(revealed_row_span_offset(10, 100, 4, 11, 2), 10);
+    }
+    #[test]
+    fn short_empty_and_oversized_control_spans_are_bounded_and_stable() {
+        assert_eq!(revealed_row_span_offset(8, 10, 0, 4, 2), 0);
+        assert_eq!(revealed_row_span_offset(8, 0, 4, 0, 1), 0);
+        assert_eq!(revealed_row_span_offset(8, 10, 4, 0, 0), 6);
+        let first = revealed_row_span_offset(0, 10, 2, 4, 3);
+        assert_eq!(first, 4);
+        assert_eq!(revealed_row_span_offset(first, 10, 2, 4, 3), first);
+        assert_eq!(
+            revealed_row_span_offset(0, 10, 4, usize::MAX, usize::MAX),
+            6
+        );
     }
 }

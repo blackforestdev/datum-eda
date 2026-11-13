@@ -5,6 +5,7 @@ use datum_gui_protocol::{
 };
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(super) enum Target {
+    BoardField(datum_gui_protocol::board_authoring_controls::BoardField),
     CoordinateX,
     CoordinateY,
     LibraryPath,
@@ -32,6 +33,26 @@ pub(super) struct Snapshot {
 impl Runtime {
     fn active_editor(&self) -> Option<Target> {
         let ui = &self.workspace().ui;
+        if ui.active_menu.is_none()
+            && !ui.new_project.open
+            && !ui.project_open.open
+            && self.application_focus()
+                == datum_gui_protocol::ApplicationFocus::Editor(ui.layout.focused)
+            && self.board_authoring_current()
+            && let Some(field) = self
+                .workspace()
+                .authoring
+                .board_controls
+                .as_ref()
+                .and_then(|c| c.focus)
+        {
+            return match field {
+                datum_gui_protocol::board_authoring_controls::BoardControl::Field(field) => {
+                    Some(Target::BoardField(field))
+                }
+                _ => None,
+            };
+        }
         if self.coordinate_input_owner_available()
             && self.application_focus()
                 == datum_gui_protocol::ApplicationFocus::Editor(ui.layout.focused)
@@ -105,6 +126,15 @@ impl Runtime {
     fn editor_snapshot(&self, target: Target) -> Option<Snapshot> {
         let ui = &self.workspace().ui;
         match target {
+            Target::BoardField(field) => {
+                let setup = self.workspace().authoring.board_controls.as_ref()?;
+                let value = setup.field(field);
+                Some(Snapshot {
+                    text: value.text.clone(),
+                    editor: value.editor,
+                    editable: !self.native_edit.pending() && setup.current(self.workspace()),
+                })
+            }
             Target::CoordinateX | Target::CoordinateY => {
                 let form = self.workspace().authoring.coordinates.as_ref()?;
                 let (text, editor) = if target == Target::CoordinateX {
@@ -206,6 +236,20 @@ impl Runtime {
     }
     fn store_editor(&mut self, target: Target, snapshot: Snapshot, changed: bool) {
         match target {
+            Target::BoardField(field) => {
+                if let Some(setup) = &mut self.session.workspace_mut().authoring.board_controls {
+                    let value = setup.field_mut(field);
+                    value.text = snapshot.text;
+                    value.editor = snapshot.editor;
+                }
+                if changed {
+                    if field == datum_gui_protocol::board_authoring_controls::BoardField::Net {
+                        self.refresh_board_zone_readback();
+                    }
+                    self.refresh_board_route_stop();
+                }
+                self.invalidate_frame();
+            }
             Target::CoordinateX | Target::CoordinateY => {
                 if let Some(form) = &mut self.session.workspace_mut().authoring.coordinates {
                     if target == Target::CoordinateX {
@@ -443,7 +487,9 @@ impl Runtime {
             }
             Err(reason) if reason.is_empty() => return false,
             Err(reason) => {
-                if matches!(target, Target::CoordinateX | Target::CoordinateY) {
+                if matches!(target, Target::BoardField(_)) {
+                    self.board_authoring_error(reason);
+                } else if matches!(target, Target::CoordinateX | Target::CoordinateY) {
                     self.coordinate_refusal(reason, false);
                 } else if matches!(target, Target::LibraryPath | Target::LibrarySearch) {
                     if let Some(a) = &mut self.session.workspace_mut().library.acquisition {
@@ -493,6 +539,9 @@ impl Runtime {
         scale: f32,
     ) -> bool {
         let target = match region.target {
+            HitTarget::BoardAuthoring(
+                datum_gui_protocol::board_authoring_controls::BoardControl::Field(field),
+            ) => Target::BoardField(field),
             HitTarget::CoordinateEntry(datum_gui_protocol::CoordinateEntryControl::X) => {
                 Target::CoordinateX
             }
@@ -545,6 +594,13 @@ impl Runtime {
             .position(&snapshot.text, byte, self.modifiers.shift_key());
         self.store_editor(target, snapshot, false);
         match target {
+            Target::BoardField(field) => {
+                if let Some(setup) = &mut self.session.workspace_mut().authoring.board_controls {
+                    setup.focus = Some(
+                        datum_gui_protocol::board_authoring_controls::BoardControl::Field(field),
+                    );
+                }
+            }
             Target::CoordinateX | Target::CoordinateY => {
                 if let Some(form) = &mut self.session.workspace_mut().authoring.coordinates {
                     form.focus = if target == Target::CoordinateX {

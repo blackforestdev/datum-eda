@@ -173,6 +173,9 @@ impl Runtime {
         datum_gui_protocol::gui_menu_model::native_project_edit_available(self.workspace())
     }
     pub(super) fn queue_native_edit(&mut self, action: NativeEditAction) -> bool {
+        if !self.board_authoring_admits(action) {
+            return true;
+        }
         if self.workspace().ui.board_transfer.is_some()
             && !matches!(
                 action,
@@ -369,6 +372,11 @@ impl Runtime {
                 .pending_request
                 .take();
         }
+        match self.prepare_board_authoring_intent(action) {
+            Ok(Some(board)) => intent = board,
+            Ok(None) => {}
+            Err(error) => return self.board_authoring_error(error),
+        }
         // Build the final click-derived preview before dispatching the writer.
         // Ending a gesture is not cancellation: keep this complete pending pose
         // visible until the qualified canonical response replaces it.
@@ -401,6 +409,7 @@ impl Runtime {
             .start(intent, backing.request, inputs, previous)
         {
             Ok(()) => {
+                self.mark_board_authoring_pending(action);
                 self.restore_context_move_tool();
                 if let Some((schematic, base, scene)) = pending_move {
                     self.native_edit.pending_move_base = Some((schematic, base));
@@ -424,6 +433,7 @@ impl Runtime {
                 self.log_console_echo(ConsoleFeedbackSource::Tool, "Applying Project action");
             }
             Err(error) => {
+                self.release_board_authoring_pending();
                 if let Some(review) = &mut self
                     .session
                     .workspace_mut()
@@ -495,6 +505,7 @@ impl Runtime {
             .schematic_authoring
             .delete_review
             .take();
+        let board_authoring = self.workspace().authoring.clone();
         let transfer_review = self.session.workspace_mut().ui.board_transfer.take();
         let draft = self.workspace().schematic_authoring.creation.clone();
         let editing = self.selected_schematic_edit_snapshot();
@@ -510,7 +521,10 @@ impl Runtime {
             .and_then(|p| p.symbol.get("uuid"))
             .and_then(serde_json::Value::as_str)
             .and_then(|s| s.parse().ok());
-        let acquired = answer.result.is_ok() && answer.next.is_some() && answer.selection.is_some();
+        let acquired = matches!(answer.intent.action, NativeEditAction::LibraryAcquire)
+            && answer.result.is_ok()
+            && answer.next.is_some()
+            && answer.selection.is_some();
         // A qualified refresh can follow a refused write. It must not consume
         // the acquisition or select its preview as if Import had succeeded.
         let refused_acquisition = if answer.result.is_err()
@@ -530,11 +544,12 @@ impl Runtime {
             });
         if let (Some(next), Some(prepared)) = (answer.next, answer.selection) {
             self.native_edit.pending_move_base = None;
-            self.publish_prepared_workspace(next, prepared);
+            self.publish_edit_refresh(next, prepared, acquired);
         } else {
             self.native_edit.blocked = true;
             self.restore_pending_move_base();
         }
+        self.restore_board_authoring(board_authoring, &answer.intent, &answer.result);
         self.restore_board_transfer(transfer_review, &answer.result);
         self.restore_delete_review(review, answer.proposal, &answer.result);
         if let (Err(reason), Some(mut acquisition)) = (&answer.result, refused_acquisition) {

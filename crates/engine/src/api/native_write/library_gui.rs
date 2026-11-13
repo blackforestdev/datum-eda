@@ -221,6 +221,8 @@ pub fn build_definition(
         {
             let shape = if next.contains_key("circle") {
                 "circle"
+            } else if next.contains_key("round_rect") {
+                "round_rect"
             } else {
                 "rect"
             };
@@ -235,6 +237,7 @@ pub fn build_definition(
                 for (old_shape, dimensions) in [
                     ("circle", &["diameter_nm"][..]),
                     ("rect", &["width_nm", "height_nm"][..]),
+                    ("round_rect", &["width_nm", "height_nm", "rratio_ppm"][..]),
                 ] {
                     if previous
                         .get(old_shape)
@@ -250,6 +253,7 @@ pub fn build_definition(
                 }
                 previous.remove("circle");
                 previous.remove("rect");
+                previous.remove("round_rect");
                 previous.extend(next.clone());
             }
         } else {
@@ -341,6 +345,16 @@ fn validate_padstack(raw: &Value) -> Result<(), EngineError> {
             width_nm,
             height_nm,
         }) => vec![width_nm, height_nm],
+        Some(PadstackAperture::RoundRect {
+            width_nm,
+            height_nm,
+            rratio_ppm,
+        }) => {
+            if rratio_ppm > 500_000 {
+                return Err(refusal("RoundRect radius ratio exceeds 0.5"));
+            }
+            vec![width_nm, height_nm]
+        }
         None => return Err(refusal("Choose supported Circle or Rect copper geometry")),
     };
     if dimensions.iter().any(|d| *d <= 0) || stack.drill_nm.is_some_and(|d| d <= 0) {

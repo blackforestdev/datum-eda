@@ -393,3 +393,119 @@ fn via_span_uses_physical_stack_order_and_unknown_endpoints_are_not_invisible() 
     );
     unsupported(&f, id, "Via copper layers unavailable");
 }
+
+#[test]
+fn zone_clearance_readback_is_shared_with_fill_and_preserves_equal_largest_sources() {
+    let (mut f, mut request) = setup();
+    let own = request.basis.net;
+    let initial = capture_zone_clearance_readback(&f.model, own, 1).unwrap();
+    let a = Net::new(Uuid::new_v4(), "Larger A", Uuid::nil());
+    commit(
+        &mut f,
+        vec![Operation::CreateBoardNet {
+            net_id: a.uuid,
+            net: serde_json::to_value(&a).unwrap(),
+        }],
+    );
+    assert!(
+        capture_zone_basis(&f.model, a.uuid, 1)
+            .unwrap()
+            .clearance
+            .is_none()
+    );
+    assert_eq!(
+        capture_zone_clearance_readback(&f.model, own, 1).unwrap(),
+        initial,
+        "a foreign Net without policy remains ignored, never a new blanket refusal"
+    );
+    let rule_a = Uuid::new_v4();
+    f.write("datum.project.create_rule",json!({"rule":{"uuid":rule_a,"name":"Larger A minimum",
+        "scope":{"Net":a.uuid},"priority":0,"enabled":true,"rule_type":"clearance_copper","params":{"min_nm":500000}}}));
+    f.model = ProjectResolver::new(&f.root).resolve().unwrap();
+    let readback = capture_zone_clearance_readback(&f.model, own, 1).unwrap();
+    assert_eq!(readback.minimum_nm, 500000);
+    assert_eq!(readback.sources.len(), 1);
+    assert_eq!(readback.sources[0].source, rule_a);
+    assert_eq!(readback.sources[0].name, "Larger A minimum");
+    assert_eq!(
+        readback.sources[0].kind,
+        super::super::stop::ClearanceSource::Rule
+    );
+    request.basis = capture_zone_basis(&f.model, own, 1).unwrap();
+    let id = add(&mut f, &request);
+    let fills = preview_fills(&f.model, &fill_request(&f, id)).unwrap();
+    assert!(
+        fills[0]
+            .provenance
+            .as_ref()
+            .unwrap()
+            .contains("conservative cutout clearance 500000 nm")
+    );
+    let b = Net::new(Uuid::new_v4(), "Larger B", Uuid::nil());
+    commit(
+        &mut f,
+        vec![Operation::CreateBoardNet {
+            net_id: b.uuid,
+            net: serde_json::to_value(&b).unwrap(),
+        }],
+    );
+    let rule_b = Uuid::new_v4();
+    f.write("datum.project.create_rule",json!({"rule":{"uuid":rule_b,"name":"Larger B minimum",
+        "scope":{"Net":b.uuid},"priority":0,"enabled":true,"rule_type":"clearance_copper","params":{"min_nm":500000}}}));
+    f.model = ProjectResolver::new(&f.root).resolve().unwrap();
+    let before = f.bytes();
+    let readback = capture_zone_clearance_readback(&f.model, own, 1).unwrap();
+    assert_eq!(readback.minimum_nm, 500000);
+    assert_eq!(readback.sources.len(), 2);
+    assert!(readback.sources.iter().any(|p| p.source == rule_a));
+    assert!(readback.sources.iter().any(|p| p.source == rule_b));
+    assert_eq!(f.bytes(), before, "readback never writes or fills");
+}
+#[test]
+fn zone_clearance_readback_refuses_missing_own_nonpositive_and_ambiguous_policy() {
+    let (mut f, request) = setup();
+    let mut invalid = request.basis.clone();
+    invalid.clearance.as_mut().unwrap().minimum_nm = 0;
+    assert!(required_zone_clearance(&invalid).is_err());
+    f.model = ProjectResolver::new(&f.root).resolve().unwrap();
+    f.write(
+        "datum.project.delete_rule",
+        json!({"rule_id":request.basis.clearance.as_ref().unwrap().source}),
+    );
+    f.model = ProjectResolver::new(&f.root).resolve().unwrap();
+    let before = f.bytes();
+    assert!(
+        capture_zone_clearance_readback(&f.model, request.basis.net, 1)
+            .unwrap_err()
+            .to_string()
+            .contains("positive persisted")
+    );
+    assert_eq!(f.bytes(), before);
+    let (mut f, request) = setup();
+    f.model = ProjectResolver::new(&f.root).resolve().unwrap();
+    f.write("datum.project.create_rule",json!({"rule":{"uuid":Uuid::new_v4(),"name":"Ambiguous equal priority",
+        "scope":{"Net":request.basis.net},"priority":0,"enabled":true,"rule_type":"clearance_copper","params":{"min_nm":200000}}}));
+    f.model = ProjectResolver::new(&f.root).resolve().unwrap();
+    let before = f.bytes();
+    assert!(capture_zone_clearance_readback(&f.model, request.basis.net, 1).is_err());
+    assert_eq!(f.bytes(), before);
+}
+#[test]
+fn zone_clearance_readback_refuses_changed_captured_board_or_rules_sources() {
+    let (f, request) = setup();
+    for kind in [SourceShardKind::BoardRoot, SourceShardKind::RulesRoot] {
+        let shard = f
+            .model
+            .source_shards
+            .iter()
+            .find(|s| s.kind == kind)
+            .unwrap();
+        let bytes = std::fs::read(&shard.path).unwrap();
+        let mut changed: serde_json::Value = serde_json::from_slice(&bytes).unwrap();
+        changed["readback_tamper"] = json!("outside accepted journal");
+        std::fs::write(&shard.path, serde_json::to_vec(&changed).unwrap()).unwrap();
+        assert!(capture_zone_clearance_readback(&f.model, request.basis.net, 1).is_err());
+        std::fs::write(&shard.path, &bytes).unwrap();
+        assert!(capture_zone_clearance_readback(&f.model, request.basis.net, 1).is_ok());
+    }
+}

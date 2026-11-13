@@ -100,6 +100,10 @@ impl BoardZoneDraft {
                     .is_ok_and(|b| b == self.basis)
             })
     }
+    pub fn release_pending(&mut self) {
+        self.pending = false;
+    }
+
     fn editable(&self) -> Result<(), String> {
         if self.pending {
             Err("Wait for the pending Zone edit".into())
@@ -278,6 +282,54 @@ impl ReviewWorkspaceState {
             false
         }
     }
+}
+
+/// Selection already captured/qualified its source. Enrich the existing
+/// immutable values projection once; no Inspector paint reads source files.
+pub(crate) fn append_zone_inspection(
+    model: &eda_engine::substrate::DesignModel,
+    source: &serde_json::Value,
+    values: &mut std::collections::BTreeMap<String, serde_json::Value>,
+) {
+    let result = (|| -> Result<_, String> {
+        let zone: eda_engine::board::Zone =
+            serde_json::from_value(source.clone()).map_err(|e| e.to_string())?;
+        eda_engine::api::native_write::board_routing::zone::capture_zone_clearance_readback(
+            model, zone.net, zone.layer,
+        )
+        .map_err(|e| e.to_string())
+    })();
+    if let Ok(readback) = &result {
+        values.insert(
+            "zone_effective_clearance_nm".into(),
+            serde_json::json!(readback.minimum_nm),
+        );
+    }
+    values.insert(
+        "zone_clearance_readback".into(),
+        serde_json::to_value(result).expect("Zone readback contains serializable source values"),
+    );
+}
+
+/// Typed consumer of already-captured selection values; never a source query.
+pub fn captured_zone_clearance(
+    view: &crate::selection_view::SelectionView,
+) -> Result<eda_engine::api::native_write::board_routing::zone::ZoneClearanceReadback, String> {
+    if view.stale {
+        return Err("Zone selection is stale".into());
+    }
+    let crate::SelectionSubject::Object(identity) = &view.subject else {
+        return Err("Choose one authored Zone".into());
+    };
+    if identity.class != crate::AuthoredSelectionClass::Zone {
+        return Err("Choose one authored Zone".into());
+    }
+    view.values
+        .get(identity)
+        .and_then(|values| values.get("zone_clearance_readback"))
+        .cloned()
+        .and_then(|value| serde_json::from_value(value).ok())
+        .unwrap_or_else(|| Err("Qualified Zone clearance projection unavailable".into()))
 }
 
 #[cfg(test)]

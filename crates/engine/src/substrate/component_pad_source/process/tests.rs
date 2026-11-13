@@ -1,6 +1,38 @@
 use super::*;
 use serde_json::json;
 
+#[test]
+fn preserved_roundrect_process_requires_explicit_ratio_and_keeps_radius() {
+    let mut raw = preserved();
+    raw["shape"] = json!("round_rect");
+    raw["width"] = json!(800000);
+    raw["height"] = json!(950000);
+    raw["solder_mask_margin_nm"] = json!(0);
+    raw["solder_paste_margin_nm"] = json!(0);
+    raw["solder_paste_margin_ratio_ppm"] = json!(0);
+    assert!(
+        preserved_placed_process(&raw)
+            .unwrap_err()
+            .to_string()
+            .contains("roundrect_rratio_ppm")
+    );
+    raw["roundrect_rratio_ppm"] = json!(200000);
+    let result = preserved_placed_process(&raw).unwrap();
+    let crate::pool::process::EffectiveProcessAperture::RoundRect { radius_nm, .. } =
+        result.effective.paste
+    else {
+        panic!("rounded paste source must remain rounded")
+    };
+    assert_eq!(radius_nm.integer_nm().unwrap(), 160000);
+    raw["solder_paste_margin_nm"] = json!(1);
+    assert!(
+        preserved_placed_process(&raw)
+            .unwrap_err()
+            .to_string()
+            .contains("rounded process margins")
+    );
+}
+
 fn preserved() -> Value {
     json!({"uuid": Uuid::new_v4(), "package": Uuid::new_v4(), "name": "preserved",
         "net": null, "position": {"x": 7, "y": 11}, "layer": 30,

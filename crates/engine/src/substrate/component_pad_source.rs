@@ -11,6 +11,8 @@ use uuid::Uuid;
 mod pins;
 pub mod process;
 mod projection;
+#[cfg(test)]
+mod roundrect_tests;
 mod validation;
 pub(crate) use pins::{capture_pad, capture_root, check_pin, continuity, source_value};
 pub use projection::{ComponentPadProjection, component_pad_projection};
@@ -80,6 +82,8 @@ pub struct ComponentPadSource {
     #[serde(default)]
     pub height_nm: i64,
     #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub roundrect_rratio_ppm: Option<u32>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub source_binding: Option<ComponentPadSourceBinding>,
 }
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -119,6 +123,13 @@ impl ComponentPadSource {
                 width_nm: self.width_nm,
                 height_nm: self.height_nm,
             },
+            Some(PadShape::RoundRect) => PadstackAperture::RoundRect {
+                width_nm: self.width_nm,
+                height_nm: self.height_nm,
+                rratio_ppm: self.roundrect_rratio_ppm.ok_or_else(|| {
+                    invalid("rounded frozen aperture requires explicit corner ratio")
+                })?,
+            },
             _ => return Err(invalid("unsupported frozen aperture")),
         };
         if self.uuid.is_nil()
@@ -138,7 +149,17 @@ impl ComponentPadSource {
                 width_nm,
                 height_nm,
             } if width_nm > 0 && height_nm > 0 => {}
+            PadstackAperture::RoundRect {
+                width_nm,
+                height_nm,
+                rratio_ppm,
+            } if width_nm > 0 && height_nm > 0 && rratio_ppm <= 500_000 => {}
             _ => return Err(invalid("nonpositive frozen aperture")),
+        }
+        if self.shape != Some(PadShape::RoundRect) && self.roundrect_rratio_ppm.is_some() {
+            return Err(invalid(
+                "corner ratio supplied for a nonrounded frozen aperture",
+            ));
         }
         if self.drill_nm.is_some_and(|d| d < 0) {
             return Err(invalid("negative frozen drill"));

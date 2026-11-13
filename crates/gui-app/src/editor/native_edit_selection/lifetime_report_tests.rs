@@ -5,6 +5,107 @@ use datum_gui_viewport::selection_lifetime::reconcile_native_selection;
 use eda_engine::{ir::geometry::Point, substrate::Operation};
 
 #[test]
+fn library_acquire_refresh_selects_its_qualified_definition_without_changing_other_refreshes() {
+    use datum_gui_protocol::library_browser::acquisition::{
+        FootprintAcquisitionPreview, LibraryAcquisition, LibraryAcquisitionPreview,
+    };
+    use datum_gui_protocol::library_browser::{KINDS, LibraryBrowser, LibraryEntry};
+    use serde_json::{Value, json};
+    let kind_index = |kind: &str| KINDS.iter().position(|(k, _)| *k == kind).unwrap();
+    let entry = |kind: &str, id: uuid::Uuid| LibraryEntry {
+        id,
+        kind: kind.into(),
+        name: "Definition".into(),
+        source_path: format!("pool/{kind}/{id}.json"),
+        revision: Some(1),
+        raw: json!({"uuid":id}),
+        warning: None,
+    };
+    for (origin, physical) in [
+        ("packages", true),
+        ("padstacks", true),
+        ("footprints", true),
+        ("units", false),
+    ] {
+        let target_kind = if physical { "footprints" } else { "symbols" };
+        let old = entry(origin, uuid::Uuid::new_v4());
+        let target = entry(target_kind, uuid::Uuid::new_v4());
+        let old_selection = SelectionTarget::AuthoredObject(old.key());
+        let mut previous = LibraryBrowser::default();
+        previous.kind = kind_index(origin);
+        previous.search = "old source only".into();
+        previous.result_offset = 4;
+        previous.entries.push(old.clone());
+        let mut acquisition = LibraryAcquisition::begin("prior revision".into(), None);
+        if physical {
+            acquisition.use_footprint_source();
+        }
+        let source = std::path::PathBuf::from(if physical {
+            "/source/Part.kicad_mod"
+        } else {
+            "/source/Part.kicad_sym"
+        });
+        acquisition.selected = Some("Part".into());
+        acquisition.selected_source = Some(source.clone());
+        acquisition.preview = Some(LibraryAcquisitionPreview {
+            name: "Part".into(),
+            source_digest: "source hash".into(),
+            source_path: source,
+            unit: Value::Null,
+            symbol: if physical {
+                Value::Null
+            } else {
+                target.raw.clone()
+            },
+            footprint: physical.then(|| FootprintAcquisitionPreview {
+                package: Value::Null,
+                footprint: target.raw.clone(),
+                padstacks: vec![],
+            }),
+            notices: vec![],
+        });
+        acquisition.request().unwrap();
+        previous.acquisition = Some(acquisition);
+        let mut next = LibraryBrowser::default();
+        next.entries = vec![old.clone(), target.clone()];
+        let (view, selection) = refreshed_library(&previous, &old_selection, next.clone(), true);
+        assert_eq!(view.kind, kind_index(target_kind));
+        assert!(view.search.is_empty());
+        assert_eq!(view.result_offset, 0);
+        assert_eq!(selection, Some(target.key()));
+        // A query/CheckRun or refused write does not turn a preview into an acquire.
+        let (view, selection) = refreshed_library(&previous, &old_selection, next.clone(), false);
+        assert_eq!(view.kind, previous.kind);
+        assert_eq!(view.search, previous.search);
+        assert_eq!(view.result_offset, 4);
+        assert_eq!(selection, Some(old.key()));
+        // Success still requires the exact unique, available refreshed target.
+        for unavailable in [None, Some("ambiguous source")] {
+            let mut incomplete = LibraryBrowser::default();
+            incomplete.entries.push(old.clone());
+            if let Some(warning) = unavailable {
+                let mut invalid = target.clone();
+                invalid.warning = Some(warning.into());
+                incomplete.entries.push(invalid);
+            }
+            let (view, selection) = refreshed_library(&previous, &old_selection, incomplete, true);
+            assert_eq!(view.kind, previous.kind);
+            assert_eq!(view.search, previous.search);
+            assert_eq!(view.result_offset, 4);
+            assert_eq!(selection, Some(old.key()));
+        }
+        next.entries.push(target.clone());
+        let (view, selection) = refreshed_library(&previous, &old_selection, next, true);
+        assert_eq!(view.kind, previous.kind);
+        assert_eq!(
+            selection,
+            Some(old.key()),
+            "ambiguous duplicate target is never selected"
+        );
+    }
+}
+
+#[test]
 fn singleton_inspector_preserves_explicit_scope_through_refresh_and_revision_shrink() {
     let mut f = fixture::Fixture::new("singleton-scope-lifetime");
     let a = f.line(fixture::id(1), Point::new(0, 0), Point::new(1000, 0));

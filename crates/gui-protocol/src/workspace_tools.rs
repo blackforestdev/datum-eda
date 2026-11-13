@@ -9,6 +9,8 @@ pub use coordinate_entry::{CoordinateEntry, CoordinateEntryMode};
 #[path = "move_handle_feedback.rs"]
 mod move_handle_feedback;
 pub use move_handle_feedback::{MoveHandleFeedback, MoveHandleKind};
+#[path = "board_authoring_controls.rs"]
+pub mod board_authoring_controls;
 #[path = "board_routing.rs"]
 pub mod board_routing;
 #[path = "board_zones.rs"]
@@ -240,6 +242,7 @@ impl AuthoringGestureState {
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AuthoringToolState {
+    pub board_controls: Option<board_authoring_controls::BoardAuthoringControls>,
     pub board_route: Option<board_routing::BoardRouteDraft>,
     pub board_zone: Option<board_zones::BoardZoneDraft>,
     pub handle_feedback: Option<MoveHandleFeedback>,

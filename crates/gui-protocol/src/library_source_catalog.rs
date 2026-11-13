@@ -5,6 +5,11 @@ use std::{
     sync::{Mutex, OnceLock},
     time::SystemTime,
 };
+#[path = "library_footprint_catalog.rs"]
+mod footprint;
+pub fn discover_footprints(source: &Path) -> Result<SourceCatalog, String> {
+    footprint::discover(source)
+}
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct LibrarySourceSymbol {

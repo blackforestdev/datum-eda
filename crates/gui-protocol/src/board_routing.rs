@@ -64,6 +64,10 @@ impl BoardRouteDraft {
         &self.vertices
     }
 
+    pub fn posture(&self) -> WireRouteConfig {
+        self.posture
+    }
+
     pub fn width_nm(&self) -> Option<i64> {
         self.width_nm
     }
@@ -76,6 +80,10 @@ impl BoardRouteDraft {
                     && model.model_revision == self.basis.revision
                     && eda_engine::revision::transaction_tip(&model.journal) == self.basis.tip
             })
+    }
+
+    pub fn release_pending(&mut self) {
+        self.pending = None;
     }
 
     fn editable(&self) -> Result<(), String> {

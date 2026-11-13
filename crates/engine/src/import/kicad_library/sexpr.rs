@@ -2,7 +2,7 @@
 use super::{Result, refusal};
 
 #[derive(Debug, Clone)]
-pub(super) enum Node {
+pub(crate) enum Node {
     Atom(String),
     List(Vec<Node>),
 }
@@ -58,7 +58,7 @@ impl Node {
     }
 }
 
-pub(super) fn parse(input: &str) -> Result<Node> {
+pub(crate) fn parse(input: &str) -> Result<Node> {
     let mut reader = Reader {
         chars: input.chars().peekable(),
     };

@@ -21,13 +21,33 @@ pub(crate) fn paint_native_process(
         presentation(process.center_nm[0]),
         presentation(process.center_nm[1]),
     );
-    let (width, height, circle) = match aperture {
+    let (width, height, circle, radius) = match aperture {
         A::Suppressed => return,
-        A::Circle { diameter_nm } => (presentation(*diameter_nm), presentation(*diameter_nm), true),
+        A::Circle { diameter_nm } => (
+            presentation(*diameter_nm),
+            presentation(*diameter_nm),
+            true,
+            0.0,
+        ),
         A::Rect {
             width_nm,
             height_nm,
-        } => (presentation(*width_nm), presentation(*height_nm), false),
+        } => (
+            presentation(*width_nm),
+            presentation(*height_nm),
+            false,
+            0.0,
+        ),
+        A::RoundRect {
+            width_nm,
+            height_nm,
+            radius_nm,
+        } => (
+            presentation(*width_nm),
+            presentation(*height_nm),
+            false,
+            presentation(*radius_nm),
+        ),
     };
     if !world_primitives::admit_outline_points(out, 64) {
         return;
@@ -35,7 +55,7 @@ pub(crate) fn paint_native_process(
     let outline = if circle {
         ellipse_points(center, width, height, process.rotation as f32, 64)
     } else {
-        rounded_rect_points(center, width, height, process.rotation as f32, 0.0)
+        rounded_rect_points(center, width, height, process.rotation as f32, radius)
     };
     world_primitives::push_convex_polygon_fill(out, &outline, color);
 }

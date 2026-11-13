@@ -17,6 +17,12 @@ use crate::{
     substrate::ImportMapEntry,
 };
 
+#[path = "library_acquisition_footprint.rs"]
+mod footprint;
+#[cfg(test)]
+#[path = "library_acquisition_footprint_tests.rs"]
+mod footprint_tests;
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct LibraryAcquisitionRequest {
@@ -50,6 +56,9 @@ pub fn build_acquisition(
     provenance: WriteProvenance,
     request: LibraryAcquisitionRequest,
 ) -> Result<PreparedWrite, EngineError> {
+    if request.source_format == "kicad_footprint" {
+        return footprint::build(context, provenance, request);
+    }
     let converted = match request.source_format.as_str() {
         "kicad_symbol" => kicad_library::convert(&request.source_path, &request.symbol_name)?,
         "datum_bundle" => library_bundle::preview(&request.source_path, &request.symbol_name)?,

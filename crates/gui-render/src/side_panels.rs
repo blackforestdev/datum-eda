@@ -4,6 +4,7 @@ pub(crate) mod library_preview;
 pub(crate) mod library_surface;
 use super::*;
 
+mod board_authoring;
 #[path = "inspector_check_finding.rs"]
 mod inspector_check_finding;
 mod inspector_dispatch;

@@ -80,6 +80,11 @@ pub enum EffectiveProcessAperture {
         width_nm: Quadratic3,
         height_nm: Quadratic3,
     },
+    RoundRect {
+        width_nm: Quadratic3,
+        height_nm: Quadratic3,
+        radius_nm: Quadratic3,
+    },
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -271,6 +276,32 @@ fn effective_aperture(
             width_nm: dimension(*width_nm)?,
             height_nm: dimension(*height_nm)?,
         }),
+        PadstackAperture::RoundRect {
+            width_nm,
+            height_nm,
+            rratio_ppm,
+        } => {
+            if *rratio_ppm > 500_000 {
+                return Err(error(&format!(
+                    "{process}: roundrect ratio exceeds half the shorter side"
+                )));
+            }
+            if margin != 0 || ratio != 0 {
+                return Err(error(&format!(
+                    "{process}: rounded process margins and scaling are unsupported"
+                )));
+            }
+            let radius = Rational::new(
+                i128::from((*width_nm).min(*height_nm)) * i128::from(*rratio_ppm),
+                1_000_000,
+            )
+            .map_err(|_| error(&format!("{process}: corner-radius arithmetic overflow")))?;
+            Ok(EffectiveProcessAperture::RoundRect {
+                width_nm: dimension(*width_nm)?,
+                height_nm: dimension(*height_nm)?,
+                radius_nm: Quadratic3::rational(radius),
+            })
+        }
     }
 }
 

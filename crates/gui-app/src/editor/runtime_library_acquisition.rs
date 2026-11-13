@@ -5,6 +5,8 @@ use datum_gui_protocol::library_browser::acquisition::{
     catalog::{self, SourceCatalog},
 };
 use std::sync::mpsc;
+#[path = "runtime_library_footprint_acquisition.rs"]
+mod source_read;
 
 enum ReadResult {
     Names(SourceCatalog),
@@ -36,31 +38,10 @@ impl AcquisitionWork {
         let revision = acquisition.revision.clone();
         let path = std::path::PathBuf::from(&acquisition.path);
         let bundled = acquisition.bundled;
+        let footprints = acquisition.footprints;
         let wake = self.wake.clone();
         std::thread::spawn(move || {
-            let result = (|| {
-                if let Some(source) = source {
-                    let converted = if bundled {
-                        eda_engine::import::library_bundle::preview(&source.path, &source.name)
-                    } else {
-                        eda_engine::import::kicad_library::convert(&source.path, &source.name)
-                    }
-                    .map_err(|error| error.to_string())?;
-                    Ok(ReadResult::Preview(LibraryAcquisitionPreview {
-                        name: source.name,
-                        source_digest: converted.source_hash,
-                        source_path: converted.source_path,
-                        unit: serde_json::to_value(converted.unit).map_err(|e| e.to_string())?,
-                        symbol: serde_json::to_value(converted.symbol)
-                            .map_err(|e| e.to_string())?,
-                        notices: converted.warnings,
-                    }))
-                } else if bundled {
-                    catalog::bundled().map(ReadResult::Names)
-                } else {
-                    catalog::discover(&path).map(ReadResult::Names)
-                }
-            })();
+            let result = source_read::read(&path, bundled, footprints, source);
             let _ = sender.send(Answer {
                 session,
                 revision,
@@ -166,7 +147,7 @@ impl Runtime {
             C::ProjectSymbols => return self.browse_project_symbols_for_placement(),
             C::Acquire | C::BrowseBundled => {
                 if !self.native_edit_available() || self.check_work.pending() {
-                    self.log_console_refusal(ConsoleFeedbackSource::Tool, "Open a native Project and finish its check job before acquiring a library symbol");
+                    self.log_console_refusal(ConsoleFeedbackSource::Tool, "Open a native Project and finish its check job before acquiring library content");
                     return true;
                 }
                 let state = self.workspace();
@@ -179,6 +160,15 @@ impl Runtime {
                         .as_ref()
                         .and_then(|s| s.parse().ok()),
                 );
+                if *control == C::Acquire
+                    && datum_gui_protocol::library_browser::KINDS
+                        .get(state.library.kind)
+                        .is_some_and(|(kind, _)| {
+                            matches!(*kind, "footprints" | "packages" | "padstacks")
+                        })
+                {
+                    acquisition.use_footprint_source();
+                }
                 acquisition.bundled = *control == C::BrowseBundled;
                 if acquisition.bundled {
                     acquisition.path.clear();

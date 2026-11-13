@@ -36,6 +36,11 @@ pub fn process_pad_for_layer(
         })?,
     };
     match geometry {
+        EffectiveProcessAperture::RoundRect { .. } => {
+            return Err(refusal(
+                "rounded process apertures are not supported by the current exact CAM writer",
+            ));
+        }
         EffectiveProcessAperture::Suppressed => {
             return Err(refusal(
                 "suppressed aperture has nonempty process membership",

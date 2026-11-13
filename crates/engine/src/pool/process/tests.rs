@@ -1,6 +1,58 @@
 use super::*;
 use serde_json::json;
 
+#[test]
+fn roundrect_process_preserves_fractional_radius_and_refuses_unimplemented_offsets() {
+    let mut raw = json!({"uuid": Uuid::new_v4(), "name": "rounded",
+        "aperture": {"round_rect": {"width_nm": 801, "height_nm": 950,
+            "rratio_ppm": 250000}}, "mask_policy": "exposed", "paste_policy": "aperture"});
+    let result = resolve_padstack_process(&raw, &json!({}), None).unwrap();
+    let EffectiveProcessAperture::RoundRect {
+        width_nm,
+        height_nm,
+        radius_nm,
+    } = &result.mask
+    else {
+        panic!("rounded source must remain rounded")
+    };
+    assert_eq!(width_nm.integer_nm().unwrap(), 801);
+    assert_eq!(height_nm.integer_nm().unwrap(), 950);
+    assert_eq!(
+        *radius_nm,
+        Quadratic3::rational(Rational::new(801, 4).unwrap())
+    );
+    assert_eq!(
+        serde_json::from_value::<EffectivePadstackProcess>(serde_json::to_value(&result).unwrap())
+            .unwrap(),
+        result
+    );
+    for margin in [-1, 1] {
+        raw["mask_policy"] = json!({"expansion_nm": margin});
+        assert!(
+            resolve_padstack_process(&raw, &json!({}), None)
+                .unwrap_err()
+                .to_string()
+                .contains("rounded process margins")
+        );
+    }
+    raw["mask_policy"] = json!("exposed");
+    raw["paste_policy"] = json!("inherit");
+    assert!(
+        resolve_padstack_process(&raw, &basis(), None)
+            .unwrap_err()
+            .to_string()
+            .contains("rounded process margins")
+    );
+    raw["paste_policy"] = json!("aperture");
+    raw["aperture"]["round_rect"]["rratio_ppm"] = json!(500001);
+    assert!(
+        resolve_padstack_process(&raw, &json!({}), None)
+            .unwrap_err()
+            .to_string()
+            .contains("roundrect ratio")
+    );
+}
+
 fn pad(mask: Option<Value>, paste: Option<Value>, diameter: i64) -> Value {
     let mut value = json!({"uuid": Uuid::new_v4(), "name": "process pad",
         "aperture": {"circle": {"diameter_nm": diameter}}});

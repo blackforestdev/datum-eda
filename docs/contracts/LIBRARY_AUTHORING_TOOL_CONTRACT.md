@@ -167,6 +167,35 @@ models, approval, generation and general placed updates remain targets; seed,
 source rights, standards/manufacturing and HUMAN/assistive qualification remain
 separate. PM062 does not establish those capabilities through this candidate.
 
+The local KiCad-footprint increment `dat-kicad-footprint-library-k0i9` adds a
+bounded installed-file acquisition path to the existing Library flow. It
+discovers named `.pretty`/`.kicad_mod` sources, previews supported native copper
+and outlines or an explicit refusal, then explicitly acquires a Package,
+Footprint and Padstacks in one canonical transaction with source hash, original
+source and Import Map provenance. It introduces no private writer or board/
+project converter. Native rounded pads retain exact dimensions and corner ratio;
+unsupported geometry refuses instead of becoming rectangular. Text omitted from
+the preview and unloaded external 3D models remain disclosed. Source format or
+directory names do not supply rights, approval or standards evidence.
+
+The current bounded engine evidence covers actual R0603 acquisition, exact
+rounded geometry, refusal, history and cold loading at its recorded task
+candidate. Independently accepted ordinary App proof (`run04`, frozen M
+candidate) covers a fresh Project, installed R0603 search and rounded preview,
+preview/cancel without canonical changes, explicit acquisition and typed target
+selection, Undo/Redo with exact pool bytes, Save and cold reopen with unchanged
+canonical geometry/provenance. The isolated GUI, companions, input envelope and
+private accessibility bus stopped with verified runtime removal. This is bounded
+development availability; existing PM062 Circle/Rect proof above remains
+historical and unchanged.
+Missing process inputs remain unresolved. Explicit source process overrides
+require version `20241229`; required paste inputs refuse if inheritance remains
+partial or their ratio is nonzero. Suppressed process membership stays suppressed.
+Rounded process offsets/scaling and
+rounded CAM output remain unsupported. Bundled content, complete Part/pin-map/
+PCB-transfer qualification and manufacturing/full qualification are separate
+follow-through, not prerequisites added to this local increment.
+
 The creation-only Package GUI increment adds named Package creation using
 existing family/code/mounting metadata, optional nominal body dimensions/heights
 and terminal identity/name/role. The shared library form uses the canonical writer

@@ -1,12 +1,9 @@
 use std::path::{Path, PathBuf};
 
 use anyhow::{Context, Result};
-use eda_engine::board::PadShape;
 use eda_engine::board::{PlacedPackage, StackupLayer, StackupLayerType};
 use eda_engine::ir::geometry::{Point, Polygon};
-use eda_engine::pool::{
-    Footprint, ModelRef, Package, Pad, Padstack, PadstackAperture, Part, Primitive,
-};
+use eda_engine::pool::{Footprint, ModelRef, Package, Pad, Padstack, Part, Primitive};
 use eda_engine::substrate::{DesignModel, ProjectResolver, SourceShardTaxon};
 
 use crate::NativeComponentMechanicalPolygon;
@@ -18,6 +15,9 @@ use crate::{
     NativeComponentSilkscreenPolygon, NativeComponentSilkscreenPolyline,
     NativeComponentSilkscreenText,
 };
+
+mod pad_geometry;
+use pad_geometry::native_component_pad;
 
 const PACKAGE_COURTYARD_MECHANICAL_LAYER_ID: i32 = 41;
 
@@ -330,36 +330,6 @@ fn initialize_component_graphic_maps(project: &mut LoadedNativeProject, key: Str
         .or_default();
     project.board.component_pads.entry(key.clone()).or_default();
     project.board.component_models_3d.entry(key).or_default();
-}
-
-fn native_component_pad(
-    pad: eda_engine::pool::Pad,
-    padstack: Option<&Padstack>,
-) -> NativeComponentPad {
-    let (shape, diameter_nm, width_nm, height_nm) =
-        match padstack.and_then(|padstack| padstack.aperture.as_ref()) {
-            Some(PadstackAperture::Circle { diameter_nm }) => {
-                (Some(PadShape::Circle), *diameter_nm, 0, 0)
-            }
-            Some(PadstackAperture::Rect {
-                width_nm,
-                height_nm,
-            }) => (Some(PadShape::Rect), 0, *width_nm, *height_nm),
-            None => (None, 0, 0, 0),
-        };
-    NativeComponentPad {
-        source_binding: None,
-        uuid: pad.uuid,
-        name: pad.name,
-        position: native_point(pad.position),
-        padstack: pad.padstack,
-        layer: pad.layer,
-        drill_nm: padstack.and_then(|padstack| padstack.drill_nm),
-        shape,
-        diameter_nm,
-        width_nm,
-        height_nm,
-    }
 }
 
 fn resolve_native_project_pool_package(

@@ -3,6 +3,16 @@ use crate::*;
 
 impl Runtime {
     pub(crate) fn set_workspace_tool(&mut self, tool: WorkspaceTool) -> bool {
+        use datum_gui_protocol::board_authoring_controls::BoardToolKind;
+        match tool {
+            WorkspaceTool::DrawBoardTrack => {
+                return self.begin_native_board_tool(BoardToolKind::Route);
+            }
+            WorkspaceTool::DrawBoardZone => {
+                return self.begin_native_board_tool(BoardToolKind::Zone);
+            }
+            _ => {}
+        }
         if self.workspace().schematic_authoring.delete_review.is_some() {
             self.log_console_refusal(
                 ConsoleFeedbackSource::Tool,
@@ -40,14 +50,18 @@ impl Runtime {
     }
 
     pub(crate) fn active_tool_is_authoring(&self) -> bool {
-        self.workspace().tool == WorkspaceTool::Move && self.native_edit_available()
+        self.workspace().authoring.board_controls.is_some()
+            || self.workspace().tool == WorkspaceTool::Move && self.native_edit_available()
     }
 
     pub(crate) fn handle_authoring_pointer_move(&mut self, screen_pos: (f32, f32)) -> bool {
         if self.native_schematic_pointer(screen_pos) {
             return true;
         }
-        if !self.active_tool_is_authoring() || !self.workspace().authoring.gesture.is_active() {
+        if !self.active_tool_is_authoring()
+            || (!self.workspace().authoring.gesture.is_active()
+                && self.workspace().authoring.board_controls.is_none())
+        {
             return false;
         }
         let Some(prepared) = self.prepared_scene() else {
@@ -59,6 +73,9 @@ impl Runtime {
         else {
             return false;
         };
+        if self.board_authoring_pointer(world) {
+            return true;
+        }
         if self.workspace().tool == WorkspaceTool::Move {
             return self.native_move_pointer(world);
         }
@@ -76,6 +93,9 @@ impl Runtime {
     ) -> bool {
         if !self.active_tool_is_authoring() {
             return false;
+        }
+        if self.workspace().authoring.board_controls.is_some() {
+            return self.board_authoring_click(world, target_object_id);
         }
         if self.workspace().tool == WorkspaceTool::Move {
             return self.native_move_click(world, target_object_id);
@@ -173,7 +193,18 @@ impl Runtime {
                 .render_session()
                 .board()
                 .expect("retained scene initialized");
-            retained.hit_test_authored_world(world, self.session.workspace())
+            if self.workspace().tool == WorkspaceTool::DrawBoardTrack {
+                retained.hit_test_authored_world_eligible(
+                    world,
+                    self.session.workspace(),
+                    |target| {
+                        matches!(target, HitTarget::AuthoredObject(id)
+                        if self.workspace().scene.pads.iter().any(|p| &p.object_id == id))
+                    },
+                )
+            } else {
+                retained.hit_test_authored_world(world, self.session.workspace())
+            }
         };
         match target {
             Some(HitTarget::AuthoredObject(id)) => Some(id),

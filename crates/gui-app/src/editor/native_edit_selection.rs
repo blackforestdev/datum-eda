@@ -172,13 +172,82 @@ pub(super) fn target_after_reconciliation(
     }
 }
 
+/// Acquire selects its actual refreshed definition, never a dependency that
+/// happened to be created first. An unrelated refresh has no acquire intent.
+fn refreshed_library(
+    previous: &datum_gui_protocol::library_browser::LibraryBrowser,
+    previous_selection: &SelectionTarget,
+    mut next: datum_gui_protocol::library_browser::LibraryBrowser,
+    acquire_succeeded: bool,
+) -> (
+    datum_gui_protocol::library_browser::LibraryBrowser,
+    Option<String>,
+) {
+    let acquired = acquire_succeeded
+        .then(|| {
+            let preview = previous.acquisition.as_ref()?.preview.as_ref()?;
+            let (kind, raw) = match &preview.footprint {
+                Some(physical) => ("footprints", &physical.footprint),
+                None => ("symbols", &preview.symbol),
+            };
+            let id = raw
+                .get("uuid")?
+                .as_str()?
+                .parse::<eda_engine::substrate::ObjectId>()
+                .ok()?;
+            let key = format!("library:pool/{kind}/{id}.json");
+            let mut matches = next
+                .entries
+                .iter()
+                .filter(|entry| entry.id == id && entry.kind == kind && entry.key() == key);
+            if matches.next()?.warning.is_some() || matches.next().is_some() {
+                return None;
+            }
+            Some((kind, key))
+        })
+        .flatten();
+    let created = previous
+        .draft
+        .as_ref()
+        .map(|draft| format!("library:pool/{}/{}.json", draft.kind, draft.id));
+    let prior = previous
+        .selected(previous_selection)
+        .map(|entry| entry.key());
+    next.kind = previous.kind;
+    next.search = previous.search.clone();
+    next.result_offset = previous.result_offset;
+    if let Some((kind, _)) = &acquired {
+        next.kind = datum_gui_protocol::library_browser::KINDS
+            .iter()
+            .position(|(candidate, _)| candidate == kind)
+            .unwrap_or(previous.kind);
+        next.search.clear();
+        next.result_offset = 0;
+    }
+    let selected = acquired
+        .map(|(_, key)| key)
+        .or(created)
+        .or(prior)
+        .filter(|key| next.entries.iter().any(|entry| entry.key() == *key));
+    (next, selected)
+}
+
 impl Runtime {
     /// One atomic source/selection publication path for authored writes and
     /// generated check evidence. View state remains owned by the live session.
     pub(super) fn publish_prepared_workspace(
         &mut self,
+        next: datum_gui_protocol::ReviewWorkspaceState,
+        prepared: Prepared,
+    ) {
+        self.publish_edit_refresh(next, prepared, false);
+    }
+
+    pub(super) fn publish_edit_refresh(
+        &mut self,
         mut next: datum_gui_protocol::ReviewWorkspaceState,
         prepared: Prepared,
+        acquire_succeeded: bool,
     ) {
         let same_world = {
             let current = self.workspace();
@@ -216,35 +285,12 @@ impl Runtime {
                 )
             });
         let workspace = self.session.workspace_mut();
-        let library_selection = workspace
-            .library
-            .selected(&workspace.selection)
-            .map(|e| e.key());
-        let acquired = workspace
-            .library
-            .acquisition
-            .as_ref()
-            .and_then(|a| a.preview.as_ref())
-            .and_then(|p| p.symbol.get("uuid"))
-            .and_then(serde_json::Value::as_str)
-            .map(|id| format!("library:pool/symbols/{id}.json"));
-        let created = workspace
-            .library
-            .draft
-            .as_ref()
-            .map(|d| format!("library:pool/{}/{}.json", d.kind, d.id));
-        let mut library = next.library;
-        library.kind = workspace.library.kind;
-        library.search = workspace.library.search.clone();
-        library.result_offset = workspace.library.result_offset;
-        if acquired.is_some() {
-            library.kind = datum_gui_protocol::library_browser::KINDS
-                .iter()
-                .position(|(kind, _)| *kind == "symbols")
-                .unwrap_or(0);
-            library.search.clear();
-            library.result_offset = 0;
-        }
+        let (library, library_selection) = refreshed_library(
+            &workspace.library,
+            &workspace.selection,
+            next.library,
+            acquire_succeeded,
+        );
         workspace.library = library;
         if !same_world {
             workspace.scene = next.scene;
@@ -286,9 +332,7 @@ impl Runtime {
             }
         }
         workspace.selection = prepared.selected;
-        if let Some(key) = acquired.or(created).or(library_selection)
-            && workspace.library.entries.iter().any(|e| e.key() == key)
-        {
+        if let Some(key) = library_selection {
             workspace.selection = datum_gui_protocol::SelectionTarget::AuthoredObject(key);
         }
         self.selection_run.cancel();

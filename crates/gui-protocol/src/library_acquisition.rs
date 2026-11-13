@@ -5,6 +5,9 @@ use uuid::Uuid;
 #[path = "library_source_catalog.rs"]
 pub mod catalog;
 pub use catalog::LibrarySourceSymbol;
+#[path = "library_footprint_acquisition.rs"]
+mod footprint;
+pub use footprint::FootprintAcquisitionPreview;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct LibraryAcquisitionPreview {
@@ -13,6 +16,7 @@ pub struct LibraryAcquisitionPreview {
     pub source_path: std::path::PathBuf,
     pub unit: Value,
     pub symbol: Value,
+    pub footprint: Option<FootprintAcquisitionPreview>,
     pub notices: Vec<String>,
 }
 
@@ -23,6 +27,7 @@ pub struct LibraryAcquisition {
     pub tip: Option<Uuid>,
     pub path: String,
     pub bundled: bool,
+    pub footprints: bool,
     pub include_unavailable: bool,
     pub path_editor: SingleLineEditor,
     pub search: String,
@@ -55,6 +60,7 @@ impl LibraryAcquisition {
             path_editor: SingleLineEditor::at_end(&path),
             path,
             bundled: false,
+            footprints: false,
             include_unavailable: false,
             search: String::new(),
             search_editor: SingleLineEditor::default(),
@@ -161,16 +167,19 @@ impl LibraryAcquisition {
         let preview = self
             .preview
             .as_ref()
-            .ok_or("Preview a supported symbol before importing")?;
+            .ok_or("Preview a supported library object before importing")?;
         if self.loading
             || self.selected.as_deref() != Some(preview.name.as_str())
             || self.selected_source.as_ref() != Some(&preview.source_path)
         {
-            return Err("Wait for the selected symbol preview before importing".into());
+            return Err("Wait for the selected library preview before importing".into());
         }
+        self.validate_preview_kind(preview)?;
         Ok(
             eda_engine::api::native_write::library_acquisition::LibraryAcquisitionRequest {
-                source_format: if self.bundled {
+                source_format: if self.footprints {
+                    "kicad_footprint"
+                } else if self.bundled {
                     "datum_bundle"
                 } else {
                     "kicad_symbol"
@@ -257,6 +266,7 @@ mod tests {
             source_path: "kicad/Device.kicad_sym".into(),
             unit: Value::Null,
             symbol: Value::Null,
+            footprint: None,
             notices: Vec::new(),
         });
         acquisition.search_changed();
@@ -336,6 +346,7 @@ mod tests {
             source_path: "/canonical/Device.kicad_sym".into(),
             unit: Value::Null,
             symbol: Value::Null,
+            footprint: None,
             notices: Vec::new(),
         });
         let request = acquisition.request().unwrap();

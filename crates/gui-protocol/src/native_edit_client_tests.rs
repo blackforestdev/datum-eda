@@ -229,3 +229,100 @@ fn first_edit_committed_model_matches_fresh_projection() {
         "Committed result cannot replace fresh projection: {changed:?}"
     );
 }
+
+#[test]
+fn board_clearance_transport_preserves_full_priority_and_rejects_mixed_or_stale_payloads() {
+    let rule = board_rule::BoardClearanceRule {
+        project: Uuid::new_v4(),
+        revision: "now".into(),
+        tip: Some(Uuid::new_v4()),
+        rule: Uuid::new_v4(),
+        net: Uuid::new_v4(),
+        minimum_nm: 200000,
+        priority: u64::MAX,
+    };
+    let mut intent = NativeEditIntent::new(
+        PathBuf::from("/native/project"),
+        rule.project,
+        rule.revision.clone(),
+        rule.tip,
+        NativeEditAction::CreateBoardClearance,
+    );
+    assert!(intent.validate_board_rule_payload().is_err());
+    intent.clearance_rule = Some(rule);
+    assert!(intent.validate_board_rule_payload().is_ok());
+    assert_eq!(
+        intent.clearance_rule.as_ref().unwrap().value().unwrap()["priority"].as_u64(),
+        Some(u64::MAX)
+    );
+    for change in 0..6 {
+        let mut bad = intent.clone();
+        match change {
+            0 => bad.action = NativeEditAction::Save,
+            1 => bad.expected_revision = "stale".into(),
+            2 => bad.expected_tip = None,
+            3 => bad.instance_path.push(Uuid::new_v4()),
+            4 => bad.clearance_rule.as_mut().unwrap().minimum_nm = 0,
+            _ => bad.project_id = Uuid::new_v4(),
+        }
+        assert!(bad.validate_board_rule_payload().is_err());
+    }
+}
+
+#[test]
+fn board_clearance_setup_refuses_out_of_journal_board_net_changes() {
+    use eda_engine::substrate::{ProjectResolver, SourceShardKind};
+    let root = std::env::temp_dir().join(format!("datum-clearance-source-{}", Uuid::new_v4()));
+    use eda_engine::api::native_write::{self as native, WriteProvenance};
+    native::genesis::bootstrap_native_project(
+        &root,
+        native::genesis::GenesisSpec {
+            project_name: "Native clearance source fixture".into(),
+            existing_ids: None,
+        },
+    )
+    .unwrap();
+    let mut model = ProjectResolver::new(&root).resolve().unwrap();
+    let seeded = eda_engine::board::Net::new(Uuid::new_v4(), "Source Net", Uuid::nil());
+    let prepared = native::board_routing::build_place_board_net(
+        &model,
+        WriteProvenance::new(
+            "clearance-source-fixture",
+            eda_engine::substrate::CommitSource::Test,
+            "Explicit native fixture Net",
+        ),
+        &seeded,
+    )
+    .unwrap();
+    native::commit_prepared(&mut model, &root, prepared).unwrap();
+    let model = ProjectResolver::new(&root).resolve().unwrap();
+    let shard = model
+        .source_shards
+        .iter()
+        .find(|s| s.kind == SourceShardKind::BoardRoot)
+        .unwrap();
+    let old = std::fs::read(&shard.path).unwrap();
+    let mut board: Value = serde_json::from_slice(&old).unwrap();
+    let net: Uuid = board["nets"]
+        .as_object()
+        .unwrap()
+        .keys()
+        .next()
+        .unwrap()
+        .parse()
+        .unwrap();
+    let rules = model
+        .source_shards
+        .iter()
+        .find(|s| s.kind == SourceShardKind::RulesRoot)
+        .unwrap();
+    let rules_before = std::fs::read(&rules.path).unwrap();
+    assert!(board_rule::BoardClearanceRule::capture(&model, net, 200000, 0).is_ok());
+    board["nets"][net.to_string()]["name"] = json!("Out of journal Net");
+    std::fs::write(&shard.path, serde_json::to_vec(&board).unwrap()).unwrap();
+    assert!(board_rule::BoardClearanceRule::capture(&model, net, 200000, 0).is_err());
+    assert_eq!(std::fs::read(&rules.path).unwrap(), rules_before);
+    std::fs::write(&shard.path, old).unwrap();
+    assert!(board_rule::BoardClearanceRule::capture(&model, net, 200000, 0).is_ok());
+    std::fs::remove_dir_all(root).unwrap();
+}

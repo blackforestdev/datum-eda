@@ -48,8 +48,18 @@ impl Padstack {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum PadstackAperture {
-    Circle { diameter_nm: i64 },
-    Rect { width_nm: i64, height_nm: i64 },
+    Circle {
+        diameter_nm: i64,
+    },
+    Rect {
+        width_nm: i64,
+        height_nm: i64,
+    },
+    RoundRect {
+        width_nm: i64,
+        height_nm: i64,
+        rratio_ppm: u32,
+    },
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]

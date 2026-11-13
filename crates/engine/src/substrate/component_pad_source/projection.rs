@@ -387,7 +387,7 @@ pub(super) fn project_pad(
         height: pad.height_nm,
         drill: pad.drill_nm.unwrap_or(0),
         rotation: if exact { 0 } else { package.rotation },
-        roundrect_rratio_ppm: 250000,
+        roundrect_rratio_ppm: pad.roundrect_rratio_ppm.unwrap_or(250000),
         mask_layers: vec![],
         paste_layers: vec![],
         solder_mask_margin_nm: 0,

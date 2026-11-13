@@ -122,6 +122,18 @@ fn visit<'a>(
         if !layer_visible(state, &zone.layer_id) {
             continue;
         }
+        if !zone.fill_projection.is_legacy() && zone.polygon.len() >= 3 {
+            emit(Region {
+                target: &zone.object_id,
+                layer_id: Some(&zone.layer_id),
+                shape: Shape::ClosedPolyline {
+                    path: &zone.polygon,
+                    half_width_nm: (AuthoredStrokePrimitive::CopperZoneOutline.nominal_nm() as f32
+                        * 0.5)
+                        .max(150_000.0),
+                },
+            })?;
+        }
         let legacy = (zone.fill_projection.is_legacy() && zone.polygon.len() >= 3)
             .then_some(zone.polygon.as_slice());
         let current = (!zone.fill_projection.is_legacy()).then_some(zone);
