@@ -8,7 +8,7 @@ import unittest
 from unittest.mock import patch
 
 from server_runtime import EngineDaemonClient, StdioToolHost
-from test_support import FakeDaemonClient
+from test_support import FakeDaemonClient, decode_tool_payload
 
 class TestDispatchLibrary(unittest.TestCase):
     @patch("server_runtime.subprocess.run")
@@ -86,7 +86,7 @@ class TestDispatchLibrary(unittest.TestCase):
                 }
             )
             self.assertEqual(daemon.calls[-1], expected_call)
-            payload = response["result"]["content"][0]["json"]
+            payload = decode_tool_payload(response)
             self.assertIn(payload["contract"], {
                 "native_project_library_objects_query_v1",
                 "native_project_pool_models_query_v1",
@@ -127,7 +127,7 @@ class TestDispatchLibrary(unittest.TestCase):
                 }
             )
             self.assertEqual(daemon.calls[-1][0], expected_method)
-            payload = response["result"]["content"][0]["json"]
+            payload = decode_tool_payload(response)
             self.assertTrue(payload["ok"])
             self.assertEqual(payload["schema"], {"name": tool_name, "version": 1})
             self.assertEqual(
@@ -681,7 +681,7 @@ class TestDispatchLibrary(unittest.TestCase):
                 }
             )
             self.assertEqual(daemon.calls[-1], expected_call)
-            payload = response["result"]["content"][0]["json"]
+            payload = decode_tool_payload(response)
             package_silkscreen_methods = {
                 "add_pool_package_silkscreen_line",
                 "add_pool_package_silkscreen_rect",

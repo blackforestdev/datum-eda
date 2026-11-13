@@ -6,7 +6,7 @@ from __future__ import annotations
 import unittest
 
 from server_runtime import StdioToolHost
-from test_support import FakeDaemonClient
+from test_support import FakeDaemonClient, decode_tool_payload
 
 
 class TestDispatchOutputJobProposals(unittest.TestCase):
@@ -31,7 +31,7 @@ class TestDispatchOutputJobProposals(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls[-1][0], "create_output_job_proposal")
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["contract"], "proposal_create_v1")
         self.assertEqual(payload["action"], "propose_create_output_job")
 
@@ -58,7 +58,7 @@ class TestDispatchOutputJobProposals(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls[-1][0], "update_output_job_proposal")
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["contract"], "proposal_create_v1")
         self.assertEqual(payload["action"], "propose_update_output_job")
 
@@ -81,7 +81,7 @@ class TestDispatchOutputJobProposals(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls[-1][0], "delete_output_job_proposal")
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["contract"], "proposal_create_v1")
         self.assertEqual(payload["action"], "propose_delete_output_job")
 

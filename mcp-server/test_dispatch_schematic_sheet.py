@@ -6,7 +6,7 @@ from __future__ import annotations
 import unittest
 
 from server_runtime import StdioToolHost
-from test_support import FakeDaemonClient
+from test_support import FakeDaemonClient, decode_tool_payload
 
 
 class TestDispatchSchematicSheet(unittest.TestCase):
@@ -33,7 +33,7 @@ class TestDispatchSchematicSheet(unittest.TestCase):
         self.assertEqual(
             daemon.calls, [("create_sheet", "/tmp/native-project", "Aux", "sheet-1")]
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertTrue(payload["ok"])
         self.assertEqual(
             payload["schema"], {"name": "datum.schematic.create_sheet", "version": 1}
@@ -59,7 +59,7 @@ class TestDispatchSchematicSheet(unittest.TestCase):
         )
 
         self.assertEqual(daemon.calls, [("delete_sheet", "/tmp/native-project", "sheet-1")])
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertTrue(payload["ok"])
         self.assertEqual(
             payload["schema"], {"name": "datum.schematic.delete_sheet", "version": 1}
@@ -92,7 +92,7 @@ class TestDispatchSchematicSheet(unittest.TestCase):
         self.assertEqual(
             daemon.calls, [("rename_sheet", "/tmp/native-project", "sheet-1", "Renamed")]
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertTrue(payload["ok"])
         self.assertEqual(
             payload["schema"], {"name": "datum.schematic.rename_sheet", "version": 1}
@@ -134,7 +134,7 @@ class TestDispatchSchematicSheet(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertTrue(payload["ok"])
         self.assertEqual(
             payload["schema"],
@@ -183,7 +183,7 @@ class TestDispatchSchematicSheet(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertTrue(payload["ok"])
         self.assertEqual(
             payload["schema"],
@@ -211,7 +211,7 @@ class TestDispatchSchematicSheet(unittest.TestCase):
         self.assertEqual(
             daemon.calls, [("delete_sheet_instance", "/tmp/native-project", "instance-1")]
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertTrue(payload["ok"])
         self.assertEqual(
             payload["schema"],
@@ -245,7 +245,7 @@ class TestDispatchSchematicSheet(unittest.TestCase):
             daemon.calls,
             [("move_sheet_instance", "/tmp/native-project", "instance-1", 300, 400)],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertTrue(payload["ok"])
         self.assertEqual(
             payload["schema"],
@@ -278,7 +278,7 @@ class TestDispatchSchematicSheet(unittest.TestCase):
             daemon.calls,
             [("bind_sheet_instance_port", "/tmp/native-project", "instance-1", "port-1")],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertTrue(payload["ok"])
         self.assertEqual(
             payload["schema"],
@@ -311,7 +311,7 @@ class TestDispatchSchematicSheet(unittest.TestCase):
             daemon.calls,
             [("unbind_sheet_instance_port", "/tmp/native-project", "instance-1", "port-1")],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertTrue(payload["ok"])
         self.assertEqual(
             payload["schema"],

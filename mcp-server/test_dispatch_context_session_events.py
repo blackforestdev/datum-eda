@@ -3,7 +3,7 @@
 from __future__ import annotations
 import unittest
 from server_runtime import StdioToolHost
-from test_support import FakeDaemonClient
+from test_support import FakeDaemonClient, decode_tool_payload
 
 
 class TestDispatchContextSessionEvents(unittest.TestCase):
@@ -46,7 +46,7 @@ class TestDispatchContextSessionEvents(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertTrue(payload["ok"])
         self.assertEqual(
             payload["schema"],
@@ -98,7 +98,7 @@ class TestDispatchContextSessionEvents(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertTrue(payload["ok"])
         self.assertEqual(payload["schema"], {"name": "datum.context.session_activity", "version": 1})
         self.assertEqual(payload["result"]["contract"], "datum_tool_session_activity_summary_v1")

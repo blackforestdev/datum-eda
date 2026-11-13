@@ -20,7 +20,7 @@ from agent_authority_test_support import write_agent_authority_fixture
 from discovery_scope import load_discovery_scope
 from library_authoring_methods import cli_run_kwargs_for_method
 from stdio_tool_host import StdioToolHost
-from test_support import FakeDaemonClient
+from test_support import FakeDaemonClient, decode_tool_payload
 
 
 class TestAgentSessionAuthority(unittest.TestCase):
@@ -108,7 +108,7 @@ class TestAgentSessionAuthority(unittest.TestCase):
                 },
             }
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["error"]["code"], "session_authority_revoked")
         self.assertEqual(self.daemon.calls, [])
 
@@ -131,7 +131,7 @@ class TestAgentSessionAuthority(unittest.TestCase):
                 },
             }
         )
-        self.assertTrue(response["result"]["content"][0]["json"]["ok"])
+        self.assertTrue(decode_tool_payload(response)["ok"])
         event_log = Path(
             json.loads(self.pinned_path.read_text())["storage"]["event_log_path"]
         )

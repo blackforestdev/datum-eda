@@ -91,7 +91,20 @@ class Broker:
         result = self.request(
             "tools/call", {"name": name, "arguments": arguments}
         )
-        return result["content"][0]["json"]
+        content = result.get("content")
+        if not isinstance(content, list) or len(content) != 1:
+            raise RuntimeError("broker tool result must contain one text block")
+        block = content[0]
+        if not isinstance(block, dict) or block.get("type") != "text" or not isinstance(block.get("text"), str):
+            raise RuntimeError("broker tool result is not MCP text content")
+        payload = json.loads(block["text"])
+        if not isinstance(payload, dict):
+            raise RuntimeError("broker Datum tool payload must be an object")
+        if not isinstance(result.get("isError", False), bool):
+            raise RuntimeError("broker tool error flag must be boolean")
+        if result.get("isError", False) != (payload.get("ok") is False):
+            raise RuntimeError("broker tool error flag disagrees with Datum outcome")
+        return payload
 
     def close(self) -> None:
         if self._process.stdin is not None:

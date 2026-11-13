@@ -6,7 +6,7 @@ from __future__ import annotations
 import unittest
 
 from server_runtime import StdioToolHost
-from test_support import FakeDaemonClient
+from test_support import FakeDaemonClient, decode_tool_payload
 
 
 @unittest.skip("retired flat/private writer compatibility; use canonical native write parity tests")
@@ -35,7 +35,7 @@ class TestDispatchWriteBasicsCommands(unittest.TestCase):
             [("move_component", "comp-1", 15.0, 12.0, 90.0)],
         )
         self.assertEqual(
-            response["result"]["content"][0]["json"]["diff"]["modified"][0]["object_type"],
+            decode_tool_payload(response)["diff"]["modified"][0]["object_type"],
             "component",
         )
 
@@ -61,7 +61,7 @@ class TestDispatchWriteBasicsCommands(unittest.TestCase):
             [("rotate_component", "comp-1", 180.0)],
         )
         self.assertEqual(
-            response["result"]["content"][0]["json"]["diff"]["modified"][0]["object_type"],
+            decode_tool_payload(response)["diff"]["modified"][0]["object_type"],
             "component",
         )
 
@@ -84,7 +84,7 @@ class TestDispatchWriteBasicsCommands(unittest.TestCase):
         )
         self.assertEqual(daemon.calls, [("flip_component", "comp-1", 2)])
         self.assertEqual(
-            response["result"]["content"][0]["json"]["diff"]["modified"][0]["object_type"],
+            decode_tool_payload(response)["diff"]["modified"][0]["object_type"],
             "component",
         )
 
@@ -107,7 +107,7 @@ class TestDispatchWriteBasicsCommands(unittest.TestCase):
         )
         self.assertEqual(daemon.calls, [("set_value", "comp-1", "22k")])
         self.assertEqual(
-            response["result"]["content"][0]["json"]["diff"]["modified"][0]["object_type"],
+            decode_tool_payload(response)["diff"]["modified"][0]["object_type"],
             "component",
         )
 
@@ -132,10 +132,10 @@ class TestDispatchWriteBasicsCommands(unittest.TestCase):
         )
         self.assertEqual(daemon.calls, [("undo", None), ("redo", None)])
         self.assertEqual(
-            undo["result"]["content"][0]["json"]["diff"]["created"][0]["uuid"],
+            decode_tool_payload(undo)["diff"]["created"][0]["uuid"],
             "track-1",
         )
         self.assertEqual(
-            redo["result"]["content"][0]["json"]["diff"]["deleted"][0]["uuid"],
+            decode_tool_payload(redo)["diff"]["deleted"][0]["uuid"],
             "track-1",
         )

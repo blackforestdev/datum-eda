@@ -6,7 +6,7 @@ from __future__ import annotations
 import unittest
 
 from server_runtime import StdioToolHost
-from test_support import FakeDaemonClient
+from test_support import FakeDaemonClient, decode_tool_payload
 
 
 class TestDispatchLibraryAliases(unittest.TestCase):
@@ -389,7 +389,7 @@ class TestDispatchLibraryAliases(unittest.TestCase):
                 }
             )
             self.assertEqual(daemon.calls[-1][0], expected_method)
-            payload = response["result"]["content"][0]["json"]
+            payload = decode_tool_payload(response)
             self.assertTrue(payload["ok"])
             self.assertEqual(payload["schema"], {"name": tool_name, "version": 1})
             package_silkscreen_methods = {

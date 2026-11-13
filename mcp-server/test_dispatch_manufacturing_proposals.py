@@ -6,7 +6,7 @@ from __future__ import annotations
 import unittest
 
 from server_runtime import StdioToolHost
-from test_support import FakeDaemonClient
+from test_support import FakeDaemonClient, decode_tool_payload
 
 
 class TestDispatchManufacturingProposals(unittest.TestCase):
@@ -31,7 +31,7 @@ class TestDispatchManufacturingProposals(unittest.TestCase):
                 }
             )
             self.assertEqual(daemon.calls[-1][0], name)
-            payload = response["result"]["content"][0]["json"]
+            payload = decode_tool_payload(response)
             self.assertEqual(payload["contract"], "proposal_create_v1")
             self.assertTrue(payload["action"].startswith("propose_"))
 

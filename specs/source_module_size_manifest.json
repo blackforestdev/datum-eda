@@ -668,7 +668,7 @@
     "mcp-server/test_native_write_parity.py": {
       "kind": "python-test",
       "limits": {
-        "file_lines": 719
+        "file_lines": 718
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",

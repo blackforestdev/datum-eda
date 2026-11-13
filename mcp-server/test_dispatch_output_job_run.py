@@ -8,7 +8,7 @@ import unittest
 from unittest.mock import patch
 
 from server_runtime import EngineDaemonClient, StdioToolHost
-from test_support import FakeDaemonClient
+from test_support import FakeDaemonClient, decode_tool_payload
 
 
 class TestDispatchOutputJobRun(unittest.TestCase):
@@ -43,7 +43,7 @@ class TestDispatchOutputJobRun(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["contract"], "output_job_run_v1")
         self.assertEqual(payload["action"], "run_output_job")
 
@@ -147,10 +147,10 @@ class TestDispatchOutputJobRun(unittest.TestCase):
             ],
         )
         self.assertEqual(
-            start["result"]["content"][0]["json"]["output_job_run"]["status"], "running"
+            decode_tool_payload(start)["output_job_run"]["status"], "running"
         )
         self.assertEqual(
-            cancel["result"]["content"][0]["json"]["output_job_run"]["status"], "canceled"
+            decode_tool_payload(cancel)["output_job_run"]["status"], "canceled"
         )
 
     @patch("server_runtime.subprocess.run")

@@ -6,7 +6,7 @@ from __future__ import annotations
 import unittest
 
 from server_runtime import StdioToolHost
-from test_support import FakeDaemonClient
+from test_support import FakeDaemonClient, decode_tool_payload
 
 
 @unittest.skip("retired flat/private writer compatibility; use canonical native write parity tests")
@@ -26,7 +26,7 @@ class TestDispatchCoreProjectWrite(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("open_project", "/tmp/demo.kicad_pcb")])
-        self.assertEqual(response["result"]["content"][0]["json"]["kind"], "kicad_board")
+        self.assertEqual(decode_tool_payload(response)["kind"], "kicad_board")
 
     def test_tools_call_dispatches_close_project(self) -> None:
         daemon = FakeDaemonClient()
@@ -43,7 +43,7 @@ class TestDispatchCoreProjectWrite(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("close_project", None)])
-        self.assertEqual(response["result"]["content"][0]["json"]["closed"], True)
+        self.assertEqual(decode_tool_payload(response)["closed"], True)
 
     def test_tools_call_dispatches_save(self) -> None:
         daemon = FakeDaemonClient()
@@ -60,7 +60,7 @@ class TestDispatchCoreProjectWrite(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("save", "/tmp/out.kicad_pcb")])
-        self.assertEqual(response["result"]["content"][0]["json"]["path"], "/tmp/out.kicad_pcb")
+        self.assertEqual(decode_tool_payload(response)["path"], "/tmp/out.kicad_pcb")
 
     def test_tools_call_dispatches_delete_track(self) -> None:
         daemon = FakeDaemonClient()
@@ -78,7 +78,7 @@ class TestDispatchCoreProjectWrite(unittest.TestCase):
         )
         self.assertEqual(daemon.calls, [("delete_track", "track-1")])
         self.assertEqual(
-            response["result"]["content"][0]["json"]["diff"]["deleted"][0]["uuid"],
+            decode_tool_payload(response)["diff"]["deleted"][0]["uuid"],
             "track-1",
         )
 
@@ -98,7 +98,7 @@ class TestDispatchCoreProjectWrite(unittest.TestCase):
         )
         self.assertEqual(daemon.calls, [("delete_component", "comp-1")])
         self.assertEqual(
-            response["result"]["content"][0]["json"]["diff"]["deleted"][0]["uuid"],
+            decode_tool_payload(response)["diff"]["deleted"][0]["uuid"],
             "comp-1",
         )
 
@@ -118,7 +118,7 @@ class TestDispatchCoreProjectWrite(unittest.TestCase):
         )
         self.assertEqual(daemon.calls, [("delete_via", "via-1")])
         self.assertEqual(
-            response["result"]["content"][0]["json"]["diff"]["deleted"][0]["uuid"],
+            decode_tool_payload(response)["diff"]["deleted"][0]["uuid"],
             "via-1",
         )
 
@@ -156,7 +156,7 @@ class TestDispatchCoreProjectWrite(unittest.TestCase):
             ],
         )
         self.assertEqual(
-            response["result"]["content"][0]["json"]["diff"]["created"][0]["object_type"],
+            decode_tool_payload(response)["diff"]["created"][0]["object_type"],
             "rule",
         )
 
@@ -176,7 +176,7 @@ class TestDispatchCoreProjectWrite(unittest.TestCase):
         )
         self.assertEqual(daemon.calls, [("assign_part", "comp-1", "part-1")])
         self.assertEqual(
-            response["result"]["content"][0]["json"]["diff"]["modified"][0]["object_type"],
+            decode_tool_payload(response)["diff"]["modified"][0]["object_type"],
             "component",
         )
 
@@ -196,7 +196,7 @@ class TestDispatchCoreProjectWrite(unittest.TestCase):
         )
         self.assertEqual(daemon.calls, [("set_package", "comp-1", "package-1")])
         self.assertEqual(
-            response["result"]["content"][0]["json"]["diff"]["modified"][0]["object_type"],
+            decode_tool_payload(response)["diff"]["modified"][0]["object_type"],
             "component",
         )
 
@@ -238,7 +238,7 @@ class TestDispatchCoreProjectWrite(unittest.TestCase):
             ],
         )
         self.assertEqual(
-            response["result"]["content"][0]["json"]["diff"]["modified"][0]["object_type"],
+            decode_tool_payload(response)["diff"]["modified"][0]["object_type"],
             "net",
         )
 
@@ -258,6 +258,6 @@ class TestDispatchCoreProjectWrite(unittest.TestCase):
         )
         self.assertEqual(daemon.calls, [("set_reference", "comp-1", "R10")])
         self.assertEqual(
-            response["result"]["content"][0]["json"]["diff"]["modified"][0]["object_type"],
+            decode_tool_payload(response)["diff"]["modified"][0]["object_type"],
             "component",
         )

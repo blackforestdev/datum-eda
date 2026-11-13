@@ -6,7 +6,7 @@ from __future__ import annotations
 import unittest
 
 from server_runtime import JsonRpcResponse, StdioToolHost
-from test_support import FakeDaemonClient
+from test_support import FakeDaemonClient, decode_tool_payload
 
 
 class TestDispatchReadSurfaceQueries(unittest.TestCase):
@@ -25,8 +25,8 @@ class TestDispatchReadSurfaceQueries(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("get_check_report", None)])
-        self.assertEqual(response["result"]["content"][0]["json"]["domain"], "board")
-        self.assertEqual(response["result"]["content"][0]["json"]["summary"]["status"], "warning")
+        self.assertEqual(decode_tool_payload(response)["domain"], "board")
+        self.assertEqual(decode_tool_payload(response)["summary"]["status"], "warning")
 
     def test_tools_call_dispatches_check_report_with_input_without_explicit_driver(
         self,
@@ -75,7 +75,7 @@ class TestDispatchReadSurfaceQueries(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("get_check_report", None)])
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["domain"], "schematic")
         self.assertEqual(payload["summary"]["status"], "info")
         self.assertEqual(
@@ -98,7 +98,7 @@ class TestDispatchReadSurfaceQueries(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("get_board_summary", None)])
-        self.assertEqual(response["result"]["content"][0]["json"]["name"], "simple-demo")
+        self.assertEqual(decode_tool_payload(response)["name"], "simple-demo")
 
     def test_tools_call_dispatches_schematic_summary(self) -> None:
         daemon = FakeDaemonClient()
@@ -115,7 +115,7 @@ class TestDispatchReadSurfaceQueries(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("get_schematic_summary", None)])
-        self.assertEqual(response["result"]["content"][0]["json"]["sheet_count"], 1)
+        self.assertEqual(decode_tool_payload(response)["sheet_count"], 1)
 
     def test_tools_call_dispatches_sheets(self) -> None:
         daemon = FakeDaemonClient()
@@ -132,7 +132,7 @@ class TestDispatchReadSurfaceQueries(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("get_sheets", None)])
-        self.assertEqual(response["result"]["content"][0]["json"][0]["name"], "Root")
+        self.assertEqual(decode_tool_payload(response)[0]["name"], "Root")
 
     def test_tools_call_dispatches_components(self) -> None:
         daemon = FakeDaemonClient()
@@ -149,7 +149,7 @@ class TestDispatchReadSurfaceQueries(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("get_components", None)])
-        self.assertEqual(response["result"]["content"][0]["json"][0]["reference"], "R1")
+        self.assertEqual(decode_tool_payload(response)[0]["reference"], "R1")
 
     def test_tools_call_dispatches_symbol_fields(self) -> None:
         daemon = FakeDaemonClient()
@@ -166,7 +166,7 @@ class TestDispatchReadSurfaceQueries(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("get_symbol_fields", "abcd")])
-        self.assertEqual(response["result"]["content"][0]["json"][0]["key"], "Reference")
+        self.assertEqual(decode_tool_payload(response)[0]["key"], "Reference")
 
     def test_tools_call_dispatches_netlist(self) -> None:
         daemon = FakeDaemonClient()
@@ -183,7 +183,7 @@ class TestDispatchReadSurfaceQueries(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("get_netlist", None)])
-        self.assertEqual(response["result"]["content"][0]["json"][0]["name"], "GND")
+        self.assertEqual(decode_tool_payload(response)[0]["name"], "GND")
 
     def test_tools_call_dispatches_bus_entries(self) -> None:
         daemon = FakeDaemonClient()
@@ -200,7 +200,7 @@ class TestDispatchReadSurfaceQueries(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("get_bus_entries", None)])
-        self.assertEqual(response["result"]["content"][0]["json"][0]["uuid"], "be1")
+        self.assertEqual(decode_tool_payload(response)[0]["uuid"], "be1")
 
     def test_tools_call_dispatches_board_net_info(self) -> None:
         daemon = FakeDaemonClient()
@@ -217,7 +217,7 @@ class TestDispatchReadSurfaceQueries(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("get_net_info", None)])
-        self.assertEqual(response["result"]["content"][0]["json"][0]["name"], "GND")
+        self.assertEqual(decode_tool_payload(response)[0]["name"], "GND")
 
     def test_tools_call_dispatches_schematic_net_info(self) -> None:
         daemon = FakeDaemonClient()
@@ -234,7 +234,7 @@ class TestDispatchReadSurfaceQueries(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("get_schematic_net_info", None)])
-        self.assertEqual(response["result"]["content"][0]["json"][0]["name"], "SCL")
+        self.assertEqual(decode_tool_payload(response)[0]["name"], "SCL")
 
     def test_tools_call_dispatches_unrouted(self) -> None:
         daemon = FakeDaemonClient()
@@ -251,7 +251,7 @@ class TestDispatchReadSurfaceQueries(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("get_unrouted", None)])
-        self.assertEqual(response["result"]["content"][0]["json"][0]["net_name"], "SIG")
+        self.assertEqual(decode_tool_payload(response)[0]["net_name"], "SIG")
 
     def test_tools_call_dispatches_connectivity_diagnostics(self) -> None:
         daemon = FakeDaemonClient()
@@ -268,7 +268,7 @@ class TestDispatchReadSurfaceQueries(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("get_connectivity_diagnostics", None)])
-        diagnostics = response["result"]["content"][0]["json"]
+        diagnostics = decode_tool_payload(response)
         self.assertEqual(len(diagnostics), 2)
         self.assertTrue(
             any(diagnostic["kind"] == "partially_routed_net" for diagnostic in diagnostics)
@@ -289,4 +289,4 @@ class TestDispatchReadSurfaceQueries(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("get_design_rules", None)])
-        self.assertEqual(response["result"]["content"][0]["json"], [])
+        self.assertEqual(decode_tool_payload(response), [])

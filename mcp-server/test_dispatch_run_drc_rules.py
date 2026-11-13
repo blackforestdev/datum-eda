@@ -6,7 +6,7 @@ from __future__ import annotations
 import unittest
 
 from stdio_tool_host import StdioToolHost
-from test_support import FakeDaemonClient
+from test_support import FakeDaemonClient, decode_tool_payload
 
 
 class TestRunDrcRuleDispatch(unittest.TestCase):
@@ -25,7 +25,7 @@ class TestRunDrcRuleDispatch(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("run_drc", ["TrackWidth"])])
-        self.assertEqual(response["result"]["content"][0]["json"]["passed"], False)
+        self.assertEqual(decode_tool_payload(response)["passed"], False)
 
 
 if __name__ == "__main__":

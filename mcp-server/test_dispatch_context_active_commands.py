@@ -3,7 +3,7 @@ from __future__ import annotations
 import unittest
 
 from server_runtime import StdioToolHost
-from test_support import FakeDaemonClient
+from test_support import FakeDaemonClient, decode_tool_payload
 
 
 class TestDispatchContextActiveCommands(unittest.TestCase):
@@ -27,7 +27,7 @@ class TestDispatchContextActiveCommands(unittest.TestCase):
             }
         )
 
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         commands = payload["result"]["active_context_commands"]
         self.assertEqual(payload["active_context_commands"], commands)
         self.assertEqual(

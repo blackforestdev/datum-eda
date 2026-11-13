@@ -1,7 +1,7 @@
 from __future__ import annotations
 import unittest
 from server_runtime import StdioToolHost
-from test_support import FakeDaemonClient
+from test_support import FakeDaemonClient, decode_tool_payload
 class TestDispatchDatumTaxonomy(unittest.TestCase):
     def test_tools_call_dispatches_datum_context_get(self) -> None:
         daemon = FakeDaemonClient()
@@ -32,7 +32,7 @@ class TestDispatchDatumTaxonomy(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertTrue(payload["ok"])
         self.assertEqual(payload["schema"], {"name": "datum.context.get", "version": 1})
         self.assertEqual(payload["result"]["contract"], "datum_terminal_context_v1")
@@ -79,7 +79,7 @@ class TestDispatchDatumTaxonomy(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertTrue(payload["ok"])
         self.assertEqual(payload["schema"], {"name": "datum.context.refresh", "version": 1})
         self.assertTrue(payload["result"]["refreshed"])
@@ -98,7 +98,7 @@ class TestDispatchDatumTaxonomy(unittest.TestCase):
                 },
             }
         )
-        check_payload = check_response["result"]["content"][0]["json"]
+        check_payload = decode_tool_payload(check_response)
         self.assertTrue(check_payload["ok"])
         self.assertEqual(check_payload["schema"], {"name": "datum.check.run", "version": 1})
         self.assertEqual(check_payload["context"]["project_id"], "project-test")
@@ -144,7 +144,7 @@ class TestDispatchDatumTaxonomy(unittest.TestCase):
                 },
             }
         )
-        artifact_payload = artifact_response["result"]["content"][0]["json"]
+        artifact_payload = decode_tool_payload(artifact_response)
         self.assertTrue(artifact_payload["ok"])
         self.assertEqual(
             artifact_payload["schema"], {"name": "datum.artifact.files", "version": 1}
@@ -181,7 +181,7 @@ class TestDispatchDatumTaxonomy(unittest.TestCase):
                 },
             }
         )
-        proposal_payload = proposal_response["result"]["content"][0]["json"]
+        proposal_payload = decode_tool_payload(proposal_response)
         self.assertTrue(proposal_payload["ok"])
         self.assertEqual(proposal_payload["result"]["proposal_count"], 1)
         proposal = proposal_payload["result"]["proposals"][0]
@@ -205,7 +205,7 @@ class TestDispatchDatumTaxonomy(unittest.TestCase):
                 },
             }
         )
-        journal_payload = journal_response["result"]["content"][0]["json"]
+        journal_payload = decode_tool_payload(journal_response)
         self.assertTrue(journal_payload["ok"])
         self.assertEqual(journal_payload["result"]["transaction_count"], 1)
         self.assertTrue(journal_payload["result"]["can_undo"])
@@ -224,7 +224,7 @@ class TestDispatchDatumTaxonomy(unittest.TestCase):
                 },
             }
         )
-        component_payload = component_response["result"]["content"][0]["json"]
+        component_payload = decode_tool_payload(component_response)
         self.assertTrue(component_payload["ok"])
         self.assertEqual(component_payload["result"]["component_instance_count"], 1)
         component = component_payload["result"]["component_instances"][0]
@@ -243,7 +243,7 @@ class TestDispatchDatumTaxonomy(unittest.TestCase):
                 },
             }
         )
-        import_payload = import_response["result"]["content"][0]["json"]
+        import_payload = decode_tool_payload(import_response)
         self.assertTrue(import_payload["ok"])
         self.assertEqual(import_payload["result"]["import_map_count"], 1)
         entry = import_payload["result"]["entries"][0]
@@ -353,7 +353,7 @@ class TestDispatchDatumTaxonomy(unittest.TestCase):
                     "params": {"name": tool_name, "arguments": arguments},
                 }
             )
-            payload = response["result"]["content"][0]["json"]
+            payload = decode_tool_payload(response)
             self.assertTrue(payload["ok"])
             self.assertEqual(payload["schema"], {"name": tool_name, "version": 1})
             self.assertEqual(payload["result"]["action"], expected_action)
@@ -375,7 +375,7 @@ class TestDispatchDatumTaxonomy(unittest.TestCase):
                 },
             }
         )
-        check_payload = check_response["result"]["content"][0]["json"]
+        check_payload = decode_tool_payload(check_response)
         self.assertFalse(check_payload["ok"])
         self.assertEqual(check_payload["schema"], {"name": "datum.check.run", "version": 1})
         self.assertEqual(check_payload["context"]["project_id"], None)
@@ -393,7 +393,7 @@ class TestDispatchDatumTaxonomy(unittest.TestCase):
                 },
             }
         )
-        artifact_payload = artifact_response["result"]["content"][0]["json"]
+        artifact_payload = decode_tool_payload(artifact_response)
         self.assertFalse(artifact_payload["ok"])
         self.assertEqual(
             artifact_payload["schema"], {"name": "datum.artifact.validate", "version": 1}
@@ -426,7 +426,7 @@ class TestDispatchDatumTaxonomy(unittest.TestCase):
                 },
             }
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertTrue(payload["ok"])
         self.assertEqual(payload["schema"], {"name": "datum.check.run", "version": 1})
         self.assertEqual(payload["context"]["project_id"], "project-test")

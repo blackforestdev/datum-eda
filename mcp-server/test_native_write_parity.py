@@ -14,7 +14,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from server_runtime import EngineDaemonClient, StdioToolHost
-
+from test_support import decode_tool_payload
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 def datum_cli_prefix() -> list[str]:
@@ -51,7 +51,7 @@ def call_tool(host: StdioToolHost, name: str, arguments: dict):
             "params": {"name": name, "arguments": arguments},
         }
     )
-    payload = response["result"]["content"][0]["json"]
+    payload = decode_tool_payload(response)
     assert payload["ok"] is True, payload
     return payload
 
@@ -69,7 +69,7 @@ def guarded_journal_arguments(host: StdioToolHost, name: str, arguments: dict) -
             "params": {"name": "datum.journal.list", "arguments": {"path": path}},
         }
     )
-    payload = list_response["result"]["content"][0]["json"]
+    payload = decode_tool_payload(list_response)
     assert payload["ok"] is True, payload
     latest = payload["transactions"][-1]["transaction_id"]
     return {**arguments, "expected_tip_transaction": latest}
@@ -576,14 +576,14 @@ class TestNativeWriteParity(unittest.TestCase):
                 self.assertEqual(query_result(host, "datum.query.schematic_bus_entries", root), [])
                 self.assertEqual(call_tool(host, "datum.journal.redo", {"path": str(root)})["status"], "applied")
                 self.assertEqual(query_result(host, "datum.query.schematic_bus_entries", root)[0]["uuid"], entry)
-                blocked = host.handle_message(
+                blocked = decode_tool_payload(host.handle_message(
                     {
                         "jsonrpc": "2.0",
                         "id": 1,
                         "method": "tools/call",
                         "params": {"name": "datum.schematic.delete_bus", "arguments": {"path": str(root), "bus": bus}},
                     }
-                )["result"]["content"][0]["json"]
+                ))
                 self.assertFalse(blocked["ok"])
                 self.assertIn("still referenced by bus entry", blocked["error"]["message"])
                 self.assertEqual(

@@ -63,17 +63,23 @@ class StdioToolHost:
         msg_id = message.get("id")
         params = message.get("params", {})
 
+        if not isinstance(params, dict):
+            return _protocol_error(msg_id, -32602, "params must be an object")
+        if method == "tools/call":
+            name = params.get("name")
+            arguments = params.get("arguments", {})
+            if not isinstance(name, str) or not isinstance(arguments, dict):
+                return _protocol_error(msg_id, -32602, "invalid tool call")
+            if name not in TOOL_BY_NAME:
+                return _protocol_error(msg_id, -32602, f"unknown tool: {name}")
+
         if self._session_authority is not None:
             try:
                 self._session_authority.assert_active()
             except SessionAuthorityError as exc:
                 if method == "tools/call":
                     name = params.get("name") if isinstance(params, dict) else None
-                    result = {
-                        "content": [
-                            {"type": "json", "json": _datum_error_envelope(name, exc)}
-                        ]
-                    }
+                    result = _tool_result(_datum_error_envelope(name, exc), is_error=True)
                     return {"jsonrpc": "2.0", "id": msg_id, "result": result}
                 return _protocol_error(msg_id, -32020, str(exc))
 
@@ -141,21 +147,8 @@ class StdioToolHost:
             try:
                 result = self._call_tool(name, arguments)
             except Exception as exc:
-                if isinstance(exc, (AgentCapabilityError, ContextFenceError, SessionAuthorityError)):
-                    result = {
-                        "content": [
-                            {"type": "json", "json": _datum_error_envelope(name, exc)}
-                        ]
-                    }
-                    return {"jsonrpc": "2.0", "id": msg_id, "result": result}
-                if isinstance(name, str) and name.startswith("datum."):
-                    result = {"content": [{"type": "json", "json": _datum_error_envelope(name, exc)}]}
-                    return {"jsonrpc": "2.0", "id": msg_id, "result": result}
-                return {
-                    "jsonrpc": "2.0",
-                    "id": msg_id,
-                    "error": {"code": -32010, "message": str(exc)},
-                }
+                result = _tool_result(_datum_error_envelope(name, exc), is_error=True)
+                return {"jsonrpc": "2.0", "id": msg_id, "result": result}
             if TOOL_BY_NAME.get(name, {}).get("x_public_write_surface_class"):
                 self._publish_resource_changes()
             return {"jsonrpc": "2.0", "id": msg_id, "result": result}
@@ -290,7 +283,7 @@ class StdioToolHost:
         if isinstance(name, str) and name.startswith("datum."):
             result = _datum_target_envelope(name, result)
 
-        return {"content": [{"type": "json", "json": result}]}
+        return _tool_result(result, is_error=isinstance(result, dict) and result.get("ok") is False)
 
     def run_stdio(self, stdin: TextIO | None = None, stdout: TextIO | None = None) -> None:
         input_stream = stdin or sys.stdin
@@ -316,6 +309,15 @@ class StdioToolHost:
                     file=output_stream,
                     flush=True,
                 )
+
+
+def _tool_result(payload: Any, *, is_error: bool = False) -> dict[str, Any]:
+    # Serialized JSON text is valid in every negotiated MCP version, including
+    # compatibility aliases whose payload is a list or scalar rather than an object.
+    return {
+        "content": [{"type": "text", "text": json.dumps(payload, ensure_ascii=False)}],
+        "isError": is_error,
+    }
 
 
 def _protocol_error(msg_id: Any, code: int, message: str) -> dict[str, Any]:

@@ -6,7 +6,7 @@ from __future__ import annotations
 import unittest
 
 from server_runtime import StdioToolHost
-from test_support import FakeDaemonClient
+from test_support import FakeDaemonClient, decode_tool_payload
 
 
 class TestDispatchJournal(unittest.TestCase):
@@ -25,7 +25,7 @@ class TestDispatchJournal(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("get_journal_list", "/tmp/native-project")])
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["contract"], "project_transaction_journal_list_v1")
         self.assertEqual(payload["count"], 1)
 
@@ -50,7 +50,7 @@ class TestDispatchJournal(unittest.TestCase):
             daemon.calls,
             [("get_journal_transaction", "/tmp/native-project", "txn-test")],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["contract"], "project_transaction_journal_record_v1")
         self.assertEqual(payload["transaction"]["transaction_id"], "txn-test")
 
@@ -93,11 +93,11 @@ class TestDispatchJournal(unittest.TestCase):
                 ("journal_redo", "/tmp/native-project", "model-rev", "txn-tip-redo"),
             ],
         )
-        self.assertEqual(undo_response["result"]["content"][0]["json"]["action"], "undo")
-        self.assertEqual(redo_response["result"]["content"][0]["json"]["action"], "redo")
-        self.assertTrue(undo_response["result"]["content"][0]["json"]["guard"]["checked"])
+        self.assertEqual(decode_tool_payload(undo_response)["action"], "undo")
+        self.assertEqual(decode_tool_payload(redo_response)["action"], "redo")
+        self.assertTrue(decode_tool_payload(undo_response)["guard"]["checked"])
         self.assertEqual(
-            redo_response["result"]["content"][0]["json"]["guard"]["expected_model_revision"],
+            decode_tool_payload(redo_response)["guard"]["expected_model_revision"],
             "model-rev",
         )
 
@@ -116,4 +116,4 @@ class TestDispatchJournal(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("journal_undo", "/tmp/native-project", None, None)])
-        self.assertEqual(response["result"]["content"][0]["json"]["action"], "undo")
+        self.assertEqual(decode_tool_payload(response)["action"], "undo")

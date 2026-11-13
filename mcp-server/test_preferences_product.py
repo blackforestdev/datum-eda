@@ -6,7 +6,7 @@ from __future__ import annotations
 import unittest
 
 from stdio_tool_host import StdioToolHost
-from test_support import FakeDaemonClient
+from test_support import FakeDaemonClient, decode_tool_payload
 from tools_catalog_data import TOOL_BY_NAME, TOOLS
 
 
@@ -46,7 +46,7 @@ class TestPreferencesProductMcp(unittest.TestCase):
                 "params": {"name": "datum.preferences.describe", "arguments": {}},
             }
         )
-        product = response["result"]["content"][0]["json"]
+        product = decode_tool_payload(response)
         self.assertTrue(product["ok"])
         self.assertEqual(product["schema"]["name"], "datum.preferences.describe")
         self.assertEqual(product["context"]["scope"], "global_this_device")
@@ -112,7 +112,7 @@ class TestPreferencesProductMcp(unittest.TestCase):
                 },
             }
         )
-        envelope = response["result"]["content"][0]["json"]
+        envelope = decode_tool_payload(response)
         self.assertTrue(envelope["ok"])
         self.assertEqual(envelope["schema"]["name"], "datum.project.new")
         method, params = daemon.calls[-1]

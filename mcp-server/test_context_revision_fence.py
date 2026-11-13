@@ -13,7 +13,7 @@ from unittest.mock import patch
 from agent_authority_test_support import write_agent_authority_fixture
 from discovery_scope import load_discovery_scope
 from stdio_tool_host import StdioToolHost
-from test_support import FakeDaemonClient
+from test_support import FakeDaemonClient, decode_tool_payload
 from tools_catalog_data import TOOL_BY_NAME
 
 
@@ -234,7 +234,7 @@ class TestContextRevisionFence(unittest.TestCase):
                 },
             }
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertTrue(payload["ok"])
         self.assertEqual(
             self.daemon.calls,
@@ -284,7 +284,7 @@ class TestContextRevisionFence(unittest.TestCase):
                 },
             }
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["error"]["code"], "context_fence_required")
         self.assertEqual(self.daemon.calls, [])
 
@@ -300,7 +300,7 @@ class TestContextRevisionFence(unittest.TestCase):
                 },
             }
         )
-        return response["result"]["content"][0]["json"]
+        return decode_tool_payload(response)
 
     def _proposal_arguments(self) -> dict[str, object]:
         return {

@@ -6,7 +6,7 @@ from __future__ import annotations
 import unittest
 
 from server_runtime import StdioToolHost
-from test_support import FakeDaemonClient
+from test_support import FakeDaemonClient, decode_tool_payload
 
 
 class TestDispatchOutputJobCanonicalAliases(unittest.TestCase):
@@ -37,7 +37,7 @@ class TestDispatchOutputJobCanonicalAliases(unittest.TestCase):
             self.assertEqual(daemon.calls[-1][0], method_name)
             if tool_name == "datum.output_job.create_gerber_set":
                 self.assertEqual(daemon.calls[-1][1]["include"], "gerber-set")
-            payload = response["result"]["content"][0]["json"]
+            payload = decode_tool_payload(response)
             self.assertTrue(payload["ok"])
             self.assertEqual(payload["schema"], {"name": tool_name, "version": 1})
 
@@ -59,7 +59,7 @@ class TestDispatchOutputJobCanonicalAliases(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls[-1][0], "run_output_job")
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertTrue(payload["ok"])
         self.assertEqual(payload["schema"], {"name": "datum.output_job.run", "version": 1})
 

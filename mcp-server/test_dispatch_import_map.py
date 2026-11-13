@@ -6,7 +6,7 @@ from __future__ import annotations
 import unittest
 
 from server_runtime import StdioToolHost
-from test_support import FakeDaemonClient
+from test_support import FakeDaemonClient, decode_tool_payload
 
 
 class TestDispatchImportMap(unittest.TestCase):
@@ -25,6 +25,6 @@ class TestDispatchImportMap(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("get_import_map", "/tmp/native-project")])
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["contract"], "import_map_query_v1")
         self.assertEqual(payload["import_map_count"], 1)

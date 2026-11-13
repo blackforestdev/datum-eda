@@ -8,7 +8,7 @@ import unittest
 from unittest.mock import patch
 
 from server_runtime import EngineDaemonClient, JsonRpcResponse, StdioToolHost
-from test_support import FakeDaemonClient
+from test_support import FakeDaemonClient, decode_tool_payload
 
 
 class TestDispatchQueryHierarchy(unittest.TestCase):
@@ -29,7 +29,7 @@ class TestDispatchQueryHierarchy(unittest.TestCase):
         )
 
         self.assertEqual(daemon.calls, [("get_project_hierarchy", "/tmp/native-project")])
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertTrue(payload["ok"])
         self.assertEqual(payload["schema"], {"name": "datum.query.hierarchy", "version": 1})
         self.assertEqual(payload["result"]["instances"][0]["name"], "Main Instance")
@@ -48,7 +48,7 @@ class TestDispatchQueryHierarchy(unittest.TestCase):
         )
 
         self.assertEqual(daemon.calls, [("get_project_hierarchy", None)])
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertTrue(payload["ok"])
         self.assertEqual(payload["result"]["instances"][0]["name"], "Main Instance")
 

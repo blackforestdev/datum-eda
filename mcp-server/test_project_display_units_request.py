@@ -6,7 +6,7 @@ from __future__ import annotations
 import unittest
 
 from server_runtime import EngineDaemonClient, JsonRpcResponse, StdioToolHost
-
+from test_support import decode_tool_payload
 
 PROFILE = {
     "system": "metric",
@@ -89,7 +89,7 @@ class TestProjectDisplayUnitsRequest(unittest.TestCase):
             }
         )
 
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertTrue(payload["ok"])
         self.assertEqual(payload["schema"]["name"], "datum.project.set_display_units")
         self.assertEqual(payload["result"], {"status": "committed"})
@@ -120,7 +120,7 @@ class TestProjectDisplayUnitsRequest(unittest.TestCase):
             }
         )
 
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertTrue(payload["ok"])
         self.assertEqual(payload["result"]["canonical_nm"], 5_080_000)
         self.assertEqual(

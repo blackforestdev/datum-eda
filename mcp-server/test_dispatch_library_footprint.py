@@ -6,7 +6,7 @@ from __future__ import annotations
 import unittest
 
 from server_runtime import StdioToolHost
-from test_support import FakeDaemonClient
+from test_support import FakeDaemonClient, decode_tool_payload
 
 
 class TestDispatchLibraryFootprint(unittest.TestCase):
@@ -240,7 +240,7 @@ class TestDispatchLibraryFootprint(unittest.TestCase):
                 }
             )
             self.assertEqual(daemon.calls[-1], expected_call)
-            payload = response["result"]["content"][0]["json"]
+            payload = decode_tool_payload(response)
             self.assertEqual(payload["object_uuid"], expected_call[3])
 
 

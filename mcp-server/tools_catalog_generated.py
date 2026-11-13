@@ -137,6 +137,7 @@ _PREFIX_ORDERS: dict[str, tuple[str, ...]] = {
         "datum.schematic.delete_drawing",
         "datum.schematic.place_symbol",
         "datum.schematic.move_symbol",
+        "datum.schematic.align_symbols",
         "datum.schematic.rotate_symbol",
         "datum.schematic.mirror_symbol",
         "datum.schematic.delete_symbol",

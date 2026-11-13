@@ -13,7 +13,7 @@ from unittest.mock import patch
 from agent_authority_test_support import write_agent_authority_fixture
 from discovery_scope import load_discovery_scope
 from stdio_tool_host import StdioToolHost
-from test_support import FakeDaemonClient
+from test_support import FakeDaemonClient, decode_tool_payload
 
 
 class ScopedHostFixture:
@@ -100,7 +100,7 @@ class ScopedHostFixture:
                 "params": {"name": name, "arguments": arguments},
             }
         )
-        return response["result"]["content"][0]["json"]
+        return decode_tool_payload(response)
 
     @staticmethod
     def _write(path: Path, value: dict[str, object]) -> None:

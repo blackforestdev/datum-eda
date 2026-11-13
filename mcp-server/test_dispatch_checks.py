@@ -6,7 +6,7 @@ from __future__ import annotations
 import unittest
 
 from server_runtime import StdioToolHost
-from test_support import FakeDaemonClient
+from test_support import FakeDaemonClient, decode_tool_payload
 
 
 class TestDispatchChecks(unittest.TestCase):
@@ -31,7 +31,7 @@ class TestDispatchChecks(unittest.TestCase):
             daemon.calls,
             [("get_check_run", "/tmp/native-project", "native-combined")],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["action"], "native_project_check_run")
         self.assertEqual(payload["check_run_id"], "check-run-test")
         self.assertEqual(payload["persisted"], True)
@@ -54,7 +54,7 @@ class TestDispatchChecks(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("get_check_run", "/tmp/native-project", "standards")])
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["schema"], {"name": "datum.check.run", "version": 1})
         self.assertEqual(payload["result"]["profile_id"], "standards")
         self.assertEqual(payload["result"]["coverage"][1]["status"], "filtered_by_profile")
@@ -74,7 +74,7 @@ class TestDispatchChecks(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("get_zone_fills", "/tmp/native-project")])
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["contract"], "zone_fills_query_v1")
         self.assertEqual(payload["zone_fill_count"], 1)
         self.assertEqual(payload["zone_fills"][0]["state"], "unfilled")
@@ -101,7 +101,7 @@ class TestDispatchChecks(unittest.TestCase):
             daemon.calls,
             [("fill_zones", "/tmp/native-project", "zone-test", "net-test")],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["contract"], "zone_fill_generate_v1")
         self.assertEqual(payload["zone_fills"][0]["state"], "unsupported")
 
@@ -120,7 +120,7 @@ class TestDispatchChecks(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("get_check_runs", "/tmp/native-project")])
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["contract"], "check_run_list_v1")
         self.assertEqual(payload["check_run_count"], 1)
 
@@ -145,7 +145,7 @@ class TestDispatchChecks(unittest.TestCase):
             daemon.calls,
             [("show_check_run", "/tmp/native-project", "check-run-test")],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["contract"], "check_run_record_v1")
         self.assertEqual(payload["check_run"]["check_run_id"], "check-run-test")
         self.assertEqual(payload["check_run"]["proposal_refs"], ["proposal-test"])
@@ -171,7 +171,7 @@ class TestDispatchChecks(unittest.TestCase):
                 },
             }
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["schema"], {"name": "datum.check.show", "version": 1})
         self.assertEqual(payload["result"]["check_run_id"], "check-run-test")
         self.assertEqual(payload["result"]["proposal_refs"], ["proposal-test"])
@@ -192,7 +192,7 @@ class TestDispatchChecks(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("get_check_profiles", "/tmp/native-project")])
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["contract"], "check_profiles_v1")
         self.assertEqual(payload["default_profile_id"], "native-combined")
 
@@ -214,7 +214,7 @@ class TestDispatchChecks(unittest.TestCase):
             daemon.calls,
             [("generate_standards_repair_proposals", "/tmp/native-project")],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["action"], "generate_standards_repair_proposals")
         self.assertEqual(payload["proposal_count"], 2)
 
@@ -236,7 +236,7 @@ class TestDispatchChecks(unittest.TestCase):
             daemon.calls,
             [("generate_standards_repair_proposals", "/tmp/native-project")],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertTrue(payload["ok"])
         self.assertEqual(
             payload["schema"],
@@ -292,7 +292,7 @@ class TestDispatchChecks(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["contract"], "project_waive_finding_v2")
         self.assertEqual(payload["fingerprint"], "sha256:finding")
         self.assertEqual(payload["domain"], "standards")
@@ -329,7 +329,7 @@ class TestDispatchChecks(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["contract"], "project_accept_deviation_v2")
         self.assertEqual(payload["fingerprint"], "sha256:finding")
         self.assertEqual(payload["domain"], "standards")

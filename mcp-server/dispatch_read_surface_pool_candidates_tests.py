@@ -6,7 +6,7 @@ from __future__ import annotations
 import unittest
 
 from server_runtime import StdioToolHost
-from test_support import FakeDaemonClient
+from test_support import FakeDaemonClient, decode_tool_payload
 
 
 class TestDispatchReadSurfacePoolCandidates(unittest.TestCase):
@@ -25,7 +25,7 @@ class TestDispatchReadSurfacePoolCandidates(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("search_pool", "sot23")])
-        self.assertEqual(response["result"]["content"][0]["json"][0]["package"], "SOT23")
+        self.assertEqual(decode_tool_payload(response)[0]["package"], "SOT23")
 
     def test_tools_call_dispatches_get_part(self) -> None:
         daemon = FakeDaemonClient()
@@ -42,7 +42,7 @@ class TestDispatchReadSurfacePoolCandidates(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("get_part", "part-uuid")])
-        self.assertEqual(response["result"]["content"][0]["json"]["mpn"], "MMBT3904")
+        self.assertEqual(decode_tool_payload(response)["mpn"], "MMBT3904")
 
     def test_tools_call_dispatches_get_package(self) -> None:
         daemon = FakeDaemonClient()
@@ -59,7 +59,7 @@ class TestDispatchReadSurfacePoolCandidates(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("get_package", "package-uuid")])
-        self.assertEqual(response["result"]["content"][0]["json"]["name"], "SOT23")
+        self.assertEqual(decode_tool_payload(response)["name"], "SOT23")
 
     def test_tools_call_dispatches_get_package_change_candidates(self) -> None:
         daemon = FakeDaemonClient()
@@ -76,7 +76,7 @@ class TestDispatchReadSurfacePoolCandidates(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("get_package_change_candidates", "comp-uuid")])
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["status"], "candidates_available")
         self.assertEqual(payload["candidates"][0]["package_name"], "ALT-3")
 
@@ -95,7 +95,7 @@ class TestDispatchReadSurfacePoolCandidates(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("get_part_change_candidates", "comp-uuid")])
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["status"], "candidates_available")
         self.assertEqual(payload["candidates"][0]["value"], "ALTAMP")
 
@@ -114,7 +114,7 @@ class TestDispatchReadSurfacePoolCandidates(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("get_component_replacement_plan", "comp-uuid")])
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["current_reference"], "R1")
         self.assertEqual(payload["package_change"]["status"], "candidates_available")
         self.assertEqual(payload["part_change"]["status"], "candidates_available")
@@ -149,7 +149,7 @@ class TestDispatchReadSurfacePoolCandidates(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["policy"], "best_compatible_package")
         self.assertEqual(payload["replacements"][0]["current_reference"], "R1")
         self.assertEqual(payload["replacements"][0]["target_package_name"], "ALT-3")
@@ -223,6 +223,6 @@ class TestDispatchReadSurfacePoolCandidates(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(len(payload["replacements"]), 1)
         self.assertEqual(payload["replacements"][0]["component_uuid"], "comp-1")

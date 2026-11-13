@@ -6,7 +6,7 @@ from __future__ import annotations
 import unittest
 
 from server_runtime import JsonRpcResponse, StdioToolHost
-from test_support import FakeDaemonClient
+from test_support import FakeDaemonClient, decode_tool_payload
 
 
 @unittest.skip("retired flat/private writer compatibility; use canonical native write parity tests")
@@ -56,7 +56,7 @@ class TestDispatchWriteFollowupMutations(unittest.TestCase):
                 "params": {"name": "get_net_info", "arguments": {}},
             }
         )
-        before_nets = before["result"]["content"][0]["json"]
+        before_nets = decode_tool_payload(before)
         self.assertEqual(len(before_nets[0]["pins"]), 2)
 
         host.handle_message(
@@ -78,7 +78,7 @@ class TestDispatchWriteFollowupMutations(unittest.TestCase):
                 "params": {"name": "get_net_info", "arguments": {}},
             }
         )
-        after_nets = after["result"]["content"][0]["json"]
+        after_nets = decode_tool_payload(after)
         self.assertEqual(len(after_nets[0]["pins"]), 1)
         self.assertEqual(
             daemon.calls,
@@ -150,7 +150,7 @@ class TestDispatchWriteFollowupMutations(unittest.TestCase):
                 "params": {"name": "get_net_info", "arguments": {}},
             }
         )
-        before_nets = before["result"]["content"][0]["json"]
+        before_nets = decode_tool_payload(before)
         self.assertEqual(before_nets[0]["class"], "Default")
 
         host.handle_message(
@@ -179,7 +179,7 @@ class TestDispatchWriteFollowupMutations(unittest.TestCase):
                 "params": {"name": "get_net_info", "arguments": {}},
             }
         )
-        after_nets = after["result"]["content"][0]["json"]
+        after_nets = decode_tool_payload(after)
         self.assertEqual(after_nets[0]["class"], "power")
         self.assertEqual(
             daemon.calls,
@@ -240,7 +240,7 @@ class TestDispatchWriteFollowupMutations(unittest.TestCase):
                 "params": {"name": "get_components", "arguments": {}},
             }
         )
-        before_components = before["result"]["content"][0]["json"]
+        before_components = decode_tool_payload(before)
         self.assertEqual(before_components[0]["reference"], "R1")
 
         host.handle_message(
@@ -262,7 +262,7 @@ class TestDispatchWriteFollowupMutations(unittest.TestCase):
                 "params": {"name": "get_components", "arguments": {}},
             }
         )
-        after_components = after["result"]["content"][0]["json"]
+        after_components = decode_tool_payload(after)
         self.assertEqual(after_components[0]["reference"], "R10")
         self.assertEqual(
             daemon.calls,

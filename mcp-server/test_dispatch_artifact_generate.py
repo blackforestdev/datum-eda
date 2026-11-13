@@ -6,7 +6,7 @@ from __future__ import annotations
 import unittest
 
 from server_runtime import StdioToolHost
-from test_support import FakeDaemonClient
+from test_support import FakeDaemonClient, decode_tool_payload
 
 
 class TestDispatchArtifactGenerate(unittest.TestCase):
@@ -42,7 +42,7 @@ class TestDispatchArtifactGenerate(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["ok"], True)
         self.assertEqual(payload["schema"]["name"], "datum.artifact.generate")
 
@@ -66,7 +66,7 @@ class TestDispatchArtifactGenerate(unittest.TestCase):
             }
         )
 
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["ok"], True)
         result = payload["result"]
         self.assertEqual(result["generated_count"], 1)

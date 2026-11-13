@@ -6,7 +6,7 @@ from __future__ import annotations
 import unittest
 
 from server_runtime import StdioToolHost
-from test_support import FakeDaemonClient
+from test_support import FakeDaemonClient, decode_tool_payload
 
 
 class TestDispatchQueries(unittest.TestCase):
@@ -25,7 +25,7 @@ class TestDispatchQueries(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("get_labels", None)])
-        self.assertEqual(response["result"]["content"][0]["json"][0]["name"], "SCL")
+        self.assertEqual(decode_tool_payload(response)[0]["name"], "SCL")
 
     def test_tools_call_dispatches_ports(self) -> None:
         daemon = FakeDaemonClient()
@@ -42,7 +42,7 @@ class TestDispatchQueries(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("get_ports", None)])
-        self.assertEqual(response["result"]["content"][0]["json"][0]["name"], "SUB_IN")
+        self.assertEqual(decode_tool_payload(response)[0]["name"], "SUB_IN")
 
     def test_tools_call_dispatches_symbols(self) -> None:
         daemon = FakeDaemonClient()
@@ -59,7 +59,7 @@ class TestDispatchQueries(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("get_symbols", None)])
-        self.assertEqual(response["result"]["content"][0]["json"][0]["reference"], "R1")
+        self.assertEqual(decode_tool_payload(response)[0]["reference"], "R1")
 
     def test_tools_call_dispatches_buses(self) -> None:
         daemon = FakeDaemonClient()
@@ -76,7 +76,7 @@ class TestDispatchQueries(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("get_buses", None)])
-        self.assertEqual(response["result"]["content"][0]["json"][0]["name"], "DATA")
+        self.assertEqual(decode_tool_payload(response)[0]["name"], "DATA")
 
     def test_tools_call_dispatches_hierarchy(self) -> None:
         daemon = FakeDaemonClient()
@@ -93,7 +93,7 @@ class TestDispatchQueries(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("get_hierarchy", None)])
-        self.assertEqual(response["result"]["content"][0]["json"]["instances"][0]["name"], "child")
+        self.assertEqual(decode_tool_payload(response)["instances"][0]["name"], "child")
 
     def test_tools_call_dispatches_noconnects(self) -> None:
         daemon = FakeDaemonClient()
@@ -110,7 +110,7 @@ class TestDispatchQueries(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("get_noconnects", None)])
-        self.assertEqual(response["result"]["content"][0]["json"][0]["pin"], "2")
+        self.assertEqual(decode_tool_payload(response)[0]["pin"], "2")
 
     def test_tools_call_dispatches_run_erc(self) -> None:
         daemon = FakeDaemonClient()
@@ -127,7 +127,7 @@ class TestDispatchQueries(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("run_erc", None)])
-        self.assertEqual(response["result"]["content"][0]["json"][0]["code"], "undriven_power_net")
+        self.assertEqual(decode_tool_payload(response)[0]["code"], "undriven_power_net")
 
     def test_tools_call_dispatches_run_drc(self) -> None:
         daemon = FakeDaemonClient()
@@ -144,7 +144,7 @@ class TestDispatchQueries(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("run_drc", None)])
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["passed"], False)
         self.assertEqual(payload["violations"][0]["code"], "connectivity_unrouted_net")
 
@@ -186,7 +186,7 @@ class TestDispatchQueries(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["action"], "export_route_path_proposal")
         self.assertEqual(payload["candidate"], "route-path-candidate")
         self.assertEqual(payload["artifact_kind"], "native_route_proposal_artifact")
@@ -228,7 +228,7 @@ class TestDispatchQueries(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["action"], "route_apply")
         self.assertEqual(payload["candidate"], "authored-copper-graph")
         self.assertEqual(
@@ -270,7 +270,7 @@ class TestDispatchQueries(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["action"], "route_proposal")
         self.assertEqual(payload["selection_profile"], "authored-copper-priority")
         self.assertEqual(payload["selected_candidate"], "route-path-candidate")
@@ -309,7 +309,7 @@ class TestDispatchQueries(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["action"], "route_proposal_explain")
         self.assertEqual(payload["families"][0]["status"], "selected")
 
@@ -348,7 +348,7 @@ class TestDispatchQueries(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["action"], "route_strategy_report")
         self.assertEqual(payload["recommended_profile"], "authored-copper-priority")
         self.assertEqual(payload["selected_candidate"], "authored-copper-graph")
@@ -386,7 +386,7 @@ class TestDispatchQueries(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["action"], "route_strategy_compare")
         self.assertEqual(payload["recommended_profile"], "default")
         self.assertEqual(len(payload["entries"]), 2)
@@ -424,7 +424,7 @@ class TestDispatchQueries(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["action"], "route_strategy_delta")
         self.assertEqual(payload["delta_classification"], "different_candidate_family")
         self.assertEqual(len(payload["profiles"]), 2)
@@ -458,7 +458,7 @@ class TestDispatchQueries(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["action"], "write_route_strategy_curated_fixture_suite")
         self.assertEqual(payload["suite_id"], "m6_route_strategy_curated_fixture_suite_v1")
         self.assertEqual(payload["authoring_boundary"], "generated_fixture_only")
@@ -495,7 +495,7 @@ class TestDispatchQueries(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["action"], "capture_route_strategy_curated_baseline")
         self.assertEqual(payload["authoring_boundary"], "generated_fixture_only")
         self.assertEqual(payload["result_kind"], "native_route_strategy_batch_result_artifact")
@@ -528,7 +528,7 @@ class TestDispatchQueries(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["action"], "route_strategy_batch_evaluate")
         self.assertEqual(payload["kind"], "native_route_strategy_batch_result_artifact")
         self.assertEqual(payload["summary"]["total_evaluated_requests"], 2)
@@ -554,7 +554,7 @@ class TestDispatchQueries(unittest.TestCase):
             daemon.calls,
             [("inspect_route_strategy_batch_result", "/tmp/route-strategy-batch-result.json")],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["action"], "inspect_route_strategy_batch_result")
         self.assertEqual(payload["kind"], "native_route_strategy_batch_result_artifact")
         self.assertEqual(payload["summary"]["total_evaluated_requests"], 2)
@@ -576,7 +576,7 @@ class TestDispatchQueries(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("validate_project", "/tmp/native-project")])
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["action"], "validate_project")
         self.assertEqual(payload["project_root"], "/tmp/native-project")
         self.assertEqual(payload["valid"], True)
@@ -601,7 +601,7 @@ class TestDispatchQueries(unittest.TestCase):
             daemon.calls,
             [("validate_route_strategy_batch_result", "/tmp/route-strategy-batch-result.json")],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["action"], "validate_route_strategy_batch_result")
         self.assertEqual(payload["structurally_valid"], True)
 
@@ -634,7 +634,7 @@ class TestDispatchQueries(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["action"], "compare_route_strategy_batch_result")
         self.assertEqual(
             payload["comparison_classification"], "per_request_outcomes_changed"
@@ -671,7 +671,7 @@ class TestDispatchQueries(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["action"], "gate_route_strategy_batch_result")
         self.assertEqual(payload["selected_gate_policy"], "strict_identical")
         self.assertEqual(payload["passed"], False)
@@ -708,7 +708,7 @@ class TestDispatchQueries(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["action"], "summarize_route_strategy_batch_results")
         self.assertEqual(payload["summary"]["total_artifacts"], 2)
 
@@ -748,7 +748,7 @@ class TestDispatchQueries(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["action"], "export_route_proposal")
         self.assertEqual(payload["artifact_kind"], "native_route_proposal_artifact")
 
@@ -786,7 +786,7 @@ class TestDispatchQueries(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["action"], "route_apply_selected")
         self.assertEqual(payload["applied_actions"], 1)
 
@@ -810,7 +810,7 @@ class TestDispatchQueries(unittest.TestCase):
             daemon.calls,
             [("inspect_route_proposal_artifact", "/tmp/demo.route-proposal.json")],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["action"], "inspect_route_proposal_artifact")
         self.assertEqual(payload["artifact_kind"], "native_route_proposal_artifact")
 
@@ -850,7 +850,7 @@ class TestDispatchQueries(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["action"], "review_route_proposal")
         self.assertEqual(payload["review_source"], "selected_route_proposal")
 
@@ -886,7 +886,7 @@ class TestDispatchQueries(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["action"], "review_route_proposal")
         self.assertEqual(payload["review_source"], "route_proposal_artifact")
 
@@ -919,7 +919,7 @@ class TestDispatchQueries(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["action"], "revalidate_route_proposal_artifact")
         self.assertEqual(payload["matches_live"], True)
 
@@ -952,7 +952,7 @@ class TestDispatchQueries(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["action"], "apply_route_proposal_artifact")
         self.assertEqual(payload["artifact_actions"], 2)
         self.assertEqual(payload["applied_actions"], 0)

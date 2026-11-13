@@ -6,7 +6,7 @@ from __future__ import annotations
 import unittest
 
 from server_runtime import JsonRpcResponse, StdioToolHost
-from test_support import FakeDaemonClient
+from test_support import FakeDaemonClient, decode_tool_payload
 
 
 @unittest.skip("retired flat replacement write compatibility; use proposal/native parity tests")
@@ -34,7 +34,7 @@ class TestDispatchCoreReplacements(unittest.TestCase):
             [("set_package_with_part", "comp-1", "package-1", "part-1")],
         )
         self.assertEqual(
-            response["result"]["content"][0]["json"]["diff"]["modified"][0]["object_type"],
+            decode_tool_payload(response)["diff"]["modified"][0]["object_type"],
             "component",
         )
 
@@ -61,7 +61,7 @@ class TestDispatchCoreReplacements(unittest.TestCase):
             [("replace_component", "comp-1", "package-1", "part-1")],
         )
         self.assertEqual(
-            response["result"]["content"][0]["json"]["diff"]["modified"][0]["object_type"],
+            decode_tool_payload(response)["diff"]["modified"][0]["object_type"],
             "component",
         )
 
@@ -113,7 +113,7 @@ class TestDispatchCoreReplacements(unittest.TestCase):
             ],
         )
         self.assertEqual(
-            len(response["result"]["content"][0]["json"]["diff"]["modified"]),
+            len(decode_tool_payload(response)["diff"]["modified"]),
             2,
         )
 
@@ -165,7 +165,7 @@ class TestDispatchCoreReplacements(unittest.TestCase):
             ],
         )
         self.assertEqual(
-            len(response["result"]["content"][0]["json"]["diff"]["modified"]),
+            len(decode_tool_payload(response)["diff"]["modified"]),
             2,
         )
 
@@ -223,7 +223,7 @@ class TestDispatchCoreReplacements(unittest.TestCase):
             ],
         )
         self.assertEqual(
-            len(response["result"]["content"][0]["json"]["diff"]["modified"]),
+            len(decode_tool_payload(response)["diff"]["modified"]),
             2,
         )
 
@@ -258,7 +258,7 @@ class TestDispatchCoreReplacements(unittest.TestCase):
             ],
         )
         self.assertEqual(
-            len(response["result"]["content"][0]["json"]["diff"]["modified"]),
+            len(decode_tool_payload(response)["diff"]["modified"]),
             2,
         )
 
@@ -298,6 +298,6 @@ class TestDispatchCoreReplacements(unittest.TestCase):
             [("apply_scoped_component_replacement_plan", plan)],
         )
         self.assertEqual(
-            len(response["result"]["content"][0]["json"]["diff"]["modified"]),
+            len(decode_tool_payload(response)["diff"]["modified"]),
             2,
         )

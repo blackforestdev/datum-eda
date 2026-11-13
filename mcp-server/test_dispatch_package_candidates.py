@@ -6,7 +6,7 @@ from __future__ import annotations
 import unittest
 
 from server_runtime import JsonRpcResponse, StdioToolHost
-from test_support import FakeDaemonClient
+from test_support import FakeDaemonClient, decode_tool_payload
 
 
 @unittest.skip("retired flat package/replacement write compatibility; use proposal/native parity tests")
@@ -76,7 +76,7 @@ class TestDispatchPackageCandidates(unittest.TestCase):
                 "params": {"name": "get_net_info", "arguments": {}},
             }
         )
-        intermediate_nets = intermediate["result"]["content"][0]["json"]
+        intermediate_nets = decode_tool_payload(intermediate)
         self.assertEqual(len(intermediate_nets[0]["pins"]), 2)
 
         host.handle_message(
@@ -98,7 +98,7 @@ class TestDispatchPackageCandidates(unittest.TestCase):
                 "params": {"name": "get_net_info", "arguments": {}},
             }
         )
-        after_nets = after["result"]["content"][0]["json"]
+        after_nets = decode_tool_payload(after)
         self.assertEqual(len(after_nets[0]["pins"]), 2)
         self.assertEqual(
             daemon.calls,
@@ -177,7 +177,7 @@ class TestDispatchPackageCandidates(unittest.TestCase):
                 "params": {"name": "get_net_info", "arguments": {}},
             }
         )
-        intermediate_nets = intermediate["result"]["content"][0]["json"]
+        intermediate_nets = decode_tool_payload(intermediate)
         self.assertEqual(len(intermediate_nets[0]["pins"]), 2)
 
         host.handle_message(
@@ -203,7 +203,7 @@ class TestDispatchPackageCandidates(unittest.TestCase):
                 "params": {"name": "get_net_info", "arguments": {}},
             }
         )
-        after_nets = after["result"]["content"][0]["json"]
+        after_nets = decode_tool_payload(after)
         self.assertEqual(len(after_nets[0]["pins"]), 2)
         self.assertEqual(
             daemon.calls,
@@ -287,7 +287,7 @@ class TestDispatchPackageCandidates(unittest.TestCase):
                 "params": {"name": "get_net_info", "arguments": {}},
             }
         )
-        intermediate_nets = intermediate["result"]["content"][0]["json"]
+        intermediate_nets = decode_tool_payload(intermediate)
         self.assertEqual(len(intermediate_nets[0]["pins"]), 2)
 
         response = host.handle_message(
@@ -306,7 +306,7 @@ class TestDispatchPackageCandidates(unittest.TestCase):
             }
         )
         self.assertEqual(
-            response["result"]["content"][0]["json"]["description"],
+            decode_tool_payload(response)["description"],
             "replace_component comp-1",
         )
         after = host.handle_message(
@@ -317,7 +317,7 @@ class TestDispatchPackageCandidates(unittest.TestCase):
                 "params": {"name": "get_net_info", "arguments": {}},
             }
         )
-        after_nets = after["result"]["content"][0]["json"]
+        after_nets = decode_tool_payload(after)
         self.assertEqual(len(after_nets[0]["pins"]), 2)
         self.assertEqual(
             daemon.calls,
@@ -389,7 +389,7 @@ class TestDispatchPackageCandidates(unittest.TestCase):
             }
         )
         self.assertEqual(
-            response["result"]["content"][0]["json"]["description"],
+            decode_tool_payload(response)["description"],
             "replace_components 2",
         )
         undo = host.handle_message(
@@ -401,7 +401,7 @@ class TestDispatchPackageCandidates(unittest.TestCase):
             }
         )
         self.assertEqual(
-            undo["result"]["content"][0]["json"]["description"],
+            decode_tool_payload(undo)["description"],
             "undo replace_components 2",
         )
         after = host.handle_message(
@@ -412,7 +412,7 @@ class TestDispatchPackageCandidates(unittest.TestCase):
                 "params": {"name": "get_components", "arguments": {}},
             }
         )
-        values = [component["value"] for component in after["result"]["content"][0]["json"]]
+        values = [component["value"] for component in decode_tool_payload(after)]
         self.assertEqual(values, ["10k", "10k"])
         self.assertEqual(
             daemon.calls,
@@ -493,7 +493,7 @@ class TestDispatchPackageCandidates(unittest.TestCase):
             }
         )
         self.assertEqual(
-            response["result"]["content"][0]["json"]["description"],
+            decode_tool_payload(response)["description"],
             "replace_components 2",
         )
         after = host.handle_message(
@@ -504,7 +504,7 @@ class TestDispatchPackageCandidates(unittest.TestCase):
                 "params": {"name": "get_components", "arguments": {}},
             }
         )
-        values = [component["value"] for component in after["result"]["content"][0]["json"]]
+        values = [component["value"] for component in decode_tool_payload(after)]
         self.assertEqual(values, ["ALTAMP", "ALTAMP"])
         self.assertEqual(
             daemon.calls,
@@ -593,7 +593,7 @@ class TestDispatchPackageCandidates(unittest.TestCase):
             }
         )
         self.assertEqual(
-            response["result"]["content"][0]["json"]["description"],
+            decode_tool_payload(response)["description"],
             "replace_components 2",
         )
         after = host.handle_message(
@@ -604,7 +604,7 @@ class TestDispatchPackageCandidates(unittest.TestCase):
                 "params": {"name": "get_components", "arguments": {}},
             }
         )
-        values = [component["value"] for component in after["result"]["content"][0]["json"]]
+        values = [component["value"] for component in decode_tool_payload(after)]
         self.assertEqual(values, ["ALTAMP", "ALTAMP"])
         self.assertEqual(
             daemon.calls,

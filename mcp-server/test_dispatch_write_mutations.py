@@ -7,7 +7,7 @@ from typing import Any
 import unittest
 
 from server_runtime import JsonRpcResponse, StdioToolHost
-from test_support import FakeDaemonClient
+from test_support import FakeDaemonClient, decode_tool_payload
 
 
 @unittest.skip("retired flat/private writer compatibility; use canonical native write parity tests")
@@ -56,7 +56,7 @@ class TestDispatchWriteMutations(unittest.TestCase):
                 "params": {"name": "get_design_rules", "arguments": {}},
             }
         )
-        self.assertEqual(before["result"]["content"][0]["json"], [])
+        self.assertEqual(decode_tool_payload(before), [])
 
         host.handle_message(
             {
@@ -83,7 +83,7 @@ class TestDispatchWriteMutations(unittest.TestCase):
                 "params": {"name": "get_design_rules", "arguments": {}},
             }
         )
-        rules = after["result"]["content"][0]["json"]
+        rules = decode_tool_payload(after)
         self.assertEqual(len(rules), 1)
         self.assertEqual(rules[0]["name"], "default clearance")
         self.assertEqual(
@@ -142,7 +142,7 @@ class TestDispatchWriteMutations(unittest.TestCase):
                 "params": {"name": "get_components", "arguments": {}},
             }
         )
-        before_components = before["result"]["content"][0]["json"]
+        before_components = decode_tool_payload(before)
         self.assertEqual(before_components[0]["value"], "10k")
 
         host.handle_message(
@@ -164,7 +164,7 @@ class TestDispatchWriteMutations(unittest.TestCase):
                 "params": {"name": "get_components", "arguments": {}},
             }
         )
-        after_components = after["result"]["content"][0]["json"]
+        after_components = decode_tool_payload(after)
         self.assertEqual(after_components[0]["value"], "22k")
         self.assertEqual(
             daemon.calls,
@@ -220,7 +220,7 @@ class TestDispatchWriteMutations(unittest.TestCase):
                 "params": {"name": "get_net_info", "arguments": {}},
             }
         )
-        before_nets = before["result"]["content"][0]["json"]
+        before_nets = decode_tool_payload(before)
         self.assertEqual(len(before_nets[0]["pins"]), 2)
 
         host.handle_message(
@@ -242,7 +242,7 @@ class TestDispatchWriteMutations(unittest.TestCase):
                 "params": {"name": "get_net_info", "arguments": {}},
             }
         )
-        after_nets = after["result"]["content"][0]["json"]
+        after_nets = decode_tool_payload(after)
         self.assertEqual(len(after_nets[0]["pins"]), 1)
         self.assertEqual(
             daemon.calls,
@@ -314,7 +314,7 @@ class TestDispatchWriteMutations(unittest.TestCase):
                 "params": {"name": "get_net_info", "arguments": {}},
             }
         )
-        intermediate_nets = intermediate["result"]["content"][0]["json"]
+        intermediate_nets = decode_tool_payload(intermediate)
         self.assertEqual(len(intermediate_nets[0]["pins"]), 2)
 
         host.handle_message(
@@ -336,7 +336,7 @@ class TestDispatchWriteMutations(unittest.TestCase):
                 "params": {"name": "get_net_info", "arguments": {}},
             }
         )
-        after_nets = after["result"]["content"][0]["json"]
+        after_nets = decode_tool_payload(after)
         self.assertEqual(len(after_nets[0]["pins"]), 2)
         self.assertEqual(
             daemon.calls,

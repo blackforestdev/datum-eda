@@ -6,7 +6,7 @@ from __future__ import annotations
 import unittest
 
 from server_runtime import StdioToolHost
-from test_support import FakeDaemonClient
+from test_support import FakeDaemonClient, decode_tool_payload
 
 
 class TestDispatchExplainViolation(unittest.TestCase):
@@ -28,7 +28,7 @@ class TestDispatchExplainViolation(unittest.TestCase):
             daemon.calls,
             [("explain_violation", {"domain": "drc", "index": 0, "fingerprint": None})],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["rule_detail"], "drc connectivity_unrouted_net")
 
     def test_tools_call_dispatches_explain_violation_by_fingerprint(self) -> None:
@@ -54,7 +54,7 @@ class TestDispatchExplainViolation(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["fingerprint"], "sha256:finding")
 
     def test_tools_call_dispatches_canonical_explain_violation_by_index(self) -> None:
@@ -75,7 +75,7 @@ class TestDispatchExplainViolation(unittest.TestCase):
             daemon.calls,
             [("explain_violation", {"domain": "drc", "index": 0, "fingerprint": None})],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertTrue(payload["ok"])
         self.assertEqual(
             payload["schema"], {"name": "datum.check.explain_violation", "version": 1}
@@ -105,7 +105,7 @@ class TestDispatchExplainViolation(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertTrue(payload["ok"])
         self.assertEqual(payload["result"]["fingerprint"], "sha256:finding")
 

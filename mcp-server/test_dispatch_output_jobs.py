@@ -6,7 +6,7 @@ from __future__ import annotations
 import unittest
 
 from server_runtime import StdioToolHost
-from test_support import FakeDaemonClient
+from test_support import FakeDaemonClient, decode_tool_payload
 
 class TestDispatchOutputJobs(unittest.TestCase):
     def test_tools_call_dispatches_generate_artifacts(self) -> None:
@@ -42,7 +42,7 @@ class TestDispatchOutputJobs(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["contract"], "artifact_generate_v1")
         self.assertEqual(payload["generated_count"], 1)
 
@@ -61,7 +61,7 @@ class TestDispatchOutputJobs(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("get_artifacts", "/tmp/native-project")])
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["action"], "artifact_metadata_list")
         self.assertEqual(payload["artifact_count"], 1)
 
@@ -91,7 +91,7 @@ class TestDispatchOutputJobs(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["contract"], "artifact_metadata_v1")
         self.assertEqual(payload["artifact"]["artifact_id"], "artifact-test")
 
@@ -121,7 +121,7 @@ class TestDispatchOutputJobs(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["contract"], "artifact_files_v1")
         self.assertEqual(payload["artifact_id"], "artifact-test")
         self.assertEqual(payload["file_count"], 1)
@@ -159,7 +159,7 @@ class TestDispatchOutputJobs(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["contract"], "artifact_file_preview_v1")
         self.assertEqual(payload["preview_kind"], "gerber_rs274x")
         self.assertEqual(payload["hash_matches_metadata"], True)
@@ -195,7 +195,7 @@ class TestDispatchOutputJobs(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["contract"], "artifact_metadata_compare_v1")
         self.assertEqual(payload["before_artifact_id"], "artifact-before")
         self.assertEqual(payload["after_artifact_id"], "artifact-after")
@@ -226,7 +226,7 @@ class TestDispatchOutputJobs(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["contract"], "artifact_metadata_validation_v1")
         self.assertEqual(payload["artifact_id"], "artifact-test")
         self.assertEqual(payload["valid"], True)
@@ -246,7 +246,7 @@ class TestDispatchOutputJobs(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("get_output_jobs", "/tmp/native-project")])
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["action"], "output_jobs")
         self.assertEqual(payload["output_job_count"], 1)
 
@@ -285,7 +285,7 @@ class TestDispatchOutputJobs(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["action"], "create_gerber_output_job")
         self.assertEqual(payload["output_job"]["prefix"], "fab/doa2526")
         self.assertEqual(payload["output_job"]["manufacturing_plan"], "fab/doa2526")
@@ -327,7 +327,7 @@ class TestDispatchOutputJobs(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["action"], "create_output_job")
         self.assertEqual(payload["output_job"]["include"], ["drill"])
 
@@ -370,7 +370,7 @@ class TestDispatchOutputJobs(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["action"], "update_output_job")
         self.assertEqual(payload["output_job"]["name"], "Updated Gerbers")
 
@@ -403,7 +403,7 @@ class TestDispatchOutputJobs(unittest.TestCase):
                 )
             ],
         )
-        payload = response["result"]["content"][0]["json"]
+        payload = decode_tool_payload(response)
         self.assertEqual(payload["action"], "delete_output_job")
         self.assertEqual(payload["output_job"]["id"], "gerber-set-default")
 
@@ -461,8 +461,8 @@ class TestDispatchOutputJobs(unittest.TestCase):
                 ),
             ],
         )
-        export_payload = export_response["result"]["content"][0]["json"]
-        validate_payload = validate_response["result"]["content"][0]["json"]
+        export_payload = decode_tool_payload(export_response)
+        validate_payload = decode_tool_payload(validate_response)
         self.assertEqual(export_payload["action"], "export_manufacturing_set")
         self.assertEqual(
             export_payload["artifact_metadata"]["kind"], "manufacturing_set"
@@ -576,10 +576,10 @@ class TestDispatchOutputJobs(unittest.TestCase):
                 ),
             ],
         )
-        get_payload = get_response["result"]["content"][0]["json"]
-        create_payload = create_response["result"]["content"][0]["json"]
-        update_payload = update_response["result"]["content"][0]["json"]
-        delete_payload = delete_response["result"]["content"][0]["json"]
+        get_payload = decode_tool_payload(get_response)
+        create_payload = decode_tool_payload(create_response)
+        update_payload = decode_tool_payload(update_response)
+        delete_payload = decode_tool_payload(delete_response)
         self.assertEqual(get_payload["panel_projection_count"], 1)
         self.assertEqual(create_payload["panel_projection"]["key"], "main-panel")
         self.assertEqual(update_payload["action"], "update_panel_projection")
@@ -686,10 +686,10 @@ class TestDispatchOutputJobs(unittest.TestCase):
                 ),
             ],
         )
-        get_payload = get_response["result"]["content"][0]["json"]
-        create_payload = create_response["result"]["content"][0]["json"]
-        update_payload = update_response["result"]["content"][0]["json"]
-        delete_payload = delete_response["result"]["content"][0]["json"]
+        get_payload = decode_tool_payload(get_response)
+        create_payload = decode_tool_payload(create_response)
+        update_payload = decode_tool_payload(update_response)
+        delete_payload = decode_tool_payload(delete_response)
         self.assertEqual(get_payload["manufacturing_plan_count"], 1)
         self.assertEqual(
             create_payload["manufacturing_plan"]["panel_projection"], "main-panel"

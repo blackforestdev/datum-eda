@@ -7,7 +7,7 @@ from typing import Any
 import unittest
 
 from server_runtime import JsonRpcResponse, StdioToolHost
-from test_support import FakeDaemonClient
+from test_support import FakeDaemonClient, decode_tool_payload
 
 
 @unittest.skip("retired flat/private writer compatibility; use canonical native write parity tests")
@@ -54,7 +54,7 @@ class TestDispatchWriteBasicsStateful(unittest.TestCase):
                 },
             }
         )
-        before_distance = before["result"]["content"][0]["json"][0]["distance_nm"]
+        before_distance = decode_tool_payload(before)[0]["distance_nm"]
         self.assertEqual(before_distance, 20_000_000)
 
         host.handle_message(
@@ -84,7 +84,7 @@ class TestDispatchWriteBasicsStateful(unittest.TestCase):
                 },
             }
         )
-        after_distance = after["result"]["content"][0]["json"][0]["distance_nm"]
+        after_distance = decode_tool_payload(after)[0]["distance_nm"]
         self.assertNotEqual(after_distance, before_distance)
         self.assertEqual(
             daemon.calls,
@@ -135,7 +135,7 @@ class TestDispatchWriteBasicsStateful(unittest.TestCase):
                 "params": {"name": "get_components", "arguments": {}},
             }
         )
-        before_components = before["result"]["content"][0]["json"]
+        before_components = decode_tool_payload(before)
         self.assertEqual(before_components[0]["rotation"], 0)
 
         host.handle_message(
@@ -157,7 +157,7 @@ class TestDispatchWriteBasicsStateful(unittest.TestCase):
                 "params": {"name": "get_components", "arguments": {}},
             }
         )
-        after_components = after["result"]["content"][0]["json"]
+        after_components = decode_tool_payload(after)
         self.assertEqual(after_components[0]["rotation"], 180)
         self.assertEqual(
             daemon.calls,
@@ -223,7 +223,7 @@ class TestDispatchWriteBasicsStateful(unittest.TestCase):
                 "params": {"name": "get_check_report", "arguments": {}},
             }
         )
-        before_kinds = [d["kind"] for d in before["result"]["content"][0]["json"]["diagnostics"]]
+        before_kinds = [d["kind"] for d in decode_tool_payload(before)["diagnostics"]]
         self.assertEqual(before_kinds, ["partially_routed_net"])
 
         host.handle_message(
@@ -242,7 +242,7 @@ class TestDispatchWriteBasicsStateful(unittest.TestCase):
                 "params": {"name": "get_check_report", "arguments": {}},
             }
         )
-        after_kinds = [d["kind"] for d in after["result"]["content"][0]["json"]["diagnostics"]]
+        after_kinds = [d["kind"] for d in decode_tool_payload(after)["diagnostics"]]
         self.assertEqual(after_kinds, ["net_without_copper"])
         self.assertEqual(
             daemon.calls,
@@ -291,7 +291,7 @@ class TestDispatchWriteBasicsStateful(unittest.TestCase):
                 "params": {"name": "get_components", "arguments": {}},
             }
         )
-        before_components = before["result"]["content"][0]["json"]
+        before_components = decode_tool_payload(before)
         self.assertEqual(len(before_components), 1)
 
         host.handle_message(
@@ -313,7 +313,7 @@ class TestDispatchWriteBasicsStateful(unittest.TestCase):
                 "params": {"name": "get_components", "arguments": {}},
             }
         )
-        after_components = after["result"]["content"][0]["json"]
+        after_components = decode_tool_payload(after)
         self.assertEqual(after_components, [])
         self.assertEqual(
             daemon.calls,
@@ -357,7 +357,7 @@ class TestDispatchWriteBasicsStateful(unittest.TestCase):
                 "params": {"name": "get_net_info", "arguments": {}},
             }
         )
-        before_gnd = before["result"]["content"][0]["json"][0]
+        before_gnd = decode_tool_payload(before)[0]
         self.assertEqual(before_gnd["name"], "GND")
         self.assertEqual(before_gnd["vias"], 1)
 
@@ -377,7 +377,7 @@ class TestDispatchWriteBasicsStateful(unittest.TestCase):
                 "params": {"name": "get_net_info", "arguments": {}},
             }
         )
-        after_gnd = after["result"]["content"][0]["json"][0]
+        after_gnd = decode_tool_payload(after)[0]
         self.assertEqual(after_gnd["vias"], 0)
         self.assertEqual(
             daemon.calls,
