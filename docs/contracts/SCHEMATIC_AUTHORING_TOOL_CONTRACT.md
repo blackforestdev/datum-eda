@@ -520,8 +520,11 @@ restated.
 
 ### 1. place-symbol
 
-- **(1) Manual UI:** Pick a symbol from the library panel, click to place
-  on the active sheet, drag to set position, type reference/value.
+- **(1) Manual UI:** Normal component placement selects a reusable Part with
+  its declared Value, Package, default Footprint and complete default PinPadMap;
+  then choose the gate, reference and position on the active sheet. Value belongs
+  to the selected component, rather than an independent placement edit. Explicit
+  bare-Symbol placement retains its provisional/specialist scope.
 - **(2) Operation:** `PlaceSymbol{sheet_id, library_ref, position,
   rotation, mirror, component_instance_id}` → one atomic
   `OperationBatch` through `commit()`. Current CLI uses the journaled
@@ -582,6 +585,22 @@ of a new component is the scope; existing Assign Part and Place another Gate
 remain on their current paths. Repeated/shared occurrences, cross-sheet component
 grouping, placed ECO, map/library updates, approval and full qualification remain
 outside this increment.
+
+The component-first follow-up (`dat-component-first-capture-3btd`) configures the
+same placement verb with captured complete-component intent. The engine checks
+the declared logical and physical graph and source revisions; an incomplete or
+stale choice refuses without falling back to a bare Symbol. Partial library
+definitions remain editable, but do not qualify for normal complete placement.
+An empty Part pool offers the existing Library acquisition path for a reusable
+native Part; its supported source profile and identity/refusal rules are in the
+Library Authoring Tool Contract. Initial PCB handoff consumes the established
+physical choice and checks its authenticated Part-adoption source basis; pose
+changes do not adopt later library definitions. A changed map, footprint or
+padstack requires a reviewed update, including when the caller supplies the same
+map explicitly. This adds no new persisted binding role or silent propagation.
+Implementation and focused proof are in progress under that task; the earlier
+Part/Gate and bare-Symbol receipts retain their original scope, and no new
+runtime, release-GUI, HUMAN or full qualification is claimed here.
 
 ### 2. transform-symbol (move / rotate / mirror unified)
 
@@ -959,7 +978,16 @@ Bus's source binding. No names or surviving-entry heuristics reconstruct binding
   provenance and automated component-bound edits still require Proposal acceptance.
   The GUI and remaining field selectors are unchanged.
 
-  Bounded Part assignment implementation (`dat-schematic-part-assignment-dres`)
+  The component-first follow-up (`dat-component-first-capture-3btd`) uses the same
+  reviewed Assign Part path for an existing provisional Symbol. Normal choices
+  require a complete reusable component and display its Value, Package and
+  Footprint. Acceptance applies that Part's Value while preserving Symbol and pin
+  UUIDs, anchors, wires, connectivity and other raw fields. The value comes from
+  the authenticated selected Part revision, including in persisted assignment
+  summaries; arbitrary unrelated field changes remain refused. This prospective
+  behavior does not broaden the earlier proof or deliver general library ECO.
+
+  Earlier bounded Part assignment implementation (`dat-schematic-part-assignment-dres`)
   adds named compatible Part/Gate choices through the selected Symbol Inspector
   and existing `Assign Part…` context command. It retains the native pool Symbol's
   Unit and geometry. Explicit shared Proposal acceptance atomically creates an

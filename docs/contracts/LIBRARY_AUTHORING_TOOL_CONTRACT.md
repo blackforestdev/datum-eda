@@ -48,6 +48,18 @@ values must agree, including explicit empty values. The atomic canonical batch
 records the CI ownership, qualified placed pads, mapped nets and correspondence;
 reference text is display data. Declared counterparts remain unchanged on repeat.
 
+The component-first follow-up (`dat-component-first-capture-3btd`) establishes the
+normal physical choice when selecting the schematic Part. A declared default
+Footprint/PinPadMap pair must be complete and compatible; the transfer review
+shows that component choice without per-design map cycling. Initial handoff
+checks the physical source basis at authenticated Part adoption, including after
+pose changes, Undo/Redo and reopening. Later Map, Footprint or Padstack changes
+refuse for a reviewed update rather than silently adopting current definitions;
+supplying an explicit map cannot bypass this check. Partial definitions remain
+editable. The existing explicit-map workflow is retained for genuinely missing
+default pairs, not as a fallback from an invalid declared pair. This follow-up
+is in implementation/proof, not a new runtime or qualification receipt.
+
 Board source preparation is an explicitly accepted, separately saved transaction;
 closing the review retains that preparation. Preview, Cancel, refusal and repeat
 add no authored/history changes. Transfer supports Undo/Redo and Save/cold reopen.
@@ -188,6 +200,25 @@ canonical geometry/provenance. The isolated GUI, companions, input envelope and
 private accessibility bus stopped with verified runtime removal. This is bounded
 development availability; existing PM062 Circle/Rect proof above remains
 historical and unchanged.
+
+The same component-first task adds a source parameter to existing Library
+Acquire for one complete native Part from a saved native Datum project folder.
+Preview identifies the Part, Value, Package, all gate Symbols, Footprint and
+explicit pad-to-gate/pin map. Acquisition preserves native UUIDs and raw fields:
+identical existing definitions are reused unchanged, missing dependency records
+are added in one canonical history transaction, and conflicting or ambiguous
+identities refuse the whole acquisition. The source stays unchanged; detected
+preview/source drift and stale destination state refuse. The imported snapshot
+is recorded through existing acquisition provenance, not a live source link or
+a promise to follow the latest definition.
+
+This first source profile requires declared complete defaults. Standalone pool
+directories, inherited Parts, alternate-packaging definitions, legacy inline
+maps and linked model/process resources are explicitly unsupported; acquisition
+never drops those dependencies or invents a map. An already identical complete
+Part is reported as already present without a duplicate or empty transaction.
+Cancel/refusal writes nothing. This supplies neither source approval nor process
+qualification, and compilation/ordinary application proof remain pending.
 Missing process inputs remain unresolved. Explicit source process overrides
 require version `20241229`; required paste inputs refuse if inheritance remains
 partial or their ratio is nonzero. Suppressed process membership stays suppressed.
@@ -1152,7 +1183,10 @@ Undo/Redo, Save/cold reopening and exact old root/child sources and scenes.
 The CLI case captures the current Part, checks actual gate compatibility, then
 explicitly declares that selected Map through existing CI authority and the mapped
 materialization command; A/B/clear preserve earlier users and Map payloads.
-Initial Part placement remains Part-only, with no automatic Map binding. Legacy
+At that recorded increment, initial Part placement remained Part-only, with no
+automatic Map binding. The component-first follow-up above consumes established
+Part defaults without inventing a new binding role; it does not retroactively
+broaden this receipt. Legacy
 mapping precedence and consumer-specific empty/footprintless Map refusals remain;
 no consumer inference or universal materialization guarantee is added. The first
 CLI fixture run lacked a sheet; its failed log is retained, and the fixture now

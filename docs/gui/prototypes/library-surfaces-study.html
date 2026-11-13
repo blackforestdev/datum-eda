@@ -275,26 +275,37 @@
 <!-- ======================================================== L-H -->
 <section class="fr" id="L-H">
   <div class="sec-label"><span class="n">L-H</span><span>Part variant / footprint / map and placement eligibility</span><span class="rule"></span>
-    <span class="tag cur">● CURRENT · bounded (narrow Symbol picker only)</span><span class="tag tgt">○ TARGET · not delivered</span></div>
-  <p class="cap">Choosing a named Part, variant, footprint and map for placement, with the current binding and the qualification status kept as
-  different facts. Unresolved or ambiguous choices explain their actual disposition; nothing is repaired or adopted implicitly. Today's evidence is the
-  narrow named Symbol placement picker at its recorded scope; the full Part browser, map placement integration and any approved seed remain open.</p>
+    <span class="tag cur">● CURRENT · bounded (retained Symbol-only proof)</span><span class="tag tgt">○ TARGET · not delivered</span></div>
+  <p class="cap">Normal placement is component-first: the designer selects a complete reusable Part, and its declared Value, Package, default
+  Footprint and full default pin-pad map are established by that selection — carried from the Part, not rebuilt per design. The initial PCB
+  handoff consumes that physical choice; later source drift is refused for the reviewed update path (L-I), never adopted implicitly.
+  Binding completeness and qualification stay different facts: an incomplete default graph makes normal placement unavailable with its exact
+  reason, while approval / process-basis policy remains the S05 owner disposition. Explicit bare-Symbol / legacy placement retains its original
+  scope. Today's delivered evidence is the narrow named Symbol picker at its recorded scope; the full Part browser and map placement
+  integration remain open.</p>
   <div class="grid2">
-    <div class="card"><div class="phd0"><span>Place Part — target</span><span class="r">complete browser path</span></div>
+    <div class="card"><div class="phd0"><span>Place Part — target</span><span class="r">normal component-first path</span></div>
       <table class="t in" aria-label="Placement choices">
         <tr><th>Choice</th><th>Selected</th><th>Binding</th><th>Qualification</th></tr>
-        <tr><td class="n">Part</td><td>DEMO-OPA2-D</td><td><span class="st ok">✓ resolved</span></td><td><span class="st na">? unknown</span></td></tr>
+        <tr><td class="n">Part</td><td>DEMO-OPA2-D <span class="tag syn">◇ made-up</span></td><td><span class="st ok">✓ resolved</span></td><td><span class="st na">? unknown</span></td></tr>
+        <tr><td class="n">Value</td><td>DEMO-OPA2-D</td><td><span class="st ok">✓ declared on the Part</span></td><td>—</td></tr>
+        <tr><td class="n">Package</td><td>Demo SOIC-8 body</td><td><span class="st ok">✓ declared on the Part</span></td><td>—</td></tr>
         <tr><td class="n">Gate to place</td><td>A (then B, PWR)</td><td><span class="st ok">✓ 3 gates</span></td><td>—</td></tr>
-        <tr><td class="n">Footprint</td><td>Demo SOIC-8 land</td><td><span class="st ok">✓ default</span></td><td><span class="st na">∅ approval unavailable</span></td></tr>
-        <tr><td class="n">Pin-pad map</td><td>OPA2-D → SOIC-8</td><td><span class="st warn">△ 1 unmapped pad</span></td><td>—</td></tr>
+        <tr><td class="n">Footprint</td><td>Demo SOIC-8 land</td><td><span class="st ok">✓ Part default, carried</span></td><td><span class="st na">∅ approval unavailable</span></td></tr>
+        <tr><td class="n">Pin-pad map</td><td>OPA2-D → SOIC-8</td><td><span class="st warn">△ 1 unmapped pad (pad 8)</span></td><td>—</td></tr>
       </table>
-      <div class="note">Eligibility is stated, not decided: whether a non-approved or unknown-basis Part warns or blocks is an owner choice. <span class="tag own">◐ S05</span></div>
-      <div class="acts"><span class="btn">Cancel</span><span class="btn pri">Place gate A</span></div></div>
-    <div class="card"><div class="phd0"><span>Symbol picker — delivered today</span><span class="r">narrow, named</span></div>
+      <div class="note">Normal placement requires the selected Part's complete authored default graph. The partial map above stays editable as
+      library authoring, but it is not normal placement readiness, and the missing pin mapping is not delegated to any eligibility policy — the
+      action below is unavailable with the binding reason. Qualification is the separate fact; eligibility is stated, not decided: whether a
+      non-approved or unknown-basis Part warns or blocks is an owner choice. <span class="tag own">◐ S05</span></div>
+      <div class="acts"><span class="btn">Cancel</span><span class="btn na">Place gate A — default map incomplete: pad 8 unmapped</span></div></div>
+    <div class="card"><div class="phd0"><span>Symbol picker — retained historical proof</span><span class="r">explicit Symbol-only mode · original scope</span></div>
       <div class="srch f">cap▏</div>
       <div class="res sel"><span class="kd">Symbol</span><span>Demo Capacitor</span><span class="o"></span></div>
       <div class="res"><span class="kd">Symbol</span><span>Demo Capacitor, polarised</span><span class="o"></span></div>
-      <div class="note">Picks a named Symbol, previews, cancels or places (see <code>schematic-surfaces-study.html#S-D</code>, D1–D2). It does not choose Part, variant, footprint or map, and its test data is synthetic — not an approved seed.</div></div>
+      <div class="note">Retained historical proof of the explicit Symbol-only mode at its original scope — not the normal component-first
+      default. Picks a named Symbol, previews, cancels or places (see <code>schematic-surfaces-study.html#S-D</code>, D1–D2). It does not choose
+      Part, variant, footprint or map, and its test data is synthetic — not an approved seed.</div></div>
   </div>
 </section>
 
@@ -381,7 +392,7 @@
     <tr><td class="n">#L-E</td><td>LIBRARY-MANUAL-USE</td><td>Models</td><td>—</td><td>Target</td></tr>
     <tr><td class="n">#L-F</td><td>LIBRARY-VALIDATION · OWNER-RATIFICATION</td><td>Source, basis, process and approval; guarded status in Authoring, readiness and checks</td><td>Warning / block for non-approved or UnknownBasis</td><td>Target</td></tr>
     <tr><td class="n">#L-G</td><td>LIBRARY-MANUAL-USE</td><td>Supported native footprint synthesis paragraph</td><td>Generator family / basis / naming stay with their own authority</td><td>Target</td></tr>
-    <tr><td class="n">#L-H</td><td>LIBRARY-MANUAL-USE</td><td>Ordinary workflow row “Choose a named Part / variant / footprint / map”</td><td>Placement gate strictness</td><td>Narrow picker current; rest target</td></tr>
+    <tr><td class="n">#L-H</td><td>LIBRARY-MANUAL-USE</td><td>Ordinary workflow row — place a complete named Part with carried Value / Package / Footprint / map</td><td>Warning / block policy for non-approved or UnknownBasis (S05)</td><td>Narrow picker current; rest target</td></tr>
     <tr><td class="n">#L-I</td><td>LIBRARY-VALIDATION</td><td>Relationships and revisions — update candidate paragraph</td><td>Placed-impact trigger (separate authority)</td><td>Target</td></tr>
     <tr><td class="n">#L-J</td><td>SHARED-MUTATION</td><td>Accessibility and visual frames</td><td>Narrow pool / kind / Navigator / Inspector access; refusal placement</td><td>Target</td></tr>
   </table>
