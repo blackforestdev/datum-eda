@@ -270,6 +270,9 @@ pub struct Variant {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct SchematicNetInfo {
     pub uuid: Uuid,
+    /// Complete evaluated native scalar group; legacy projections have no authority here.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub occurrences: Vec<crate::substrate::ElectricalOccurrence>,
     pub name: String,
     pub class: Option<String>,
     pub pins: Vec<NetPinRef>,
@@ -283,6 +286,8 @@ pub struct SchematicNetInfo {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct NetPinRef {
     pub uuid: Uuid,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub instance_path: Vec<Uuid>,
     pub component: String,
     pub pin: String,
     pub electrical_type: PinElectricalType,

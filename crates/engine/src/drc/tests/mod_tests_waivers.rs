@@ -215,8 +215,11 @@ fn authored_drc_object_waiver_marks_matching_violation_as_waived() {
         rationale: "Intentional empty copper in fixture".into(),
         created_by: Some("drc-test".into()),
     };
-    let fingerprint_report =
-        run_with_waivers(&board, &[RuleType::Connectivity], &[fingerprint_waiver]);
+    let fingerprint_report = run_with_waivers(
+        &board,
+        &[RuleType::Connectivity],
+        std::slice::from_ref(&fingerprint_waiver),
+    );
     assert_eq!(fingerprint_report.summary.waived, 1);
     assert!(
         fingerprint_report
@@ -224,6 +227,50 @@ fn authored_drc_object_waiver_marks_matching_violation_as_waived() {
             .iter()
             .any(|violation| violation.code == "connectivity_no_copper" && violation.waived)
     );
+
+    board.nets.get_mut(&net_uuid).unwrap().name = "RENAMED".into();
+    let renamed = run_with_waivers(
+        &board,
+        &[RuleType::Connectivity],
+        std::slice::from_ref(&fingerprint_waiver),
+    );
+    let renamed_finding = renamed
+        .violations
+        .iter()
+        .find(|v| v.code == "connectivity_no_copper")
+        .unwrap();
+    assert!(renamed_finding.waived);
+    assert_eq!(
+        renamed_finding.fingerprint,
+        fingerprint_report
+            .violations
+            .iter()
+            .find(|v| v.code == "connectivity_no_copper")
+            .unwrap()
+            .fingerprint
+    );
+    assert_ne!(
+        renamed_finding.message,
+        fingerprint_report
+            .violations
+            .iter()
+            .find(|v| v.code == "connectivity_no_copper")
+            .unwrap()
+            .message
+    );
+    let pad_id = *board.pads.keys().next().unwrap();
+    let original_position = board.pads[&pad_id].position;
+    board.pads.get_mut(&pad_id).unwrap().position.x += 1_000_000;
+    let changed = run_with_waivers(&board, &[RuleType::Connectivity], &[fingerprint_waiver]);
+    let changed_finding = changed
+        .violations
+        .iter()
+        .find(|v| v.code == "connectivity_no_copper")
+        .unwrap();
+    assert!(!changed_finding.waived);
+    assert_ne!(changed_finding.fingerprint, renamed_finding.fingerprint);
+    // Fresh evaluation must replace the prior run's producer-attached signature.
+    board.pads.get_mut(&pad_id).unwrap().position = original_position;
 
     let waiver = CheckWaiver {
         uuid: Uuid::new_v4(),
@@ -381,4 +428,86 @@ fn standards_backed_drc_fingerprint_includes_rule_revision_basis() {
         drc_violation_fingerprint(&revised),
         "standards rule revision must participate in DRC finding identity"
     );
+}
+
+#[test]
+fn native_connectivity_rename_keeps_waiver_and_new_copper_invalidates_it() {
+    use crate::api::native_write::board_routing::route::tests::{fixture, provenance};
+    use crate::api::native_write::{board_routing, commit_prepared};
+    use crate::drc::run_with_current_zone_fills_and_waivers;
+    let mut f = fixture();
+    let report = |f: &crate::api::native_write::board_routing::route::tests::Fixture,
+                  waivers: &[CheckWaiver]| {
+        let snapshot = crate::substrate::ElectricalSelectionSnapshot::capture(&f.model).unwrap();
+        let roots: Vec<_> = f
+            .model
+            .source_shards
+            .iter()
+            .filter(|shard| shard.kind == crate::substrate::SourceShardKind::BoardRoot)
+            .collect();
+        assert_eq!(roots.len(), 1);
+        let mut value = snapshot
+            .source_shard_value(snapshot.revision(), roots[0].shard_id)
+            .unwrap()
+            .clone();
+        assert_eq!(value["pads"].as_object().unwrap().len(), 2);
+        value["outline"] = serde_json::to_value(crate::ir::geometry::Polygon::new(vec![])).unwrap();
+        for key in ["rules", "keepouts", "dimensions", "texts"] {
+            value[key] = serde_json::json!([]);
+        }
+        let board = serde_json::from_value(value).unwrap();
+        run_with_current_zone_fills_and_waivers(
+            &board,
+            &[RuleType::Connectivity],
+            &f.model,
+            waivers,
+        )
+    };
+    let original = report(&f, &[]);
+    let original = original
+        .violations
+        .iter()
+        .find(|v| v.code == "connectivity_unrouted_net")
+        .unwrap();
+    let waiver = CheckWaiver {
+        uuid: Uuid::new_v4(),
+        domain: CheckDomain::DRC,
+        target: WaiverTarget::Fingerprint(original.fingerprint.clone().unwrap()),
+        rationale: "Intentional native disconnect".into(),
+        created_by: None,
+    };
+    let mut net: Net =
+        serde_json::from_value(f.board()["nets"][f.request.basis.net.to_string()].clone()).unwrap();
+    net.name = "RENAMED".into();
+    let prepared = board_routing::build_set_board_net(&f.model, provenance(), &net).unwrap();
+    commit_prepared(&mut f.model, &f.root, prepared).unwrap();
+    f.recapture();
+    let renamed = report(&f, std::slice::from_ref(&waiver));
+    let renamed = renamed
+        .violations
+        .iter()
+        .find(|v| v.code == original.code)
+        .unwrap();
+    assert_eq!(renamed.fingerprint, original.fingerprint);
+    assert_ne!(renamed.message, original.message);
+    assert!(renamed.waived);
+    let track = Track::straight(
+        Uuid::new_v4(),
+        net.uuid,
+        f.request.points[0],
+        f.request.points[1],
+        200_000,
+        1,
+    );
+    let prepared = board_routing::build_place_board_track(&f.model, provenance(), &track).unwrap();
+    commit_prepared(&mut f.model, &f.root, prepared).unwrap();
+    f.recapture();
+    let changed = report(&f, &[waiver]);
+    let changed = changed
+        .violations
+        .iter()
+        .find(|v| v.code == original.code)
+        .unwrap();
+    assert_ne!(changed.fingerprint, original.fingerprint);
+    assert!(!changed.waived);
 }

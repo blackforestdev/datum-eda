@@ -90,6 +90,7 @@ pub(super) fn run(
                 continue;
             }
         };
+        let first = result.len();
         let terminals: Vec<_> = components
             .components
             .iter()
@@ -137,6 +138,17 @@ pub(super) fn run(
                     net.name
                 ),
             ));
+        }
+        if first < result.len() {
+            let observation = super::fingerprint::native_connectivity_observation(
+                snapshot,
+                source,
+                *net_id,
+                &components.components,
+            );
+            for finding in &mut result[first..] {
+                super::fingerprint::attach_connectivity(finding, &observation);
+            }
         }
         match components.contacts {
             Ok(contacts) => {

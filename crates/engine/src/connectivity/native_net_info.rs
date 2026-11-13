@@ -86,6 +86,7 @@ pub fn native_schematic_net_info(
                                 found = true;
                                 pins.push(NetPinRef {
                                     uuid: pin.uuid,
+                                    instance_path: occurrence.instance_path.clone(),
                                     component: symbol.reference.clone(),
                                     pin: pin.number.clone(),
                                     electrical_type: pin.electrical_type.clone(),
@@ -105,6 +106,7 @@ pub fn native_schematic_net_info(
                 .cmp(&b.component)
                 .then_with(|| a.pin.cmp(&b.pin))
                 .then_with(|| a.uuid.cmp(&b.uuid))
+                .then_with(|| a.instance_path.cmp(&b.instance_path))
         });
         let id = owners[0].id;
         let name = names
@@ -113,6 +115,7 @@ pub fn native_schematic_net_info(
             .unwrap_or_else(|| format!("N${}", &id.as_simple().to_string()[..8]));
         result.push(SchematicNetInfo {
             uuid: id,
+            occurrences: group.into_iter().collect(),
             semantic_class: super::infer_semantic_class(&name)
                 .or_else(|| power_label.then(|| "power".into())),
             name,

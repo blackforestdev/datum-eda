@@ -119,7 +119,7 @@ pub(super) fn run_connectivity_checks(board: &Board) -> Vec<DrcViolation> {
         }
     }
 
-    violations
+    super::fingerprint::legacy_connectivity(board, violations)
 }
 
 mod nominal_clearance;

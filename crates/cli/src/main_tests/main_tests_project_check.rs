@@ -659,3 +659,7 @@ fn project_query_check_counts_matching_native_waiver_without_failing_summary() {
 }
 
 mod drc_waiver;
+#[path = "main_tests_project_check/rename_correlation.rs"]
+mod rename_correlation;
+
+mod occurrence_waivers;

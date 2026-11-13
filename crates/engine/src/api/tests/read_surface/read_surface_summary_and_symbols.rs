@@ -34,7 +34,10 @@ fn schematic_check_summary_includes_info_level_erc_codes() {
                 key: "Q1.1".into(),
             }],
             object_uuids: vec![uuid::Uuid::new_v4()],
+            occurrences: Vec::new(),
+            net_uuid: None,
             pin_evidence: Vec::new(),
+            fingerprint: None,
             waived: false,
         }],
     );

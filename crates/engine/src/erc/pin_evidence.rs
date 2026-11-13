@@ -9,6 +9,8 @@ use crate::schematic::{NetPinRef, Schematic};
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub struct ErcPinEvidence {
     pub pin_uuid: Uuid,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub instance_path: Vec<Uuid>,
     pub symbol_uuid: Uuid,
     pub reference: String,
     pub pin_number: String,
@@ -36,6 +38,7 @@ pub(super) fn pin_evidence_by_uuid(schematic: &Schematic) -> BTreeMap<Uuid, ErcP
                     pin.uuid,
                     ErcPinEvidence {
                         pin_uuid: pin.uuid,
+                        instance_path: Vec::new(),
                         symbol_uuid: symbol.uuid,
                         reference: symbol.reference.clone(),
                         pin_number: pin.number.clone(),
@@ -62,6 +65,11 @@ pub(super) fn evidence_for_pins<'a>(
     pins: impl IntoIterator<Item = &'a NetPinRef>,
 ) -> Vec<ErcPinEvidence> {
     pins.into_iter()
-        .filter_map(|pin| evidence_by_uuid.get(&pin.uuid).cloned())
+        .filter_map(|pin| {
+            let mut evidence = evidence_by_uuid.get(&pin.uuid)?.clone();
+            evidence.instance_path = pin.instance_path.clone();
+            evidence.canonical_pin_type = canonical_pin_electrical_type_name(&pin.electrical_type);
+            Some(evidence)
+        })
         .collect()
 }

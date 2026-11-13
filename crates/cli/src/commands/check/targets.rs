@@ -1,4 +1,7 @@
 pub(crate) fn check_primary_target(source: &str, payload: &serde_json::Value) -> serde_json::Value {
+    if let Some(target) = occurrence_targets(payload).into_iter().next() {
+        return target;
+    }
     if let Some(value) = first_object_id(payload) {
         return serde_json::json!({
             "kind": "object_uuid",
@@ -38,6 +41,16 @@ pub(crate) fn check_related_targets(
     primary_target: &serde_json::Value,
     payload: &serde_json::Value,
 ) -> Vec<serde_json::Value> {
+    let mut qualified = occurrence_targets(payload);
+    if !qualified.is_empty() {
+        if let Some(net) = payload.get("net_uuid").and_then(serde_json::Value::as_str) {
+            qualified.push(serde_json::json!({"kind": "net", "id": net}));
+        }
+        return qualified
+            .into_iter()
+            .filter(|target| target != primary_target)
+            .collect();
+    }
     object_id_array_values(payload)
         .map(|value| {
             serde_json::json!({
@@ -46,6 +59,32 @@ pub(crate) fn check_related_targets(
             })
         })
         .filter(|target| target != primary_target)
+        .collect()
+}
+
+// Use the existing source UUID + ordered path target representation consumed by
+// schematic navigation. The path is never sorted or replaced by a derived UUID.
+fn occurrence_targets(payload: &serde_json::Value) -> Vec<serde_json::Value> {
+    let Some(values) = payload
+        .get("occurrences")
+        .and_then(serde_json::Value::as_array)
+    else {
+        return Vec::new();
+    };
+    let mut occurrences: Vec<eda_engine::substrate::ElectricalOccurrence> = values
+        .iter()
+        .filter_map(|value| serde_json::from_value(value.clone()).ok())
+        .collect();
+    occurrences.sort();
+    occurrences.dedup();
+    occurrences
+        .into_iter()
+        .map(|occurrence| {
+            serde_json::json!({
+                "kind": "object_uuid", "id": occurrence.source_id,
+                "instance_path": occurrence.instance_path,
+            })
+        })
         .collect()
 }
 
@@ -119,6 +158,34 @@ mod tests {
         assert_eq!(
             target,
             serde_json::json!({ "kind": "object_uuid", "id": "object-a" })
+        );
+    }
+    #[test]
+    fn native_occurrence_targets_keep_ordered_paths_and_actual_net_scope() {
+        let pin = uuid::Uuid::from_u128(1);
+        let outer = uuid::Uuid::from_u128(3);
+        let inner = uuid::Uuid::from_u128(2);
+        let net = uuid::Uuid::from_u128(4);
+        let payload = serde_json::json!({
+            "object_uuids": [pin], "net_uuid": net,
+            "occurrences": [
+                {"class":"pins", "source_id":pin, "instance_path":[outer,inner]},
+                {"class":"pins", "source_id":pin, "instance_path":[inner,outer]}
+            ]
+        });
+        let primary = check_primary_target("erc", &payload);
+        assert_eq!(
+            primary,
+            serde_json::json!({
+                "kind":"object_uuid", "id":pin, "instance_path":[inner,outer]
+            })
+        );
+        assert_eq!(
+            check_related_targets(&primary, &payload),
+            vec![
+                serde_json::json!({"kind":"object_uuid", "id":pin,"instance_path":[outer,inner]}),
+                serde_json::json!({"kind":"net", "id":net})
+            ]
         );
     }
 }

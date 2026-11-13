@@ -224,6 +224,7 @@ pub fn schematic_net_info(schematic: &Schematic) -> Vec<SchematicNetInfo> {
                 let root = uf.find(node);
                 point_groups.entry(root).or_default().pins.push(NetPinRef {
                     uuid: pin.uuid,
+                    instance_path: Vec::new(),
                     component: symbol.reference.clone(),
                     pin: pin.number.clone(),
                     electrical_type: pin.electrical_type.clone(),
@@ -362,6 +363,7 @@ pub fn schematic_net_info(schematic: &Schematic) -> Vec<SchematicNetInfo> {
 
         nets.push(SchematicNetInfo {
             uuid,
+            occurrences: Vec::new(),
             name,
             class: None,
             pins,

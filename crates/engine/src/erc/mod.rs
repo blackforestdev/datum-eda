@@ -9,6 +9,7 @@ use crate::schematic::{CheckDomain, CheckWaiver, Schematic, WaiverTarget};
 
 mod electrical;
 mod finding_id;
+mod fingerprint;
 mod hierarchy;
 mod pin_evidence;
 use electrical::{
@@ -42,8 +43,15 @@ pub struct ErcFinding {
     pub pin: Option<String>,
     pub objects: Vec<ErcObjectRef>,
     pub object_uuids: Vec<Uuid>,
+    /// Qualified affected sources, not synthetic occurrence UUIDs.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub occurrences: Vec<crate::substrate::ElectricalOccurrence>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub net_uuid: Option<Uuid>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub pin_evidence: Vec<ErcPinEvidence>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub fingerprint: Option<String>,
     pub waived: bool,
 }
 
@@ -87,6 +95,7 @@ pub fn run_prechecks_with_nets(
     let pin_evidence_by_uuid = pin_evidence_by_uuid(schematic);
 
     for net in nets {
+        let first = findings.len();
         let net_name = net.name.clone();
         let output_pins: Vec<_> = net
             .pins
@@ -300,11 +309,13 @@ pub fn run_prechecks_with_nets(
                 Some(net_name.clone()),
                 None,
                 None,
-                vec![object_ref("net", net_name)],
+                vec![object_ref("net", net_name.clone())],
                 vec![net.uuid],
                 Vec::new(),
             ));
         }
+        finding_id::qualify(&mut findings[first..], &net);
+        fingerprint::attach(&mut findings[first..], &net);
     }
 
     apply_waivers(&mut findings, waivers);
@@ -350,6 +361,7 @@ fn build_finding(
         component.as_deref(),
         pin.as_deref(),
         &objects,
+        &object_uuids,
     );
     ErcFinding {
         id,
@@ -361,7 +373,10 @@ fn build_finding(
         pin,
         objects,
         object_uuids,
+        occurrences: Vec::new(),
+        net_uuid: None,
         pin_evidence,
+        fingerprint: None,
         waived: false,
     }
 }
@@ -408,7 +423,7 @@ fn waiver_matches(waiver: &CheckWaiver, finding: &ErcFinding) -> bool {
             expected.sort();
             actual == expected
         }
-        WaiverTarget::Fingerprint(_) => false,
+        WaiverTarget::Fingerprint(value) => finding.fingerprint.as_ref() == Some(value),
     }
 }
 

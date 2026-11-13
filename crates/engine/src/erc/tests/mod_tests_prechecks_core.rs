@@ -201,11 +201,27 @@ fn finding_ids_are_stable_for_same_input() {
         waivers: Vec::<CheckWaiver>::new(),
     };
 
-    let a = run_prechecks(&make_schematic());
-    let b = run_prechecks(&make_schematic());
+    let schematic = make_schematic();
+    let a = run_prechecks(&schematic);
+    let b = run_prechecks(&schematic.clone());
     assert_eq!(a.len(), 1);
     assert_eq!(b.len(), 1);
     assert_eq!(a[0].id, b[0].id);
+
+    // A different source pin is a different finding, even at the same position.
+    let mut changed = schematic;
+    changed
+        .sheets
+        .get_mut(&sheet_uuid)
+        .unwrap()
+        .symbols
+        .get_mut(&symbol_uuid)
+        .unwrap()
+        .pins[0]
+        .uuid = Uuid::new_v4();
+    let changed = run_prechecks(&changed);
+    assert_eq!(changed.len(), 1);
+    assert_ne!(a[0].id, changed[0].id);
 }
 
 #[test]
