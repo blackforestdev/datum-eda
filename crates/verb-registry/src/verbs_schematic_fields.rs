@@ -1,5 +1,5 @@
 //! Shared, revision-qualified schematic field editing public caller.
-use crate::{ArgvToken, Dispatch, ParamSpec, ParamType, VerbSpec, VerbStatus};
+use crate::{ArgvToken, Dispatch, ParamSpec, ParamType, VerbSpec, VerbStatus, WriteSurface};
 
 const fn parameter(
     name: &'static str,
@@ -99,7 +99,10 @@ pub(crate) static VERBS: &[VerbSpec] = &[VerbSpec {
     schema_json_override: Some(
         r#"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"},"field":{"type":"string","enum":["reference","value"]},"expected_model_revision":{"type":"string","minLength":1},"expected_tip_transaction":{"type":"string","minLength":1},"value":{"type":"string"},"clear":{"type":"boolean"},"instance_path":{"type":"array","items":{"type":"string"}}},"required":["path","symbol","field","expected_model_revision","expected_tip_transaction"]}"#,
     ),
-    write_surface: None,
+    write_surface: Some(WriteSurface {
+        class: "journaled_symbol_field_write",
+        evidence: "revision- and transaction-tip-qualified native Symbol field builder and canonical journal commit; component-bound automated edits retain Proposal policy",
+    }),
     terminal: false,
     terminal_optional_params: &[],
     terminal_argv_override: None,

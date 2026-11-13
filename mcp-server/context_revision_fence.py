@@ -5,6 +5,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 from typing import Any
+from uuid import UUID
 
 from discovery_scope import DiscoveryScope
 
@@ -49,10 +50,10 @@ def scoped_tool_catalog(
             "type": "string",
             "description": "Immutable pinned Datum work-context identity.",
         }
-        properties[EXPECTED_MODEL_REVISION_FIELD] = {
+        properties.setdefault(EXPECTED_MODEL_REVISION_FIELD, {
             "type": "string",
             "description": "Model revision against which this request was prepared.",
-        }
+        })
         properties[ACCEPTED_TRANSACTION_TIP_FIELD] = {
             "type": ["string", "null"],
             "description": "Accepted journal transaction tip from the pinned context.",
@@ -155,7 +156,43 @@ def validate_context_fence(
             ),
         )
 
-    return {key: value for key, value in arguments.items() if key not in _FENCE_FIELDS}
+    native_schema = spec.get("inputSchema", {})
+    native_properties = native_schema.get("properties", {})
+    native_tip_field = "expected_tip_transaction"
+    if native_tip_field in native_properties and (
+        native_tip_field in arguments or native_tip_field in native_schema.get("required", [])
+    ):
+        native_tip = _native_transaction_tip(arguments.get(native_tip_field))
+        broker_tip = None if provided_tip is None else _uuid_transaction_tip(provided_tip)
+        if native_tip is _INVALID or broker_tip is _INVALID or native_tip != broker_tip:
+            raise ContextFenceError(
+                "stale_context",
+                "native transaction guard does not match the pinned Datum context",
+                _error_details(
+                    discovery, name, arguments,
+                    reason="native_transaction_tip_mismatch", pinned=pinned, live=live,
+                ),
+            )
+
+    return {
+        key: value for key, value in arguments.items()
+        if key not in _FENCE_FIELDS or key in native_properties
+    }
+
+
+def _native_transaction_tip(value: Any) -> Any:
+    if value == "none":
+        return None
+    return _uuid_transaction_tip(value)
+
+
+def _uuid_transaction_tip(value: Any) -> Any:
+    if not isinstance(value, str):
+        return _INVALID
+    try:
+        return UUID(value)
+    except ValueError:
+        return _INVALID
 
 
 def tool_requires_context_fence(

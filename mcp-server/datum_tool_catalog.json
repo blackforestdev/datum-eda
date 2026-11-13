@@ -25187,7 +25187,10 @@
       "replacements": [],
       "retirement": null,
       "status": "public",
-      "write_surface": null
+      "write_surface": {
+        "class": "journaled_symbol_field_write",
+        "evidence": "revision- and transaction-tip-qualified native Symbol field builder and canonical journal commit; component-bound automated edits retain Proposal policy"
+      }
     },
     {
       "description": "Set one native-project schematic symbol gate UUID.",

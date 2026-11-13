@@ -25,6 +25,7 @@ _WRITE_CLASS_CAPABILITY = {
     "proposal_review_state_write": UNATTENDED,
     "journaled_project_settings": UNATTENDED,
     "journaled_route_apply": UNATTENDED,
+    "journaled_symbol_field_write": UNATTENDED,
     "proposal_artifact_apply": UNATTENDED,
 }
 _PROPOSE_READ_TOOLS = {
