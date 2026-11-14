@@ -184,8 +184,19 @@ verification pass for this bounded circuit.
 | Align / Distribute | `datum.pcb.align_components` / `build_align_board_packages` | ENGINE-READY / GUI-BLOCKED |
 | Track / Via / Zone | `datum.pcb.draw_track` / `place_via` / `place_zone` + set/delete | ENGINE-READY / GUI-BLOCKED |
 | Zone fill | `datum.check.fill_zones` / `build_set_zone_fills` | ENGINE-READY / GUI-BLOCKED |
+| Delete one native Track | shared Delete dispatch → typed `datum.pcb.delete_track` → `build_delete_board_track` / native worker | PARTIAL — current singleton source-qualified Track; observed Edit/Delete and Delete-tool canvas routes; stale/pending/unsupported refuse without terminal handoff |
 | Net / Net class / Pad / Dimension / Keepout / Board text | `datum.pcb.place_net` / `place_net_class` / `place_pad` / `place_dimension` / `place_keepout` / `place_text` | ENGINE-READY / GUI-BLOCKED |
 | Route apply | `datum.route.apply` / `apply_selected` | ENGINE-READY / GUI-BLOCKED (facade migration pending — see gaps) |
+
+The grouped inventory above remains a historical family-level baseline. Current
+bounded Route/Zone controls are recorded in the Product Spec and PCB contract;
+the native Track-delete row records this increment's shared menu/key/tool
+configuration. A reviewed 62-step ordinary debug App repair workflow deletes
+obsolete tracks, explicitly routes/refills, runs current DRC and preserves
+history/Save/cold state. It uses programmatic menu/pointer events and canonical
+Delete-tool activation, not physical X-key execution or full menu/HUMAN/PCB
+qualification. Other PCB target classes still refuse in this native Delete path;
+it does not expose a foreign terminal fallback or general PCB deletion.
 
 ### Project
 | Item | Verb / builder | Status |

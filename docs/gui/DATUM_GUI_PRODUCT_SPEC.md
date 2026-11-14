@@ -779,6 +779,23 @@ Route/Zone GUI controls are delivered with independently accepted ordinary
 application proof under `dat-practical-pcb-design-3qbp`; full qualification
 remains open.
 
+Native deletion of one current authored PCB Track now configures the shared
+Delete action for the Board persona. Existing menu/key/Delete-tool dispatch
+captures the current project, view, source, model revision and journal tip and
+uses the canonical native worker. Stale, pending, locked, hidden, grouped or
+unsupported GUI targets refuse without sending a command to the terminal;
+imported compatibility and other deletion families are unchanged. Obsolete
+copper can be removed while complete connectivity or current fill is unavailable.
+The independently reviewed 62-step isolated ordinary App repair workflow covers
+two menu and two Delete-tool canvas deletions, duplicate pending suppression,
+unsupported-target refusal, four GUI replacement route chains/six segments,
+explicit refill, fill Undo/Redo, current persisted DRC and Save/cold reopening.
+The public native fixture setup supplies project units and accepts the prior
+schematic net revision; earlier review proof retains its original scope. This
+uses a debug App and qualified release companions with programmatic input; it
+is not physical X-key/HUMAN, release-GUI, owner-project, full clean-DRC or full
+PCB qualification. The broader practical PCB goal remains open.
+
 The bounded board-outline target defines or replaces one closed simple board
 polygon through the same focused Inspector draft: board-wide Edge.Cuts scope
 with no copper-layer or Net input, shared grid/snap and project units,

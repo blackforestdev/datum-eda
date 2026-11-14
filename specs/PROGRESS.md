@@ -510,6 +510,25 @@ Frontier selection are unchanged; broader cf5t and practical PCB goals remain
 open. The delivered metadata slice and its protected owner-QA snapshot retain
 their original proof scope.
 
+*Native PCB Track Delete and ordinary GUI repair — bounded development availability:*
+`dat-schematic-pcb-revision-loop-cf5t` now routes current singleton Track deletion
+through shared menu/key/tool dispatch and the canonical native writer. Source,
+revision and explicit tip guards reject stale intent; unsupported native targets
+refuse without terminal execution. Two engine, one daemon and three protocol
+checks passed. A separately reviewed 62-step ordinary debug App workflow uses
+two menu and two Delete-tool canvas deletions, verifies pending duplicate and
+unsupported-target refusals, then draws four replacement chains/six segments,
+refills, runs current persisted DRC, checks fill history and saves/reopens cold.
+The actual fixture report has no Connectivity findings; this is not a general
+clean-DRC claim. Public setup initializes fixture units and accepts the prior
+schematic revision; earlier review evidence stays at its original scope.
+The initial App failure from missing fixture units and the normal-release
+compile failure from a test-only UUID dependency remain retained; corrected
+source and final matching release artifacts were separately qualified. Two tiny
+source corrections retain explicit equivalence qualifications. No physical
+X-key/HUMAN, release-GUI, owner-project or full PCB qualification is claimed.
+The broader cf5t/practical PCB goals remain open; no Frontier successor is selected.
+
 *Earlier bounded PCB target checkpoint (historical):* the owner-goal `dat-practical-pcb-design-3qbp`
 has delivered the native Route/Zone GUI controls (source `711e0fc1`,
 metadata `7a9f71bf`) with independently accepted ordinary proof (M30

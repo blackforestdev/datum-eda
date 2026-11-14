@@ -347,6 +347,24 @@ read named below folds under DatumQueryTool (`datum-eda query pcb.*`); every
 - **Proof slice:** datum-test — draw one track between two pads →
   `get_unrouted` drops by one; clearance DRC clean; `delete_track` + undo
   round-trips; the journal records the batch.
+- **Bounded native GUI availability:** one current authored Track can be
+  deleted through the shared Edit/Delete entry, Delete-key dispatch or Delete
+  tool on a native Board. The typed `datum.pcb.delete_track` request uses the
+  existing canonical builder; current project/view/source, model revision and
+  explicit journal tip qualify the edit. Missing/stale request guards refuse;
+  GUI capture also rejects pending, hidden, locked, grouped or unsupported
+  targets. Native refusals do not execute terminal commands. Removing obsolete
+  copper requires no complete current fill or connectivity conclusion and
+  preserves every other authored object.
+  Independently reviewed engine/daemon/protocol controls and a 62-step isolated
+  ordinary debug App workflow cover two menu deletions, two Delete-tool canvas
+  deletions, pending duplicate suppression, unsupported Footprint refusal, GUI
+  routing of four replacement chains/six segments, explicit fill, fill history,
+  a current persisted DRC result and Save/fresh App cold reopening. The native
+  fixture uses public setup for project units and the accepted schematic net
+  revision. The report has no Connectivity findings; this is not a general
+  clean-DRC or physical/HUMAN, physical-X-key, release-GUI or full PCB claim.
+  Other PCB deletion families and imported compatibility keep their own scope.
 - **Explicitly not-supported-yet:** `add_track` has no `commit()` op
   (`routing_net.rs:91` native write). Push-and-shove and
   interactive-width-from-rules are out of scope (the kernel covers
