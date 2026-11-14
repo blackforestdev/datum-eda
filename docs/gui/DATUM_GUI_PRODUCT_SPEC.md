@@ -654,6 +654,24 @@ input, owner-project migration, general ECO, library adoption, component
 addition/removal or full qualification. The broader revision-loop task remains
 open beyond this bounded increment.
 
+The next bounded connectivity-revision target (`cf5t`, study S-Q; native delivery
+pending) carries an authored root-sheet pin reassignment between existing stable
+board-correspondent nets into an explicit PCB correspondence review. The existing
+transfer card's **Review PCB connectivity changes** control opens the shared
+inline Proposal in the same captured context. It shows every changed terminal's
+recorded old/new pad and logical/board net assignments, read-only physical
+identity, retained Track/Via/Zone identities, and source-bound contact or fill
+unavailability. A conservative potentially affected set must disclose its scope;
+unknown contacts are not complete physical connectivity or current fill.
+Acceptance requires complete current pin/pad and physical-source qualification
+and a complete visible review with its warning and action hints. It changes only
+the reviewed correspondence; physical placement and identities stay fixed, and
+tracks, vias and zones retain their geometry and net assignments. Explicit
+refill, DRC and manual routing repair remain necessary. Source-stale, ambiguous or
+unsupported requests refuse without design writes. This target adds no general
+ECO, library adoption, net lifecycle or repeated/hierarchical update capability,
+and supplies no native workflow or broader qualification PASS.
+
 **Command and mutation boundary.** Menus, tool palettes, shortcuts and command
 palette use the existing application registry. The target families remain native
 Symbol placement, transform and heterogeneous deletion; Wire creation; label

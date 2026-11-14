@@ -483,6 +483,22 @@ target review; other target states retain their recorded proof limits. The
 broader revision-loop task and parent PCB goal remain open. This increment
 changes no Frontier selection or historical receipt scope.
 
+*Next bounded cf5t target — native delivery pending:* the existing-component
+connectivity-revision increment reviews a root-sheet pin reassignment between
+already existing stable board-correspondent nets. The S-Q target reuses the
+transfer card and shared inline Proposal, with complete old/new assignments,
+retained copper identities and explicit source-bound contact/fill unknowns.
+Qualified correspondence changes preserve placement and physical choice;
+authored tracks, vias and zones keep their geometry and net assignments for
+explicit refill, checking and repair. Existing PM053/PM054 identity, pending,
+contact and fill authority remains strict. Backend implementation and genuine
+prototype reconciliation are in progress; neither target captures nor a compile
+establish native delivery. Integrated canonical history, Save/cold reopening and
+independent delivery review remain pending. No new workflow PASS, general ECO,
+hierarchy qualification or Frontier selection is
+claimed. The delivered metadata slice and its protected owner-QA snapshot retain
+their existing proof scope; owner QA does not block this independent increment.
+
 *Earlier bounded PCB target checkpoint (historical):* the owner-goal `dat-practical-pcb-design-3qbp`
 has delivered the native Route/Zone GUI controls (source `711e0fc1`,
 metadata `7a9f71bf`) with independently accepted ordinary proof (M30

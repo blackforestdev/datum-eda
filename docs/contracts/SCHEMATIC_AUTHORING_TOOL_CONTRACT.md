@@ -1019,6 +1019,38 @@ Bus's source binding. No names or surviving-entry heuristics reconstruct binding
   App with matching release CLI/daemon companions; it is not release-GUI,
   physical/HUMAN, owner-project or full PCB qualification.
 
+  **Bounded connectivity-revision target (native delivery pending):**
+  The next `dat-schematic-pcb-revision-loop-cf5t` increment reviews an already
+  authored root-sheet pin reassignment between two existing stable
+  board-correspondent nets on existing mapped components. The retained transfer
+  card opens the same captured-context inline Proposal review (study S-Q).
+  Every changed terminal shows its recorded old and proposed new pad, logical
+  NetId and board Net UUID, with read-only Part/Footprint context. Display names
+  never reconstruct identity. The review
+  enumerates retained Track/Via/Zone source identities and any conservative
+  potentially affected set, including source-bound unavailable contact reasons.
+  Complete pin/pad correspondence and current physical/library source proof
+  remain mandatory. An already stale zone fill is not current copper evidence:
+  a complete review includes disclosed unknowns and does not certify complete
+  physical connectivity, current fill or a complete Global Net.
+  Explicit acceptance changes only qualified correspondence in one canonical
+  design transaction. Package/pad identities, placement and physical choice stay
+  fixed; authored tracks, vias and zones keep their geometry and net assignments.
+  The designer explicitly refills, checks and repairs resulting shorts or
+  unrouted connections using ordinary PCB tools. For affected subjects, pending
+  or mismatched binding or unavailable current geometry retains the PM053 C02
+  and PM054 C04/C05 unavailability rules; review fabricates no complete membership.
+  The complete current review, including warnings and action hints, must fit
+  visibly together before acceptance; preparing, source-stale or unfit reviews
+  cannot accept, and dismissal remains reachable. Dismissing a submitted write closes
+  its review without cancelling the write or reopening the review on completion.
+  Net birth/retirement, ambiguous merge/split ownership, changed physical/library
+  bindings and unsupported scope/contact kinds are outside this bounded review;
+  these limits do not prohibit ordinary schematic topology authoring. General
+  ECO, hierarchy synchronization and native delivery are not claimed by this
+  target. Existing metadata-revision and initial-transfer receipts keep their
+  original scope.
+
   Earlier bounded Part assignment implementation (`dat-schematic-part-assignment-dres`)
   adds named compatible Part/Gate choices through the selected Symbol Inspector
   and existing `Assign Part…` context command. It retains the native pool Symbol's

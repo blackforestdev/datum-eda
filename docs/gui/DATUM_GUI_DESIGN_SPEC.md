@@ -536,6 +536,20 @@ with parent-layer fade/blur). The AI dock-vs-overlay comparison is illustrated i
    and fit refusal retain their focused source/renderer proof; these normal
    captures do not qualify every target state, release-GUI execution,
    physical/HUMAN input or full PCB design.
+   The subsequent S-Q synthetic target configures that same transfer-card entry
+   and inline Proposal for a bounded existing-component connectivity revision.
+   Show the complete recorded old/new terminal, pad and logical/board net chain,
+   read-only physical context, retained Track/Via/Zone identities, and a guarded
+   conservative impact set with any source-bound contact/fill unavailability.
+   An already stale zone is not current copper; complete review disclosure does
+   not certify complete physical connectivity or a complete Global Net.
+   Tracks, vias and zones retain geometry and net assignments; explicit refill,
+   checks and routing repair follow. Complete current review content, warnings
+   and action hints must fit visibly together before Apply/Tab is offered.
+   Preparing, source-stale and unfit states withhold acceptance and keep Dismiss/Esc
+   reachable. A dismissed submitted write completes without reopening its review.
+   This remains a native-pending target under the existing PM053/PM054 authority,
+   not a general ECO or hierarchy surface or a delivered-workflow claim.
 2. **Fonts**: embed IBM Plex Sans; choose the data-mono face (Design Book leaves
    it open).
 3. **Context menus — RESOLVED (2026-07-06)** into the "Context Menu System"
