@@ -529,6 +529,21 @@ source corrections retain explicit equivalence qualifications. No physical
 X-key/HUMAN, release-GUI, owner-project or full PCB qualification is claimed.
 The broader cf5t/practical PCB goals remain open; no Frontier successor is selected.
 
+*Practical PCB owner objective — accepted 2026-11-14:* the standing PM059 manager
+accepts `dat-practical-pcb-design-3qbp`, following independent coverage review,
+against its original representative-circuit workflow: component selection and connected
+schematic-to-board transfer, placement, routing, copper zones and DRC, followed
+by explicit review and application of supported schematic changes and manual
+copper repair. This acceptance supersedes the earlier open-status checkpoints
+for 3qbp above. It composes the accepted component-first/initial-transfer and
+native placement evidence, Route/Zone M30, outline36, metadata and connectivity
+review/history, and Track Delete/repair62 proofs at their original candidates
+and scopes; it does not claim one complete current-candidate campaign. The
+broader `dat-schematic-pcb-revision-loop-cf5t` remains open for general ECO and
+hierarchy coverage. HUMAN, release-GUI workflow, full qualification, global
+clean DRC and manufacturing readiness are not established; no Frontier
+successor or transition is selected.
+
 *Earlier bounded PCB target checkpoint (historical):* the owner-goal `dat-practical-pcb-design-3qbp`
 has delivered the native Route/Zone GUI controls (source `711e0fc1`,
 metadata `7a9f71bf`) with independently accepted ordinary proof (M30
