@@ -50,6 +50,7 @@
     <a href="schematic-authoring-states-study.html#S-F">S-F Readiness and authoring states</a>
     <a href="schematic-surfaces-study.html#S-G">S-G Net, Bus, ERC</a>
     <a href="schematic-authoring-states-study.html#S-H">S-H Tool families</a>
+    <a href="schematic-authoring-states-study.html#S-P">S-P PCB reference / value change review</a>
     <a href="schematic-layout-accessibility-study.html#S-I">S-I Layout and accessibility matrix</a>
     <a href="schematic-surfaces-study.html#S-MAP">Frame → clause map</a>
   </nav>
@@ -545,6 +546,117 @@
       <code>dat-ordinary-circuit-authoring-zvhw</code> at their recorded scopes (delivery <code>16699b68</code>).</td><td><span class="tag tgt">○ TARGET · not delivered</span></td></tr>
     <tr><td class="n">Heterogeneous delete · Symbol fields · ERC waiver</td><td>Normalized surface and complete GUI pending; waiver stays proposal-gated</td><td><span class="tag tgt">○ TARGET · not delivered</span></td></tr>
   </table>
+</section>
+
+<!-- ======================================================== S-P -->
+<section class="fr" id="S-P">
+  <div class="sec-label"><span class="n">S-P</span><span>PCB reference / value change review — schematic Reference and display Value edits read against the existing board counterpart</span><span class="rule"></span>
+    <span class="tag tgt">○ TARGET · not delivered</span><span class="tag syn">◇ SYNTHETIC</span></div>
+  <p class="cap">Candidate presentation for reviewing Reference and display Value edits already authored in the schematic against the board
+  counterpart that an earlier transfer created. <b>Native proof is PENDING</b> — nothing in this family claims a delivered surface, runtime
+  behaviour or a product PASS. Entry is the <b>retained root-schematic transfer review</b>: its existing card carries the trigger (P1), and
+  pressing it closes the card and opens the <b>existing</b> shared inline Proposal review in the same captured root context — no pane switch
+  and no new board-side entrypoint; the board counterpart appears only as read-only data inside the review. The payload rides that inline
+  Proposal review unchanged: <span class="kbd">Tab</span> applies
+  only while the review is <b>complete, current and ready</b>; <span class="kbd">Esc</span> always dismisses; pending (“Preparing Proposal…”)
+  and refusal presentation are the shared semantics, not new rules. Opening the review <b>inspects the design source to prepare the immutable
+  old/new diff; nothing in the design changes before explicit acceptance.</b> Applying submits one proposal that updates
+  the board's Reference and display Value text only — placement, pads, nets, routes and the component's pinned physical choice stay exactly as
+  they are. Out of scope here: library revision, footprint or map selection, topology, component addition or removal, simulation and general
+  engineering-change flows; the <b>initial</b> transfer of a component to the board remains its own separate review. Every part, footprint,
+  reference and value drawn is an illustrative synthetic first-party example.</p>
+  <div class="grid3">
+    <div id="P1">
+      <div class="shell"><div class="pane focus"><div class="phd"><span class="pt">Schematic Design</span><span class="ctx">occurrence <b>/</b></span><span class="tools"><span class="tl on">Sel</span></span><span class="fdot"><i></i>FOCUS</span></div>
+        <div class="pbody" style="min-height:330px"><svg class="cv" viewBox="0 0 520 300" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><use href="#sch"/></svg>
+          <div style="position:absolute;inset:10px;background:var(--s01);border:1px solid var(--bd-sub);border-radius:4px;padding:10px 12px;font-size:12px;overflow:hidden">
+            <div style="color:var(--tx);font-size:13px;font-weight:600">Transfer root schematic to PCB</div>
+            <div style="color:var(--tx2);margin-top:5px">Choose each footprint/map explicitly. Existing counterparts are unchanged.</div>
+            <div style="color:var(--tx2);margin-top:4px">0 ready / 2 components — initial placement at 5 mm spacing</div>
+            <div style="color:var(--tx3);font-size:11px;margin-top:4px">Preparation is a separate saved change. Closing this review does not undo it.</div>
+            <div style="margin-top:9px;color:var(--tx)">C9 — Already on PCB</div>
+            <div style="margin-top:6px;color:var(--tx)">R7 — Already on PCB</div>
+            <div style="margin-top:10px;padding:7px 9px;border:1px solid var(--bd-str);border-radius:4px;background:var(--s02)">
+              <div style="color:var(--tx3);font-size:11px;margin-bottom:6px">2 existing counterparts have new Reference or display Value text in this root schematic.</div>
+              <span class="btn">Review PCB reference/value changes</span></div>
+            <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap"><span class="btn na" title="Not available: first row shown">Previous ∅</span><span class="btn na" title="Not available: all rows shown">Next ∅</span><span class="btn na" title="Not available: no component is ready for initial transfer">Transfer ready components ∅</span><span class="btn">Close review</span></div>
+          </div></div></div></div>
+      <p class="cell-cap"><b>P1 — the trigger lives in the existing root-schematic transfer review.</b> The retained transfer card
+      (<i>Transfer root schematic to PCB</i>), drawn over the captured root schematic, carries one visible, plainly named control:
+      <b>Review PCB reference/value changes</b>. Pressing it closes this card and opens the existing shared inline Proposal review in the
+      same captured root context (P2) — no pane switch and no new board-side entrypoint. The design source is inspected to prepare the
+      immutable old/new diff; no design change happens before explicit acceptance.</p>
+    </div>
+    <div id="P2">
+      <div class="shell"><div class="pane focus"><div class="phd"><span class="pt">Schematic Design</span><span class="ctx">occurrence <b>/</b></span><span class="tools"><span class="tl on">Sel</span></span><span class="fdot"><i></i>FOCUS</span></div>
+        <div class="pbody" style="min-height:480px"><svg class="cv" viewBox="0 0 520 300" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><use href="#sch"/></svg>
+          <div class="picker" style="width:312px">
+            <div class="hd">Review PCB reference/value changes — 2 components</div>
+            <div style="padding:6px 10px 2px;font-size:11px;color:var(--tx3)">Demo Capacitor · C-0603 — same placed component<span style="float:right">read-only</span></div>
+            <div class="kv"><span class="k">Reference</span><span class="v m">old <b>C9</b> → new <b style="color:var(--acc)">C12</b></span></div>
+            <div class="kv"><span class="k">Value</span><span class="v m">old <b>100n</b> → new <b>100n</b> <span style="color:var(--tx3)">unchanged</span></span></div>
+            <div style="border-top:1px solid var(--bd-sub);margin-top:4px;padding:6px 10px 2px;font-size:11px;color:var(--tx3)">Demo Resistor · R-0603 — same placed component<span style="float:right">read-only</span></div>
+            <div class="kv"><span class="k">Reference</span><span class="v m">old <b>R7</b> → new <b>R7</b> <span style="color:var(--tx3)">unchanged</span></span></div>
+            <div class="kv"><span class="k">Value</span><span class="v m">old <b>4k7</b> → new <b style="color:var(--acc)">10k</b></span></div>
+            <div class="note">Reviewing edits nothing. Applying updates Reference and display Value text only — placement, pads, nets, routes and the pinned physical choice stay unchanged.</div>
+            <div style="display:flex;gap:8px;align-items:center;padding:7px 12px 9px"><span class="btn">Apply changes</span><span class="kbd">Tab</span><span class="btn">Dismiss</span><span class="kbd">Esc</span></div>
+          </div>
+          <div class="fstack"><div class="fstrip"><span class="gl">◇</span><span class="tx"><b>review</b> · Tab apply reference/value changes · Esc dismiss</span></div></div></div></div></div>
+      <p class="cell-cap"><b>P2 — the complete payload, in the same captured root context.</b> The shared inline Proposal review opens where
+      the transfer card closed — same pane, same captured root schematic. Every changed component shows <b>old and new Reference and old and
+      new display Value</b>, even where one of the two is unchanged, under a read-only identity line: Part and Footprint are the board
+      counterpart's data, shown read-only — it is the same placed component throughout. Apply changes / <span class="kbd">Tab</span> and
+      Dismiss / <span class="kbd">Esc</span> are both visible; <span class="kbd">Tab</span> is offered only because the list is complete,
+      current and ready.</p>
+    </div>
+    <div id="P3">
+      <div class="shell"><div class="pane focus"><div class="phd"><span class="pt">Schematic Design</span><span class="ctx">occurrence <b>/</b></span><span class="tools"><span class="tl on">Sel</span></span><span class="fdot"><i></i>FOCUS</span></div>
+        <div class="pbody" style="min-height:590px"><svg class="cv" viewBox="0 0 520 300" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <rect width="520" height="300" fill="url(#sgrid)"/></svg>
+          <div class="picker" style="width:216px">
+            <div class="hd">Review PCB reference/value changes — 1 component</div>
+            <div style="padding:6px 10px 2px;font-size:11px;color:var(--tx3)">Demo Resistor, precision thin film · R-0402 — same placed component<span style="display:block">read-only</span></div>
+            <div class="kv"><span class="k">Reference</span><span class="v m">old <b>R7</b> → new <b>R7</b> <span style="color:var(--tx3)">unchanged</span></span></div>
+            <div class="kv"><span class="k">Value</span><span class="v m">old <b>4.70 kΩ ±1 % 62.5 mW thin film</b> → new <b style="color:var(--acc)">10.0 kΩ ±0.1 % 62.5 mW thin film</b></span></div>
+            <div class="note">Reviewing edits nothing. Placement, pads, nets, routes and the pinned physical choice stay unchanged.</div>
+            <div style="display:flex;gap:8px;align-items:center;padding:7px 12px 9px;flex-wrap:wrap"><span class="btn">Apply changes</span><span class="kbd">Tab</span><span class="btn">Dismiss</span><span class="kbd">Esc</span></div>
+          </div>
+          <div class="fstack"><div class="fstrip"><span class="gl">◇</span><span class="tx"><b>review</b> · Tab apply reference/value changes · Esc dismiss</span></div></div></div></div></div>
+      <p class="cell-cap"><b>P3 — long values in a narrow pane, still complete.</b> Long display Values wrap; nothing is elided. Acceptance is
+      offered only because every old and new field is fully visible together with the acceptance hint — wrapping is the fit answer here, not
+      truncation.</p>
+    </div>
+  </div>
+  <div class="grid2" style="margin-top:16px">
+    <div id="P4">
+      <div class="shell"><div class="pane focus"><div class="phd"><span class="pt">Schematic Design</span><span class="ctx">occurrence <b>/</b></span><span class="tools"><span class="tl on">Sel</span></span><span class="fdot"><i></i>FOCUS</span></div>
+        <div class="pbody" style="min-height:150px"><svg class="cv" viewBox="0 0 520 160" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <rect width="520" height="160" fill="url(#sgrid)"/></svg>
+          <div style="position:absolute;left:50%;transform:translateX(-50%);bottom:10px;width:300px;background:var(--s03);border:1px solid var(--acc);border-radius:6px;box-shadow:0 8px 24px rgba(0,0,0,.55);padding:7px 10px;font-size:12px">
+            <div style="color:var(--tx);font-weight:600">Review PCB reference/value changes — 2 components</div>
+            <div style="color:var(--tx3);margin:3px 0 6px">Enlarge the pane to review every old and new Reference and Value.</div>
+            <div style="display:flex;gap:8px;align-items:center"><span class="btn na" title="Not available: the complete old and new fields do not fit">Apply changes ∅</span><span class="btn">Dismiss</span><span class="kbd">Esc</span><span style="font-size:10.5px;color:var(--tx3)">Acceptance unavailable</span></div>
+          </div></div></div></div>
+      <p class="cell-cap"><b>P4 — truthful fit refusal.</b> When the pane cannot show every required old/new field together with the acceptance
+      hint, the review <b>withholds the payload rather than clipping it</b>: it states the reason, acceptance is visibly unavailable, and
+      dismissal stays one <span class="kbd">Esc</span> away. A clipped or hidden old/new value can never be accepted.</p>
+    </div>
+    <div id="P5">
+      <div class="shell"><div class="pane focus"><div class="phd"><span class="pt">Schematic Design</span><span class="ctx">occurrence <b>/</b></span><span class="tools"><span class="tl on">Sel</span></span><span class="fdot"><i></i>FOCUS</span></div>
+        <div class="pbody" style="min-height:220px"><svg class="cv" viewBox="0 0 520 300" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <rect width="520" height="300" fill="url(#sgrid)"/></svg>
+          <div class="picker" style="width:300px;opacity:.6">
+            <div class="hd">Review PCB reference/value changes — 2 components</div>
+            <div class="kv"><span class="k">Reference</span><span class="v m">old <b>C9</b> → new <b>C12</b></span></div>
+            <div class="kv"><span class="k">Value</span><span class="v m">old <b>4k7</b> → new <b>10k</b></span></div>
+          </div>
+          <div class="fstack"><div class="fstrip err"><span class="gl">✕</span><span class="tx">Apply refused — design changed; reopen the PCB update review. Nothing changed.</span></div></div></div></div></div>
+      <p class="cell-cap"><b>P5 — not current means no acceptance.</b> <span class="kbd">Tab</span> applies only while the review is complete,
+      current and ready; a design that changed underneath refuses with the actual reason and writes nothing, and a review still being prepared
+      shows the shared pending state (“Preparing Proposal…”). Both are the existing Proposal semantics, unchanged by this family;
+      <span class="kbd">Esc</span> dismisses in every state.</p>
+    </div>
+  </div>
 </section>
 
 </div>
