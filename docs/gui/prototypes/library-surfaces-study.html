@@ -66,6 +66,7 @@
     <a href="library-surfaces-study.html#L-H">L-H Placement eligibility</a>
     <a href="library-surfaces-study.html#L-I">L-I Placed update</a>
     <a href="library-layout-accessibility-study.html#L-J">L-J Layout and accessibility</a>
+    <a href="library-surfaces-study.html#L-K">L-K Unresolved transfer resolution</a>
     <a href="library-surfaces-study.html#L-MAP">Frame → clause map</a>
   </nav>
 </header>
@@ -378,6 +379,141 @@
   </div>
 </section>
 
+<!-- ======================================================== L-K -->
+<section class="fr" id="L-K">
+  <div class="sec-label"><span class="n">L-K</span><span>Unresolved transfer component — source-qualified resolution: assign a compatible Part or author one from the placed Symbol</span><span class="rule"></span>
+    <span class="tag tgt">○ TARGET · not delivered</span><span class="tag syn">◇ SYNTHETIC</span></div>
+  <p class="cap">The retained root-schematic transfer review (trigger context: <code>schematic-pcb-connectivity-revision-study.html#Q1</code>) can meet a
+  project whose placed symbols have only saved Unit / Symbol definitions — no Entity, Part, Package, Footprint, Padstack or PinPadMap exists yet. Such a
+  component is <b>unresolved for transfer</b> and is never guessed: no component, pin map or footprint is invented, no redraw or new project is suggested,
+  and nothing external is imported or adopted silently. Each unresolved row names its reference and value and carries an explicit <b>Resolve…</b> action.
+  Resolution is <b>source-qualified</b>: a compatible Part must reference <b>this placed Symbol's exact existing Unit / Symbol identity</b> — a same-looking
+  Part built on a different Unit or Symbol is stated incompatible, never offered as a near match. Where a compatible complete Part exists, the existing
+  explicit Assign Part flow binds it through the shared Preview / Proposal / human-acceptance path, preserving the placed symbol's identity, pins, pose and
+  wiring. Where none exists, the flow states exactly which definitions are missing and offers the <b>existing</b> Library editors (L-B3…L-B8, L-G) to author
+  them from the placed Symbol's own Unit / Symbol, keeping the target reference visible while authoring. Return to assignment and transfer retry are
+  explicit; returning restores the exact original placed symbol and schematic occurrence. Committing Library definitions is the purpose of this recovery,
+  so Library-only revisions made along the way never make the flow stale: on return the original placed-symbol preimage, its project root, its
+  pane / document / occurrence and source-definition compatibility are revalidated unchanged. A genuinely changed, missing or rebound placed target, or a
+  switched project or view, refuses and restarts truthfully — stated as meaningful names and next actions; the revalidation guards are internal.
+  Cancelling or navigating away makes no assignment and no new design edit, and never rewinds a separately committed Library edit; a pending uncommitted
+  draft or running authoring step must be finished, cancelled or awaited explicitly — never discarded silently. Every name, value and count is synthetic.</p>
+  <div class="shell">
+    <div class="mb"><span class="brand">Datum<b>·</b>EDA</span><span class="m">File</span><span class="m">Edit</span><span class="m">View</span><span class="m">Place</span><span class="m">Project</span><span class="m">Checks</span><span class="m">Window</span><span class="m">Help</span><span class="sp"></span><span class="pill">demo-first-board · rev 3f09a1</span></div>
+    <div class="ws" style="height:370px">
+      <div class="panes"><div class="pane focus">
+        <div class="phd"><span class="pt">Schematic Design</span><span class="cx">occurrence <b>/</b></span><span class="fdot"><i></i>FOCUS</span></div>
+        <div class="pbody"><div class="card" id="K1" style="margin:14px auto;max-width:640px">
+          <div class="phd0"><span>Transfer root schematic to PCB</span><span class="r">retained transfer review</span></div>
+          <table class="t in" aria-label="Initial transfer components, all unresolved">
+            <tr><th>Component</th><th>Placed Symbol</th><th>Transfer state</th><th>Action</th></tr>
+            <tr><td class="n">U1 · DEMO-MCU-A</td><td>Demo MCU A — body</td><td><span class="st warn">△ unresolved — no Part bound</span></td><td><span class="btn">Resolve…</span></td></tr>
+            <tr class="ed"><td class="n">✎ U2 · DEMO-OPA1</td><td>Demo Op-Amp — body</td><td><span class="st warn">△ unresolved — no Part bound</span></td><td><span class="btn">Resolve…</span></td></tr>
+            <tr><td class="n">C1 · 100n</td><td>Demo Capacitor</td><td><span class="st warn">△ unresolved — no Part bound</span></td><td><span class="btn">Resolve…</span></td></tr>
+            <tr><td class="n">C2 · 1µ</td><td>Demo Capacitor</td><td><span class="st warn">△ unresolved — no Part bound</span></td><td><span class="btn">Resolve…</span></td></tr>
+          </table>
+          <div class="note">0 ready / 4 components. Saved in this project: Units and Symbols only. Unresolved is a stated fact about missing library
+          definitions, not a schematic error; wiring and placement stay exactly as authored.</div>
+          <div class="acts"><span class="btn na">Transfer ready components ∅ — none resolved yet</span><span class="btn">Refresh transfer</span><span class="btn">Close review</span></div>
+        </div></div>
+      </div></div>
+    </div>
+    <div class="dock"><span class="dt on">bash</span><span class="dt">+</span><span class="h">Terminal — available, never required for resolution</span></div>
+  </div>
+  <p class="cell-cap"><b>K1 — unresolved transfer rows, normal composition.</b> The same retained transfer review as the initial handoff; each
+  unresolved component carries its own explicit Resolve action, and the transfer action stays unavailable with its exact reason. Resolve on U2 is
+  opened in K3.</p>
+  <div class="grid2" style="margin-top:16px">
+    <div class="card" id="K2">
+      <div class="phd0"><span>Resolve C1 — compatible complete Part found</span><span class="r">existing Assign Part flow</span></div>
+      <div class="it"><span class="ref">C1 · 100n</span><span class="kind">placed Symbol · Demo Capacitor · occurrence / — retained target</span></div>
+      <div class="kv"><span class="k">Part</span><span class="v"><span class="fld f">DEMO-CAP-X7R ▾</span> · 1 eligible complete Part</span></div>
+      <div class="kv"><span class="k">Gate</span><span class="v"><span class="fld">main ▾</span> · 1 of 1</span></div>
+      <div class="kv"><span class="k">Carried by the Part</span><span class="v">Package, default Footprint, default pin-pad map <span class="st ok">✓ complete</span></span></div>
+      <div class="steps"><span class="now">① choose eligible Part</span><span>② preview binding — identity, pins, pose, wires retained</span><span>③ accept proposal / cancel · no change</span></div>
+      <div class="note">The choice offers only eligible complete Parts — those whose Entity gate uses this placed Symbol's exact Unit and Symbol
+      (Demo Capacitor — logic · Demo Capacitor). A same-looking Part built on a different Unit or Symbol is not eligible and is not listed. Assignment is
+      the existing explicit Assign Part flow — a preview, then a proposal a human accepts; nothing is re-placed or redrawn, and nothing transfers
+      automatically. Qualification stays the separate fact (L-F).</div>
+      <div class="acts"><span class="btn">Cancel — no assignment</span><span class="btn">Back to transfer</span><span class="btn pri">Assign DEMO-CAP-X7R…</span></div>
+      <p class="cell-cap"><b>K2 — compatible Part assignment.</b> The existing shared choice form under the existing complete-choice admission: eligibility
+      is the exact existing Unit / Symbol identity, and the ineligible same-looking case is explained rather than listed — no candidate census, no new
+      discovery surface.</p>
+    </div>
+    <div class="card" id="K3">
+      <div class="phd0"><span>Resolve U2 — no compatible Part</span><span class="r">guides existing Library authoring</span></div>
+      <div class="it"><span class="ref">U2 · DEMO-OPA1</span><span class="kind">placed Symbol · Demo Op-Amp — body · occurrence / — retained target</span></div>
+      <div class="kv w"><span class="v"><span class="st na">∅ no compatible Part</span> No Part in the open pools references this placed Symbol's Unit / Symbol
+      identity (Demo Op-Amp — logic · Demo Op-Amp — body). No ready Part catalog or source is configured; none is invented or fetched.</span></div>
+      <table class="t in c" aria-label="Existing and missing definitions for a complete Part">
+        <tr><th>Definition</th><th>State</th><th>Existing action</th></tr>
+        <tr><td class="n">Unit</td><td><span class="st ok">✓ saved — Demo Op-Amp — logic</span></td><td>—</td></tr>
+        <tr><td class="n">Symbol</td><td><span class="st ok">✓ saved — Demo Op-Amp — body</span></td><td>—</td></tr>
+        <tr><td class="n">Entity</td><td><span class="st na">∅ missing</span></td><td><span class="btn">Author Entity from this Unit / Symbol…</span></td></tr>
+        <tr><td class="n">Package</td><td><span class="st na">∅ missing</span></td><td><span class="btn">Author Package…</span></td></tr>
+        <tr><td class="n">Padstack · Footprint</td><td><span class="st na">∅ missing</span></td><td><span class="btn">Author land pattern…</span></td></tr>
+        <tr><td class="n">Part</td><td><span class="st na">∅ missing</span></td><td><span class="btn na">Author Part… ∅ needs Entity, Package, default Footprint</span></td></tr>
+        <tr><td class="n">PinPadMap</td><td><span class="st na">∅ missing</span></td><td><span class="btn na">Author map or declare default… ∅ needs Part and Footprint</span></td></tr>
+      </table>
+      <div class="note">Guidance states order and prerequisites only; it decides no dimension, no pin map and no footprint. Each action opens the ordinary
+      authoring editor with this resolution's target retained (K4); each definition commits through that editor's own review / commit, and a commit made
+      there stays committed however this resolution ends. Nothing binds until the completed Part goes through the explicit assignment of K2.</div>
+      <div class="acts"><span class="btn">Cancel — no assignment</span><span class="btn">Back to transfer</span></div>
+      <p class="cell-cap"><b>K3 — no compatible Part.</b> The explanation and contextual authoring actions — the ordinary editors of L-B3…L-B8 and the
+      supported generation of L-G. Cancelling this resolution makes no new design edit and rewinds none of their commits.</p>
+    </div>
+  </div>
+  <div class="grid2" style="margin-top:16px">
+    <div class="card" id="K4">
+      <div class="phd0"><span>While authoring — retained target, explicit return and retry</span></div>
+      <div class="banner"><span class="bic">✎</span>Resolving U2 · DEMO-OPA1 — authoring Entity “Demo Op-Amp, single”. Still missing for a complete Part: Package, Footprint, Part, pin-pad map.</div>
+      <div class="kv"><span class="k">Target kept</span><span class="v">reference <b>U2</b>, value <b>DEMO-OPA1</b>, its placed Symbol and occurrence — held by name throughout authoring</span></div>
+      <div class="kv"><span class="k">Return</span><span class="v"><span class="btn">Return to assignment</span> reopens Resolve U2 on the exact original placed symbol and schematic occurrence; Library definitions committed meanwhile remain, and a now-eligible Part is offered — never auto-assigned</span></div>
+      <div class="kv"><span class="k">Retry</span><span class="v"><span class="btn">Refresh transfer</span> re-reads readiness; a newly completed compatible Part becomes assignable — never auto-assigned</span></div>
+      <div class="kv"><span class="k">Leaving</span><span class="v">an uncommitted draft or a running authoring step is finished, cancelled or awaited first — nothing is discarded silently</span></div>
+      <div class="note">Authoring itself is the ordinary editors with their own preview / review / commit; this flow adds no new editor, write path or capability.</div>
+      <p class="cell-cap"><b>K4 — retained target while authoring.</b> Return revalidates the unchanged original placed-symbol preimage — same project root,
+      pane / document / occurrence, compatible source definition — internally; committing Library definitions is the expected path and never stales it.</p>
+    </div>
+    <div>
+      <div class="shell narrow" id="K5">
+      <div class="mb"><span class="tl btn">☰ Navigator</span><span class="brand" style="margin-left:6px">Datum<b>·</b>EDA</span><span class="sp"></span><span class="tl btn">Inspector ▸</span></div>
+      <div class="ws" style="height:430px;flex:0 0 430px"><div class="panes"><div class="pane pnl focus">
+        <div class="phd"><span class="pt">Resolve U2 · DEMO-OPA1</span><span class="fdot"><i></i>FOCUS</span></div>
+        <div class="kv w"><span class="v"><span class="st na">∅ no compatible Part</span> for Demo Op-Amp — logic · Demo Op-Amp — body.</span></div>
+        <div class="sh">Missing for a complete Part</div>
+        <div class="kv"><span class="k">Entity</span><span class="v"><span class="btn">Author from this Unit / Symbol…</span></span></div>
+        <div class="kv"><span class="k">Package</span><span class="v"><span class="btn">Author…</span></span></div>
+        <div class="kv"><span class="k">Land pattern</span><span class="v"><span class="btn">Author…</span></span></div>
+        <div class="kv"><span class="k">Part · map</span><span class="v"><span class="btn na">∅ after the rows above</span></span></div>
+        <div class="acts"><span class="btn">Back to transfer</span><span class="btn">Cancel</span></div>
+        <div style="flex:0 0 40px" aria-hidden="true"></div>
+        <div class="fstack" style="max-width:92%"><div class="fstrip"><span class="gl">·</span><span class="tx">resolving <b>U2</b> · target retained</span><span class="hb">▤ history</span></div></div>
+      </div></div></div><div class="dock"><span class="dt on">bash</span></div>
+      </div>
+      <p class="cell-cap"><b>K5 — narrow composition.</b> One column in a fixed 430 px body: the same source-qualified facts, guidance and explicit
+      return; nothing collapses into an identifier or a developer phrase.</p>
+    </div>
+  </div>
+  <div class="grid4" style="margin-top:16px">
+    <div><div class="card"><div class="phd0"><span>Resolve C1</span></div><div class="empty"><span class="st info">⧗ pending</span><b>Reading compatible Parts…</b>No candidate list and no choice until the source-qualified query returns.</div></div>
+      <p class="cell-cap"><b>K6a — pending.</b> No fictitious candidates, nothing pre-chosen.</p></div>
+    <div><div class="card"><div class="banner"><span class="bic">△</span>U2 changed in the schematic while this resolution was open.</div><div class="empty" style="min-height:96px"><b>Resolve U2 restarts from the current schematic.</b>No assignment was made; Library definitions already committed remain. Nothing is bound or retargeted automatically.</div></div>
+      <p class="cell-cap"><b>K6b — genuinely changed target.</b> A changed, missing or rebound placed target, or a switched project or view, refuses and
+      restarts truthfully. Library-only commits are not staleness: the internal guards revalidate the placed-symbol preimage, project root,
+      pane / document / occurrence and source-definition compatibility rather than any revision having moved.</p></div>
+    <div><div class="card"><div class="phd0"><span>Resolve — cancelled</span></div><div class="empty"><span class="st na">∅ cancelled</span><b>No assignment, no new design edit.</b>The placed symbol, its wiring and the transfer review are unchanged; Library definitions already committed remain committed.</div></div>
+      <p class="cell-cap"><b>K6c — cancel.</b> Cancelling ends the resolution only; it never rewinds a separately committed ordinary Library edit.</p></div>
+    <div><div class="card"><div class="banner"><span class="bic">△</span>The Entity draft “Demo Op-Amp, single” is not committed.</div><div class="empty" style="min-height:96px"><b>Finish and commit, cancel the draft, or wait for the running step.</b>Leaving is refused until one is chosen; nothing is discarded silently.</div></div>
+      <p class="cell-cap"><b>K6d — pending draft.</b> An uncommitted Library draft or a running authoring step blocks leaving until it is explicitly finished, cancelled or awaited.</p></div>
+    <div><div class="card"><div class="phd0"><span>Returned after a Library commit</span></div><div class="empty"><span class="st ok">✓ original context restored</span><b>U2 — the exact placed symbol and occurrence.</b>Identity, pins, pose and wires exactly as before resolving; the committed Entity remains, and a now-complete compatible Part is offered for explicit assignment.</div></div>
+      <p class="cell-cap"><b>K6e — legitimate return.</b> Library-only commits made while resolving do not stale the return; the unchanged placed target is revalidated and nothing is assigned automatically.</p></div>
+  </div>
+  <p class="cell-cap" style="margin-top:10px"><b>Reconciles</b> the unresolved Part-binding fact of <code>schematic-surfaces-study.html#S-C</code> and the
+  component-first placement row of L-H: this family adds the missing recovery between them — from an unresolved transfer row to explicit assignment —
+  without a new controller, capability, solver, component definition or import flow.</p>
+</section>
+
 <!-- ======================================================== map -->
 <section class="fr" id="L-MAP">
   <div class="sec-label"><span class="n">MAP</span><span>Frame → clause / candidate mapping</span><span class="rule"></span></div>
@@ -395,6 +531,7 @@
     <tr><td class="n">#L-H</td><td>LIBRARY-MANUAL-USE</td><td>Ordinary workflow row — place a complete named Part with carried Value / Package / Footprint / map</td><td>Warning / block policy for non-approved or UnknownBasis (S05)</td><td>Narrow picker current; rest target</td></tr>
     <tr><td class="n">#L-I</td><td>LIBRARY-VALIDATION</td><td>Relationships and revisions — update candidate paragraph</td><td>Placed-impact trigger (separate authority)</td><td>Target</td></tr>
     <tr><td class="n">#L-J</td><td>SHARED-MUTATION</td><td>Accessibility and visual frames</td><td>Narrow pool / kind / Navigator / Inspector access; refusal placement</td><td>Target</td></tr>
+    <tr><td class="n">#L-K</td><td>LIBRARY-MANUAL-USE · LIBRARY-VALIDATION</td><td>Ordinary workflow row — resolve an unresolved transfer component to a complete named Part by explicit assignment or existing authoring from its placed Symbol</td><td>—</td><td>Target</td></tr>
   </table>
   <p class="cap" style="margin-top:12px"><b>Conflicts shown, not resolved:</b> (1) the Library Authoring contract still lists seven DomainObjects with ModelAttachment
   as a kind and describes its map table as <code>logical_pin → footprint_pad</code>; these frames follow the Product contract — eight Pool kinds, models as
