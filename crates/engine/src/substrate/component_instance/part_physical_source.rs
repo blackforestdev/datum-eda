@@ -42,6 +42,15 @@ fn part_signature(raw: &Value) -> Result<Option<(Uuid, ObjectRevision)>, EngineE
 
 impl DesignModel {
     fn component_part_adoption(&self, component: Uuid, part: Uuid) -> Result<usize, EngineError> {
+        self.component_part_adoption_for_scope(component, part, false)
+    }
+
+    fn component_part_adoption_for_scope(
+        &self,
+        component: Uuid,
+        part: Uuid,
+        bound_metadata: bool,
+    ) -> Result<usize, EngineError> {
         if self.journal_cursor.applied_transaction_count != self.journal.len() {
             return Err(invalid("journal tip differs from the current source"));
         }
@@ -50,7 +59,11 @@ impl DesignModel {
             .get(&component)
             .filter(|ci| {
                 ci.authority == ComponentInstanceAuthority::Authored
-                    && ci.placed_package_refs.is_empty()
+                    && if bound_metadata {
+                        ci.placed_package_refs.len() == 1 && ci.placed_symbol_refs.len() == 1
+                    } else {
+                        ci.placed_package_refs.is_empty()
+                    }
             })
             .ok_or_else(|| {
                 invalid("requires an authored component awaiting initial PCB placement")
@@ -193,6 +206,27 @@ impl DesignModel {
         part: Uuid,
     ) -> Result<BTreeMap<Uuid, ObjectRevision>, EngineError> {
         let adoption = self.component_part_adoption(component, part)?;
+        self.component_part_source_graph(part, adoption, false)
+    }
+
+    /// Metadata propagation retains the original complete logical adoption even
+    /// after physical placement. It neither rebinds nor chooses a newer library
+    /// epoch. Explicit frozen physical/Map checks remain the caller's duty.
+    pub(crate) fn declared_bound_component_part_sources(
+        &self,
+        component: Uuid,
+        part: Uuid,
+    ) -> Result<BTreeMap<Uuid, ObjectRevision>, EngineError> {
+        let adoption = self.component_part_adoption_for_scope(component, part, true)?;
+        self.component_part_source_graph(part, adoption, true)
+    }
+
+    fn component_part_source_graph(
+        &self,
+        part: Uuid,
+        adoption: usize,
+        legacy_optional_defaults: bool,
+    ) -> Result<BTreeMap<Uuid, ObjectRevision>, EngineError> {
         let mut pending = vec![(part, "parts")];
         let mut sources = BTreeMap::new();
         let mut kinds = BTreeMap::new();
@@ -213,8 +247,12 @@ impl DesignModel {
                 "parts" => {
                     add(&raw["entity"], "entities")?;
                     add(&raw["package"], "packages")?;
-                    add(&raw["default_footprint"], "footprints")?;
-                    add(&raw["default_pin_pad_map"], "pin_pad_maps")?;
+                    if !legacy_optional_defaults || !raw["default_footprint"].is_null() {
+                        add(&raw["default_footprint"], "footprints")?;
+                    }
+                    if !legacy_optional_defaults || !raw["default_pin_pad_map"].is_null() {
+                        add(&raw["default_pin_pad_map"], "pin_pad_maps")?;
+                    }
                 }
                 "entities" => {
                     for gate in raw["gates"]

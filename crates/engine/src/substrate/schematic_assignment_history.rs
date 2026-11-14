@@ -154,6 +154,9 @@ pub(super) fn prepare(
     target: &TransactionRecord,
     batch: &mut OperationBatch,
 ) -> Result<bool, EngineError> {
+    if model.prepare_component_metadata_inverse(target, batch)? {
+        return Ok(true);
+    }
     if deletion::prepare(model, target, batch)? {
         return Ok(true);
     }
@@ -343,7 +346,8 @@ pub(super) fn matches(
     target: &TransactionRecord,
     prior: &[TransactionRecord],
 ) -> bool {
-    deletion::matches(tx, target, prior)
+    DesignModel::component_metadata_inverse_matches(tx, target, prior)
+        || deletion::matches(tx, target, prior)
         || (super::journal_history::selected_target(prior, target, tx.transaction_kind)
             && normalized(target, prior).is_some_and(|ops| {
                 tx.operations == ops

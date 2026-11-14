@@ -1,6 +1,22 @@
 //! Journaled proposal prediction uses the same identity basis and postimages as apply.
+use super::component_instance::metadata_history::CanonicalMetadataPreview;
 use super::{CommitReport, DesignModel, EngineError, OperationBatch, TransactionKind};
 use std::path::Path;
+
+/// Creation has no published Proposal receipt. Its private proof is minted by
+/// exact canonical recomputation; the clone's report is computed only afterward.
+pub(super) fn nonwriting_metadata_report(
+    model: &DesignModel,
+    batch: &OperationBatch,
+) -> Result<Option<CommitReport>, EngineError> {
+    let Some(proof) = CanonicalMetadataPreview::capture(model, batch)? else {
+        return Ok(None);
+    };
+    let mut preview = model.clone();
+    preview
+        .preview_canonical_metadata_batch(batch.clone(), &proof)
+        .map(Some)
+}
 
 pub(super) fn report(
     model: &DesignModel,
@@ -9,18 +25,22 @@ pub(super) fn report(
 ) -> Result<CommitReport, EngineError> {
     let batch =
         super::electrical_transaction::compose(model, batch.clone(), TransactionKind::Normal)?;
+    let proof = CanonicalMetadataPreview::capture(model, &batch)?;
     let staged = super::journal::stage_operation_shard_writes(project_root, model, &batch)?;
     let mut preview = model.clone();
     super::journal::update_staged_source_hashes(&mut preview.source_shards, &staged)?;
     super::electrical_transaction::retain_preimage_hashes(model, &mut preview);
     super::journal::sort_source_shards(&mut preview.source_shards);
-    let result = preview
-        .commit_without_direct_policy(batch.clone())
-        .and_then(|mut report| {
-            super::journal::update_staged_source_hashes(&mut preview.source_shards, &staged)?;
-            super::commit::refresh_journaled_report_revision(&mut preview, &mut report, None)?;
-            Ok(report)
-        });
+    let result = if let Some(proof) = proof.as_ref() {
+        preview.preview_canonical_metadata_batch(batch.clone(), proof)
+    } else {
+        preview.commit_without_direct_policy(batch.clone())
+    }
+    .and_then(|mut report| {
+        super::journal::update_staged_source_hashes(&mut preview.source_shards, &staged)?;
+        super::commit::refresh_journaled_report_revision(&mut preview, &mut report, None)?;
+        Ok(report)
+    });
     // Existing private staged preview ownership, never published source.
     let stage_dir = project_root
         .join(".datum/stage")

@@ -24,6 +24,7 @@ pub(super) fn failed_refresh_consumes_only_terminal_reviews(runtime: &mut Runtim
         let id = Uuid::new_v4();
         let sheet = Uuid::new_v4();
         let response = NativeProposalResponse {
+            board_field_revision: None,
             project_annotation: None,
             proposal_id: id,
             status,
@@ -43,6 +44,7 @@ pub(super) fn failed_refresh_consumes_only_terminal_reviews(runtime: &mut Runtim
             interface_binding: None,
         };
         let review = DeleteReview {
+            board_field_revision: None,
             basis: AuthoringViewBasis {
                 project,
                 revision: revision.clone(),

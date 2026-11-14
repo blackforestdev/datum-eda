@@ -15,6 +15,7 @@ mod projection;
 mod roundrect_tests;
 mod validation;
 pub(crate) use pins::{capture_pad, capture_root, check_pin, continuity, source_value};
+pub(in crate::substrate) use projection::projection_with_metadata_basis;
 pub use projection::{ComponentPadProjection, component_pad_projection};
 pub(crate) use projection::{
     project_value, projection_with_operations, projection_with_package_basis,

@@ -1,7 +1,7 @@
 //! Explicit multi-row Reference/Value edits planned against one immutable sheet.
 use super::{
     context::{PreparedWrite, WriteProvenance, build_batch},
-    schematic_assignment::repin_symbols,
+    schematic_assignment::component::repin_field_symbols,
     schematic_selected_source::SelectedSchematicSource,
     schematic_selection_edit::validate_field_values,
     schematic_symbol_payload::{member_payload, source_sheet_payload},
@@ -156,7 +156,7 @@ fn plan(
         changed_symbols.push(original.clone());
     }
     // Qualify and repin each owner once, retaining all unchanged sibling members.
-    let bindings = repin_symbols(model, &changed_symbols)?;
+    let bindings = repin_field_symbols(model, &changed_symbols)?;
     let mut guarded: BTreeSet<_> = changed_symbols.iter().map(|s| s.uuid).collect();
     for operation in &bindings {
         if let Operation::SetComponentInstance {
@@ -190,7 +190,7 @@ fn plan(
     ))
 }
 
-pub(super) fn build(
+pub(crate) fn build(
     model: &DesignModel,
     sheet: Uuid,
     path: &[Uuid],

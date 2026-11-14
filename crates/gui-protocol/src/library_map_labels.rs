@@ -52,17 +52,21 @@ fn reference(entries: &[LibraryEntry], value: Option<&Value>, kind: &str) -> Str
     {
         return format!("Malformed source identity ({id})");
     }
-    let name = if kind == "parts" {
-        text(&target.raw, "mpn")
-            .map(|mpn| match text(&target.raw, "manufacturer") {
+    display_identity(kind, &target.raw)
+        .unwrap_or_else(|| format!("Display identity unavailable ({id})"))
+}
+
+pub(crate) fn display_identity(kind: &str, value: &Value) -> Option<String> {
+    if kind == "parts" {
+        text(value, "mpn")
+            .map(|mpn| match text(value, "manufacturer") {
                 Some(manufacturer) => format!("{manufacturer} {mpn}"),
                 None => mpn.to_owned(),
             })
-            .or_else(|| text(&target.raw, "name").map(str::to_owned))
+            .or_else(|| text(value, "name").map(str::to_owned))
     } else {
-        text(&target.raw, "name").map(str::to_owned)
-    };
-    name.unwrap_or_else(|| format!("Display identity unavailable ({id})"))
+        text(value, "name").map(str::to_owned)
+    }
 }
 
 pub(super) fn project(entries: &mut [LibraryEntry]) {

@@ -2,6 +2,7 @@
 use super::*;
 use crate::board::query_pad::{QueryPadGeometry, SourceRelativePadGeometry};
 use crate::board::{PadLayerConnection, PlacedPackage, PlacedPad, Stackup, StackupLayerType};
+use crate::substrate::component_instance::metadata_history::MetadataFrame;
 use crate::substrate::{Operation, SourceShardKind};
 use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
@@ -57,7 +58,7 @@ pub(crate) fn projection_with_operations(
     board: &Value,
     pending: &[Operation],
 ) -> Result<ComponentPadProjection, EngineError> {
-    project_with_part_basis(model, model, None, board, pending)
+    project_with_part_basis(model, model, None, board, pending, None)
 }
 
 /// Compensation stages no pool edits. Its accepted Part basis stays immutable
@@ -71,7 +72,7 @@ pub(crate) fn projection_with_part_basis(
     validate_library_basis(model, part_basis, pending)?;
     // The compensation gate proves there are no pool edits. Package roots
     // therefore use that same accepted journal while leaves stay on candidate.
-    project_with_part_basis(model, part_basis, Some(part_basis), board, pending)
+    project_with_part_basis(model, part_basis, Some(part_basis), board, pending, None)
 }
 /// Precommit descriptive Package edits retain their accepted root payloads.
 /// The strict Part compensation basis above remains a separate unchanged gate.
@@ -89,7 +90,28 @@ pub(crate) fn projection_with_package_basis(
     if !history.package_metadata_frame_matches(model)? {
         return Err(invalid("unqualified Package metadata source basis"));
     }
-    project_with_part_basis(model, model, Some(accepted), board, pending)
+    project_with_part_basis(model, model, Some(accepted), board, pending, None)
+}
+
+/// The already-applied metadata frame is authenticated independently of the
+/// legacy Part/Package source-basis paths. No journal record is manufactured.
+pub(in crate::substrate) fn projection_with_metadata_basis(
+    model: &DesignModel,
+    frame: &MetadataFrame<'_>,
+    board: &Value,
+    pending: &[Operation],
+) -> Result<ComponentPadProjection, EngineError> {
+    let accepted = frame.accepted();
+    let mut expected = accepted.materialized_source_shard_value(SourceShardKind::BoardRoot)?;
+    for operation in pending {
+        crate::substrate::board_journal_ops::apply_board_operation(&mut expected, operation)?;
+    }
+    if expected != *board {
+        return Err(invalid(
+            "prospective Board source differs from the accepted metadata frame",
+        ));
+    }
+    project_with_part_basis(model, model, None, board, pending, Some(frame))
 }
 
 pub(crate) fn validate_library_basis(
@@ -156,9 +178,11 @@ fn project_with_part_basis(
     package_basis: Option<&DesignModel>,
     board: &Value,
     pending: &[Operation],
+    metadata: Option<&MetadataFrame<'_>>,
 ) -> Result<ComponentPadProjection, EngineError> {
     let board_id: Uuid = serde_json::from_value(board["uuid"].clone())?;
     let mut result = ComponentPadProjection::default();
+    let mut references = BTreeMap::new();
     let Some(placements) = board.get("component_pads").and_then(Value::as_object) else {
         return Ok(result);
     };
@@ -230,8 +254,14 @@ fn project_with_part_basis(
                         result.process_pads.insert(pad.uuid, process);
                     }
                     if result.statuses[&pad.uuid] == ComponentPadMaterializationStatus::Current {
-                        physical.terminal_mut().net =
-                            authoritative_net(model, part_basis, physical.terminal(), b);
+                        physical.terminal_mut().net = authoritative_net(
+                            model,
+                            part_basis,
+                            physical.terminal(),
+                            b,
+                            metadata,
+                            &mut references,
+                        );
                     }
                     if let QueryPadGeometry::Integer(p) = &physical {
                         result.pads.insert(pad.uuid, p.clone());
@@ -410,8 +440,25 @@ fn authoritative_net(
     library_basis: &DesignModel,
     pad: &PlacedPad,
     b: &ComponentPadSourceBinding,
+    metadata: Option<&MetadataFrame<'_>>,
+    references: &mut BTreeMap<(Uuid, u64), Option<RevisionedRef>>,
 ) -> Option<Uuid> {
-    let ci = b.component_instance.as_ref()?;
+    let recorded = b.component_instance.as_ref()?;
+    let current = model.component_instances.get(&recorded.object_id)?;
+    let ci = if current.object_revision == recorded.object_revision {
+        recorded.clone()
+    } else {
+        references
+            .entry((recorded.object_id, recorded.object_revision.0))
+            .or_insert_with(|| {
+                match metadata {
+                    Some(frame) => frame.reference(recorded),
+                    None => model.metadata_component_reference(recorded),
+                }
+                .ok()
+            })
+            .clone()?
+    };
     let map = b.pin_pad_map.as_ref()?;
     if model
         .component_instances
@@ -435,7 +482,7 @@ fn authoritative_net(
         } = &relation.identity
             && evidence.iter().any(|e| {
                 e.board_pad.object_id == pad.uuid
-                    && e.component_instance == *ci
+                    && e.component_instance == ci
                     && e.pin_pad_map.object_id == map.object_id
                     && e.pin_pad_map.object_revision == map.object_revision
                     && e.library_pad.as_ref().is_some_and(|p| {

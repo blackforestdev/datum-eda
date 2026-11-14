@@ -47,13 +47,15 @@ fn interface_review_keeps_identities_and_refusal_visible_and_refuses_clipped_lay
         let mut plan =
             native_selection_overlay::cue_plan::PanePlan::new(&state, viewport, camera).unwrap();
         let (mut quads, mut text) = (vec![], vec![]);
-        render(
+        let _ = render(
             &mut quads,
             &mut text,
             &scene,
             viewport,
             &projection,
             &state,
+            0.,
+            &mut Vec::new(),
             &mut plan,
         );
         let visible = text

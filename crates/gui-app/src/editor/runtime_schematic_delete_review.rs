@@ -76,6 +76,12 @@ impl Runtime {
         event: &winit::event::KeyEvent,
     ) -> bool {
         if self.native_edit.pending() {
+            if event.state == ElementState::Pressed
+                && event.logical_key
+                    == winit::keyboard::Key::Named(winit::keyboard::NamedKey::Escape)
+            {
+                return self.confirm_delete_review(false);
+            }
             return true;
         }
         if self.handle_field_table_key(event) {
@@ -94,9 +100,6 @@ impl Runtime {
         {
             return false;
         }
-        if self.native_edit.pending() {
-            return true;
-        }
         match review_decision(key, self.modifiers) {
             Some(accept) => self.confirm_delete_review(accept),
             None => true,
@@ -104,6 +107,25 @@ impl Runtime {
     }
     pub(super) fn confirm_delete_review(&mut self, accept: bool) -> bool {
         if self.native_edit.pending() {
+            if !accept
+                && self
+                    .workspace()
+                    .schematic_authoring
+                    .delete_review
+                    .as_ref()
+                    .is_some_and(|review| review.board_field_revision.is_some())
+            {
+                let editor = &mut self.session.workspace_mut().schematic_authoring;
+                editor.delete_review = None;
+                editor.circuit_basis = None;
+                editor.circuit_preview = None;
+                self.log_console_echo(
+                    ConsoleFeedbackSource::Tool,
+                    "Review dismissed; an in-flight operation will still finish",
+                );
+                self.invalidate_scene();
+                self.invalidate_frame();
+            }
             return true;
         }
         let Some(mut review) = self.workspace().schematic_authoring.delete_review.clone() else {
@@ -131,6 +153,48 @@ impl Runtime {
                     ConsoleFeedbackSource::Tool,
                     "Enlarge the parent pane to review every interface identity before accepting",
                 );
+                return true;
+            }
+        }
+        if accept && let Some(fields) = &review.board_field_revision {
+            let panes = self
+                .current_layout()
+                .viewport_panes(&self.workspace().ui.layout);
+            let fits = panes
+                .panes
+                .iter()
+                .find(|pane| pane.id == review.basis.pane)
+                .is_some_and(|pane| {
+                    let body = pane.rect.body();
+                    let scene = pane.rect.scene;
+                    let clearance = if pane.id == self.workspace().ui.layout.focused {
+                        datum_gui_protocol::schematic_authoring::review_layout::console_geometry(
+                            body.width,
+                            body.height,
+                            self.scale_factor,
+                            self.workspace().ui.console.visible_latest().is_some(),
+                            self.workspace().ui.console.history_expanded(),
+                        )
+                        .map_or(0., |geometry| {
+                            (scene.y + scene.height
+                                - (body.y + body.height - geometry.occupied_height))
+                                .max(0.)
+                        })
+                    } else {
+                        0.
+                    };
+                    datum_gui_render::Renderer::board_field_review_layout(
+                        fields,
+                        review.refusal.as_deref(),
+                        scene.width,
+                        scene.height,
+                        clearance,
+                    )
+                    .is_ok_and(|layout| layout.fits)
+                });
+            if !fits {
+                self.log_console_refusal(ConsoleFeedbackSource::Tool,
+                    "Enlarge the pane to review every old and new Reference and Value before accepting");
                 return true;
             }
         }

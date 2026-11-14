@@ -64,7 +64,9 @@ pub(super) fn render(
         text,
     );
     y += 20.0;
-    let visible = (((card.height - 210.0).max(0.0) / 70.0) as usize).max(1);
+    let field_offer = review.field_changes.as_ref().is_ok_and(|count| *count > 0);
+    let footer = if field_offer { 285.0 } else { 210.0 };
+    let visible = (((card.height - footer).max(0.0) / 70.0) as usize).max(1);
     for (index, row) in review
         .plan
         .components
@@ -125,6 +127,38 @@ pub(super) fn render(
             draw_text_clipped(reason, x, y, 12.0, TEXT_MUTED, TextFace::Ui, card, text);
         }
         y += 22.0;
+    }
+    if field_offer {
+        let count = review.field_changes.as_ref().copied().unwrap_or(0);
+        let top = card.y + card.height - 165.0;
+        draw_text_clipped(
+            &format!("{count} existing counterparts have new Reference or display Value text"),
+            x,
+            top,
+            12.0,
+            TEXT_MUTED,
+            TextFace::Ui,
+            card,
+            text,
+        );
+        let rect = RectPx {
+            x,
+            y: top + 21.0,
+            width: width.min(350.0),
+            height: 30.0,
+        };
+        button(
+            "Review PCB reference/value changes",
+            rect,
+            false,
+            true,
+            &mut painter,
+            text,
+        );
+        hits.push(HitRegion {
+            rect,
+            target: HitTarget::BoardTransfer(Action::ReviewFields),
+        });
     }
     y = card.y + card.height - 90.0;
     if let Some(reason) = &review.refusal {

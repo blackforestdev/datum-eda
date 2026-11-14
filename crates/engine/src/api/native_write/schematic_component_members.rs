@@ -12,6 +12,92 @@ pub(in crate::api::native_write) fn current_set(
 ) -> Result<BTreeMap<Uuid, (Uuid, Value)>, EngineError> {
     capture(model, symbols, false)
 }
+
+/// Display-field authoring has a separate, fully qualified physical-member
+/// path. Move, assignment, membership and deletion retain `current_set`'s
+/// schematic-only restriction.
+pub(in crate::api::native_write) fn metadata_set(
+    model: &DesignModel,
+    symbols: &BTreeSet<Uuid>,
+) -> Result<BTreeMap<Uuid, (Uuid, Value)>, EngineError> {
+    let bound = model.component_instances.values().any(|ci| {
+        !ci.placed_package_refs.is_empty()
+            && ci.placed_symbol_refs.iter().any(|id| symbols.contains(id))
+    });
+    if !bound {
+        return current_set(model, symbols);
+    }
+    let mut result = BTreeMap::new();
+    let mut qualified_sheets = BTreeSet::new();
+    for symbol in symbols {
+        let owners: Vec<_> = model
+            .component_instances
+            .values()
+            .filter(|ci| ci.placed_symbol_refs.contains(symbol))
+            .collect();
+        let [owner] = owners.as_slice() else {
+            return Err(invalid(
+                "Metadata fields require one authored component owner",
+            ));
+        };
+        if owner.authority != ComponentInstanceAuthority::Authored
+            || owner.placed_symbol_refs != vec![*symbol]
+            || owner.placed_package_refs.len() != 1
+        {
+            return Err(invalid(
+                "This metadata review requires one-to-one placed component counterparts",
+            ));
+        }
+        let object = model
+            .objects
+            .get(&owner.id)
+            .ok_or_else(|| invalid("Component metadata source is unavailable"))?;
+        let shard = model
+            .source_shards
+            .iter()
+            .find(|s| {
+                s.shard_id == object.source_shard_id && s.kind == SourceShardKind::ComponentInstance
+            })
+            .ok_or_else(|| invalid("Component metadata owner is unavailable"))?;
+        let raw = model.materialized_source_shard_value_by_relative_path(&shard.relative_path)?;
+        let typed: ComponentInstanceShard = serde_json::from_value(raw.clone())?;
+        if typed.component_instance.uuid != owner.id
+            || typed.component_instance.object_revision != object.object_revision
+            || typed.component_instance.placed_symbol_refs.len() != 1
+            || typed.component_instance.placed_package_refs.len() != 1
+            || typed.component_instance.placed_symbol_refs[0].object_id != *symbol
+            || typed.component_instance.placed_symbol_refs[0].object_revision
+                != model.objects[symbol].object_revision
+            || typed.component_instance.placed_package_refs[0].object_id
+                != owner.placed_package_refs[0]
+        {
+            return Err(invalid(
+                "Component metadata source or member revision is stale",
+            ));
+        }
+        let member = model
+            .objects
+            .get(symbol)
+            .ok_or_else(|| invalid("Symbol source is unavailable"))?;
+        let sheet_owner = model
+            .source_shards
+            .iter()
+            .find(|s| s.shard_id == member.source_shard_id)
+            .ok_or_else(|| invalid("Symbol source owner is unavailable"))?;
+        let sheet =
+            model.materialized_source_shard_value_by_relative_path(&sheet_owner.relative_path)?;
+        let sheet_id: Uuid = serde_json::from_value(sheet["uuid"].clone())?;
+        if qualified_sheets.insert(sheet_id) {
+            crate::api::native_write::schematic_board_transfer::field_revision::preview(
+                model,
+                sheet_id,
+                &[],
+            )?;
+        }
+        result.insert(*symbol, (owner.id, raw["component_instance"].clone()));
+    }
+    Ok(result)
+}
 /// Adding a member requires complete Gate proof even for the original singleton.
 pub(in crate::api::native_write) fn gate_set(
     model: &DesignModel,

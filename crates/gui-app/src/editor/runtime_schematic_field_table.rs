@@ -73,6 +73,16 @@ impl Runtime {
         Some(changed)
     }
     pub(crate) fn handle_field_table_control(&mut self, control: C) -> bool {
+        if control == C::Cancel
+            && self
+                .workspace()
+                .schematic_authoring
+                .delete_review
+                .as_ref()
+                .is_some_and(|review| review.board_field_revision.is_some())
+        {
+            return self.confirm_delete_review(false);
+        }
         if self.native_edit.pending() {
             return true;
         }

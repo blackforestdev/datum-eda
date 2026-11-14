@@ -6,6 +6,7 @@ use uuid::Uuid;
 
 #[path = "library_map_labels.rs"]
 mod map_labels;
+pub(crate) use map_labels::display_identity;
 
 #[path = "library_acquisition.rs"]
 pub mod acquisition;

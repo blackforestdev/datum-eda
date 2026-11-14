@@ -14,7 +14,7 @@ pub(super) fn validate_operations(
     model: &DesignModel,
     operations: &[super::Operation],
 ) -> Result<(), EngineError> {
-    validate_frame(model, operations, None)
+    validate_frame(model, operations, None, None)
 }
 
 pub(super) fn validate_operations_with_package_basis(
@@ -22,20 +22,35 @@ pub(super) fn validate_operations_with_package_basis(
     operations: &[super::Operation],
     accepted: &DesignModel,
 ) -> Result<(), EngineError> {
-    validate_frame(model, operations, Some(accepted))
+    validate_frame(model, operations, Some(accepted), None)
+}
+
+pub(super) fn validate_metadata_preview(
+    model: &DesignModel,
+    operations: &[super::Operation],
+    accepted: &DesignModel,
+    proof: &super::component_instance::metadata_history::CanonicalMetadataPreview<'_>,
+) -> Result<(), EngineError> {
+    validate_frame(model, operations, Some(accepted), Some(proof))
 }
 
 fn validate_frame(
     model: &DesignModel,
     operations: &[super::Operation],
     accepted: Option<&DesignModel>,
+    preview: Option<&super::component_instance::metadata_history::CanonicalMetadataPreview<'_>>,
 ) -> Result<(), EngineError> {
     super::schematic_net_declarations::validate(model, operations)?;
     if model.electrical_identities.is_empty() {
+        if let Some(proof) = preview {
+            proof.frame(model, operations)?;
+        }
         return Ok(());
     }
     let basis = if let Some(accepted) = accepted {
-        super::electrical_basis::ElectricalBasis::with_package_basis(model, operations, accepted)?
+        super::electrical_basis::ElectricalBasis::with_package_basis(
+            model, operations, accepted, preview,
+        )?
     } else {
         super::electrical_basis::ElectricalBasis::new(model, operations)?
     };

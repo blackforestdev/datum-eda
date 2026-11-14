@@ -251,6 +251,17 @@ pub(super) fn apply_operation_to_objects(
         | Operation::SetBoardPad {
             pad_id: object_id, ..
         } => bump_existing_object(objects, *object_id, diff),
+        _ => match package_edit_target(operation) {
+            Some(package_id) => bump_existing_object(objects, package_id, diff),
+            None => Ok(()),
+        },
+    }
+}
+
+/// The existing canonical package edits each advance their placed object once.
+/// Cold reconstruction uses this same classification, never a display kind.
+pub(super) fn package_edit_target(operation: &Operation) -> Option<ObjectId> {
+    match operation {
         Operation::SetBoardPackagePart { package_id, .. }
         | Operation::SetBoardPackagePackage { package_id, .. }
         | Operation::SetBoardPackageValue { package_id, .. }
@@ -259,10 +270,8 @@ pub(super) fn apply_operation_to_objects(
         | Operation::SetBoardPackageLayer { package_id, .. }
         | Operation::SetComponentSide { package_id, .. }
         | Operation::SetBoardPackageRotation { package_id, .. }
-        | Operation::SetBoardPackageLocked { package_id, .. } => {
-            bump_existing_object(objects, *package_id, diff)
-        }
-        _ => Ok(()),
+        | Operation::SetBoardPackageLocked { package_id, .. } => Some(*package_id),
+        _ => None,
     }
 }
 

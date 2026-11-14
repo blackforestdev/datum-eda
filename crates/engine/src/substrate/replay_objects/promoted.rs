@@ -131,6 +131,29 @@ pub(in crate::substrate) fn apply_promoted_journal_object_diffs(
                             )
                         })
                         .sum()
+                } else if object.domain == "board" {
+                    let package_advances = transaction
+                        .operations
+                        .iter()
+                        .filter(|operation| {
+                            super::super::operation_application_objects::package_edit_target(
+                                operation,
+                            ) == Some(*object_id)
+                        })
+                        .count() as u64;
+                    if package_advances == 0 {
+                        0
+                    } else {
+                        package_advances
+                            + transaction
+                                .operations
+                                .iter()
+                                .filter(|operation| {
+                                    matches!(operation,
+                            Operation::BumpObjectRevision { object_id: id } if id == object_id)
+                                })
+                                .count() as u64
+                    }
                 } else {
                     0
                 };

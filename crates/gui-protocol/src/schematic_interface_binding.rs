@@ -128,20 +128,13 @@ impl InterfaceBindingDraft {
 /// Shared card measurement for presentation and acceptance visibility, using the
 /// existing 11px monospace Proposal typography and padding.
 pub const INTERFACE_ACCEPT_HINT: &str = "Tab accept interface change · Esc dismiss";
-pub struct InterfaceReviewLayout {
-    pub width: f32,
-    pub height: f32,
-    pub lines: Vec<String>,
-    pub fits: bool,
-}
+pub type InterfaceReviewLayout = super::review_layout::ProposalReviewLayout;
 pub fn review_layout(
     summary: &InterfaceBindingSummary,
     refusal: Option<&str>,
     viewport_width: f32,
     viewport_height: f32,
 ) -> InterfaceReviewLayout {
-    let width = (viewport_width - 28.).clamp(80., 520.);
-    let columns = ((width - 20.) / 6.7).max(1.) as usize;
     let path = |ids: &[uuid::Uuid]| {
         if ids.is_empty() {
             "root".to_owned()
@@ -164,23 +157,11 @@ pub fn review_layout(
     if let Some(refusal) = refusal {
         rows.push(format!("Unavailable: {refusal}"));
     }
-    let lines: Vec<String> = rows
-        .iter()
-        .flat_map(|row| {
-            row.chars()
-                .collect::<Vec<_>>()
-                .chunks(columns)
-                .map(|chunk| chunk.iter().collect::<String>())
-                .collect::<Vec<_>>()
-        })
-        .collect();
-    let height = 56. + lines.len() as f32 * 17.;
-    InterfaceReviewLayout {
-        width,
-        height,
-        lines,
-        fits: width <= viewport_width - 28.
-            && height <= viewport_height - 28.
-            && columns >= INTERFACE_ACCEPT_HINT.chars().count(),
-    }
+    super::review_layout::measure(
+        &rows,
+        INTERFACE_ACCEPT_HINT,
+        viewport_width,
+        viewport_height,
+        0.,
+    )
 }

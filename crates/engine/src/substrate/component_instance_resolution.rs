@@ -84,7 +84,18 @@ pub(super) fn insert_component_instance(
     }
     if !refs_match_objects(&input.placed_symbol_refs, objects)
         || (!input.placed_package_refs.is_empty()
-            && !refs_match_objects(&input.placed_package_refs, objects))
+            && !input.placed_package_refs.iter().all(|reference| {
+                revisioned_object_matches(reference.object_id, reference.object_revision, objects)
+                    || (final_state
+                        && input.placed_symbol_refs.len() == 1
+                        && input.placed_package_refs.len() == 1
+                        && history.is_some_and(|history| {
+                            objects.get(&reference.object_id).is_some_and(|object| {
+                                super::placed_package_history::matches(history, object, reference)
+                                    .unwrap_or(false)
+                            })
+                        }))
+            }))
     {
         diagnostics.push(ResolveDiagnostic {
             code: "component_instance_unresolved_ref".to_string(),

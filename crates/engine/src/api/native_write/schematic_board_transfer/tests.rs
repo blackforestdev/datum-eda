@@ -1,4 +1,6 @@
 //! Source-native linked initial transfer through the same public writer facades.
+#[path = "field_revision_tests.rs"]
+mod field_revision_tests;
 use super::*;
 use crate::api::native_write::{
     self as native, commit_prepared,

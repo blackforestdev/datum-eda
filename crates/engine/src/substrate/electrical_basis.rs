@@ -32,7 +32,7 @@ impl ElectricalBasis<'static> {
         operations: &[Operation],
         read: &impl Fn(&super::SourceShardRef) -> Result<Value, EngineError>,
     ) -> Result<Self, EngineError> {
-        Self::capture(model, operations, read, None, None)
+        Self::capture(model, operations, read, None, None, None)
     }
 }
 impl<'basis> ElectricalBasis<'basis> {
@@ -40,6 +40,7 @@ impl<'basis> ElectricalBasis<'basis> {
         model: &DesignModel,
         operations: &[Operation],
         accepted: &DesignModel,
+        preview: Option<&super::component_instance::metadata_history::CanonicalMetadataPreview<'_>>,
     ) -> Result<Self, EngineError> {
         let history = super::component_instance::pool_history::PoolHistoryBasis {
             model: accepted,
@@ -49,12 +50,18 @@ impl<'basis> ElectricalBasis<'basis> {
         let package_basis = history
             .package_metadata_frame_matches(model)?
             .then_some(accepted);
+        let metadata_basis = if let Some(proof) = preview {
+            Some(proof.frame(model, operations)?)
+        } else {
+            history.metadata_frame(model)?
+        };
         Self::capture(
             model,
             operations,
             &|shard| super::journal::materialized_shard_value(model, shard),
             None,
             package_basis,
+            metadata_basis,
         )
     }
     pub(super) fn with_part_basis(
@@ -68,6 +75,7 @@ impl<'basis> ElectricalBasis<'basis> {
             &|shard| super::journal::materialized_shard_value(model, shard),
             Some(part_basis),
             None,
+            None,
         )
     }
     fn capture(
@@ -76,6 +84,7 @@ impl<'basis> ElectricalBasis<'basis> {
         read: &impl Fn(&super::SourceShardRef) -> Result<Value, EngineError>,
         part_basis: Option<&'basis DesignModel>,
         package_basis: Option<&DesignModel>,
+        metadata_basis: Option<super::component_instance::metadata_history::MetadataFrame<'_>>,
     ) -> Result<Self, EngineError> {
         if let Some(accepted) = part_basis {
             super::component_pad_source::validate_library_basis(model, accepted, operations)?;
@@ -245,7 +254,11 @@ impl<'basis> ElectricalBasis<'basis> {
                 pending_map_changes.insert(id);
             }
             if shard.kind == SourceShardKind::BoardRoot {
-                let projection = if let Some(accepted) = part_basis {
+                let projection = if let Some(frame) = metadata_basis.as_ref() {
+                    super::component_pad_source::projection_with_metadata_basis(
+                        model, frame, &value, operations,
+                    )?
+                } else if let Some(accepted) = part_basis {
                     super::component_pad_source::projection_with_part_basis(
                         model, accepted, &value, operations,
                     )?

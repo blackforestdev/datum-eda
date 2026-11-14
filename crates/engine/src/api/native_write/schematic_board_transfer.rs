@@ -10,6 +10,7 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 mod compose;
+pub mod field_revision;
 mod plan;
 pub(crate) use compose::initial_bindings;
 pub use plan::plan_transfer;
@@ -145,8 +146,23 @@ pub fn prepare_transfer(
 fn transfer(
     context: &NativeWriteContext<'_>,
     provenance: WriteProvenance,
-    params: serde_json::Value,
+    mut params: serde_json::Value,
 ) -> Result<PreparedWrite, EngineError> {
+    // Existing-counterpart propagation is proposal-first even for a manual
+    // caller. Do not let the ordinary direct native.write route bypass review.
+    if let Some(intent) = params.get("intent") {
+        match intent.as_str() {
+            Some("initial") => {
+                params.as_object_mut().unwrap().remove("intent");
+            }
+            Some("reference_value_revision") => {
+                return Err(invalid(
+                    "Reference/value revision requires native.proposal create_board_field_revision; preview the Draft and explicitly accept or reject it",
+                ));
+            }
+            _ => return Err(invalid("Unsupported PCB transfer intent")),
+        }
+    }
     let request = parse_verb_params("datum.schematic.transfer_to_pcb", params)?;
     prepare_transfer(context.model, provenance, &request)
 }

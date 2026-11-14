@@ -63,6 +63,7 @@ pub(super) fn review_fixture() -> (
         waivers: vec![],
     });
     state.schematic_authoring.delete_review = Some(DeleteReview {
+        board_field_revision: None,
         gate_placement: None,
         child_sheet: None,
         interface_binding: None,
@@ -96,6 +97,7 @@ pub(super) fn review_fixture() -> (
         pending: None,
         refusal: None,
         response: Some(NativeProposalResponse {
+            board_field_revision: None,
             project_annotation: None,
             gate_placement: None,
             child_sheet: None,
@@ -148,13 +150,15 @@ fn batch_delete_inline_review_uses_names_counts_and_exact_source_without_modal_o
         native_selection_overlay::cue_plan::PanePlan::new(&state, viewport, camera).unwrap();
     let mut quads = vec![];
     let mut text = vec![];
-    render(
+    let _ = render(
         &mut quads,
         &mut text,
         &scene,
         viewport,
         &projection,
         &state,
+        0.,
+        &mut Vec::new(),
         &mut plan,
     );
     assert!(!quads.is_empty());
@@ -223,13 +227,15 @@ fn batch_delete_inline_review_uses_names_counts_and_exact_source_without_modal_o
         native_selection_overlay::cue_plan::PanePlan::new(&state, narrow, camera).unwrap();
     let mut narrow_quads = Vec::new();
     let mut narrow_text = Vec::new();
-    render(
+    let _ = render(
         &mut narrow_quads,
         &mut narrow_text,
         &scene,
         narrow,
         &projection,
         &state,
+        0.,
+        &mut Vec::new(),
         &mut narrow_plan,
     );
     assert!(!narrow_quads.is_empty());
@@ -242,24 +248,28 @@ fn batch_delete_inline_review_uses_names_counts_and_exact_source_without_modal_o
     wrong.scene_id.push_str("other");
     quads.clear();
     text.clear();
-    render(
+    let _ = render(
         &mut quads,
         &mut text,
         &wrong,
         viewport,
         &projection,
         &state,
+        0.,
+        &mut Vec::new(),
         &mut plan,
     );
     assert!(quads.is_empty() && text.is_empty());
     state.schematic_authoring.delete_review = None;
-    render(
+    let _ = render(
         &mut quads,
         &mut text,
         &scene,
         viewport,
         &projection,
         &state,
+        0.,
+        &mut Vec::new(),
         &mut plan,
     );
     assert!(quads.is_empty() && text.is_empty());
@@ -326,13 +336,15 @@ fn erc_disposition_inline_review_uses_same_chip_without_deletion_ghosts() {
         native_selection_overlay::cue_plan::PanePlan::new(&state, viewport, camera).unwrap();
     let mut quads = vec![];
     let mut text = vec![];
-    render(
+    let _ = render(
         &mut quads,
         &mut text,
         &scene,
         viewport,
         &projection,
         &state,
+        0.,
+        &mut Vec::new(),
         &mut plan,
     );
     assert!(
@@ -347,13 +359,15 @@ fn erc_disposition_inline_review_uses_same_chip_without_deletion_ghosts() {
     assert!(!text.iter().any(|t| t.text.contains("accept deletion")));
     state.checks.persisted = false;
     text.clear();
-    render(
+    let _ = render(
         &mut quads,
         &mut text,
         &scene,
         viewport,
         &projection,
         &state,
+        0.,
+        &mut Vec::new(),
         &mut plan,
     );
     assert!(text.iter().any(|t| t.text.contains("Proposal unavailable")));
@@ -440,13 +454,15 @@ fn part_assignment_inline_review_names_binding_without_deleting_symbol_geometry(
         native_selection_overlay::cue_plan::PanePlan::new(&state, viewport, camera).unwrap();
     let mut quads = vec![];
     let mut text = vec![];
-    render(
+    let _ = render(
         &mut quads,
         &mut text,
         &scene,
         viewport,
         &projection,
         &state,
+        0.,
+        &mut Vec::new(),
         &mut plan,
     );
     assert!(
@@ -505,13 +521,15 @@ fn sheet_annotation_review_uses_shared_inline_acceptance_without_deletion_ghosts
         native_selection_overlay::cue_plan::PanePlan::new(&state, viewport, camera).unwrap();
     let mut quads = vec![];
     let mut text = vec![];
-    render(
+    let _ = render(
         &mut quads,
         &mut text,
         &scene,
         viewport,
         &projection,
         &state,
+        0.,
+        &mut Vec::new(),
         &mut plan,
     );
     assert!(
@@ -595,13 +613,15 @@ fn gate_placement_review_uses_shared_ghost_and_explicit_accept_controls() {
     let mut plan =
         native_selection_overlay::cue_plan::PanePlan::new(&state, viewport, camera).unwrap();
     let (mut quads, mut text) = (vec![], vec![]);
-    render(
+    let _ = render(
         &mut quads,
         &mut text,
         &scene,
         viewport,
         &projection,
         &state,
+        0.,
+        &mut Vec::new(),
         &mut plan,
     );
     assert!(text.iter().any(|run| run.text.contains("U_SECOND")));

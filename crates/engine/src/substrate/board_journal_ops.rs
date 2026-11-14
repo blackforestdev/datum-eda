@@ -618,7 +618,7 @@ fn apply_board_package_materialization(
     Ok(())
 }
 
-fn component_materialization_map_names() -> [&'static str; 14] {
+pub(super) fn component_materialization_map_names() -> [&'static str; 14] {
     [
         "component_silkscreen",
         "component_silkscreen_texts",

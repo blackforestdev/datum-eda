@@ -14,6 +14,8 @@ use winit::platform::wayland::EventLoopBuilderExtWayland;
 mod alignment;
 #[path = "native_schematic_frame_tests/block_clipboard.rs"]
 mod block_clipboard;
+#[path = "native_board_field_revision_frame_tests.rs"]
+mod board_field_revision;
 #[path = "native_schematic_frame_tests/board_transfer.rs"]
 mod board_transfer;
 #[path = "native_component_authoring_frame_tests.rs"]

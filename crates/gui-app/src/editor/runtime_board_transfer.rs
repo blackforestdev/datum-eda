@@ -35,6 +35,9 @@ impl Runtime {
                 request,
                 plan,
                 first_row: 0,
+                field_changes: transfer::field_revision::preview(model, basis.source, &[])
+                    .map(|revision| revision.changes.len())
+                    .map_err(|error| error.to_string()),
                 refusal: None,
             })
         })();
@@ -135,6 +138,39 @@ impl Runtime {
                     board: review.plan.board_id,
                 });
             }
+            Action::ReviewFields => {
+                let result = (|| -> anyhow::Result<_> {
+                    anyhow::ensure!(
+                        self.ensure_selection_authority()?,
+                        "Native source unavailable"
+                    );
+                    let model = &self.native_selection.as_ref().unwrap().model;
+                    anyhow::ensure!(
+                        model.project.project_id == review.plan.project_id
+                            && model.model_revision == review.plan.expected_model_revision
+                            && eda_engine::revision::transaction_tip(&model.journal)
+                                == review.plan.expected_tip,
+                        "Design changed; reopen the PCB update review"
+                    );
+                    datum_gui_protocol::schematic_authoring::delete_review::DeleteReview::capture_board_field_revision(
+                        self.workspace(),
+                    ).map_err(anyhow::Error::msg)
+                })();
+                match result {
+                    Ok(fields) => {
+                        self.session.workspace_mut().ui.board_transfer = None;
+                        self.session
+                            .workspace_mut()
+                            .schematic_authoring
+                            .delete_review = Some(fields);
+                        self.queue_native_edit(NativeEditAction::Proposal);
+                    }
+                    Err(error) => {
+                        review.refusal = Some(error.to_string());
+                        self.session.workspace_mut().ui.board_transfer = Some(review);
+                    }
+                }
+            }
             Action::Accept => {
                 if review.plan.requires_profile_adoption || review.plan.ready_count() == 0 {
                     review.refusal = Some(
@@ -159,6 +195,10 @@ impl Runtime {
         };
         review.refusal = result.as_ref().err().cloned();
         if let Some(native) = &self.native_selection {
+            review.field_changes =
+                transfer::field_revision::preview(&native.model, review.request.sheet, &[])
+                    .map(|revision| revision.changes.len())
+                    .map_err(|error| error.to_string());
             match transfer::plan_transfer(&native.model, &review.request) {
                 Ok(plan) => review.plan = plan,
                 Err(error) => review.refusal = Some(error.to_string()),

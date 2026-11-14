@@ -1,3 +1,4 @@
+mod proposal_preview;
 use std::path::Path;
 
 use uuid::Uuid;
@@ -16,7 +17,6 @@ use super::{
         sort_source_shards, stage_operation_shard_writes, update_staged_source_hashes,
         write_journal_cursor,
     },
-    operation_application_batch::apply_operations,
     proposal_policy::{direct_commit_proposal_policy_blockers, format_proposal_policy_blockers},
 };
 
@@ -35,60 +35,6 @@ impl DesignModel {
             CommitPolicyContext::Direct,
         )?;
         super::proposal_source_preview::apply_unjournaled(self, batch)
-    }
-
-    pub(super) fn commit_without_direct_policy(
-        &mut self,
-        batch: OperationBatch,
-    ) -> Result<CommitReport, EngineError> {
-        validate_non_empty_operation_batch(&batch)?;
-        validate_object_revision_guards(self, &batch.operations)?;
-        let batch = batch_without_object_revision_guards(batch)?;
-        if let Some(expected) = &batch.expected_model_revision
-            && expected != &self.model_revision
-        {
-            return Err(EngineError::Operation(format!(
-                "model revision mismatch: expected {}, current {}",
-                expected.0, self.model_revision.0
-            )));
-        }
-
-        let before_model_revision = self.model_revision.clone();
-        let mut diff = CommitDiff::default();
-        apply_operations(self, &batch.operations, &mut diff)?;
-        diff.modified.sort();
-        diff.modified.dedup();
-        self.model_revision = super::board_batch_basis::authored_revision_after_operations(
-            self,
-            &before_model_revision,
-            &batch.operations,
-        );
-        let transaction = TransactionRecord {
-            transaction_id: Uuid::new_v5(
-                &self.project.project_id,
-                format!(
-                    "datum-eda:transaction:{}:{}",
-                    batch.batch_id, self.model_revision.0
-                )
-                .as_bytes(),
-            ),
-            batch_id: batch.batch_id,
-            transaction_kind: TransactionKind::Normal,
-            undo_of: None,
-            redo_of: None,
-            before_model_revision,
-            after_model_revision: self.model_revision.clone(),
-            provenance: batch.provenance,
-            agent_provenance: agent_commit_provenance_from_environment()?,
-            diff,
-            operations: batch.operations,
-            inverse_operations: Vec::new(),
-        };
-        self.journal.push(transaction.clone());
-        Ok(CommitReport {
-            transaction,
-            journal_len: self.journal.len(),
-        })
     }
 
     pub fn commit_journaled(

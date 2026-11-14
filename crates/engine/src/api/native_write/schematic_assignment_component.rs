@@ -59,10 +59,29 @@ pub(in crate::api::native_write) fn repin_symbols(
     model: &DesignModel,
     symbols: &[PlacedSymbol],
 ) -> Result<Vec<Operation>, EngineError> {
+    repin_symbol_members(model, symbols, false)
+}
+
+pub(in crate::api::native_write) fn repin_field_symbols(
+    model: &DesignModel,
+    symbols: &[PlacedSymbol],
+) -> Result<Vec<Operation>, EngineError> {
+    repin_symbol_members(model, symbols, true)
+}
+
+fn repin_symbol_members(
+    model: &DesignModel,
+    symbols: &[PlacedSymbol],
+    metadata: bool,
+) -> Result<Vec<Operation>, EngineError> {
     let ids: BTreeSet<_> = symbols.iter().map(|s| s.uuid).collect();
-    let bindings = current_set(model, &ids)?;
+    let bindings = if metadata {
+        members::metadata_set(model, &ids)?
+    } else {
+        current_set(model, &ids)?
+    };
     let unique: BTreeMap<_, _> = bindings.into_values().collect();
-    unique
+    let mut operations = unique
         .into_iter()
         .map(|(id, previous)| {
             let mut next = previous.clone();
@@ -94,7 +113,141 @@ pub(in crate::api::native_write) fn repin_symbols(
                 component_instance: next,
             })
         })
-        .collect()
+        .collect::<Result<Vec<_>, EngineError>>()?;
+    if metadata {
+        append_field_evidence(model, &mut operations)?;
+    }
+    Ok(operations)
+}
+
+pub(in crate::api::native_write) fn repin_board_fields(
+    model: &DesignModel,
+    edits: &BTreeMap<Uuid, u64>,
+) -> Result<Vec<Operation>, EngineError> {
+    let mut operations = Vec::new();
+    for (package, count) in edits {
+        if !(1..=2).contains(count) {
+            return Err(invalid("Invalid PCB field change count"));
+        }
+        let owners: Vec<_> = model
+            .component_instances
+            .values()
+            .filter(|ci| ci.placed_package_refs.contains(package))
+            .collect();
+        let [owner] = owners.as_slice() else {
+            return Err(invalid("PCB field owner is ambiguous"));
+        };
+        let [symbol] = owner.placed_symbol_refs.as_slice() else {
+            return Err(invalid(
+                "PCB fields require one-to-one component membership",
+            ));
+        };
+        let mut captured = members::metadata_set(model, &BTreeSet::from([*symbol]))?;
+        let (id, previous) = captured
+            .remove(symbol)
+            .ok_or_else(|| invalid("PCB field owner unavailable"))?;
+        let mut updated = previous.clone();
+        updated["object_revision"] = json!(
+            model.objects[&id]
+                .object_revision
+                .0
+                .checked_add(1)
+                .ok_or_else(|| invalid("Component metadata epoch overflow"))?
+        );
+        updated["placed_package_refs"][0]["object_revision"] = json!(
+            model.objects[package]
+                .object_revision
+                .0
+                .checked_add(*count)
+                .ok_or_else(|| invalid("PCB metadata epoch overflow"))?
+        );
+        operations.push(Operation::SetComponentInstance {
+            component_instance_id: id,
+            previous_component_instance: previous,
+            component_instance: updated,
+        });
+    }
+    append_field_evidence(model, &mut operations)?;
+    Ok(operations)
+}
+
+fn append_field_evidence(
+    model: &DesignModel,
+    operations: &mut Vec<Operation>,
+) -> Result<(), EngineError> {
+    let mut affected = BTreeMap::new();
+    for operation in operations.iter() {
+        if let Operation::SetComponentInstance {
+            component_instance_id,
+            previous_component_instance,
+            component_instance,
+        } = operation
+        {
+            if previous_component_instance["placed_package_refs"]
+                .as_array()
+                .is_some_and(|v| !v.is_empty())
+            {
+                affected.insert(
+                    *component_instance_id,
+                    (
+                        serde_json::from_value::<crate::substrate::ObjectRevision>(
+                            previous_component_instance["object_revision"].clone(),
+                        )?,
+                        serde_json::from_value::<crate::substrate::ObjectRevision>(
+                            component_instance["object_revision"].clone(),
+                        )?,
+                    ),
+                );
+            }
+        }
+    }
+    for record in model.electrical_identities.values() {
+        let crate::substrate::ElectricalIdentity::NetRelationship {
+            logical_net,
+            evidence,
+            ..
+        } = &record.identity
+        else {
+            continue;
+        };
+        if !evidence
+            .iter()
+            .any(|pin| affected.contains_key(&pin.component_instance.object_id))
+        {
+            continue;
+        }
+        if crate::substrate::net_correspondence_status(model, *logical_net)
+            != crate::substrate::NetCorrespondenceStatus::Complete
+        {
+            return Err(invalid(
+                "Metadata cannot recertify stale or changed connectivity",
+            ));
+        }
+        let mut updated = record.clone();
+        updated.object_revision.0 = updated
+            .object_revision
+            .0
+            .checked_add(1)
+            .ok_or_else(|| invalid("Net evidence metadata epoch overflow"))?;
+        let crate::substrate::ElectricalIdentity::NetRelationship { evidence, .. } =
+            &mut updated.identity
+        else {
+            unreachable!()
+        };
+        for pin in evidence {
+            if let Some((before, after)) = affected.get(&pin.component_instance.object_id) {
+                if pin.component_instance.object_revision != *before {
+                    return Err(invalid("Metadata Net evidence has a stale component epoch"));
+                }
+                pin.component_instance.object_revision = *after;
+            }
+        }
+        operations.push(Operation::SetElectricalIdentity {
+            previous: Box::new(record.clone()),
+            record: updated,
+        });
+    }
+    Ok(())
 }
 
 pub(super) fn operation(

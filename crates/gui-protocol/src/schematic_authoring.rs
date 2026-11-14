@@ -43,6 +43,8 @@ pub mod child_sheet;
 pub mod gate_placement;
 #[path = "schematic_interface_binding.rs"]
 pub mod interface_binding;
+#[path = "proposal_review_layout.rs"]
+pub mod review_layout;
 
 #[path = "schematic_annotation.rs"]
 pub mod annotation;

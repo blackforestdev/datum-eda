@@ -514,14 +514,32 @@ impl PreparedScene {
                 &mut plan,
             );
             if pass.surface == SceneSurface::Schematic {
-                crate::push_schematic_authoring_feedback(
+                let real_overlay = !self.menu_overlay_vertices.is_empty()
+                    || !self.menu_overlay_text_runs.is_empty();
+                let mut review_hits = Vec::new();
+                if let Some(foreground) = crate::push_schematic_authoring_feedback(
                     &mut quads,
                     &mut self.text_runs,
                     scene,
                     state,
                     pass.pane_id,
+                    self.console_overlay_layout
+                        .filter(|layout| layout.pane_id == pass.pane_id)
+                        .map_or(0., |layout| {
+                            let top = layout.history_panel.map_or(layout.strip.y, |panel| panel.y);
+                            (pass.scene_viewport.y + pass.scene_viewport.height - top).max(0.)
+                        }),
+                    &mut review_hits,
                     &mut plan,
-                );
+                ) && !real_overlay
+                {
+                    self.menu_overlay_vertices
+                        .splice(0..0, quads_to_vertices(&foreground.quads));
+                    self.menu_overlay_text_runs.splice(0..0, foreground.text);
+                }
+                if !real_overlay {
+                    self.hit_regions.extend(review_hits);
+                }
             }
             let offset = u32::try_from(self.viewport_overlay_vertices.len())?;
             for span in plan.screen.iter_mut() {

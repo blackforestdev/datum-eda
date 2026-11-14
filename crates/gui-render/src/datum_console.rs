@@ -6,6 +6,8 @@ use super::{
 };
 use datum_gui_protocol::{ConsoleFeedbackCategory, ConsoleFeedbackSeverity, ConsoleHistoryFilter};
 
+use datum_gui_protocol::schematic_authoring::review_layout::{ConsoleGeometry, console_geometry};
+
 mod history_layout;
 
 const MAX_PANE_WIDTH_FRACTION: f32 = 0.72;
@@ -22,27 +24,26 @@ pub(super) fn render_datum_console(
     Ok({
         let starts = (quads.len(), text_runs.len(), hit_regions.len());
         let record = state.ui.console.visible_latest();
-        if record.is_none() && !state.ui.console.history_expanded() {
-            return Ok(None);
-        }
         let panes = shell.viewport_panes(&state.ui.layout);
         let focused = panes.focused_pane();
         let body = focused.rect.body();
 
         let left = 12.0 * scale;
-        let bottom = 10.0 * scale;
-        let pad_x = 12.0 * scale;
-        let pad_y = 5.0 * scale;
-        let row_height = 16.0 * scale;
-        let strip_height = row_height + pad_y * 2.0;
-        let max_width = body.width * MAX_PANE_WIDTH_FRACTION;
-        if body.width < 96.0 * scale || body.height < strip_height + bottom {
+        let Some(geometry) = console_geometry(
+            body.width,
+            body.height,
+            scale,
+            record.is_some(),
+            state.ui.console.history_expanded(),
+        ) else {
             return Ok(None);
-        }
+        };
+        let pad_x = 12.0 * scale;
+        let pad_y = geometry.pad_y;
+        let row_height = geometry.row_height;
+        let strip_height = geometry.strip_height;
+        let max_width = body.width * MAX_PANE_WIDTH_FRACTION;
         let (strip, text_clip) = if let Some(record) = record {
-            if max_width <= pad_x * 2.0 {
-                return Ok(None);
-            }
             let (glyph, semantic_prefix, text_color) =
                 presentation(record.category, record.severity);
             let visible_text = match glyph {
@@ -57,7 +58,7 @@ pub(super) fn render_datum_console(
                 .max((pad_x * 2.0 + 1.0).min(max_width));
             let strip = RectPx {
                 x: body.x + left,
-                y: body.y + body.height - bottom - strip_height,
+                y: body.y + body.height - geometry.bottom - strip_height,
                 width: strip_width,
                 height: strip_height,
             };
@@ -104,7 +105,7 @@ pub(super) fn render_datum_console(
             // without resurrecting a synthetic feedback record or fake strip.
             let anchor = RectPx {
                 x: body.x + left,
-                y: body.y + body.height - bottom,
+                y: body.y + body.height - geometry.bottom,
                 width: 0.0,
                 height: 0.0,
             };
@@ -117,6 +118,7 @@ pub(super) fn render_datum_console(
                 body,
                 strip,
                 scale,
+                geometry,
                 quads,
                 text_runs,
                 hit_regions,
@@ -150,22 +152,20 @@ fn render_history(
     body: RectPx,
     strip: RectPx,
     scale: f32,
+    geometry: ConsoleGeometry,
     quads: &mut Vec<Quad>,
     text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
 ) -> anyhow::Result<RectPx> {
     Ok({
         let starts = (quads.len(), text_runs.len(), hit_regions.len());
-        let gap = 6.0 * scale;
+        let gap = geometry.history_gap;
         let width = (520.0 * scale).min((body.width - 24.0 * scale).max(1.0));
-        let max_height = 170.0 * scale;
-        let available = (strip.y - body.y - gap).max(1.0);
-        let height = max_height.min(available);
         let panel = RectPx {
             x: strip.x,
-            y: strip.y - gap - height,
+            y: strip.y - gap - geometry.history_height,
             width,
-            height,
+            height: geometry.history_height,
         };
         quads.push(Quad::from_rect(panel, design_tokens::chrome::SURFACE_01));
         let header_h = 26.0 * scale;

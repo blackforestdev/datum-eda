@@ -223,11 +223,20 @@ pub fn create_draft_proposal_from_batch(
     // preview sites below).
     let batch =
         super::electrical_transaction::compose(model, batch, super::TransactionKind::Normal)?;
-    let mut preview = model.clone();
-    let preview_report = preview.commit_without_direct_policy(batch.clone())?;
-    let mut affected_objects = preview_report.transaction.diff.created;
-    affected_objects.extend(preview_report.transaction.diff.modified);
-    affected_objects.extend(preview_report.transaction.diff.deleted);
+    let diff = if let Some(report) =
+        super::proposal_source_preview::nonwriting_metadata_report(model, &batch)?
+    {
+        report.transaction.diff
+    } else {
+        let mut preview = model.clone();
+        preview
+            .commit_without_direct_policy(batch.clone())?
+            .transaction
+            .diff
+    };
+    let mut affected_objects = diff.created;
+    affected_objects.extend(diff.modified);
+    affected_objects.extend(diff.deleted);
     affected_objects.sort();
     affected_objects.dedup();
 

@@ -15,6 +15,7 @@ use uuid::Uuid;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct DeleteReview {
+    pub board_field_revision: Option<crate::board_transfer::BoardFieldRevisionEvidence>,
     pub interface_binding: Option<InterfaceBindingSummary>,
     pub child_sheet: Option<super::child_sheet::ChildSheetEvidence>,
     pub gate_placement: Option<super::gate_placement::GatePlacementEvidence>,
@@ -159,7 +160,7 @@ impl DeleteReview {
             AuthoringViewBasis::capture_qualified_schematic(state, state.ui.layout.focused)?;
         Self::capture_source_basis(state, basis)
     }
-    pub(super) fn capture_source_basis(
+    pub(crate) fn capture_source_basis(
         state: &ReviewWorkspaceState,
         basis: AuthoringViewBasis,
     ) -> Result<Self, String> {
@@ -177,6 +178,7 @@ impl DeleteReview {
             .ok_or("Source view unavailable")?
             .clone();
         Ok(Self {
+            board_field_revision: None,
             gate_placement: None,
             child_sheet: None,
             interface_binding: None,
@@ -222,6 +224,14 @@ impl DeleteReview {
             || response.prepared_against != self.basis.revision
         {
             return Err("Proposal identity changed".into());
+        }
+        match (&self.board_field_revision, &response.board_field_revision) {
+            (Some(expected), Some(actual))
+                if &expected.summary == actual && response.deleted.is_empty() => {}
+            (Some(_), None)
+                if response.status == ProposalStatus::Rejected && response.deleted.is_empty() => {}
+            (None, None) => {}
+            _ => return Err("PCB reference or value changes differ from review".into()),
         }
         if self
             .targets
@@ -444,6 +454,12 @@ impl DeleteReview {
         scene
     }
     pub fn summary(&self) -> String {
+        if let Some(summary) = &self.board_field_revision {
+            return format!(
+                "Review PCB reference/value changes — {} components",
+                summary.summary.changes.len()
+            );
+        }
         if let Some(binding) = &self.interface_binding {
             return format!(
                 "{} interface · {}",

@@ -294,14 +294,18 @@ pub(super) fn push_scene_overlay_and_hits(
 
 /// Command feedback follows the qualified pane's final camera, independently
 /// of whether the workspace contains a Board pane.
+// Existing scene/projection and output sinks remain explicit at this review boundary.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn push_schematic_authoring_feedback(
     out: &mut Vec<Quad>,
     text: &mut Vec<TextRun>,
     scene: &BoardReviewSceneV1,
     state: &ReviewWorkspaceState,
     pane: datum_gui_protocol::PaneId,
+    console_clearance: f32,
+    hits: &mut Vec<HitRegion>,
     plan: &mut native_selection_overlay::cue_plan::PanePlan,
-) {
+) -> Option<native_proposal_review::ReviewForeground> {
     let projection = Projection::new(
         inset_rect(plan.viewport, 10., 10., 10., 10.),
         &scene.bounds,
@@ -335,8 +339,19 @@ pub(crate) fn push_schematic_authoring_feedback(
         .as_ref()
         .is_some_and(|r| r.basis.pane == pane)
     {
-        native_proposal_review::render(out, text, scene, plan.viewport, &projection, state, plan);
+        return native_proposal_review::render(
+            out,
+            text,
+            scene,
+            plan.viewport,
+            &projection,
+            state,
+            console_clearance,
+            hits,
+            plan,
+        );
     }
+    None
 }
 
 fn proposal_selected(state: &ReviewWorkspaceState, action_id: &str) -> bool {

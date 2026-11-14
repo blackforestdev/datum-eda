@@ -20,6 +20,8 @@ use crate::{
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 use uuid::Uuid;
+#[path = "schematic_proposal_authority.rs"]
+mod authority;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -57,6 +59,12 @@ pub struct DeleteTarget {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum NativeProposalAction {
+    CreateBoardFieldRevision {
+        proposal_id: Uuid,
+        sheet: Uuid,
+        #[serde(default)]
+        review: Option<super::schematic_board_transfer::field_revision::BoardFieldRevision>,
+    },
     CreateDesignEdit {
         proposal_id: Uuid,
         sheet: Uuid,
@@ -118,7 +126,8 @@ impl NativeProposalAction {
             Self::CreateGatePlacement(request) => request.proposal_id,
             Self::CreateChildSheet(request) => request.proposal_id,
             Self::CreateInterfaceBinding(request) => request.proposal_id,
-            Self::CreateDesignEdit { proposal_id, .. }
+            Self::CreateBoardFieldRevision { proposal_id, .. }
+            | Self::CreateDesignEdit { proposal_id, .. }
             | Self::CreateFieldBatch { proposal_id, .. }
             | Self::CreateAnnotation { proposal_id, .. }
             | Self::CreateProjectAnnotation { proposal_id }
@@ -154,6 +163,9 @@ pub struct NativeProposalResponse {
     pub current_model_revision: String,
     pub transaction_tip: Option<Uuid>,
     pub deleted: Vec<DeletedObject>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub board_field_revision:
+        Option<super::schematic_board_transfer::field_revision::BoardFieldRevision>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub annotation: Option<AnnotationSummary>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -220,6 +232,40 @@ pub fn execute(
     let mut selected_count = None;
     let mut transaction_id = None;
     match &request.action {
+        NativeProposalAction::CreateBoardFieldRevision { sheet, review, .. } => {
+            let captured =
+                super::schematic_board_transfer::field_revision::preview(model, *sheet, &[])?;
+            if review
+                .as_ref()
+                .is_some_and(|reviewed| *reviewed != captured)
+            {
+                return Err(invalid(
+                    "The reviewed PCB field changes differ from the current source",
+                ));
+            }
+            let write = super::schematic_board_transfer::field_revision::prepare(
+                model,
+                WriteProvenance::new(
+                    "datum-gui",
+                    CommitSource::Manual,
+                    super::schematic_board_transfer::field_revision::REASON,
+                ),
+                &captured,
+                id,
+            )?;
+            create_draft_proposal_from_batch(
+                model,
+                &request.project_root,
+                ProposalCreateRequest {
+                    proposal_id: Some(id),
+                    batch: write.batch,
+                    rationale: serde_json::to_string(&captured)?,
+                    source: ProposalSource::Manual,
+                    checks_run: vec![],
+                    finding_fingerprints: vec![],
+                },
+            )?;
+        }
         NativeProposalAction::CreateDesignEdit {
             sheet,
             instance_path,
@@ -443,21 +489,21 @@ pub fn execute(
             selected_count = Some(targets.len());
         }
         NativeProposalAction::Preview { .. } => {
-            let proposal = native_proposal(model, id)?;
+            let proposal = authority::native_proposal(model, id)?;
             if matches!(
                 proposal.status,
                 ProposalStatus::Draft | ProposalStatus::Accepted
             ) {
-                validate_disposition_current(model, proposal, &request.project_root)?;
+                authority::validate_disposition_current(model, proposal, &request.project_root)?;
                 preview_proposal_diff_journaled(model, &request.project_root, id)?;
             }
         }
         NativeProposalAction::AcceptApply { .. } => {
-            let proposal = native_proposal(model, id)?;
+            let proposal = authority::native_proposal(model, id)?;
             if super::schematic_child_sheet::is_child_sheet(proposal) {
                 super::schematic_child_sheet::check_destinations(proposal, &request.project_root)?;
             }
-            validate_disposition_current(model, proposal, &request.project_root)?;
+            authority::validate_disposition_current(model, proposal, &request.project_root)?;
             let status = proposal.status;
             if status == ProposalStatus::Draft {
                 review_proposal_status(model, &request.project_root, id, ProposalStatus::Accepted)?;
@@ -473,11 +519,11 @@ pub fn execute(
             );
         }
         NativeProposalAction::Reject { .. } => {
-            native_proposal(model, id)?;
+            authority::native_proposal(model, id)?;
             review_proposal_status(model, &request.project_root, id, ProposalStatus::Rejected)?;
         }
     }
-    let proposal = native_proposal(model, id)?;
+    let proposal = authority::native_proposal(model, id)?;
     let deleted: Vec<_> = proposal
         .batch
         .operations
@@ -493,6 +539,19 @@ pub fn execute(
         owned_count: selected_count.map(|selected| deleted.len().saturating_sub(selected)),
         selected_count,
         deleted,
+        board_field_revision: if super::schematic_board_transfer::field_revision::is_revision(
+            proposal,
+        ) {
+            let detail =
+                super::schematic_board_transfer::field_revision::summary(model, proposal, false);
+            if proposal.status == ProposalStatus::Rejected {
+                detail.ok()
+            } else {
+                Some(detail?)
+            }
+        } else {
+            None
+        },
         interface_binding: if super::schematic_interface_binding::is_interface_binding(proposal) {
             let detail = super::schematic_interface_binding::summary(model, proposal, false);
             if proposal.status == ProposalStatus::Rejected {
@@ -545,7 +604,11 @@ pub fn execute(
             None
         },
         fields: if super::schematic_field_batch::is_field_batch(proposal) {
-            let detail = super::schematic_field_batch::summary(model, proposal, false);
+            let bound_current = proposal.status == ProposalStatus::Draft
+                && proposal.batch.operations.iter().any(|op| matches!(op,
+                    Operation::SetComponentInstance { previous_component_instance, .. }
+                        if previous_component_instance["placed_package_refs"].as_array().is_some_and(|refs| !refs.is_empty())));
+            let detail = super::schematic_field_batch::summary(model, proposal, bound_current);
             if proposal.status == ProposalStatus::Rejected {
                 detail.ok()
             } else {
@@ -575,117 +638,6 @@ pub fn execute(
     })
 }
 
-fn native_proposal(model: &DesignModel, id: Uuid) -> Result<&Proposal, EngineError> {
-    let p = model
-        .proposals
-        .get(&id)
-        .ok_or_else(|| invalid("Proposal is unavailable"))?;
-    if p.source != ProposalSource::Manual
-        || p.batch.provenance.source != CommitSource::Manual
-        || p.project_id != model.project.project_id
-    {
-        return Err(invalid(
-            "This native action requires a manual proposal for this project",
-        ));
-    }
-    if super::design_clipboard_receipt::is_design_edit(p) {
-        super::design_clipboard_receipt::validate_recorded(p)?;
-        return Ok(p);
-    }
-    if super::schematic_interface_binding::is_interface_binding(p) {
-        super::schematic_interface_binding::validate_recorded(p)?;
-        return Ok(p);
-    }
-    if super::schematic_child_sheet::is_child_sheet(p) {
-        super::schematic_child_sheet::validate_recorded(p)?;
-        return Ok(p);
-    }
-    if super::schematic_gate_placement::is_gate_placement(p) {
-        super::schematic_gate_placement::validate_recorded(p)?;
-        return Ok(p);
-    }
-    if super::schematic_field_batch::is_field_batch(p) {
-        super::schematic_field_batch::validate_recorded(p)?;
-        return Ok(p);
-    }
-    if super::schematic_project_annotation::is_project_annotation(p) {
-        super::schematic_project_annotation::validate_recorded(p)?;
-        return Ok(p);
-    }
-    if super::schematic_annotation::is_annotation(p) {
-        super::schematic_annotation::validate_recorded(p)?;
-        return Ok(p);
-    }
-    if super::schematic_assignment::is_assignment(p) {
-        super::schematic_assignment::validate_recorded(p)?;
-        return Ok(p);
-    }
-    if super::schematic_disposition::is_disposition(p) {
-        super::schematic_disposition::summary(model, p, false)?;
-        return Ok(p);
-    }
-    if !p
-        .batch
-        .operations
-        .iter()
-        .any(|o| schematic_delete::deleted_object(o).is_some())
-        || p.batch.operations.iter().any(|o| {
-            schematic_delete::deleted_object(o).is_none()
-                && !matches!(
-                    o,
-                    Operation::SetComponentInstance { .. }
-                        | Operation::GuardObjectRevision { .. }
-                        | Operation::CreateElectricalIdentity { .. }
-                        | Operation::SetElectricalIdentity { .. }
-                        | Operation::DeleteElectricalIdentity { .. }
-                )
-        })
-    {
-        return Err(invalid(
-            "This native action requires a manual schematic deletion proposal",
-        ));
-    }
-    super::schematic_delete::validate_owned_components(&p.batch.operations)?;
-    Ok(p)
-}
-fn validate_disposition_current(
-    model: &DesignModel,
-    proposal: &Proposal,
-    root: &std::path::Path,
-) -> Result<(), EngineError> {
-    if super::design_clipboard_receipt::is_design_edit(proposal) {
-        let context = NativeWriteContext {
-            model,
-            project_root: root,
-        };
-        super::design_clipboard_receipt::validate_current(&context, proposal)?;
-    }
-    if super::schematic_interface_binding::is_interface_binding(proposal) {
-        super::schematic_interface_binding::summary(model, proposal, true)?;
-    }
-    if super::schematic_child_sheet::is_child_sheet(proposal) {
-        super::schematic_child_sheet::summary(model, proposal, true)?;
-    }
-    if super::schematic_gate_placement::is_gate_placement(proposal) {
-        super::schematic_gate_placement::summary(model, proposal, true)?;
-    }
-    if super::schematic_field_batch::is_field_batch(proposal) {
-        super::schematic_field_batch::summary(model, proposal, true)?;
-    }
-    if super::schematic_project_annotation::is_project_annotation(proposal) {
-        super::schematic_project_annotation::summary(model, proposal, true)?;
-    }
-    if super::schematic_annotation::is_annotation(proposal) {
-        super::schematic_annotation::summary(model, proposal, true)?;
-    }
-    if super::schematic_assignment::is_assignment(proposal) {
-        super::schematic_assignment::summary(model, proposal, true)?;
-    }
-    if super::schematic_disposition::is_disposition(proposal) {
-        super::schematic_disposition::summary(model, proposal, true)?;
-    }
-    Ok(())
-}
 fn invalid(reason: &str) -> EngineError {
     EngineError::Validation(reason.into())
 }

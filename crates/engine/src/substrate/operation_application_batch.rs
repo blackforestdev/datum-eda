@@ -1,12 +1,32 @@
+use super::component_instance::metadata_history::CanonicalMetadataPreview;
 use super::{
     CommitDiff, DesignModel, EngineError, Operation, operation_application::apply_operation,
     variant::propagate_variant_population_to_component_instances,
 };
 
+/// Only the in-memory canonical preview owner supplies this private proof.
+pub(super) fn apply_metadata_preview(
+    model: &mut DesignModel,
+    operations: &[Operation],
+    diff: &mut CommitDiff,
+    proof: &CanonicalMetadataPreview<'_>,
+) -> Result<(), EngineError> {
+    apply_with_preview(model, operations, diff, Some(proof))
+}
+
 pub(super) fn apply_operations(
     model: &mut DesignModel,
     operations: &[Operation],
     diff: &mut CommitDiff,
+) -> Result<(), EngineError> {
+    apply_with_preview(model, operations, diff, None)
+}
+
+fn apply_with_preview(
+    model: &mut DesignModel,
+    operations: &[Operation],
+    diff: &mut CommitDiff,
+    preview: Option<&CanonicalMetadataPreview<'_>>,
 ) -> Result<(), EngineError> {
     let retained_source_change = operations.iter().any(|op| {
         super::component_instance::pool_history::package_revision_target(model, op).is_some()
@@ -37,9 +57,15 @@ pub(super) fn apply_operations(
             applied_operations: operations,
         }
         .preserve_retained_revisions(&candidate)?;
-        super::electrical_identity_validation::validate_operations_with_package_basis(
-            &candidate, operations, model,
-        )?;
+        if let Some(proof) = preview {
+            super::electrical_identity_validation::validate_metadata_preview(
+                &candidate, operations, model, proof,
+            )?;
+        } else {
+            super::electrical_identity_validation::validate_operations_with_package_basis(
+                &candidate, operations, model,
+            )?;
+        }
         *model = candidate;
     } else {
         for operation in operations {

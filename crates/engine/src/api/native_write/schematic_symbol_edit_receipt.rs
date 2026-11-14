@@ -15,6 +15,7 @@ pub(super) struct Recorded<'a> {
     pub(super) sheets: BTreeMap<Uuid, Uuid>,
     pub(super) symbols: BTreeMap<Uuid, &'a Value>,
     pub(super) symbol_count: usize,
+    pub(super) bound_metadata: bool,
 }
 impl Recorded<'_> {
     pub(super) fn single_sheet(&self) -> Result<Uuid, EngineError> {
@@ -42,6 +43,13 @@ pub(super) fn occurrence_path(model: &DesignModel, sheet: Uuid) -> Result<Vec<Uu
         .ok_or_else(|| invalid("Symbol edit requires one current, unrepeated sheet occurrence"))
 }
 pub(super) fn recorded(proposal: &Proposal) -> Result<Recorded<'_>, EngineError> {
+    let bound_metadata = proposal.batch.provenance.reason == super::schematic_field_batch::REASON
+        && proposal.batch.operations.iter().any(|op| matches!(op,
+            Operation::SetComponentInstance { previous_component_instance, .. }
+                if previous_component_instance["placed_package_refs"].as_array().is_some_and(|refs| !refs.is_empty())));
+    if bound_metadata {
+        DesignModel::validate_component_metadata_proposal(proposal)?;
+    }
     let mut sheets = BTreeMap::new();
     let mut symbols = BTreeMap::new();
     let mut guards = BTreeSet::new();
@@ -91,9 +99,10 @@ pub(super) fn recorded(proposal: &Proposal) -> Result<Recorded<'_>, EngineError>
                     .as_array()
                     .ok_or_else(|| invalid("Symbol field edit binding references unavailable"))?;
                 if refs.is_empty()
-                    || old["placed_package_refs"]
-                        .as_array()
-                        .is_none_or(|v| !v.is_empty())
+                    || (!bound_metadata
+                        && old["placed_package_refs"]
+                            .as_array()
+                            .is_none_or(|v| !v.is_empty()))
                 {
                     return Err(invalid("Symbol field edit binding is not schematic-only"));
                 }
@@ -133,6 +142,13 @@ pub(super) fn recorded(proposal: &Proposal) -> Result<Recorded<'_>, EngineError>
                     return Err(invalid("Symbol field edit changes unrelated binding data"));
                 }
             }
+            Operation::SetElectricalIdentity { record, .. } if bound_metadata => {
+                if !guards.contains(&record.id) {
+                    return Err(invalid(
+                        "Bound field edit lacks its Net evidence source guard",
+                    ));
+                }
+            }
             _ => return Err(invalid("Symbol field edit contains unrelated operations")),
         }
     }
@@ -149,10 +165,16 @@ pub(super) fn recorded(proposal: &Proposal) -> Result<Recorded<'_>, EngineError>
             "Symbol field edit family or complete source guards unavailable",
         ));
     }
+    let symbol_count = if bound_metadata {
+        symbols.len()
+    } else {
+        guards.len() - components.len()
+    };
     Ok(Recorded {
         sheets,
         symbols,
-        symbol_count: guards.len() - components.len(),
+        symbol_count,
+        bound_metadata,
     })
 }
 pub(super) fn old_payloads(
@@ -166,6 +188,9 @@ pub(super) fn old_payloads(
             .iter()
             .find(|tx| tx.transaction_id == id)
             .ok_or_else(|| invalid("Symbol field edit transaction unavailable"))?;
+        if recorded.bound_metadata {
+            model.validate_component_metadata_transaction(proposal, tx)?;
+        }
         if !proposal
             .batch
             .operations
