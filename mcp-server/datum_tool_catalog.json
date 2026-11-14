@@ -1870,7 +1870,10 @@
       "replacements": [],
       "retirement": null,
       "status": "public",
-      "write_surface": null
+      "write_surface": {
+        "class": "journaled_history_compensation",
+        "evidence": "canonical compensating journal transaction; scoped MCP binds the pinned model revision and accepted transaction tip to existing native guards"
+      }
     },
     {
       "description": "Return one full native project transaction journal record by transaction UUID.",
@@ -1973,7 +1976,10 @@
       "replacements": [],
       "retirement": null,
       "status": "public",
-      "write_surface": null
+      "write_surface": {
+        "class": "journaled_history_compensation",
+        "evidence": "canonical compensating journal transaction; scoped MCP binds the pinned model revision and accepted transaction tip to existing native guards"
+      }
     },
     {
       "description": "Append one first-class typed native pool footprint silkscreen circle primitive.",

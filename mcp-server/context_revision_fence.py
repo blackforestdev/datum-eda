@@ -159,6 +159,21 @@ def validate_context_fence(
     native_schema = spec.get("inputSchema", {})
     native_properties = native_schema.get("properties", {})
     native_tip_field = "expected_tip_transaction"
+    history_tip = _INVALID
+    if spec.get("x_public_write_surface_class") == "journaled_history_compensation":
+        if not {EXPECTED_MODEL_REVISION_FIELD, native_tip_field}.issubset(native_properties):
+            raise ContextFenceError(
+                "context_fence_unavailable",
+                "journal compensation requires native revision and transaction guards",
+                _error_details(discovery, name, arguments, reason="native_history_guards_unavailable"),
+            )
+        history_tip = _uuid_transaction_tip(provided_tip)
+        if history_tip is _INVALID:
+            raise ContextFenceError(
+                "context_fence_unavailable",
+                "journal compensation requires a nonempty pinned transaction tip",
+                _error_details(discovery, name, arguments, reason="journal_tip_unavailable"),
+            )
     if native_tip_field in native_properties and (
         native_tip_field in arguments or native_tip_field in native_schema.get("required", [])
     ):
@@ -174,10 +189,15 @@ def validate_context_fence(
                 ),
             )
 
-    return {
+    dispatched = {
         key: value for key, value in arguments.items()
         if key not in _FENCE_FIELDS or key in native_properties
     }
+    if history_tip is not _INVALID:
+        # The caller explicitly supplied this tip in the validated broker fence.
+        # Carry it to the existing native guard so dispatch cannot retarget later.
+        dispatched[native_tip_field] = str(history_tip)
+    return dispatched
 
 
 def _native_transaction_tip(value: Any) -> Any:

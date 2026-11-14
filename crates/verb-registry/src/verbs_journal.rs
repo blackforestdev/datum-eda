@@ -6,7 +6,7 @@
 //!
 //! Entries MUST stay sorted by id (asserted by lib tests).
 
-use crate::{ArgvToken, Dispatch, ParamSpec, ParamType, VerbSpec, VerbStatus};
+use crate::{ArgvToken, Dispatch, ParamSpec, ParamType, VerbSpec, VerbStatus, WriteSurface};
 
 const PATH: ParamSpec = ParamSpec {
     name: "path",
@@ -36,6 +36,11 @@ const EXPECTED_TIP_TRANSACTION: ParamSpec = ParamSpec {
 /// guard parameters are declared non-nullable `string` there, which the
 /// ParamSpec derivation (optional => nullable) cannot express.
 const UNDO_REDO_SCHEMA: &str = r#"{"type":"object","properties":{"path":{"type":"string"},"expected_model_revision":{"type":"string"},"expected_tip_transaction":{"type":"string"}},"required":["path"]}"#;
+
+const HISTORY_WRITE: WriteSurface = WriteSurface {
+    class: "journaled_history_compensation",
+    evidence: "canonical compensating journal transaction; scoped MCP binds the pinned model revision and accepted transaction tip to existing native guards",
+};
 
 pub(crate) static VERBS: &[VerbSpec] = &[
     VerbSpec {
@@ -83,7 +88,7 @@ pub(crate) static VERBS: &[VerbSpec] = &[
         },
         params: &[PATH, EXPECTED_MODEL_REVISION, EXPECTED_TIP_TRANSACTION],
         schema_json_override: Some(UNDO_REDO_SCHEMA),
-        write_surface: None,
+        write_surface: Some(HISTORY_WRITE),
         terminal: true,
         terminal_optional_params: &[],
         terminal_argv_override: None,
@@ -146,7 +151,7 @@ pub(crate) static VERBS: &[VerbSpec] = &[
         },
         params: &[PATH, EXPECTED_MODEL_REVISION, EXPECTED_TIP_TRANSACTION],
         schema_json_override: Some(UNDO_REDO_SCHEMA),
-        write_surface: None,
+        write_surface: Some(HISTORY_WRITE),
         terminal: true,
         terminal_optional_params: &[],
         terminal_argv_override: None,
