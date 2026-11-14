@@ -529,7 +529,13 @@ with parent-layer fade/blur). The AI dock-vs-overlay comparison is illustrated i
    insufficient space disables acceptance and explains how to proceed. Esc
    remains reachable, and stale sources refuse without writes. The normal and
    narrow target states keep their action controls clear of the shared status
-   strip. This is a synthetic design target, with native delivery pending.
+   strip. The study remains a synthetic design target. The bounded native
+   implementation has separately reviewed normal-review and cold-result
+   captures from an isolated 14-step ordinary debug App workflow using
+   programmatic input and matching release CLI/daemon companions. Long-content
+   and fit refusal retain their focused source/renderer proof; these normal
+   captures do not qualify every target state, release-GUI execution,
+   physical/HUMAN input or full PCB design.
 2. **Fonts**: embed IBM Plex Sans; choose the data-mono face (Design Book leaves
    it open).
 3. **Context menus — RESOLVED (2026-07-06)** into the "Context Menu System"

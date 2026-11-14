@@ -994,7 +994,7 @@ Bus's source binding. No names or surviving-entry heuristics reconstruct binding
   the bounded ordinary App evidence above; it does not broaden earlier receipts
   or deliver general library ECO.
 
-  **Bounded mapped-component metadata target (native delivery pending):**
+  **Bounded mapped-component metadata revision (development availability):**
   `dat-schematic-pcb-revision-loop-cf5t` extends Reference/Value authoring only
   for qualified existing one-to-one counterparts with unchanged logical and
   physical bindings. Authenticated metadata history must retain component,
@@ -1010,9 +1010,14 @@ Bus's source binding. No names or surviving-entry heuristics reconstruct binding
   Accepted board changes use canonical history and preserve placement,
   footprints, pads, nets and routes through Undo/Redo, Save and reopening.
   Stale/ambiguous sources, topology or physical-library revision changes and
-  unsupported hierarchy refuse without writes. This prospective exception
+  unsupported hierarchy refuse without writes. This bounded exception
   neither changes the scope of earlier delivery receipts nor delivers general
   ECO, arbitrary bound edits or hierarchy synchronization.
+  Focused engine proof and a separately reviewed isolated ordinary App workflow
+  cover Reject, Apply with pending dismissal, Undo/Redo and Save/cold reopening.
+  The 14-step workflow uses a synthetic project, programmatic input and a debug
+  App with matching release CLI/daemon companions; it is not release-GUI,
+  physical/HUMAN, owner-project or full PCB qualification.
 
   Earlier bounded Part assignment implementation (`dat-schematic-part-assignment-dres`)
   adds named compatible Part/Gate choices through the selected Symbol Inspector

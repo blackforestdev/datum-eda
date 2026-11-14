@@ -631,7 +631,7 @@ execution, physical/HUMAN input, owner-circuit migration, manufacturer pinout
 qualification or full qualification. Approval and the separate reviewed
 cross-editor/ECO workflow remain outside this increment.
 
-The subsequent bounded Reference/display Value revision target
+The subsequent bounded Reference/display Value revision implementation
 (`dat-schematic-pcb-revision-loop-cf5t`, study S-P) is separate from initial
 transfer. In the existing root-schematic transfer review, **Review PCB
 reference/value changes** opens the shared inline Proposal review in the same
@@ -643,8 +643,16 @@ dismissal write no design changes. Apply/Tab requires complete, current, ready
 content with the fields and acceptance hint visible together; insufficient fit
 withholds acceptance, and Esc dismisses. Stale or ambiguous sources, topology or
 physical-library revision changes, and unsupported hierarchy refuse without
-writes. This synthetic target does not claim native delivery, general ECO,
-library adoption, component addition/removal or full qualification.
+writes. Development availability has focused engine, renderer and protocol
+checks plus a separately reviewed isolated 14-step ordinary App workflow:
+Reject, Apply with pending dismissal, Undo/Redo and Save/cold reopening, with
+unchanged pads and routes. The App proof uses a synthetic project, programmatic
+input and a debug App with matching release CLI/daemon companions. The S-P
+study remains the synthetic visual target; native captures cover the normal
+review and cold result. This does not claim release-GUI execution, physical/HUMAN
+input, owner-project migration, general ECO, library adoption, component
+addition/removal or full qualification. The broader revision-loop task remains
+open beyond this bounded increment.
 
 **Command and mutation boundary.** Menus, tool palettes, shortcuts and command
 palette use the existing application registry. The target families remain native

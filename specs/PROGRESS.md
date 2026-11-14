@@ -465,15 +465,23 @@ Admission and repair evidence are historical; current selection and authorizatio
 
 ## Native product outcomes
 
-*PCB Reference/display Value revision target:* the bounded
-`dat-schematic-pcb-revision-loop-cf5t` increment has a reviewed synthetic S-P
-study in the schematic authoring prototype: existing transfer-card entry,
-complete old/new fields, read-only counterpart identity, explicit shared
-Proposal acceptance/dismissal and truthful fit/currentness refusal. Actual
-normal/narrow captures exposed hidden action controls; the corrected target
-was independently reviewed with those controls visible above the status strip.
-Native implementation and workflow proof remain pending. This target changes
-no Frontier selection, historical proof scope or whole-PCB qualification.
+*PCB Reference/display Value revision — bounded development availability:*
+`dat-schematic-pcb-revision-loop-cf5t` now implements the existing transfer-card
+entry and shared Proposal review for qualified existing counterparts. Complete
+old/new fields and read-only Part/Footprint identity precede explicit acceptance;
+stale or unfit reviews cannot accept. Focused proof covers 54 engine, 17 renderer
+and 7 application/protocol checks. A separately reviewed isolated ordinary App
+test passed all 14 steps: Reject, Apply with pending dismissal, Undo/Redo and
+Save/cold reopening, preserving raw pads/routes and the established component
+bindings. Root and the independent reviewer viewed all three normal-review/cold
+captures and checked transport cleanup. This is a synthetic, programmatic debug
+App workflow with matching release CLI/daemon companions; no release-GUI,
+physical/HUMAN, owner-project, performance or full PCB qualification is claimed.
+The interrupted unisolated broad test run remains invalid evidence. The genuine
+Claude S-P study remains the visual target, including its separate normal/narrow
+target review; other target states retain their recorded proof limits. The
+broader revision-loop task and parent PCB goal remain open. This increment
+changes no Frontier selection or historical receipt scope.
 
 *Earlier bounded PCB target checkpoint (historical):* the owner-goal `dat-practical-pcb-design-3qbp`
 has delivered the native Route/Zone GUI controls (source `711e0fc1`,
