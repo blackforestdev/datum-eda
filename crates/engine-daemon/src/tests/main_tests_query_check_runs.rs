@@ -192,6 +192,120 @@ fn run_drc_dispatch_honors_selected_rule_params() {
     );
 }
 
+fn selected_drc_report(rules: Value) -> Value {
+    let mut engine = Engine::new().expect("engine should initialize");
+    let opened = dispatch_request(
+        &mut engine,
+        JsonRpcRequest {
+            jsonrpc: "2.0".into(),
+            id: json!(1),
+            method: "open_project".into(),
+            params: json!({"path": kicad_fixture_path("partial-route-demo.kicad_pcb")}),
+        },
+    );
+    assert!(opened.error.is_none(), "{opened:?}");
+    let response = dispatch_request(
+        &mut engine,
+        JsonRpcRequest {
+            jsonrpc: "2.0".into(),
+            id: json!(2),
+            method: "run_drc".into(),
+            params: json!({"rules": rules}),
+        },
+    );
+    assert!(response.error.is_none(), "{response:?}");
+    response.result.expect("normalized DRC result")
+}
+
+#[test]
+fn run_drc_dispatch_unsupported_selection_is_not_evaluated_clean() {
+    let result = selected_drc_report(json!(["HoleSize"]));
+    assert_eq!(result["raw_report"]["drc"]["passed"], false);
+    assert_eq!(
+        result["raw_report"]["drc"]["unsupported_rules"],
+        json!(["HoleSize"])
+    );
+    assert!(
+        result["raw_report"]["drc"]["violations"]
+            .as_array()
+            .unwrap()
+            .is_empty()
+    );
+    assert_eq!(result["status"], "error");
+    assert_eq!(result["summary"]["status"], "error");
+    assert_eq!(result["summary"]["errors"], 1);
+    assert_eq!(result["finding_count"], 1);
+    let finding = &result["findings"][0];
+    assert_eq!(finding["code"], "unsupported_drc_rule");
+    assert_eq!(finding["status"], "active");
+    assert_eq!(finding["severity"], "error");
+    assert_eq!(finding["payload"]["unsupported_rule"], "HoleSize");
+    assert!(
+        finding["fingerprint"]
+            .as_str()
+            .unwrap()
+            .starts_with("sha256:")
+    );
+    assert_eq!(result["coverage"].as_array().unwrap().len(), 1);
+    assert_eq!(result["coverage"][0]["rule_id"], "HoleSize");
+    assert_eq!(result["coverage"][0]["status"], "not_implemented");
+}
+
+#[test]
+fn run_drc_dispatch_mixed_selection_preserves_supported_findings() {
+    let result = selected_drc_report(json!(["Connectivity", "HoleSize"]));
+    let raw = &result["raw_report"]["drc"];
+    assert_eq!(raw["passed"], false);
+    assert_eq!(raw["unsupported_rules"], json!(["HoleSize"]));
+    let violations = raw["violations"].as_array().unwrap();
+    assert!(
+        !violations.is_empty(),
+        "fixture must exercise supported Connectivity"
+    );
+    let normalized = result["findings"].as_array().unwrap();
+    for violation in violations {
+        assert!(
+            normalized
+                .iter()
+                .any(|finding| finding["payload"] == *violation)
+        );
+    }
+    assert_eq!(normalized.len(), violations.len() + 1);
+    assert_eq!(result["status"], "error");
+    assert_eq!(
+        result["summary"]["errors"].as_u64().unwrap(),
+        raw["summary"]["errors"].as_u64().unwrap() + 1
+    );
+    assert_eq!(result["coverage"][0]["rule_id"], "HoleSize");
+    assert_eq!(result["coverage"][0]["status"], "not_implemented");
+    assert!(
+        normalized
+            .iter()
+            .any(|finding| finding["code"] == "unsupported_drc_rule")
+    );
+}
+
+#[test]
+fn run_drc_dispatch_supported_clean_and_error_controls_remain_evaluated() {
+    for (rule, expected) in [("TrackWidth", "ok"), ("Connectivity", "error")] {
+        let result = selected_drc_report(json!([rule]));
+        let raw: eda_engine::drc::DrcReport =
+            serde_json::from_value(result["raw_report"]["drc"].clone())
+                .expect("raw DRC report must retain its typed report shape");
+        assert!(raw.unsupported_rules.is_empty());
+        assert_eq!(result["raw_report"]["drc"]["passed"], expected == "ok");
+        assert_eq!(result["status"], expected);
+        assert_eq!(result["coverage"][0]["status"], "evaluated");
+        assert!(
+            result["findings"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .all(|finding| finding["code"] != "unsupported_drc_rule")
+        );
+    }
+}
+
 #[test]
 fn explain_violation_dispatch_accepts_drc_finding_fingerprint() {
     let mut engine = Engine::new().expect("engine should initialize");

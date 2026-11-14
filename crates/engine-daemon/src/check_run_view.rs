@@ -1,3 +1,4 @@
+use eda_engine::rules::ast::RuleType;
 use serde_json::{Value, json};
 
 pub(super) fn daemon_erc_check_run_view(findings: &[eda_engine::erc::ErcFinding]) -> Value {
@@ -38,12 +39,30 @@ pub(super) fn daemon_erc_check_run_view(findings: &[eda_engine::erc::ErcFinding]
 }
 
 pub(super) fn daemon_drc_check_run_view(report: &eda_engine::drc::DrcReport) -> Value {
-    let normalized = report
+    let mut normalized = report
         .violations
         .iter()
         .enumerate()
         .map(|(index, violation)| daemon_drc_finding_view(index, violation))
         .collect::<Vec<_>>();
+    for rule in &report.unsupported_rules {
+        normalized.push(daemon_unsupported_drc_finding_view(normalized.len(), rule));
+    }
+    let coverage = if report.unsupported_rules.is_empty() {
+        vec![json!({
+            "domain": "drc",
+            "rule_id": "board_design_rules",
+            "status": "evaluated",
+            "message": "Engine-daemon live DRC evaluation."
+        })]
+    } else {
+        report.unsupported_rules.iter().map(|rule| json!({
+            "domain": "drc",
+            "rule_id": rule,
+            "status": "not_implemented",
+            "message": "Requested DRC rule is not implemented; supported findings remain available."
+        })).collect()
+    };
     let summary = daemon_check_summary(&normalized);
     json!({
         "contract": "check_run_v1",
@@ -63,12 +82,7 @@ pub(super) fn daemon_drc_check_run_view(report: &eda_engine::drc::DrcReport) -> 
             "standards_basis": [],
             "inputs": [],
         },
-        "coverage": [{
-            "domain": "drc",
-            "rule_id": "board_design_rules",
-            "status": "evaluated",
-            "message": "Engine-daemon live DRC evaluation."
-        }],
+        "coverage": coverage,
         "raw_report": {
             "drc": report,
         },
@@ -195,6 +209,39 @@ fn daemon_drc_finding_view(index: usize, violation: &eda_engine::drc::DrcViolati
         "message": violation.message,
         "explanation": violation.message,
         "suggested_next_action": null,
+        "evidence": [payload.clone()],
+        "payload": payload,
+        "proposal_refs": [],
+        "proposal_links": [],
+        "waiver_refs": [],
+        "deviation_refs": [],
+    })
+}
+
+fn daemon_unsupported_drc_finding_view(index: usize, rule: &RuleType) -> Value {
+    let payload = json!({"unsupported_rule": rule});
+    let primary_target = daemon_primary_target(&payload, "drc");
+    let code = "unsupported_drc_rule";
+    let message =
+        format!("Requested DRC rule {rule:?} is not implemented; this check was not evaluated.");
+    json!({
+        "finding_id": deterministic_daemon_uuid("drc:unsupported_rule", &payload).to_string(),
+        "index": index,
+        "source": "drc",
+        "code": code,
+        "severity": "error",
+        "fingerprint": daemon_fingerprint("drc", code, &primary_target, &payload),
+        "domain": "drc",
+        "rule_id": rule,
+        "standards_basis": null,
+        "rule_revision": null,
+        "import_key": null,
+        "status": "active",
+        "primary_target": primary_target,
+        "related_targets": [],
+        "message": message,
+        "explanation": message,
+        "suggested_next_action": "Select implemented checks; do not treat this result as clean.",
         "evidence": [payload.clone()],
         "payload": payload,
         "proposal_refs": [],
