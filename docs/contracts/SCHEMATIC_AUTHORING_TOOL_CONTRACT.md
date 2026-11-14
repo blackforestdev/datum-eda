@@ -598,9 +598,15 @@ physical choice and checks its authenticated Part-adoption source basis; pose
 changes do not adopt later library definitions. A changed map, footprint or
 padstack requires a reviewed update, including when the caller supplies the same
 map explicitly. This adds no new persisted binding role or silent propagation.
-Implementation and focused proof are in progress under that task; the earlier
-Part/Gate and bare-Symbol receipts retain their original scope, and no new
-runtime, release-GUI, HUMAN or full qualification is claimed here.
+Source `54b4413b` has 43 passing focused engine checks and an isolated ordinary
+debug App run of 25 stages at 1344×1000 with current release CLI/daemon companions.
+The synthetic two-component fixture covers acquisition Preview/Cancel/Add,
+component selection and placement history, reviewed wired-Symbol assignment,
+declared read-only transfer, Save and cold reopening. Earlier Part/Gate and
+bare-Symbol receipts retain their original scope. This establishes bounded
+development behavior, not component-workflow release-GUI execution, physical/HUMAN
+input, manufacturer pinout qualification, owner-circuit migration or full
+qualification.
 
 ### 2. transform-symbol (move / rotate / mirror unified)
 
@@ -984,8 +990,9 @@ Bus's source binding. No names or surviving-entry heuristics reconstruct binding
   Footprint. Acceptance applies that Part's Value while preserving Symbol and pin
   UUIDs, anchors, wires, connectivity and other raw fields. The value comes from
   the authenticated selected Part revision, including in persisted assignment
-  summaries; arbitrary unrelated field changes remain refused. This prospective
-  behavior does not broaden the earlier proof or deliver general library ECO.
+  summaries; arbitrary unrelated field changes remain refused. This behavior has
+  the bounded ordinary App evidence above; it does not broaden earlier receipts
+  or deliver general library ECO.
 
   Earlier bounded Part assignment implementation (`dat-schematic-part-assignment-dres`)
   adds named compatible Part/Gate choices through the selected Symbol Inspector

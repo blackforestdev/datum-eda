@@ -487,7 +487,7 @@ qualification remain open.
 | Inspect provenance/basis/models/approval/lifecycle/findings | Missing metadata and stale/not-run checks explicit; no certification or approval inferred; no execution or authored delta | Stored metadata/model integrity seams exist; full context GUI proof pending |
 | Attach/detach a model or edit attachment metadata; preview/cancel; commit/history; Save/reopen | Correct target/role/format/content/hash; no execution/decryption; invalid or unsupported attachment refuses without partial write; history and reopened references agree | Current Part attachment/blob seams reusable; complete governed all-target GUI workflow pending |
 | Propose a review/approval/lifecycle/unknown-basis transition; decline or explicitly accept as human; history/reopen | Approval actor and accepted transition are recorded; unresolved basis obeys existing deviation rules; AI auto-approval refuses for all content; decline has no authored delta | Guarded status semantics inherited; complete ordinary GUI transition/refusal proof pending |
-| Choose a complete named Part and inspect its Value/Package/Footprint/map before placement | Established component choices and qualification status remain distinct; incomplete or stale definitions explain their refusal; no per-design map reconstruction or implicit repair | Component-first target under `dat-component-first-capture-3btd`; implementation/proof in progress, prior narrow Symbol and Part/Gate receipts retain their scope |
+| Choose a complete named Part and inspect its Value/Package/Footprint/map before placement | Established component choices and qualification status remain distinct; incomplete or stale definitions explain their refusal; no per-design map reconstruction or implicit repair | Bounded complete-Part workflow has focused engine and ordinary debug App evidence under `dat-component-first-capture-3btd`; complete browser integration and full qualification remain targets, and prior narrow Symbol/Part-Gate receipts retain their scope |
 | Create/edit/clone every kind; preview/cancel; commit; undo/redo; Save/reopen | Correct identity/revision and native transaction; cancel/refusal no write; reopened result agrees | Engine authoring seams exist; ordinary eight-kind GUI proof pending |
 | Generate a supported footprint from declared dimensions/basis; inspect copper/process output; cancel or accept proposal; history/reopen | Inputs/basis retained; unsupported families explicit; cancel no write; accepted native history agrees; no universal mask/paste repair | Bounded chip/SOIC engine slices reusable; complete wizard/proposal GUI pending |
 | Attempt stale/wrong-writer/invalid-reference or automated direct edit | Actual refusal, no partial source/journal delta; existing proposal boundary retained | Admission/validation seams reusable; complete ordinary refusal coverage pending |
@@ -622,9 +622,14 @@ apply the selected Value while keeping their IDs, pins and wires. Initial PCB
 review carries the established component choice read-only and refuses library
 source drift for a reviewed update. Partial library definitions remain editable;
 explicit bare-Symbol and genuinely missing-default legacy workflows keep their
-scope. This is the component-first target in `dat-component-first-capture-3btd`,
-with compilation and ordinary application proof pending. Qualification, approval
-and the separate reviewed cross-editor/ECO workflow are not supplied by it.
+scope. The bounded component-first increment in `dat-component-first-capture-3btd`
+landed as `54b4413b` with focused engine and isolated ordinary debug App evidence:
+25 stages at 1344×1000 cover the synthetic two-component workflow through Save
+and cold reopening with current release CLI/daemon companions. This is development
+availability at the recorded candidate, without component-workflow release-GUI
+execution, physical/HUMAN input, owner-circuit migration, manufacturer pinout
+qualification or full qualification. Approval and the separate reviewed
+cross-editor/ECO workflow remain outside this increment.
 
 **Command and mutation boundary.** Menus, tool palettes, shortcuts and command
 palette use the existing application registry. The target families remain native

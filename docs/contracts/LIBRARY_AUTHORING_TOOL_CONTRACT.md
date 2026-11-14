@@ -57,8 +57,11 @@ pose changes, Undo/Redo and reopening. Later Map, Footprint or Padstack changes
 refuse for a reviewed update rather than silently adopting current definitions;
 supplying an explicit map cannot bypass this check. Partial definitions remain
 editable. The existing explicit-map workflow is retained for genuinely missing
-default pairs, not as a fallback from an invalid declared pair. This follow-up
-is in implementation/proof, not a new runtime or qualification receipt.
+default pairs, not as a fallback from an invalid declared pair. Source `54b4413b`
+has focused engine and isolated ordinary debug App evidence: 25 stages cover the
+supported synthetic two-component workflow through declared transfer, Save and
+cold reopening. Component-workflow release-GUI execution, physical/HUMAN input
+and full qualification remain separate.
 
 Board source preparation is an explicitly accepted, separately saved transaction;
 closing the review retains that preparation. Preview, Cancel, refusal and repeat
@@ -217,8 +220,11 @@ directories, inherited Parts, alternate-packaging definitions, legacy inline
 maps and linked model/process resources are explicitly unsupported; acquisition
 never drops those dependencies or invents a map. An already identical complete
 Part is reported as already present without a duplicate or empty transaction.
-Cancel/refusal writes nothing. This supplies neither source approval nor process
-qualification, and compilation/ordinary application proof remain pending.
+Cancel/refusal writes nothing. Focused engine checks and the recorded ordinary
+debug App run cover acquisition Preview/Cancel/Add and subsequent component use
+at their stated candidate and fixture scope. This supplies neither source
+approval nor process qualification; owner-circuit migration, manufacturer pinout
+qualification and full qualification remain separate.
 Missing process inputs remain unresolved. Explicit source process overrides
 require version `20241229`; required paste inputs refuse if inheritance remains
 partial or their ratio is nonzero. Suppressed process membership stays suppressed.

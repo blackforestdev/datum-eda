@@ -132,12 +132,13 @@
    target clauses are reconciled to those studies. This factual note changes
    no Frontier selection or milestone status and supplies no execution grant
    or full qualification.
-   *Bounded component-first target:* direct-owner
-   `dat-component-first-capture-3btd` implements normal complete-Part selection,
+   *Bounded component-first development:* direct-owner
+   `dat-component-first-capture-3btd` delivers normal complete-Part selection,
    reusable native Part acquisition, reviewed provisional-Symbol completion and
-   established-choice PCB handoff under existing PM003/PM008. Source review and
-   focused proof are in progress; no runtime/QA readiness or full qualification
-   is claimed. This routine follow-up changes no scheduled Frontier selection.
+   established-choice PCB handoff under existing PM003/PM008. Source `54b4413b`,
+   43 passing focused engine checks and the isolated ordinary debug App's 25-stage
+   run at 1344×1000 support the recorded synthetic-fixture scope. Full qualification
+   remains separate; this routine follow-up changes no scheduled Frontier selection.
    Build manual-first native editors over the shared tooling and canonical GUI commit path after their prerequisites land. *state `blocked`; authorization `planning`.*
    *Dependencies:* `dat-advanced-routing-scope-fkpb`, `dat-drc-authored-width-rule-vz09`, `dat-drc-profile-hidden-errors-bf31`, `dat-drc-unsupported-hole-selection-r2fj`, `dat-erc-occurrence-waiver-identity-ueaz`, `dat-finding-rename-correlation-ww6e`, `dat-gerber-pad-shape-projection-3ojz`, `dat-gui-p2-cross-probe-27z`, `dat-gui-surface-specs-usb`, `dat-gui-write-path-qiu`, `dat-integrity-incomplete-stage-188y`, `dat-inventory-placement-identity-yuf4`, `dat-journal-integrity-payload-83a3`, `dat-library-graph-admission-audit-ly96`, `dat-manual-foundation-contracts-fsw`, `dat-manual-pcb-authoring-parity-5dll`, `dat-mcp-result-protocol-j9tn`, `dat-real-agent-interop-proof-x5qp`, `dat-schematic-pcb-revision-loop-cf5t`, `dat-simulation-boundary-decision-wfa`, `dat-symbol-footprint-editor-design-5gs`. *Unblocks:* none. *Governing:* `docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md`, `docs/contracts/PCB_LAYOUT_TOOL_CONTRACT.md`, `specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md`.
 <details>
@@ -493,16 +494,23 @@ adoption, full cross-selection and full qualification retained separately. The
 [existing delivery record](../docs/reviews/workflow-delivery-rollout/library-gui-authoring-delivery.json)
 contains the bounded proof and reuse limits; the Active Frontier is unchanged.
 
-The component-first follow-up (`dat-component-first-capture-3btd`) is in
-implementation/proof: normal placement chooses the reusable Part's Value,
-Package, default Footprint and complete map; native Part acquisition reuses or
-atomically adds an identity-qualified closure from a saved native project;
-reviewed Assign Part preserves existing Symbol/pin/wire identity while applying
-the selected Value. Initial transfer consumes the established physical choice
-and refuses later source drift, including explicit-map attempts. Legacy missing
-defaults and partial library editing retain their stated scope. Prior receipts
-remain at their original candidates; no new compiled/runtime/QA-ready claim is
-made before the actual focused and ordinary application checks.
+The component-first follow-up (`dat-component-first-capture-3btd`, source
+`54b4413b`) provides bounded development behavior: normal placement chooses the
+reusable Part's Value, Package, default Footprint and complete map; acquisition
+reuses or atomically adds the supported saved-native-project closure; reviewed
+Assign Part applies the selected Value while preserving existing Symbol/pin/wire
+identity. Initial transfer consumes the established physical choice and refuses
+later source drift, including explicit-map attempts. Legacy missing defaults and
+partial library editing retain their scope. The 43 passing focused engine checks
+and focused GUI results (104 passed, one preexisting annotation assertion failure,
+two ignored) are recorded separately. The ordinary debug App passes 25 stages at
+1344×1000 with current release CLI/daemon companions on a synthetic two-component
+fixture; normal release-GUI runtime proof covers only the separate browser slice.
+The original stack-overflow and 840-height off-screen Cancel failures remain
+retained. Prior receipts keep their original candidates; no 840-scroll,
+owner-circuit migration, manufacturer pinout, physical/HUMAN, general ECO or full
+qualification claim is made. The final source/proof index is
+`.datum/scratch/codex-delivery/3btd-final-review-index-a.json`.
 
 [Delivered foundations and twenty-task outcome map](progress/production_foundation_details.md#native-product-outcomes--initial-reorganization) connects library → schematic → PCB → manufacturing to existing owners and actual gaps. It is navigation, not selection, execution authority or full qualification.
 
@@ -1261,7 +1269,7 @@ all three Cancel paths, selection/composed defaults/clear, Undo/Redo and Save/co
 reopening preserve old root/child sources and rendered identity. The first CLI
 fixture's missing-sheet failure remains recorded; canonical sheet creation fixes
 the fixture. At that recorded increment, initial placement remained Part-only;
-the component-first follow-up described above is prospective and does not
+the separately evidenced component-first follow-up described above does not
 retroactively broaden this receipt. Legacy mapping precedence and
 existing empty/footprintless consumer refusals remain. No automatic Map binding,
 inferred consumer policy, placed update/ECO, relinking, approval, physical/HUMAN,
