@@ -8044,6 +8044,7 @@
       },
       "dependencies": [
         "dat-advanced-routing-scope-fkpb",
+        "dat-combined-copper-currentness-9go5",
         "dat-drc-authored-width-rule-vz09",
         "dat-drc-profile-hidden-errors-bf31",
         "dat-drc-unsupported-hole-selection-r2fj",
@@ -8059,10 +8060,14 @@
         "dat-library-graph-admission-audit-ly96",
         "dat-manual-foundation-contracts-fsw",
         "dat-manual-pcb-authoring-parity-5dll",
+        "dat-manufacturing-validation-identity-6kab",
+        "dat-mcp-context-project-scope-d47f",
+        "dat-mcp-journal-context-fence-8rpw",
         "dat-mcp-result-protocol-j9tn",
         "dat-real-agent-interop-proof-x5qp",
         "dat-schematic-pcb-revision-loop-cf5t",
         "dat-simulation-boundary-decision-wfa",
+        "dat-standards-width-findings-6izo",
         "dat-symbol-footprint-editor-design-5gs"
       ],
       "governing_docs": [
