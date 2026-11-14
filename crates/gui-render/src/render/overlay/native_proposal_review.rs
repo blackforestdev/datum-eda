@@ -35,6 +35,34 @@ impl crate::Renderer {
             },
         )
     }
+    pub fn board_connectivity_review_layout(
+        evidence: &datum_gui_protocol::board_connectivity_revision::BoardConnectivityRevisionEvidence,
+        refusal: Option<&str>,
+        width: f32,
+        height: f32,
+        clearance: f32,
+    ) -> Result<datum_gui_protocol::schematic_authoring::review_layout::ProposalReviewLayout, String>
+    {
+        let measure_width = |text| {
+            crate::measured_text_run_width_px(text, 11., TextFace::Mono)
+                .map_err(|error| error.to_string())
+        };
+        let apply_width = measure_width("Apply changes [Tab]")?
+            .max(measure_width("Preparing Proposal…")?)
+            .max(measure_width("Apply unavailable")?);
+        let label_widths = (apply_width, measure_width("Dismiss [Esc]")?);
+        evidence.layout(
+            refusal,
+            width,
+            height,
+            clearance,
+            label_widths,
+            |text, width| {
+                crate::text_metrics::measured_text_run_height_px(text, width, 11., TextFace::Mono)
+                    .map_err(|error| error.to_string())
+            },
+        )
+    }
 }
 
 // Existing scene/projection and output sinks remain explicit at this review boundary.
@@ -144,15 +172,29 @@ pub(super) fn render(
             viewport.height,
         )
     });
-    let board_layout = review.board_field_revision.as_ref().map(|fields| {
-        crate::Renderer::board_field_review_layout(
-            fields,
-            review.refusal.as_deref(),
-            viewport.width,
-            viewport.height,
-            console_clearance,
-        )
-    });
+    let board_layout = review
+        .board_connectivity_revision
+        .as_ref()
+        .map(|evidence| {
+            crate::Renderer::board_connectivity_review_layout(
+                evidence,
+                review.refusal.as_deref(),
+                viewport.width,
+                viewport.height,
+                console_clearance,
+            )
+        })
+        .or_else(|| {
+            review.board_field_revision.as_ref().map(|fields| {
+                crate::Renderer::board_field_review_layout(
+                    fields,
+                    review.refusal.as_deref(),
+                    viewport.width,
+                    viewport.height,
+                    console_clearance,
+                )
+            })
+        });
     match board_layout.as_ref() {
         Some(Err(_)) => {
             return Some(fit_refusal(
@@ -164,7 +206,11 @@ pub(super) fn render(
         Some(Ok(layout)) if !layout.fits => {
             return Some(fit_refusal(
                 viewport,
-                "Enlarge the pane to review every old and new Reference and Value",
+                if review.board_connectivity_revision.is_some() {
+                    datum_gui_protocol::board_connectivity_revision::FIT_REFUSAL
+                } else {
+                    "Enlarge the pane to review every old and new Reference and Value"
+                },
                 hits,
             ));
         }
@@ -181,7 +227,7 @@ pub(super) fn render(
     let detail_lines = measured
         .filter(|_| fits)
         .map(|layout| (layout.lines, layout.row_heights));
-    let clearance = if review.board_field_revision.is_some() {
+    let clearance = if review.is_board_revision() {
         console_clearance
     } else {
         0.
@@ -208,7 +254,7 @@ pub(super) fn render(
     let columns = ((width - 20.) / 6.7).max(1.) as usize;
     let summary = truncate_text(&review.summary(), columns);
     let detail = if !fits {
-        if review.board_field_revision.is_some() {
+        if review.is_board_revision() {
             "Enlarge the pane to review every old and new Reference and Value".into()
         } else {
             "Enlarge the parent pane to review every interface identity".into()
@@ -223,7 +269,7 @@ pub(super) fn render(
     } else if review.accepted() && review.ready() && review.current(state) {
         "Tab retry apply · Esc close review"
     } else if review.ready() && review.current(state) {
-        if review.board_field_revision.is_some() {
+        if review.is_board_revision() {
             datum_gui_protocol::board_transfer::FIELD_ACCEPT_HINT
         } else if review.interface_binding.is_some() {
             datum_gui_protocol::schematic_authoring::interface_binding::INTERFACE_ACCEPT_HINT
@@ -248,13 +294,13 @@ pub(super) fn render(
     if let Some((details, row_heights)) = detail_lines {
         let mut top = chip.y + 29.;
         for (line, row_height) in details.into_iter().zip(row_heights) {
-            if review.board_field_revision.is_some() {
+            if review.is_board_revision() {
                 measured_rows.push((lines.len(), row_height));
             }
             lines.push((line, top, TEXT_MUTED));
             top += row_height;
         }
-        if review.board_field_revision.is_none() {
+        if !review.is_board_revision() {
             lines.push((
                 action.into(),
                 chip.y + height - 20.,
@@ -263,11 +309,11 @@ pub(super) fn render(
         }
     } else {
         lines.push((truncate_text(&detail, columns), chip.y + 29., TEXT_MUTED));
-        if review.board_field_revision.is_none() {
+        if !review.is_board_revision() {
             lines.push((action.into(), chip.y + 49., design_tokens::chrome::ACCENT));
         }
     }
-    if review.board_field_revision.is_some() {
+    if review.is_board_revision() {
         use datum_gui_protocol::schematic_authoring::field_table::FieldTableControl as C;
         let available = fits && review.ready() && review.current(state) && review.pending.is_none();
         let labels = [
@@ -446,3 +492,7 @@ mod interface_tests;
 #[cfg(test)]
 #[path = "native_board_field_review_tests.rs"]
 mod board_field_tests;
+
+#[cfg(test)]
+#[path = "native_board_connectivity_review_tests.rs"]
+mod board_connectivity_tests;

@@ -6,6 +6,7 @@ pub struct BoardTransferReview {
     pub plan: TransferPlan,
     pub first_row: usize,
     pub field_changes: Result<usize, String>,
+    pub connectivity_changes: Result<usize, String>,
     pub refusal: Option<String>,
 }
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -16,6 +17,7 @@ pub enum BoardTransferAction {
     Next,
     PrepareSources,
     ReviewFields,
+    ReviewConnectivity,
     Accept,
     Cancel,
 }
@@ -92,7 +94,7 @@ impl DeleteReview {
         Ok(review)
     }
 }
-fn source_label(model: &DesignModel, id: uuid::Uuid, kind: &str) -> String {
+pub(crate) fn source_label(model: &DesignModel, id: uuid::Uuid, kind: &str) -> String {
     let name = model.objects.get(&id).and_then(|object| {
         let shard = model
             .source_shards

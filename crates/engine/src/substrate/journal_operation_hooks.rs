@@ -39,6 +39,7 @@ pub(super) fn stage_non_core_operation(
     model: &super::DesignModel,
     batch: &OperationBatch,
     operation: &Operation,
+    fill_history: Option<&super::zone_fill_journal_ops::history::HistoricalFills<'_>>,
     staged: &mut Vec<StagedShardWrite>,
 ) -> Result<(), EngineError> {
     if let Some(write) = super::electrical_identity_store::stage(project_root, batch, operation)? {
@@ -54,7 +55,7 @@ pub(super) fn stage_non_core_operation(
     maybe_stage_import_map_operation(project_root, batch, operation, staged)?;
     maybe_stage_proposal_operation(project_root, batch, operation, staged)?;
     maybe_stage_forward_annotation_review_operation(project_root, batch, operation, staged)?;
-    maybe_stage_zone_fill_operation(project_root, model, batch, operation, staged)?;
+    maybe_stage_zone_fill_operation(project_root, model, batch, operation, fill_history, staged)?;
     maybe_stage_generated_evidence_operation(project_root, model, batch, operation, staged)?;
     maybe_stage_component_instance_operation(project_root, batch, operation, staged)
 }

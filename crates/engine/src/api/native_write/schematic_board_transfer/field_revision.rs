@@ -66,7 +66,7 @@ fn guard(
     Ok(())
 }
 
-fn current_pin(
+pub(super) fn current_pin(
     model: &DesignModel,
     revisions: &mut BTreeMap<Uuid, ObjectRevision>,
     pin: &pads::PinnedPadLibrarySource,

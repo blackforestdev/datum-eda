@@ -38,6 +38,16 @@ impl Runtime {
                 field_changes: transfer::field_revision::preview(model, basis.source, &[])
                     .map(|revision| revision.changes.len())
                     .map_err(|error| error.to_string()),
+                connectivity_changes: transfer::connectivity_revision::preview(model, basis.source)
+                    .map(|revision| {
+                        revision
+                            .changes
+                            .iter()
+                            .map(|change| change.component_instance)
+                            .collect::<std::collections::BTreeSet<_>>()
+                            .len()
+                    })
+                    .map_err(|error| error.to_string()),
                 refusal: None,
             })
         })();
@@ -138,7 +148,7 @@ impl Runtime {
                     board: review.plan.board_id,
                 });
             }
-            Action::ReviewFields => {
+            Action::ReviewFields | Action::ReviewConnectivity => {
                 let result = (|| -> anyhow::Result<_> {
                     anyhow::ensure!(
                         self.ensure_selection_authority()?,
@@ -152,9 +162,11 @@ impl Runtime {
                                 == review.plan.expected_tip,
                         "Design changed; reopen the PCB update review"
                     );
-                    datum_gui_protocol::schematic_authoring::delete_review::DeleteReview::capture_board_field_revision(
-                        self.workspace(),
-                    ).map_err(anyhow::Error::msg)
+                    if action == Action::ReviewConnectivity {
+                        datum_gui_protocol::schematic_authoring::delete_review::DeleteReview::capture_board_connectivity_revision(self.workspace())
+                    } else {
+                        datum_gui_protocol::schematic_authoring::delete_review::DeleteReview::capture_board_field_revision(self.workspace())
+                    }.map_err(anyhow::Error::msg)
                 })();
                 match result {
                     Ok(fields) => {
@@ -198,6 +210,17 @@ impl Runtime {
             review.field_changes =
                 transfer::field_revision::preview(&native.model, review.request.sheet, &[])
                     .map(|revision| revision.changes.len())
+                    .map_err(|error| error.to_string());
+            review.connectivity_changes =
+                transfer::connectivity_revision::preview(&native.model, review.request.sheet)
+                    .map(|revision| {
+                        revision
+                            .changes
+                            .iter()
+                            .map(|change| change.component_instance)
+                            .collect::<std::collections::BTreeSet<_>>()
+                            .len()
+                    })
                     .map_err(|error| error.to_string());
             match transfer::plan_transfer(&native.model, &review.request) {
                 Ok(plan) => review.plan = plan,

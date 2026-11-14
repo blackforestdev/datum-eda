@@ -14,7 +14,7 @@ use super::{
     ModelRevision, Operation, OperationBatch, TransactionKind, TransactionRecord,
     journal::{
         append_transaction_journal, inverse_operations_for_batch, promote_staged_shard_writes,
-        sort_source_shards, stage_operation_shard_writes, update_staged_source_hashes,
+        sort_source_shards, stage_operation_shard_writes_with_history, update_staged_source_hashes,
         write_journal_cursor,
     },
     proposal_policy::{direct_commit_proposal_policy_blockers, format_proposal_policy_blockers},
@@ -289,7 +289,20 @@ impl DesignModel {
             Some(operations) => operations,
             None => inverse_operations_for_batch(self, &batch)?,
         };
-        let staged_writes = stage_operation_shard_writes(project_root, self, &batch)?;
+        let fill_history = super::zone_fill_journal_ops::history::authenticate(
+            self,
+            &batch,
+            transaction_kind,
+            undo_of,
+            redo_of,
+            &inverse_operations,
+        )?;
+        let staged_writes = stage_operation_shard_writes_with_history(
+            project_root,
+            self,
+            &batch,
+            fill_history.as_ref(),
+        )?;
         let mut committed = self.clone();
         update_staged_source_hashes(&mut committed.source_shards, &staged_writes)?;
         // Validation overlays the batch on immutable preimages. Existing shards

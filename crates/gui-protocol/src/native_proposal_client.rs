@@ -47,7 +47,8 @@ impl NativeProjectClient {
             "Proposal receipt identity mismatch"
         );
         let expected = match action {
-            Action::CreateBoardFieldRevision { .. }
+            Action::CreateBoardConnectivityRevision { .. }
+            | Action::CreateBoardFieldRevision { .. }
             | Action::CreateInterfaceBinding(_)
             | Action::CreateChildSheet(_)
             | Action::CreateDesignEdit { .. }
@@ -135,6 +136,7 @@ mod tests {
             ProposalStatus::Rejected,
         ] {
             let response = NativeProposalResponse {
+                board_connectivity_revision: None,
                 board_field_revision: None,
                 project_annotation: None,
                 gate_placement: None,

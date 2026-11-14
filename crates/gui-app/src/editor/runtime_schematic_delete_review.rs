@@ -113,7 +113,7 @@ impl Runtime {
                     .schematic_authoring
                     .delete_review
                     .as_ref()
-                    .is_some_and(|review| review.board_field_revision.is_some())
+                    .is_some_and(|review| review.is_board_revision())
             {
                 let editor = &mut self.session.workspace_mut().schematic_authoring;
                 editor.delete_review = None;
@@ -156,7 +156,7 @@ impl Runtime {
                 return true;
             }
         }
-        if accept && let Some(fields) = &review.board_field_revision {
+        if accept && review.is_board_revision() {
             let panes = self
                 .current_layout()
                 .viewport_panes(&self.workspace().ui.layout);
@@ -183,18 +183,31 @@ impl Runtime {
                     } else {
                         0.
                     };
-                    datum_gui_render::Renderer::board_field_review_layout(
-                        fields,
-                        review.refusal.as_deref(),
-                        scene.width,
-                        scene.height,
-                        clearance,
-                    )
+                    (if let Some(evidence) = &review.board_connectivity_revision {
+                        datum_gui_render::Renderer::board_connectivity_review_layout(
+                            evidence,
+                            review.refusal.as_deref(),
+                            scene.width,
+                            scene.height,
+                            clearance,
+                        )
+                    } else {
+                        datum_gui_render::Renderer::board_field_review_layout(
+                            review
+                                .board_field_revision
+                                .as_ref()
+                                .expect("board review purpose"),
+                            review.refusal.as_deref(),
+                            scene.width,
+                            scene.height,
+                            clearance,
+                        )
+                    })
                     .is_ok_and(|layout| layout.fits)
                 });
             if !fits {
                 self.log_console_refusal(ConsoleFeedbackSource::Tool,
-                    "Enlarge the pane to review every old and new Reference and Value before accepting");
+                    if review.board_connectivity_revision.is_some() { datum_gui_protocol::board_connectivity_revision::FIT_REFUSAL } else { "Enlarge the pane to review every old and new Reference and Value before accepting" });
                 return true;
             }
         }

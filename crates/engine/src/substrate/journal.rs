@@ -57,6 +57,15 @@ pub(super) fn stage_operation_shard_writes(
     model: &DesignModel,
     batch: &OperationBatch,
 ) -> Result<Vec<StagedShardWrite>, EngineError> {
+    stage_operation_shard_writes_with_history(project_root, model, batch, None)
+}
+
+pub(super) fn stage_operation_shard_writes_with_history(
+    project_root: &Path,
+    model: &DesignModel,
+    batch: &OperationBatch,
+    fill_history: Option<&super::zone_fill_journal_ops::history::HistoricalFills<'_>>,
+) -> Result<Vec<StagedShardWrite>, EngineError> {
     let mut staged = Vec::new();
     if let Some(manifest_shard) = model
         .source_shards
@@ -173,7 +182,14 @@ pub(super) fn stage_operation_shard_writes(
     for operation in &batch.operations {
         maybe_stage_schematic_sheet_operation(project_root, batch, operation, &mut staged)?;
         maybe_stage_schematic_definition_operation(project_root, batch, operation, &mut staged)?;
-        stage_non_core_operation(project_root, model, batch, operation, &mut staged)?;
+        stage_non_core_operation(
+            project_root,
+            model,
+            batch,
+            operation,
+            fill_history,
+            &mut staged,
+        )?;
     }
 
     Ok(staged)

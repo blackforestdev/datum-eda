@@ -544,6 +544,15 @@ impl Runtime {
                 record.source == datum_gui_protocol::ConsoleFeedbackSource::Workspace
                     && record.category == datum_gui_protocol::ConsoleFeedbackCategory::ActionRefusal
             });
+        // Record a qualified completed action before publishing the refresh's
+        // Workspace refusal. Both facts reach bounded Console history while
+        // the persistent availability warning remains the visible latest item.
+        if workspace_refusal
+            && answer.selection.is_some()
+            && let Ok(message) = &answer.result
+        {
+            self.log_console_echo(ConsoleFeedbackSource::Tool, message.clone());
+        }
         if let (Some(next), Some(prepared)) = (answer.next, answer.selection) {
             self.native_edit.pending_move_base = None;
             self.publish_edit_refresh(next, prepared, acquired);
@@ -603,7 +612,7 @@ mod project_open_busy_tests;
 
 #[cfg(test)]
 #[path = "runtime_native_edit/proposal_completion_tests.rs"]
-mod proposal_completion_tests;
+pub(crate) mod proposal_completion_tests;
 
 #[cfg(test)]
 mod completion_ownership_tests {

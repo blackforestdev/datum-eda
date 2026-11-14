@@ -65,7 +65,12 @@ pub(super) fn render(
     );
     y += 20.0;
     let field_offer = review.field_changes.as_ref().is_ok_and(|count| *count > 0);
-    let footer = if field_offer { 285.0 } else { 210.0 };
+    let connectivity_offer = review
+        .connectivity_changes
+        .as_ref()
+        .is_ok_and(|count| *count > 0);
+    let footer =
+        210.0 + if field_offer { 75.0 } else { 0.0 } + if connectivity_offer { 75.0 } else { 0.0 };
     let visible = (((card.height - footer).max(0.0) / 70.0) as usize).max(1);
     for (index, row) in review
         .plan
@@ -130,7 +135,7 @@ pub(super) fn render(
     }
     if field_offer {
         let count = review.field_changes.as_ref().copied().unwrap_or(0);
-        let top = card.y + card.height - 165.0;
+        let top = card.y + card.height - 165.0 - if connectivity_offer { 75.0 } else { 0.0 };
         draw_text_clipped(
             &format!("{count} existing counterparts have new Reference or display Value text"),
             x,
@@ -158,6 +163,40 @@ pub(super) fn render(
         hits.push(HitRegion {
             rect,
             target: HitTarget::BoardTransfer(Action::ReviewFields),
+        });
+    }
+    if connectivity_offer {
+        let count = review.connectivity_changes.as_ref().copied().unwrap_or(0);
+        let top = card.y + card.height - 165.0;
+        draw_text_clipped(
+            &format!(
+                "{count} existing counterparts have changed pin/net correspondence; copper retained"
+            ),
+            x,
+            top,
+            12.0,
+            TEXT_MUTED,
+            TextFace::Ui,
+            card,
+            text,
+        );
+        let rect = RectPx {
+            x,
+            y: top + 21.0,
+            width: width.min(350.0),
+            height: 30.0,
+        };
+        button(
+            "Review PCB connectivity changes",
+            rect,
+            false,
+            true,
+            &mut painter,
+            text,
+        );
+        hits.push(HitRegion {
+            rect,
+            target: HitTarget::BoardTransfer(Action::ReviewConnectivity),
         });
     }
     y = card.y + card.height - 90.0;

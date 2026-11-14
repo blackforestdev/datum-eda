@@ -15,6 +15,8 @@ use uuid::Uuid;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct DeleteReview {
+    pub board_connectivity_revision:
+        Option<crate::board_connectivity_revision::BoardConnectivityRevisionEvidence>,
     pub board_field_revision: Option<crate::board_transfer::BoardFieldRevisionEvidence>,
     pub interface_binding: Option<InterfaceBindingSummary>,
     pub child_sheet: Option<super::child_sheet::ChildSheetEvidence>,
@@ -179,6 +181,7 @@ impl DeleteReview {
             .clone();
         Ok(Self {
             board_field_revision: None,
+            board_connectivity_revision: None,
             gate_placement: None,
             child_sheet: None,
             interface_binding: None,
@@ -224,6 +227,15 @@ impl DeleteReview {
             || response.prepared_against != self.basis.revision
         {
             return Err("Proposal identity changed".into());
+        }
+        match (
+            &self.board_connectivity_revision,
+            &response.board_connectivity_revision,
+        ) {
+            (Some(expected), Some(actual))
+                if &expected.summary == actual && response.deleted.is_empty() => {}
+            (None, None) => {}
+            _ => return Err("PCB pin/net correspondence differs from the captured review".into()),
         }
         match (&self.board_field_revision, &response.board_field_revision) {
             (Some(expected), Some(actual))
@@ -453,7 +465,17 @@ impl DeleteReview {
         scene.source_revision = self.revision.clone();
         scene
     }
+    pub fn is_board_revision(&self) -> bool {
+        self.board_field_revision.is_some() || self.board_connectivity_revision.is_some()
+    }
     pub fn summary(&self) -> String {
+        if let Some(evidence) = &self.board_connectivity_revision {
+            return format!(
+                "Review PCB connectivity changes — {} terminals",
+                evidence.summary.changes.len()
+            );
+        }
+
         if let Some(summary) = &self.board_field_revision {
             return format!(
                 "Review PCB reference/value changes — {} components",

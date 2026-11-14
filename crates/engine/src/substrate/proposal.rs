@@ -377,6 +377,7 @@ pub fn preview_proposal_diff(
         .proposals
         .get(&proposal_id)
         .ok_or_else(|| EngineError::Validation(format!("proposal {proposal_id} not found")))?;
+    validate_connectivity_preview(model, proposal)?;
     let report = super::proposal_source_preview::unjournaled_report(model, proposal.batch.clone())?;
     proposal_preview_from_report(model, proposal, report)
 }
@@ -390,8 +391,20 @@ pub fn preview_proposal_diff_journaled(
         .proposals
         .get(&proposal_id)
         .ok_or_else(|| EngineError::Validation(format!("proposal {proposal_id} not found")))?;
+    validate_connectivity_preview(model, proposal)?;
     let report = super::proposal_source_preview::report(model, project_root, &proposal.batch)?;
     proposal_preview_from_report(model, proposal, report)
+}
+
+fn validate_connectivity_preview(
+    model: &DesignModel,
+    proposal: &Proposal,
+) -> Result<(), EngineError> {
+    use crate::api::native_write::schematic_board_transfer::connectivity_revision;
+    if connectivity_revision::is_revision(proposal) {
+        connectivity_revision::validate_current(model, proposal)?;
+    }
+    Ok(())
 }
 
 fn proposal_preview_from_report(
@@ -550,6 +563,15 @@ fn proposal_source_policy_blockers(
     proposal: &Proposal,
 ) -> Vec<ProposalApplyBlocker> {
     let mut blockers = proposal_batch_policy_blockers(&proposal.batch);
+    use crate::api::native_write::schematic_board_transfer::connectivity_revision;
+    if connectivity_revision::is_revision(proposal)
+        && let Err(error) = connectivity_revision::validate_current(model, proposal)
+    {
+        blockers.push(ProposalApplyBlocker {
+            code: "invalid_connectivity_revision".into(),
+            message: error.to_string(),
+        });
+    }
     if proposal.source == ProposalSource::Check {
         if proposal.checks_run.is_empty() {
             blockers.push(ProposalApplyBlocker {

@@ -123,6 +123,7 @@ fn child_sheet_form_preview_qualified_identity_and_review_refusals() {
     );
     let response =
         eda_engine::api::native_write::schematic_delete_proposal::NativeProposalResponse {
+            board_connectivity_revision: None,
             board_field_revision: None,
             proposal_id: review.proposal_id,
             status: ProposalStatus::Draft,

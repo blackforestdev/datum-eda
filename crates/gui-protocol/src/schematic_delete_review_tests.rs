@@ -58,6 +58,7 @@ fn workspace(
 }
 fn response(review: &DeleteReview) -> NativeProposalResponse {
     NativeProposalResponse {
+        board_connectivity_revision: None,
         board_field_revision: None,
         project_annotation: None,
         gate_placement: None,
@@ -292,6 +293,7 @@ fn erc_disposition_review_freezes_evidence_and_requires_explicit_accept_or_dismi
     assert_eq!(rationale, " Intentional test point ");
     let evidence = review.disposition.as_ref().unwrap();
     let mut receipt = NativeProposalResponse {
+        board_connectivity_revision: None,
         board_field_revision: None,
         project_annotation: None,
         gate_placement: None,
@@ -457,6 +459,7 @@ fn part_assignment_review_keeps_named_choices_source_and_component_identity_thro
     assert_eq!((*part, *gate), (first.part, first.gate));
     let evidence = review.assignment.as_ref().unwrap();
     let mut receipt = NativeProposalResponse {
+        board_connectivity_revision: None,
         board_field_revision: None,
         project_annotation: None,
         proposal_id: review.proposal_id,

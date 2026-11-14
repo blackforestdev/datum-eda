@@ -10,6 +10,9 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 mod compose;
+pub mod connectivity_revision;
+#[cfg(test)]
+mod connectivity_revision_tests;
 pub mod field_revision;
 mod plan;
 pub(crate) use compose::initial_bindings;

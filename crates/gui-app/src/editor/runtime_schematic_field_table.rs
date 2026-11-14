@@ -79,7 +79,7 @@ impl Runtime {
                 .schematic_authoring
                 .delete_review
                 .as_ref()
-                .is_some_and(|review| review.board_field_revision.is_some())
+                .is_some_and(|review| review.is_board_revision())
         {
             return self.confirm_delete_review(false);
         }

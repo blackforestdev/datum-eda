@@ -15,6 +15,10 @@ pub(super) fn native_proposal(model: &DesignModel, id: Uuid) -> Result<&Proposal
             "This native action requires a manual proposal for this project",
         ));
     }
+    if super::super::schematic_board_transfer::connectivity_revision::is_revision(p) {
+        super::super::schematic_board_transfer::connectivity_revision::validate_recorded(p)?;
+        return Ok(p);
+    }
     if super::super::schematic_board_transfer::field_revision::is_revision(p) {
         super::super::schematic_board_transfer::field_revision::validate_recorded(p)?;
         return Ok(p);
@@ -84,6 +88,11 @@ pub(super) fn validate_disposition_current(
     proposal: &Proposal,
     root: &std::path::Path,
 ) -> Result<(), EngineError> {
+    if super::super::schematic_board_transfer::connectivity_revision::is_revision(proposal) {
+        super::super::schematic_board_transfer::connectivity_revision::summary(
+            model, proposal, true,
+        )?;
+    }
     if super::super::schematic_board_transfer::field_revision::is_revision(proposal) {
         super::super::schematic_board_transfer::field_revision::summary(model, proposal, true)?;
     }

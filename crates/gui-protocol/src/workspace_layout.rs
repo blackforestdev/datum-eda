@@ -16,6 +16,8 @@ use crate::{
 };
 use std::collections::BTreeMap;
 
+#[path = "board_connectivity_revision.rs"]
+pub mod board_connectivity_revision;
 #[path = "board_transfer.rs"]
 pub mod board_transfer;
 #[path = "workspace_layout/revision_tiling.rs"]

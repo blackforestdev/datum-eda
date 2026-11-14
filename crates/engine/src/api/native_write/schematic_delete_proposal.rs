@@ -59,6 +59,11 @@ pub struct DeleteTarget {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum NativeProposalAction {
+    CreateBoardConnectivityRevision {
+        proposal_id: Uuid,
+        sheet: Uuid,
+        review: super::schematic_board_transfer::connectivity_revision::BoardConnectivityRevision,
+    },
     CreateBoardFieldRevision {
         proposal_id: Uuid,
         sheet: Uuid,
@@ -126,7 +131,8 @@ impl NativeProposalAction {
             Self::CreateGatePlacement(request) => request.proposal_id,
             Self::CreateChildSheet(request) => request.proposal_id,
             Self::CreateInterfaceBinding(request) => request.proposal_id,
-            Self::CreateBoardFieldRevision { proposal_id, .. }
+            Self::CreateBoardConnectivityRevision { proposal_id, .. }
+            | Self::CreateBoardFieldRevision { proposal_id, .. }
             | Self::CreateDesignEdit { proposal_id, .. }
             | Self::CreateFieldBatch { proposal_id, .. }
             | Self::CreateAnnotation { proposal_id, .. }
@@ -163,6 +169,9 @@ pub struct NativeProposalResponse {
     pub current_model_revision: String,
     pub transaction_tip: Option<Uuid>,
     pub deleted: Vec<DeletedObject>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub board_connectivity_revision:
+        Option<super::schematic_board_transfer::connectivity_revision::BoardConnectivityRevision>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub board_field_revision:
         Option<super::schematic_board_transfer::field_revision::BoardFieldRevision>,
@@ -232,6 +241,33 @@ pub fn execute(
     let mut selected_count = None;
     let mut transaction_id = None;
     match &request.action {
+        NativeProposalAction::CreateBoardConnectivityRevision { sheet, review, .. } => {
+            if review.sheet != *sheet {
+                return Err(invalid("Connectivity review names a different sheet"));
+            }
+            let write = super::schematic_board_transfer::connectivity_revision::prepare(
+                model,
+                WriteProvenance::new(
+                    "datum-gui",
+                    CommitSource::Manual,
+                    super::schematic_board_transfer::connectivity_revision::REASON,
+                ),
+                review,
+                id,
+            )?;
+            create_draft_proposal_from_batch(
+                model,
+                &request.project_root,
+                ProposalCreateRequest {
+                    proposal_id: Some(id),
+                    batch: write.batch,
+                    rationale: serde_json::to_string(review)?,
+                    source: ProposalSource::Manual,
+                    checks_run: vec![],
+                    finding_fingerprints: vec![],
+                },
+            )?;
+        }
         NativeProposalAction::CreateBoardFieldRevision { sheet, review, .. } => {
             let captured =
                 super::schematic_board_transfer::field_revision::preview(model, *sheet, &[])?;
@@ -539,6 +575,16 @@ pub fn execute(
         owned_count: selected_count.map(|selected| deleted.len().saturating_sub(selected)),
         selected_count,
         deleted,
+        board_connectivity_revision:
+            if super::schematic_board_transfer::connectivity_revision::is_revision(proposal) {
+                Some(
+                    super::schematic_board_transfer::connectivity_revision::summary(
+                        model, proposal, false,
+                    )?,
+                )
+            } else {
+                None
+            },
         board_field_revision: if super::schematic_board_transfer::field_revision::is_revision(
             proposal,
         ) {

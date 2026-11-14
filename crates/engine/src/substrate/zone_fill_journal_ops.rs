@@ -2,6 +2,8 @@ use std::path::Path;
 
 use uuid::Uuid;
 
+pub(super) mod history;
+
 use super::{
     DesignModel, EngineError, Operation, OperationBatch, SourceShardKind, TransactionRecord,
     ZoneFill, ZoneFillState,
@@ -15,6 +17,7 @@ pub(super) fn maybe_stage_zone_fill_operation(
     model: &DesignModel,
     batch: &OperationBatch,
     operation: &Operation,
+    history: Option<&history::HistoricalFills<'_>>,
     staged: &mut Vec<StagedShardWrite>,
 ) -> Result<(), EngineError> {
     match operation {
@@ -22,7 +25,9 @@ pub(super) fn maybe_stage_zone_fill_operation(
             zone_id, zone_fill, ..
         } => {
             let fill = validated_zone_fill_payload(*zone_id, zone_fill)?;
-            if fill.state != ZoneFillState::Stale {
+            if fill.state != ZoneFillState::Stale
+                && !history.is_some_and(|proof| proof.restores(operation))
+            {
                 let basis = super::project_board_basis(model, batch)?;
                 validate_generated_evidence_scope("zone fill", None, &fill.model_revision, &basis)?;
                 if fill.schema_version >= 2 {

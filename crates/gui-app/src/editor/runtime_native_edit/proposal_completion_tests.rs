@@ -24,6 +24,7 @@ pub(super) fn failed_refresh_consumes_only_terminal_reviews(runtime: &mut Runtim
         let id = Uuid::new_v4();
         let sheet = Uuid::new_v4();
         let response = NativeProposalResponse {
+            board_connectivity_revision: None,
             board_field_revision: None,
             project_annotation: None,
             proposal_id: id,
@@ -45,6 +46,7 @@ pub(super) fn failed_refresh_consumes_only_terminal_reviews(runtime: &mut Runtim
         };
         let review = DeleteReview {
             board_field_revision: None,
+            board_connectivity_revision: None,
             basis: AuthoringViewBasis {
                 project,
                 revision: revision.clone(),
@@ -139,4 +141,57 @@ pub(super) fn failed_refresh_consumes_only_terminal_reviews(runtime: &mut Runtim
         .workspace_mut()
         .schematic_authoring
         .delete_review = None;
+}
+
+/// Observe the real successful Runtime publication; no synthetic write/receipt.
+pub(crate) fn completed_echo_precedes_workspace_warning(runtime: &Runtime, prefix: &str) {
+    use datum_gui_protocol::{
+        CONSOLE_FEEDBACK_CAPACITY, ConsoleFeedbackCategory as Category, ConsoleFeedbackDuration,
+        ConsoleFeedbackLifetime as Lifetime, ConsoleFeedbackSeverity as Severity,
+        ConsoleFeedbackSource as Source,
+    };
+    let console = &runtime.workspace().ui.console;
+    let echo = console
+        .records()
+        .rev()
+        .find(|record| {
+            record.source == Source::Tool
+                && record.category == Category::ActionEcho
+                && record.message.starts_with(prefix)
+        })
+        .expect("Actual completed action must reach Console history");
+    let warning = console
+        .visible_latest()
+        .expect("Fresh workspace warning must remain visible");
+    assert_eq!(warning.source, Source::Workspace);
+    assert_eq!(warning.category, Category::ActionRefusal);
+    assert_eq!(warning.severity, Severity::Error);
+    assert_eq!(warning.lifetime, Lifetime::PersistentUntilNextAction);
+    assert!(warning.message.contains("Unrouted display unavailable"));
+    let model = &runtime
+        .native_selection
+        .as_ref()
+        .expect("Qualified refreshed model")
+        .model;
+    let error = eda_engine::substrate::ElectricalSelectionSnapshot::capture(model)
+        .and_then(|snapshot| snapshot.unrouted_display(&model.model_revision))
+        .expect_err("This actual source still has unavailable unrouted display");
+    assert_eq!(
+        warning.message,
+        format!("Unrouted display unavailable; no connected-state conclusion: {error:?}")
+    );
+    eprintln!(
+        "completed action echo: {} · preserved workspace warning: {}",
+        echo.message, warning.message
+    );
+    assert!(
+        !warning.message.starts_with(prefix),
+        "Successful action must not be relabelled Refused"
+    );
+    assert!(echo.sequence < warning.sequence);
+    assert!(console.len() <= CONSOLE_FEEDBACK_CAPACITY);
+    let mut elapsed = console.clone();
+    elapsed.set_duration_preference(ConsoleFeedbackDuration::FourSeconds);
+    elapsed.advance_visibility(warning.occurred_unix_ms.saturating_add(100_000), false);
+    assert_eq!(elapsed.visible_latest(), Some(warning));
 }
