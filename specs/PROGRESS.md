@@ -491,8 +491,10 @@ retained copper identities and explicit source-bound contact/fill unknowns.
 Qualified correspondence changes preserve placement and physical choice;
 authored tracks, vias and zones keep their geometry and net assignments for
 explicit refill, checking and repair. Existing PM053/PM054 identity, pending,
-contact and fill authority remains strict. Backend implementation and genuine
-prototype reconciliation are in progress; neither target captures nor a compile
+contact and fill authority remains strict. The reviewed S-Q family now lives in
+`docs/gui/prototypes/schematic-pcb-connectivity-revision-study.html`; its cohesive
+source-health extraction preserves the accepted content and normal/narrow fit.
+Backend implementation and native translation remain in progress; neither target captures nor a compile
 establish native delivery. Integrated canonical history, Save/cold reopening and
 independent delivery review remain pending. No new workflow PASS, general ECO,
 hierarchy qualification or Frontier selection is

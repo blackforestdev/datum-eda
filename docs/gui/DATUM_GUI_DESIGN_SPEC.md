@@ -536,7 +536,8 @@ with parent-layer fade/blur). The AI dock-vs-overlay comparison is illustrated i
    and fit refusal retain their focused source/renderer proof; these normal
    captures do not qualify every target state, release-GUI execution,
    physical/HUMAN input or full PCB design.
-   The subsequent S-Q synthetic target configures that same transfer-card entry
+   The subsequent S-Q synthetic target in
+   `schematic-pcb-connectivity-revision-study.html#S-Q` configures that same transfer-card entry
    and inline Proposal for a bounded existing-component connectivity revision.
    Show the complete recorded old/new terminal, pad and logical/board net chain,
    read-only physical context, retained Track/Via/Zone identities, and a guarded
