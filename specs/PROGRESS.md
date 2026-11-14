@@ -483,7 +483,7 @@ target review; other target states retain their recorded proof limits. The
 broader revision-loop task and parent PCB goal remain open. This increment
 changes no Frontier selection or historical receipt scope.
 
-*Next bounded cf5t target — native delivery pending:* the existing-component
+*Bounded cf5t connectivity revision — development implementation:* the existing-component
 connectivity-revision increment reviews a root-sheet pin reassignment between
 already existing stable board-correspondent nets. The S-Q target reuses the
 transfer card and shared inline Proposal, with complete old/new assignments,
@@ -494,12 +494,21 @@ explicit refill, checking and repair. Existing PM053/PM054 identity, pending,
 contact and fill authority remains strict. The reviewed S-Q family now lives in
 `docs/gui/prototypes/schematic-pcb-connectivity-revision-study.html`; its cohesive
 source-health extraction preserves the accepted content and normal/narrow fit.
-Backend implementation and native translation remain in progress; neither target captures nor a compile
-establish native delivery. Integrated canonical history, Save/cold reopening and
-independent delivery review remain pending. No new workflow PASS, general ECO,
-hierarchy qualification or Frontier selection is
-claimed. The delivered metadata slice and its protected owner-QA snapshot retain
-their existing proof scope; owner QA does not block this independent increment.
+Independent source and visual review accepts the bounded native implementation.
+The 16-step ordinary debug App workflow proves complete review, Reject/Apply,
+pending dismissal, truthful completion plus persistent availability feedback,
+full correspondence Undo/Redo, Save and fresh App cold reopening; authored
+BoardRoot stays exact. Public native repair/refill and CLI Connectivity checks
+are separate from GUI routing and do not establish a full clean DRC. The shared
+historical-fill admission fix has separate actual repair Undo/Redo/cold proof:
+restored source keeps its original recorded basis, which may be stale or current
+as the actual model/Zone basis dictates; explicit refill/check follows. Focused
+checks retain their candidate scopes; unchanged evidence is not replayed.
+Programmatic input in owned Weston/XWayland supplies no HUMAN, native-Wayland,
+release-GUI, owner-project or full PCB qualification. General ECO, hierarchy and
+Frontier selection are unchanged; broader cf5t and practical PCB goals remain
+open. The delivered metadata slice and its protected owner-QA snapshot retain
+their original proof scope.
 
 *Earlier bounded PCB target checkpoint (historical):* the owner-goal `dat-practical-pcb-design-3qbp`
 has delivered the native Route/Zone GUI controls (source `711e0fc1`,

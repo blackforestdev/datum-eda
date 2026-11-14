@@ -549,8 +549,17 @@ with parent-layer fade/blur). The AI dock-vs-overlay comparison is illustrated i
    and action hints must fit visibly together before Apply/Tab is offered.
    Preparing, source-stale and unfit states withhold acceptance and keep Dismiss/Esc
    reachable. A dismissed submitted write completes without reopening its review.
-   This remains a native-pending target under the existing PM053/PM054 authority,
-   not a general ECO or hierarchy surface or a delivered-workflow claim.
+   S-Q remains the synthetic visual target under PM053/PM054. Its bounded native
+   counterpart has independent source, focused layout and ordinary App review: a
+   16-step isolated debug workflow uses existing View > Maximize Pane to display
+   the complete payload, then proves Reject/Apply, pending dismissal, full
+   correspondence history and Save/cold. Completed actions remain in Console
+   history even when a fresh persistent Workspace warning stays visible. Separate
+   engine proof covers exact historical native fill restoration and truthful
+   currency through repair Undo/Redo/cold, followed by explicit refill/check.
+   Route repair is separately exercised through public native operations, not
+   GUI routing. The owned Weston/XWayland programmatic workflow is not HUMAN,
+   native-Wayland, release-GUI, general ECO, hierarchy or full PCB qualification.
 2. **Fonts**: embed IBM Plex Sans; choose the data-mono face (Design Book leaves
    it open).
 3. **Context menus — RESOLVED (2026-07-06)** into the "Context Menu System"

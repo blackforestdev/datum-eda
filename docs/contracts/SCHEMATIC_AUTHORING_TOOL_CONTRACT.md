@@ -1019,8 +1019,8 @@ Bus's source binding. No names or surviving-entry heuristics reconstruct binding
   App with matching release CLI/daemon companions; it is not release-GUI,
   physical/HUMAN, owner-project or full PCB qualification.
 
-  **Bounded connectivity-revision target (native delivery pending):**
-  The next `dat-schematic-pcb-revision-loop-cf5t` increment reviews an already
+  **Bounded connectivity revision (development implementation):**
+  The `dat-schematic-pcb-revision-loop-cf5t` increment reviews an already
   authored root-sheet pin reassignment between two existing stable
   board-correspondent nets on existing mapped components. The retained transfer
   card opens the same captured-context inline Proposal review (study S-Q).
@@ -1047,9 +1047,20 @@ Bus's source binding. No names or surviving-entry heuristics reconstruct binding
   Net birth/retirement, ambiguous merge/split ownership, changed physical/library
   bindings and unsupported scope/contact kinds are outside this bounded review;
   these limits do not prohibit ordinary schematic topology authoring. General
-  ECO, hierarchy synchronization and native delivery are not claimed by this
-  target. Existing metadata-revision and initial-transfer receipts keep their
-  original scope.
+  ECO and hierarchy synchronization remain outside this implementation.
+  Independently reviewed focused engine and renderer checks accompany an isolated
+  16-step ordinary debug App workflow: complete review, Reject/Apply, pending
+  dismissal, truthful completion and availability feedback, full correspondence
+  Undo/Redo, Save and fresh App cold reopening with authored BoardRoot unchanged.
+  Explicit route repair/refill and Connectivity-only checks use public native
+  operations and the CLI separately; they are not GUI routing or a full clean DRC
+  claim. A subsequent shared history fix authenticates historical native fill
+  restoration against fresh leased canonical history while preserving its exact
+  original basis. Real repair Undo/Redo/cold proof confirms truthful stale or
+  current availability, followed by explicit refill and Connectivity checks.
+  Programmatic input in owned Weston/XWayland envelopes supplies no HUMAN,
+  native-Wayland, owner-project, release-GUI or full PCB qualification. Existing
+  metadata-revision and initial-transfer receipts keep their original scope.
 
   Earlier bounded Part assignment implementation (`dat-schematic-part-assignment-dres`)
   adds named compatible Part/Gate choices through the selected Symbol Inspector

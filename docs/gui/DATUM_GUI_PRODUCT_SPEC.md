@@ -654,8 +654,8 @@ input, owner-project migration, general ECO, library adoption, component
 addition/removal or full qualification. The broader revision-loop task remains
 open beyond this bounded increment.
 
-The next bounded connectivity-revision target (`cf5t`, study S-Q; native delivery
-pending) carries an authored root-sheet pin reassignment between existing stable
+The bounded connectivity-revision development implementation (`cf5t`, study S-Q)
+carries an authored root-sheet pin reassignment between existing stable
 board-correspondent nets into an explicit PCB correspondence review. The existing
 transfer card's **Review PCB connectivity changes** control opens the shared
 inline Proposal in the same captured context. It shows every changed terminal's
@@ -668,9 +668,17 @@ and a complete visible review with its warning and action hints. It changes only
 the reviewed correspondence; physical placement and identities stay fixed, and
 tracks, vias and zones retain their geometry and net assignments. Explicit
 refill, DRC and manual routing repair remain necessary. Source-stale, ambiguous or
-unsupported requests refuse without design writes. This target adds no general
-ECO, library adoption, net lifecycle or repeated/hierarchical update capability,
-and supplies no native workflow or broader qualification PASS.
+unsupported requests refuse without design writes. The independently reviewed
+16-step isolated ordinary App workflow covers complete review, Reject/Apply,
+pending dismissal, completion feedback, correspondence history and Save/cold.
+Separate public native repair/refill and Connectivity-only checks do not prove
+GUI routing or a full clean DRC. Focused shared history proof restores the exact
+recorded native fill source and original basis; availability remains truthful,
+and explicit refill supplies current evidence when needed. The debug App uses
+programmatic input and qualified release companions in owned Weston/XWayland,
+not a release-GUI or native-Wayland qualification. General ECO, library adoption,
+net lifecycle, repeated/hierarchical updates, HUMAN, owner-project migration and
+full PCB qualification remain outside this bounded delivery.
 
 **Command and mutation boundary.** Menus, tool palettes, shortcuts and command
 palette use the existing application registry. The target families remain native
