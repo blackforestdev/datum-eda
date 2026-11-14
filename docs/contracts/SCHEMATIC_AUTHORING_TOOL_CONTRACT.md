@@ -608,6 +608,19 @@ development behavior, not component-workflow release-GUI execution, physical/HUM
 input, manufacturer pinout qualification, owner-circuit migration or full
 qualification.
 
+The accepted bounded recovery target `library-surfaces-study.html#L-K`
+(`dat-existing-project-component-resolution-i89r`) connects an unbound transfer
+row to existing Assign Part and Library authoring. A compatible complete Part
+must use the placed Symbol's existing Unit/Symbol identities; drawing similarity
+supplies no binding. The target retains the original Project root, schematic
+occurrence and placed-symbol preimage while Library definitions are authored.
+Library-only commits permit an explicit return; a changed target refuses, and
+a draft must be finished or cancelled, and a running worker awaited, before leaving.
+Cancelling navigation preserves committed Library definitions and makes no
+assignment. No redraw, guessed map/footprint, automatic import or general ECO
+is introduced. This is an accepted visual target with Rust translation in
+progress; ordinary application delivery remains pending.
+
 ### 2. transform-symbol (move / rotate / mirror unified)
 
 - **(1) Manual UI:** Select symbol(s); drag to move, R to rotate, X/Y to

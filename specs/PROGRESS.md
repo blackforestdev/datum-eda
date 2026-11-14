@@ -544,6 +544,16 @@ hierarchy coverage. HUMAN, release-GUI workflow, full qualification, global
 clean DRC and manufacturing readiness are not established; no Frontier
 successor or transition is selected.
 
+*Existing-project component resolution — accepted target, runtime pending:*
+`dat-existing-project-component-resolution-i89r` adds the bounded L-K target for
+an unbound transfer row to reach existing Library/Assign Part and return to its
+original placed symbol without redrawing. Source and normal/narrow visual
+reviews passed; Library commits remain committed on cancellation, intentional
+Library-only changes permit return, and stale targets/pending drafts refuse
+truthfully. Rust translation is in progress; no ordinary runtime delivery is
+claimed yet. This repair leaves the accepted 3qbp objective, broader cf5t and
+separate qualification boundaries at their recorded scopes.
+
 *Earlier bounded PCB target checkpoint (historical):* the owner-goal `dat-practical-pcb-design-3qbp`
 has delivered the native Route/Zone GUI controls (source `711e0fc1`,
 metadata `7a9f71bf`) with independently accepted ordinary proof (M30

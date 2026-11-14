@@ -631,6 +631,20 @@ execution, physical/HUMAN input, owner-circuit migration, manufacturer pinout
 qualification or full qualification. Approval and the separate reviewed
 cross-editor/ECO workflow remain outside this increment.
 
+Existing Symbol-only projects need explicit component definitions for PCB
+transfer. The accepted L-K target in `library-surfaces-study.html` gives an
+unbound row a Resolve action into existing compatible-Part assignment or
+contextual Library authoring, retaining the selected reference and original
+schematic occurrence. Authoring uses that Symbol's saved Unit/Symbol identities;
+a same-looking external Part supplies no compatible binding. Return and transfer
+retry remain explicit. Library-only commits preserve the return target;
+changed targets refuse, pending drafts/workers block leaving, and cancellation
+retains separately committed definitions. Existing Proposal acceptance, map
+choice and source-preparation rules remain in force. No component, footprint or
+pin map is guessed. This bounded `i89r` target is accepted; its Rust translation
+and ordinary runtime proof are pending. Existing qualification/S05 decisions and
+general ECO scope are unchanged.
+
 The subsequent bounded Reference/display Value revision implementation
 (`dat-schematic-pcb-revision-loop-cf5t`, study S-P) is separate from initial
 transfer. In the existing root-schematic transfer review, **Review PCB
