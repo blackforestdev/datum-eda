@@ -27,6 +27,7 @@ pub(super) fn read(
         }
         let value = |v| serde_json::to_value(v).map_err(|e| e.to_string());
         return Ok(ReadResult::Preview(LibraryAcquisitionPreview {
+            native_part: None,
             name: source.name,
             source_digest: converted.source_hash,
             source_path: converted.source_path,
@@ -51,6 +52,7 @@ pub(super) fn read(
     }
     .map_err(|error| error.to_string())?;
     Ok(ReadResult::Preview(LibraryAcquisitionPreview {
+        native_part: None,
         name: source.name,
         source_digest: converted.source_hash,
         source_path: converted.source_path,

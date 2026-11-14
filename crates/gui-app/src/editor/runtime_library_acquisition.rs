@@ -37,11 +37,16 @@ impl AcquisitionWork {
         let session = acquisition.session;
         let revision = acquisition.revision.clone();
         let path = std::path::PathBuf::from(&acquisition.path);
-        let bundled = acquisition.bundled;
-        let footprints = acquisition.footprints;
+        let bundled = acquisition.bundled();
+        let footprints = acquisition.footprints();
+        let native_parts = acquisition.is_native_part();
         let wake = self.wake.clone();
         std::thread::spawn(move || {
-            let result = source_read::read(&path, bundled, footprints, source);
+            let result = if native_parts {
+                read_native_parts(&path, source)
+            } else {
+                source_read::read(&path, bundled, footprints, source)
+            };
             let _ = sender.send(Answer {
                 session,
                 revision,
@@ -103,7 +108,7 @@ impl Runtime {
                 a.refusal = Some(reason);
             }
         }
-        let confirmed = a.take_placement_confirmation();
+        let confirmed = a.take_placement_confirmation() && !a.is_native_part();
         self.preview_existing_project_symbol();
         if confirmed {
             if catalog_arrived {
@@ -144,7 +149,18 @@ impl Runtime {
 
     pub(super) fn activate_acquisition(&mut self, control: &C) -> bool {
         match control {
-            C::ProjectSymbols => return self.browse_project_symbols_for_placement(),
+            C::ProjectSymbols => {
+                if self
+                    .workspace()
+                    .library
+                    .acquisition
+                    .as_ref()
+                    .is_some_and(|a| a.is_native_part())
+                {
+                    return true;
+                }
+                return self.browse_project_symbols_for_placement();
+            }
             C::Acquire | C::BrowseBundled => {
                 if !self.native_edit_available() || self.check_work.pending() {
                     self.log_console_refusal(ConsoleFeedbackSource::Tool, "Open a native Project and finish its check job before acquiring library content");
@@ -163,18 +179,28 @@ impl Runtime {
                 if *control == C::Acquire
                     && datum_gui_protocol::library_browser::KINDS
                         .get(state.library.kind)
+                        .is_some_and(|(kind, _)| *kind == "parts")
+                {
+                    acquisition.use_native_part_source();
+                } else if *control == C::Acquire
+                    && datum_gui_protocol::library_browser::KINDS
+                        .get(state.library.kind)
                         .is_some_and(|(kind, _)| {
                             matches!(*kind, "footprints" | "packages" | "padstacks")
                         })
                 {
                     acquisition.use_footprint_source();
                 }
-                acquisition.bundled = *control == C::BrowseBundled;
-                if acquisition.bundled {
+                if *control == C::BrowseBundled {
+                    acquisition.source = datum_gui_protocol::library_browser::acquisition::AcquisitionSource::BundledSymbols;
+                }
+                if acquisition.bundled() {
                     acquisition.path.clear();
                 }
-                acquisition.loading = true;
-                self.library_acquisition_work.start(&acquisition, None);
+                acquisition.loading = !acquisition.is_native_part();
+                if acquisition.loading {
+                    self.library_acquisition_work.start(&acquisition, None);
+                }
                 let browser = &mut self.session.workspace_mut().library;
                 browser.acquisition = Some(acquisition);
                 browser.focus = Some(C::AcquireSearch);
@@ -267,5 +293,45 @@ impl Runtime {
         }
         self.invalidate_frame();
         true
+    }
+}
+
+fn read_native_parts(
+    path: &std::path::Path,
+    source: Option<LibrarySourceSymbol>,
+) -> Result<ReadResult, String> {
+    use datum_gui_protocol::library_browser::acquisition::catalog::SourceAvailability;
+    use eda_engine::api::native_write::library_acquisition::native_part;
+    match source {
+        None => Ok(ReadResult::Names(SourceCatalog {
+            symbols: native_part::catalog(path)
+                .map_err(|e| e.to_string())?
+                .into_iter()
+                .map(|p| LibrarySourceSymbol {
+                    path: path.to_path_buf(),
+                    name: p.id.to_string(),
+                    label: p.label,
+                    description: p.refusal.clone().unwrap_or_default(),
+                    availability: if p.refusal.is_some() {
+                        SourceAvailability::Unavailable
+                    } else {
+                        SourceAvailability::Supported
+                    },
+                })
+                .collect(),
+            notices: vec![
+                "Choose one complete native Part; source project stays unchanged.".into(),
+            ],
+        })),
+        Some(source) => {
+            let id = source
+                .name
+                .parse()
+                .map_err(|_| "Native Part identity unavailable")?;
+            let snapshot = native_part::preview(&source.path, id).map_err(|e| e.to_string())?;
+            Ok(ReadResult::Preview(
+                LibraryAcquisition::native_part_preview(&snapshot)?,
+            ))
+        }
     }
 }

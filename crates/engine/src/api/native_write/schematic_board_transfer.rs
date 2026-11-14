@@ -100,6 +100,8 @@ pub struct TransferComponent {
     pub existing_packages: Vec<Uuid>,
     pub status: TransferStatus,
     pub reason: Option<String>,
+    #[serde(default)]
+    pub component_choice: bool,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

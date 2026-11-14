@@ -9,6 +9,11 @@ pub(super) fn render(p: &mut Painter<'_>) {
     p.button(
         if KINDS
             .get(state.library.kind)
+            .is_some_and(|(kind, _)| *kind == "parts")
+        {
+            "Acquire reusable native Part"
+        } else if KINDS
+            .get(state.library.kind)
             .is_some_and(|(kind, _)| matches!(*kind, "footprints" | "packages" | "padstacks"))
         {
             "Acquire local KiCad footprint"

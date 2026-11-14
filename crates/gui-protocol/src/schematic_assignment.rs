@@ -13,6 +13,10 @@ pub struct AssignmentEvidence {
     pub target: AuthoredSelectionIdentity,
     pub options: AssignmentOptions,
     pub selected: usize,
+    pub components: std::collections::BTreeMap<
+        (Uuid, Uuid),
+        eda_engine::api::native_write::schematic_library::part_placement::CompletePartSelection,
+    >,
 }
 impl AssignmentEvidence {
     /// Paint admission uses the already captured model only; compatibility is read on entry.
@@ -125,18 +129,32 @@ impl AssignmentEvidence {
             .basis
             .as_ref()
             .ok_or("Current library source unavailable")?;
-        let options = schematic_assignment::options(model, target.id, &target.instance_path)
+        let mut options = schematic_assignment::options(model, target.id, &target.instance_path)
             .map_err(|e| e.to_string())?;
         if options.sheet != basis.source {
             return Err("Symbol belongs to another sheet".into());
         }
+        let symbol = options
+            .original
+            .lib_id
+            .as_deref()
+            .and_then(|id| id.parse().ok())
+            .ok_or("Component Symbol is unavailable")?;
+        let mut components = std::collections::BTreeMap::new();
+        options.choices.retain(|choice| {
+            match eda_engine::api::native_write::schematic_library::part_placement::CompletePartSelection::capture(model, choice.part, choice.gate, symbol) {
+                Ok(component) => { components.insert((choice.part, choice.gate), component); true }
+                Err(_) => false,
+            }
+        });
         if options.choices.is_empty() {
-            return Err("No compatible Part/Gate for this Symbol's existing Unit".into());
+            return Err("No complete compatible component yet. Add a component with its value, package, footprint and pin map in the Library".into());
         }
         Ok(Self {
             target: target.clone(),
             options,
             selected: 0,
+            components,
         })
     }
     pub fn selected(state: &ReviewWorkspaceState) -> Result<Self, String> {
@@ -171,6 +189,15 @@ impl AssignmentEvidence {
         self.choice().map_or_else(
             || "No compatible Part".into(),
             |c| {
+                if let Some(component) = self.components.get(&(c.part, c.gate)) {
+                    return format!(
+                        "{} · {} · {} · {}",
+                        component.value,
+                        component.package_name,
+                        component.footprint_name,
+                        c.part_name
+                    );
+                }
                 let mut parts = Vec::new();
                 for choice in &self.options.choices {
                     if !parts.contains(&choice.part) {
@@ -225,6 +252,7 @@ impl AssignmentEvidence {
             instance_path: self.target.instance_path.clone(),
             part: choice.part,
             gate: choice.gate,
+            component: self.components.get(&(choice.part, choice.gate)).cloned(),
         })
     }
     pub fn matches(&self, summary: &AssignmentSummary) -> bool {

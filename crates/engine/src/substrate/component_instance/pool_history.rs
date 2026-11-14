@@ -3,6 +3,8 @@
 use super::super::{DesignModel, Operation};
 use super::*;
 use serde_json::Value;
+#[path = "pool_history_at_transaction.rs"]
+mod at_transaction;
 #[path = "pool_history_restore.rs"]
 mod restore;
 #[path = "pool_history_retained_revisions.rs"]

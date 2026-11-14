@@ -113,6 +113,50 @@ pub(super) fn paint_navigation(
             rect,
         });
     }
+    let check = RectPx {
+        x: bounds.x + 120.0,
+        y: bounds.y,
+        width: 160.0,
+        height: 30.0,
+    };
+    let available = enabled && nav.is_some_and(|n| n.naming.is_none() && n.menu.is_none());
+    let check_color = if available { TEXT_PRIMARY } else { TEXT_MUTED };
+    let box_rect = RectPx {
+        x: check.x + 4.0,
+        y: check.y + 8.0,
+        width: 14.0,
+        height: 14.0,
+    };
+    push_rect_border(&mut painter, box_rect, check_color, 1.0);
+    if nav.is_some_and(|n| n.show_hidden) {
+        painter.push(Quad::from_rect(
+            RectPx {
+                x: box_rect.x + 3.0,
+                y: box_rect.y + 3.0,
+                width: 8.0,
+                height: 8.0,
+            },
+            check_color,
+        ));
+    }
+    draw_text(
+        "Show hidden files",
+        check.x + 24.0,
+        check.y + 10.0,
+        design_tokens::typography::CAPTION_SIZE,
+        check_color,
+        TextFace::Ui,
+        text,
+    );
+    if available && focus == Some(Focus::ShowHidden) {
+        push_rect_border(&mut painter, check, design_tokens::chrome::STATUS_INFO, 1.0);
+    }
+    if available {
+        hits.push(HitRegion {
+            target: HitTarget::FolderBrowser(Focus::ShowHidden),
+            rect: check,
+        });
+    }
     let query_header = suggestion_header_lines(nav, bounds.width)?;
     for (i, line) in query_header.iter().enumerate() {
         draw_text(

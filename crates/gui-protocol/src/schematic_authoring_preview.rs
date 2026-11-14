@@ -35,6 +35,7 @@ impl SchematicAuthoring {
         self.assignment_draft = None;
         self.interface_draft = None;
         self.gate_draft = None;
+        self.components.active = false;
         self.child_draft = None;
         self.design_placement = None;
         self.picker = false;
@@ -185,7 +186,7 @@ impl SchematicAuthoring {
                     )
                     .map_err(anyhow::Error::msg)?
             } else {
-                let choice = &self.choices[index];
+                let choice = &self.picker_choices()[index];
                 let mut pins = choice.pins.clone();
                 for pin in &mut pins {
                     pin.position =

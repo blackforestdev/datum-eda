@@ -85,7 +85,7 @@ fn annotation_history_refuses_paired_unchanged_sibling_epoch_tamper() {
     );
     annotate(&mut model, &root, request.sheet);
     let original = model.journal.last().unwrap();
-    assert!(family::capture(original).is_some());
+    assert!(family::capture(original, &model.journal).is_some());
     let mut tampered = original.clone();
     let mut replaced = None;
     for op in &mut tampered.operations {
@@ -115,7 +115,7 @@ fn annotation_history_refuses_paired_unchanged_sibling_epoch_tamper() {
         }
     }
     assert!(
-        family::capture(&tampered).is_none(),
+        family::capture(&tampered, &model.journal).is_none(),
         "pair equality cannot authorize an untouched sibling epoch"
     );
     std::fs::remove_dir_all(root).unwrap();

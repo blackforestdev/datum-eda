@@ -413,11 +413,11 @@ impl Runtime {
                 let s = self.workspace();
                 let mut controls = Vec::new();
                 if let Some(a) = &s.library.acquisition {
-                    if !a.bundled {
+                    if !a.bundled() {
                         controls.extend([C::AcquirePath, C::AcquireLoad]);
                     }
                     controls.push(C::AcquireSearch);
-                    if a.placement_pane.is_some() {
+                    if a.placement_pane.is_some() && !a.is_native_part() {
                         controls.push(C::ProjectSymbols);
                     }
                     if a.preview.is_some() {
@@ -433,7 +433,7 @@ impl Runtime {
                     if a.results().len() > 4 {
                         controls.extend([C::AcquirePage(false), C::AcquirePage(true)]);
                     }
-                    if a.bundled {
+                    if a.bundled() || a.is_native_part() {
                         controls.push(C::AcquireShowUnavailable);
                     }
                     controls.push(C::Cancel);

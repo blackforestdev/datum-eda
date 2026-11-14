@@ -8,6 +8,7 @@ use eda_engine::{ir::geometry::Point, substrate::Operation};
 fn library_acquire_refresh_selects_its_qualified_definition_without_changing_other_refreshes() {
     use datum_gui_protocol::library_browser::acquisition::{
         FootprintAcquisitionPreview, LibraryAcquisition, LibraryAcquisitionPreview,
+        NativePartAcquisitionPreview,
     };
     use datum_gui_protocol::library_browser::{KINDS, LibraryBrowser, LibraryEntry};
     use serde_json::{Value, json};
@@ -26,8 +27,16 @@ fn library_acquire_refresh_selects_its_qualified_definition_without_changing_oth
         ("padstacks", true),
         ("footprints", true),
         ("units", false),
+        ("parts", false),
     ] {
-        let target_kind = if physical { "footprints" } else { "symbols" };
+        let native_part = origin == "parts";
+        let target_kind = if native_part {
+            "parts"
+        } else if physical {
+            "footprints"
+        } else {
+            "symbols"
+        };
         let old = entry(origin, uuid::Uuid::new_v4());
         let target = entry(target_kind, uuid::Uuid::new_v4());
         let old_selection = SelectionTarget::AuthoredObject(old.key());
@@ -39,15 +48,32 @@ fn library_acquire_refresh_selects_its_qualified_definition_without_changing_oth
         let mut acquisition = LibraryAcquisition::begin("prior revision".into(), None);
         if physical {
             acquisition.use_footprint_source();
+        } else if native_part {
+            acquisition.use_native_part_source();
         }
         let source = std::path::PathBuf::from(if physical {
             "/source/Part.kicad_mod"
         } else {
             "/source/Part.kicad_sym"
         });
-        acquisition.selected = Some("Part".into());
+        acquisition.selected = Some(if native_part {
+            target.id.to_string()
+        } else {
+            "Part".into()
+        });
         acquisition.selected_source = Some(source.clone());
         acquisition.preview = Some(LibraryAcquisitionPreview {
+            native_part: native_part.then(|| NativePartAcquisitionPreview {
+                part: target.raw.clone(),
+                entity: Value::Null,
+                package: Value::Null,
+                footprint: Value::Null,
+                pin_pad_map: Value::Null,
+                gate_count: 1,
+                object_count: 8,
+                padstacks: vec![],
+                gate_symbols: vec![],
+            }),
             name: "Part".into(),
             source_digest: "source hash".into(),
             source_path: source,

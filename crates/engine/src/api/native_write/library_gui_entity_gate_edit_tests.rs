@@ -162,6 +162,7 @@ fn old_multi_gate_members_and_later_gate_retain_their_own_entity_chains() {
         &mut model,
         &root,
         Action::CreateAssignment {
+            component: None,
             proposal_id: Uuid::new_v4(),
             symbol: first,
             instance_path: vec![],

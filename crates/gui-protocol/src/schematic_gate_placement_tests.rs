@@ -131,6 +131,7 @@ pub(super) fn setup() -> (FixtureRoot, DesignModel, Uuid) {
         &mut model,
         &root.0,
         Action::CreateAssignment {
+            component: None,
             proposal_id: Uuid::new_v4(),
             symbol: first,
             instance_path: vec![],

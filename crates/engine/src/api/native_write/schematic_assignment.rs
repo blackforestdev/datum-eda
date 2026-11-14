@@ -12,6 +12,8 @@ use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 use std::collections::BTreeSet;
 use uuid::Uuid;
+#[path = "schematic_component_assignment.rs"]
+mod complete;
 #[path = "schematic_assignment_component.rs"]
 pub(super) mod component;
 pub(super) use component::{delete_bindings, repin_symbols};
@@ -62,12 +64,42 @@ pub(super) fn build(
     part: Uuid,
     gate: Uuid,
 ) -> Result<PreparedWrite, EngineError> {
+    build_configured(model, provenance, symbol, path, part, gate, None)
+}
+pub(super) fn build_configured(
+    model: &DesignModel,
+    provenance: WriteProvenance,
+    symbol: Uuid,
+    path: &[Uuid],
+    part: Uuid,
+    gate: Uuid,
+    component: Option<&super::schematic_library::part_placement::CompletePartSelection>,
+) -> Result<PreparedWrite, EngineError> {
     let options = options(model, symbol, path)?;
     let choice = options
         .choices
         .iter()
         .find(|c| c.part == part && c.gate == gate)
         .ok_or_else(|| invalid("Choose a compatible Part and Gate for this Symbol"))?;
+    if let Some(component) = component {
+        component.verify(model)?;
+        if component.part.part != part
+            || component.part.gate != gate
+            || options.original.lib_id.as_deref()
+                != Some(component.part.symbol.to_string().as_str())
+        {
+            return Err(invalid(
+                "Complete component does not match the selected Part, Gate and Symbol",
+            ));
+        }
+        if options.original.part == Some(part)
+            && let Some(owner) = options.component_instance
+        {
+            // Changing a Gate retains this component's established physical
+            // sources. Library-update review is a separate operation.
+            component.verify_declared(model, owner)?;
+        }
+    }
     if options.component_instance.is_some()
         && options.original.part == Some(part)
         && options.original.entity == Some(choice.entity)
@@ -80,6 +112,9 @@ pub(super) fn build(
         let mut value =
             super::schematic_symbol_payload::source_symbol_payload(model, options.sheet, member)?;
         value["part"] = json!(part);
+        if let Some(component) = component {
+            value["value"] = json!(component.value);
+        }
         // Multi-Gate choices retain the complete existing Entity/Gate mapping.
         if options.members.len() == 1 {
             value["entity"] = json!(choice.entity);
@@ -92,10 +127,14 @@ pub(super) fn build(
         });
     }
     operations.push(component::operation(model, &options, choice)?);
-    Ok(PreparedWrite {
+    let mut prepared = PreparedWrite {
         batch: super::context::build_batch(model, provenance, operations)?,
         primary_object_id: Some(symbol),
-    })
+    };
+    if let Some(component) = component {
+        component.guard(&mut prepared);
+    }
+    Ok(prepared)
 }
 pub(super) fn is_assignment(proposal: &Proposal) -> bool {
     if super::schematic_annotation::is_annotation(proposal)
@@ -275,11 +314,37 @@ pub(super) fn summary(
             gate,
         )?;
         if rebuilt.batch.operations != proposal.batch.operations {
-            return Err(invalid(
-                "Assignment proposal differs from current compatible binding",
-            ));
+            let selected: Uuid = members
+                .iter()
+                .find(|(id, _)| *id == symbol)
+                .and_then(|(_, raw)| raw["lib_id"].as_str())
+                .and_then(|id| id.parse().ok())
+                .ok_or_else(|| invalid("Component Symbol is unavailable"))?;
+            let component =
+                super::schematic_library::part_placement::CompletePartSelection::capture(
+                    model, part, gate, selected,
+                )?;
+            let complete = build_configured(
+                model,
+                WriteProvenance::new(
+                    "datum-gui",
+                    crate::substrate::CommitSource::Manual,
+                    "Assign complete component",
+                ),
+                symbol,
+                path,
+                part,
+                gate,
+                Some(&component),
+            )?;
+            if complete.batch.operations != proposal.batch.operations {
+                return Err(invalid(
+                    "Assignment proposal differs from current compatible component",
+                ));
+            }
         }
     }
+    let complete_value = complete::recorded_value(model, proposal, part)?;
     let mut selected = None;
     let mut prior_part = None;
     for (id, next) in &members {
@@ -287,6 +352,12 @@ pub(super) fn summary(
         let old: PlacedSymbol = serde_json::from_value(previous.clone())?;
         let mut expected = previous;
         expected["part"] = json!(part);
+        if expected["value"] != next["value"] {
+            let value = complete_value.as_ref().ok_or_else(|| {
+                invalid("Legacy Part assignment cannot change unrelated Symbol value")
+            })?;
+            expected["value"] = json!(value);
+        }
         if members.len() == 1 {
             expected["entity"] = json!(entity);
             expected["gate"] = json!(gate);

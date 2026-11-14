@@ -12,6 +12,9 @@ use super::{
     source_shard_ref_builders::source_shard_ref_for_bytes,
 };
 
+mod declaration_history;
+pub(super) use declaration_history::{assignment_origin, assignment_receipt};
+mod part_physical_source;
 mod placed_entity_source;
 mod placed_symbol_source;
 pub(super) mod pool_history;

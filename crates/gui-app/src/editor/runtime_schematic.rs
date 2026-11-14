@@ -30,7 +30,11 @@ impl Runtime {
             return true;
         }
         if !wire {
-            return self.browse_schematic_libraries();
+            self.session
+                .workspace_mut()
+                .schematic_authoring
+                .begin_component_placement();
+            self.invalidate_frame();
         }
         true
     }
@@ -161,6 +165,8 @@ impl Runtime {
             if let Err(reason) = result {
                 editor.refusal = Some(reason);
             }
+        } else if let Some(reason) = editor.component_placement_refusal() {
+            editor.refusal = Some(reason);
         } else if editor.chosen.is_none()
             || editor.reference.trim().is_empty()
             || editor.taken_references.contains(&editor.reference)
@@ -231,6 +237,11 @@ impl Runtime {
                 }
             }
             HitTarget::SchematicReference | HitTarget::SchematicValue => {
+                if *target == HitTarget::SchematicValue
+                    && self.workspace().schematic_authoring.components.active
+                {
+                    return true;
+                }
                 self.session.workspace_mut().schematic_authoring.field =
                     if *target == HitTarget::SchematicReference {
                         PlacementField::Reference
@@ -493,8 +504,9 @@ impl Runtime {
         e.pending_request = Some(SchematicEditRequest::PlaceSymbol {
             sheet: e.placement_sheet().unwrap(),
             instance_path: e.placement_path(),
-            library_symbol: e.choices[index].id,
-            explicit_part: e.choices[index].explicit_part.clone(),
+            library_symbol: e.picker_choices()[index].id,
+            explicit_part: e.picker_choices()[index].explicit_part.clone(),
+            component: e.picker_choices()[index].component.clone(),
             reference: e.reference.clone(),
             value: e.value.clone(),
             x_nm: at.x,

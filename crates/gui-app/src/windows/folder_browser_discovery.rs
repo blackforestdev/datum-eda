@@ -24,6 +24,7 @@ impl FolderBrowser {
     }
 
     fn navigate(&mut self, path: PathBuf, replace_input: bool, assisted: bool) {
+        self.assisted = assisted;
         self.last_click = None;
         self.select_after_scan = None;
         let Some(state) = &mut self.state else {
@@ -143,6 +144,9 @@ pub(super) fn admit_answer(
                 state.expanded = true;
             }
             state.entries = listing.entries;
+            state
+                .entries
+                .retain(|entry| state.show_hidden || !entry.name.starts_with('.'));
             state.parent_identity = listing.parent_identity;
             state.occupied = listing.occupied;
             state.notice = listing.notice;

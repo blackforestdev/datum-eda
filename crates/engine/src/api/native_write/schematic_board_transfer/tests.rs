@@ -70,6 +70,9 @@ fn bytes(f: &F) -> BTreeMap<String, Vec<u8>> {
     result
 }
 fn fixture(adopt: bool) -> F {
+    fixture_mode(adopt, false)
+}
+fn fixture_mode(adopt: bool, complete: bool) -> F {
     let root = native::test_support::temp_project_root("connected_board_transfer");
     let report = native::genesis::bootstrap_native_project(
         &root,
@@ -129,7 +132,7 @@ fn fixture(adopt: bool) -> F {
         (
             "pin_pad_maps",
             map,
-            json!({"part":part,"footprint":footprint,"mappings":{pad.to_string():{"gate":gate,"pin":pin}}}),
+            json!({"part":part,"footprint":footprint,"mappings":{pad.to_string():{"gate":gate,"pin":pin}},"assign_default":complete}),
         ),
     ] {
         write(
@@ -193,6 +196,107 @@ fn fixture(adopt: bool) -> F {
         sheet,
         map,
         request,
+    }
+}
+
+#[test]
+fn complete_component_handoff_uses_authored_physical_choice_without_per_design_mapping() {
+    let mut f = fixture_mode(true, true);
+    f.request.choices.clear();
+    let before = bytes(&f);
+    let plan = plan_transfer(&f.model, &f.request).unwrap();
+    assert_eq!(plan.ready_count(), 2);
+    assert!(
+        plan.components
+            .iter()
+            .all(|row| row.pin_pad_map == Some(f.map) && row.footprint.is_some())
+    );
+    assert_eq!(bytes(&f), before);
+    let prepared = prepare_transfer(&f.model, provenance(), &f.request).unwrap();
+    commit_prepared(&mut f.model, &f.root, prepared).unwrap();
+    let cold = ProjectResolver::new(&f.root).resolve().unwrap();
+    let repeated = plan_transfer(&cold, &f.request).unwrap();
+    assert_eq!(repeated.ready_count(), 0);
+    assert!(
+        repeated
+            .components
+            .iter()
+            .all(|row| row.status == TransferStatus::Existing)
+    );
+    assert_eq!(cold.component_instances.len(), 2);
+}
+
+#[test]
+fn repeated_explicit_default_map_cannot_bypass_declared_footprint_or_padstack_drift() {
+    use native::library::{PoolLibraryObjectTarget as Target, PoolLibraryOperationSpec as Spec};
+    for kind in ["footprints", "padstacks"] {
+        let mut f = fixture_mode(true, true);
+        assert_eq!(
+            plan_transfer(&f.model, &f.request).unwrap().ready_count(),
+            2
+        );
+        let first = plan_transfer(&f.model, &f.request)
+            .unwrap()
+            .components
+            .remove(0);
+        let footprint = native::schematic_library::materialized_pool_object(
+            &f.model,
+            first.footprint.unwrap(),
+            "footprints",
+        )
+        .unwrap();
+        let id = if kind == "footprints" {
+            first.footprint.unwrap()
+        } else {
+            footprint["pads"]
+                .as_object()
+                .unwrap()
+                .values()
+                .next()
+                .unwrap()["padstack"]
+                .as_str()
+                .unwrap()
+                .parse()
+                .unwrap()
+        };
+        let mut raw =
+            native::schematic_library::materialized_pool_object(&f.model, id, kind).unwrap();
+        if kind == "footprints" {
+            raw["pads"]
+                .as_object_mut()
+                .unwrap()
+                .values_mut()
+                .next()
+                .unwrap()["position"]["x"] = json!(500000);
+        } else {
+            raw["aperture"]["circle"]["diameter_nm"] = json!(2000000);
+        }
+        let prepared = native::library::build_pool_library_write(
+            &f.model,
+            provenance(),
+            Some("pool"),
+            vec![Spec::Set {
+                target: Target::new("pool", kind, id),
+                object: raw,
+            }],
+        )
+        .unwrap();
+        commit_prepared(&mut f.model, &f.root, prepared).unwrap();
+        f.model = ProjectResolver::new(&f.root).resolve().unwrap();
+        let before = bytes(&f);
+        let plan = plan_transfer(&f.model, &f.request).unwrap();
+        assert_eq!(
+            plan.ready_count(),
+            0,
+            "same explicit Map must not bypass {kind} drift"
+        );
+        assert!(plan.components.iter().all(|row| {
+            row.reason
+                .as_deref()
+                .is_some_and(|reason| reason.contains("physical definition changed"))
+        }));
+        assert!(prepare_transfer(&f.model, provenance(), &f.request).is_err());
+        assert_eq!(bytes(&f), before);
     }
 }
 

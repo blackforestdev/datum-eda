@@ -33,6 +33,7 @@ fn assign(model: &mut DesignModel, root: &Path, symbol: Uuid, part: Uuid) -> Uui
         model,
         root,
         Action::CreateAssignment {
+            component: None,
             proposal_id: Uuid::new_v4(),
             symbol,
             instance_path: vec![],

@@ -8,6 +8,17 @@ pub use catalog::LibrarySourceSymbol;
 #[path = "library_footprint_acquisition.rs"]
 mod footprint;
 pub use footprint::FootprintAcquisitionPreview;
+#[path = "library_native_part_acquisition.rs"]
+mod native_part;
+pub use native_part::NativePartAcquisitionPreview;
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum AcquisitionSource {
+    KiCadSymbols,
+    BundledSymbols,
+    KiCadFootprints,
+    NativeParts,
+}
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct LibraryAcquisitionPreview {
@@ -17,6 +28,7 @@ pub struct LibraryAcquisitionPreview {
     pub unit: Value,
     pub symbol: Value,
     pub footprint: Option<FootprintAcquisitionPreview>,
+    pub native_part: Option<NativePartAcquisitionPreview>,
     pub notices: Vec<String>,
 }
 
@@ -26,8 +38,7 @@ pub struct LibraryAcquisition {
     pub revision: String,
     pub tip: Option<Uuid>,
     pub path: String,
-    pub bundled: bool,
-    pub footprints: bool,
+    pub source: AcquisitionSource,
     pub include_unavailable: bool,
     pub path_editor: SingleLineEditor,
     pub search: String,
@@ -59,8 +70,7 @@ impl LibraryAcquisition {
             tip,
             path_editor: SingleLineEditor::at_end(&path),
             path,
-            bundled: false,
-            footprints: false,
+            source: AcquisitionSource::KiCadSymbols,
             include_unavailable: false,
             search: String::new(),
             search_editor: SingleLineEditor::default(),
@@ -169,7 +179,7 @@ impl LibraryAcquisition {
             .as_ref()
             .ok_or("Preview a supported library object before importing")?;
         if self.loading
-            || self.selected.as_deref() != Some(preview.name.as_str())
+            || self.selected.as_deref() != Some(preview.selection_key().as_str())
             || self.selected_source.as_ref() != Some(&preview.source_path)
         {
             return Err("Wait for the selected library preview before importing".into());
@@ -177,16 +187,18 @@ impl LibraryAcquisition {
         self.validate_preview_kind(preview)?;
         Ok(
             eda_engine::api::native_write::library_acquisition::LibraryAcquisitionRequest {
-                source_format: if self.footprints {
+                source_format: if self.native_parts() {
+                    "datum_native_part"
+                } else if self.footprints() {
                     "kicad_footprint"
-                } else if self.bundled {
+                } else if self.bundled() {
                     "datum_bundle"
                 } else {
                     "kicad_symbol"
                 }
                 .into(),
                 source_path: preview.source_path.clone(),
-                symbol_name: preview.name.clone(),
+                symbol_name: preview.selection_key(),
                 expected_source_hash: preview.source_digest.clone(),
             },
         )
@@ -200,7 +212,7 @@ mod tests {
     #[test]
     fn bundled_search_finds_resistor_and_hides_refused_symbols_until_requested() {
         let mut acquisition = LibraryAcquisition::begin("rev".into(), None);
-        acquisition.bundled = true;
+        acquisition.source = AcquisitionSource::BundledSymbols;
         acquisition.sources = catalog::bundled().unwrap().symbols;
         acquisition.names = acquisition
             .sources
@@ -261,6 +273,7 @@ mod tests {
         acquisition.selected_source = Some("kicad/Device.kicad_sym".into());
         acquisition.refusal = Some("Previous selection was unavailable".into());
         acquisition.preview = Some(LibraryAcquisitionPreview {
+            native_part: None,
             name: "R".into(),
             source_digest: "hash".into(),
             source_path: "kicad/Device.kicad_sym".into(),
@@ -341,6 +354,7 @@ mod tests {
         acquisition.selected = Some("R".into());
         acquisition.selected_source = Some("/canonical/Device.kicad_sym".into());
         acquisition.preview = Some(LibraryAcquisitionPreview {
+            native_part: None,
             name: "R".into(),
             source_digest: "source-hash".into(),
             source_path: "/canonical/Device.kicad_sym".into(),

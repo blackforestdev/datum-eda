@@ -186,9 +186,13 @@ fn refreshed_library(
     let acquired = acquire_succeeded
         .then(|| {
             let preview = previous.acquisition.as_ref()?.preview.as_ref()?;
-            let (kind, raw) = match &preview.footprint {
-                Some(physical) => ("footprints", &physical.footprint),
-                None => ("symbols", &preview.symbol),
+            let (kind, raw) = if let Some(part) = &preview.native_part {
+                ("parts", &part.part)
+            } else {
+                match &preview.footprint {
+                    Some(physical) => ("footprints", &physical.footprint),
+                    None => ("symbols", &preview.symbol),
+                }
             };
             let id = raw
                 .get("uuid")?

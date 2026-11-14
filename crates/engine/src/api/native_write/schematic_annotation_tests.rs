@@ -85,6 +85,7 @@ pub(crate) fn setup(name: &str) -> (PathBuf, DesignModel, Uuid, Vec<Uuid>, Vec<U
             &mut model,
             &root,
             Action::CreateAssignment {
+                component: None,
                 proposal_id: id,
                 symbol: *symbol,
                 instance_path: vec![],

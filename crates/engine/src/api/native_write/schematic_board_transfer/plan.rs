@@ -83,6 +83,7 @@ pub fn plan_transfer(
             existing_packages: ci.placed_package_refs.clone(),
             status: TransferStatus::Unresolved,
             reason: None,
+            component_choice: false,
         };
         let result = qualify(model, &snapshot, ci, &members, &mut row);
         if let Err(error) = result {
@@ -167,6 +168,7 @@ fn unbound(symbol: &PlacedSymbol) -> TransferComponent {
         existing_packages: Vec::new(),
         status: TransferStatus::Unresolved,
         reason: Some("Symbol needs one explicit authored component binding before transfer".into()),
+        component_choice: false,
     }
 }
 
@@ -244,6 +246,33 @@ fn qualify(
         }
     }
     row.map_options.sort_by_key(|m| m.pin_pad_map);
+    // A complete Part already carries its physical choice. Initial handoff
+    // consumes that authored default; legacy explicit choices retain their scope.
+    if part.default_footprint.is_some() && part.default_pin_pad_map.is_some() {
+        row.component_choice = true;
+        let symbol = symbols
+            .first()
+            .ok_or_else(|| invalid("Component Symbol is unavailable"))?;
+        let gate = symbol
+            .gate
+            .ok_or_else(|| invalid("Component Gate is unavailable"))?;
+        let library = symbol
+            .lib_id
+            .as_deref()
+            .and_then(|id| id.parse().ok())
+            .ok_or_else(|| invalid("Component library Symbol is unavailable"))?;
+        let selected = crate::api::native_write::schematic_library::part_placement::CompletePartSelection::capture(model, part_id, gate, library)?;
+        selected.verify_declared(model, ci.id)?;
+        if row
+            .pin_pad_map
+            .is_some_and(|map| map != selected.pin_pad_map)
+        {
+            return Err(invalid(
+                "The component already declares its physical choice; review a component update before changing its map",
+            ));
+        }
+        row.pin_pad_map = Some(selected.pin_pad_map);
+    }
     let map_id = row
         .pin_pad_map
         .ok_or_else(|| invalid("Choose an explicit Pin/Pad Map and its footprint"))?;

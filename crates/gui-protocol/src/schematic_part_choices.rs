@@ -54,6 +54,13 @@ pub(super) fn append(state: &mut SchematicAuthoring, model: &DesignModel) {
                         continue;
                     }
                 }
+                match eda_engine::api::native_write::schematic_library::part_placement::CompletePartSelection::capture(model, part.uuid, gate.uuid, gate.symbol) {
+                    Ok(component) => {
+                        choice.component = Some(component);
+                        state.components.choices.push(choice.clone());
+                    }
+                    Err(error) => state.components.unavailable.push((choice.name.clone(), error.to_string())),
+                }
                 added.push(choice);
             }
             Ok(())
@@ -69,6 +76,7 @@ pub(super) fn append(state: &mut SchematicAuthoring, model: &DesignModel) {
         })
     });
     state.choices.extend(added);
+    state.components.choices.sort_by(|a, b| a.name.cmp(&b.name));
 }
 
 #[cfg(test)]

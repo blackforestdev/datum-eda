@@ -57,6 +57,12 @@ pub(super) fn render(
         let extra = field_controls::extra(authoring).max(if entries.is_empty() { 0. } else { 34. });
         let width = 480f32.min(layout.top_menu_bar.width - 32.0);
         let row_label = |choice: &datum_gui_protocol::schematic_authoring::LibrarySymbolChoice| {
+            if let Some(component) = &choice.component {
+                return format!(
+                    "{} · {} · {} · {}",
+                    component.value, component.package_name, component.footprint_name, choice.name
+                );
+            }
             format!(
                 "{}{} · {} pins{}",
                 if choice.explicit_part.is_none() && authoring.gate_draft.is_none() {
@@ -84,8 +90,28 @@ pub(super) fn render(
             .max(15.)
                 + 14.
         };
+        let unavailable = if authoring.components.active
+            && authoring.picker_choices().is_empty()
+            && !authoring.components.unavailable.is_empty()
+        {
+            let mut detail = String::from("Correct these component definitions in Library:\n");
+            for (name, reason) in authoring.components.unavailable.iter().take(4) {
+                detail.push_str(&format!("{name}: {reason}\n"));
+            }
+            if authoring.components.unavailable.len() > 4 {
+                detail.push_str(&format!(
+                    "{} more unavailable components in Library.",
+                    authoring.components.unavailable.len() - 4
+                ));
+            }
+            Some(detail)
+        } else {
+            None
+        };
         let list_extra = if compact {
             0.
+        } else if let Some(detail) = &unavailable {
+            (row_height(detail) - 124.).max(0.)
         } else {
             (authoring
                 .picker_choices()
@@ -122,6 +148,8 @@ pub(super) fn render(
                 if editing { "Edit Bus" } else { "Place Bus" }
             } else if editing {
                 "Edit Symbol"
+            } else if authoring.components.active {
+                "Place Component"
             } else {
                 "Place Symbol"
             },
@@ -136,7 +164,11 @@ pub(super) fn render(
         if !compact {
             if authoring.gate_draft.is_none() {
                 button(
-                    "Browse libraries…",
+                    if authoring.components.active {
+                        "Add components…"
+                    } else {
+                        "Browse libraries…"
+                    },
                     HitTarget::SchematicBrowseLibraries,
                     RectPx {
                         x: panel.x + width - 192.,
@@ -150,8 +182,15 @@ pub(super) fn render(
                 );
             }
             if authoring.picker_choices().is_empty() {
+                let message = unavailable.as_deref().unwrap_or_else(|| {
+                    if authoring.components.active {
+                        "No complete components yet. Add from a component library."
+                    } else {
+                        "No project symbols yet. Browse libraries to choose one."
+                    }
+                });
                 draw_text(
-                    "No project symbols yet. Browse libraries to choose one.",
+                    message,
                     panel.x + 16.,
                     y,
                     12.,
@@ -159,6 +198,7 @@ pub(super) fn render(
                     TextFace::Ui,
                     text,
                 );
+                text.last_mut().unwrap().layout_size = Some((width - 36., 124. + list_extra));
             }
             for (index, choice) in authoring
                 .picker_choices()
@@ -276,7 +316,8 @@ pub(super) fn render(
                     && state.ui.active_menu.is_none()
                     && state.ui.focus
                         == datum_gui_protocol::ApplicationFocus::Editor(state.ui.layout.focused),
-                authoring.editing.as_ref().is_none_or(|d| d.text_editable()),
+                authoring.editing.as_ref().is_none_or(|d| d.text_editable())
+                    && !(authoring.components.active && field == PlacementField::Value),
                 row,
                 &mut ControlPainter::new(quads, &mut controls, 1.),
                 text,
@@ -448,7 +489,7 @@ pub(super) fn render(
             authoring.wire || authoring.marker.is_some() || authoring.field_placement().is_some();
         let explicit_label = authoring
             .chosen
-            .and_then(|i| authoring.choices.get(i))
+            .and_then(|i| authoring.picker_choices().get(i))
             .filter(|c| c.explicit_part.is_some())
             .map(|c| c.name.as_str());
         let label_extra = explicit_label.map_or(0., |label| {

@@ -86,6 +86,8 @@ pub enum NativeProposalAction {
         instance_path: Vec<Uuid>,
         part: Uuid,
         gate: Uuid,
+        #[serde(default)]
+        component: Option<super::schematic_library::part_placement::CompletePartSelection>,
     },
     CreateDisposition {
         proposal_id: Uuid,
@@ -346,17 +348,19 @@ pub fn execute(
             instance_path,
             part,
             gate,
+            component,
             ..
         } => {
             let provenance =
                 WriteProvenance::new("datum-gui", CommitSource::Manual, "Assign schematic Part");
-            let mut write = super::schematic_assignment::build(
+            let mut write = super::schematic_assignment::build_configured(
                 model,
                 provenance,
                 *symbol,
                 instance_path,
                 *part,
                 *gate,
+                component.as_ref(),
             )?;
             write.batch.batch_id = id;
             create_draft_proposal_from_batch(

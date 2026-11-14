@@ -11,6 +11,82 @@ use crate::substrate::CommitSource;
 use serde_json::json;
 
 #[test]
+fn complete_assignment_value_history_requires_the_recorded_receipt_and_part_guard() {
+    let (root, model) = crate::api::native_write::schematic_library::part_placement::tests::complete_assignment_history_fixture();
+    let target = model.journal.last().unwrap().clone();
+    assert!(capture(&target, &model.journal).is_some());
+    for case in [
+        "missing_receipt",
+        "forged_batch",
+        "missing_part_guard",
+        "wrong_part_guard",
+        "duplicate_part_guard",
+        "unrecorded_value",
+    ] {
+        let mut tampered = target.clone();
+        if case == "missing_receipt" {
+            tampered
+                .operations
+                .retain(|op| !matches!(op, Operation::SetProposalMetadata { .. }));
+        }
+        let part = target
+            .operations
+            .iter()
+            .find_map(|op| match op {
+                Operation::SetSchematicSymbol { symbol, .. } => Some(symbol["part"].clone()),
+                _ => None,
+            })
+            .unwrap();
+        for op in &mut tampered.operations {
+            match op {
+                Operation::SetSchematicSymbol { symbol, .. } if case == "unrecorded_value" => {
+                    symbol["value"] = json!("Forged value")
+                }
+                Operation::SetProposalMetadata {
+                    previous_proposal,
+                    proposal,
+                    ..
+                } => {
+                    for raw in [previous_proposal, proposal] {
+                        let ops = raw["batch"]["operations"].as_array_mut().unwrap();
+                        if case == "missing_part_guard" {
+                            ops.retain(|op| {
+                                !(op["kind"] == "guard_object_revision" && op["object_id"] == part)
+                            });
+                        } else if case == "duplicate_part_guard" {
+                            let guard = ops
+                                .iter()
+                                .find(|op| {
+                                    op["kind"] == "guard_object_revision" && op["object_id"] == part
+                                })
+                                .unwrap()
+                                .clone();
+                            ops.push(guard);
+                        }
+                        for op in ops {
+                            if case == "wrong_part_guard"
+                                && op["kind"] == "guard_object_revision"
+                                && op["object_id"] == part
+                            {
+                                op["expected_object_revision"] = json!(u64::MAX);
+                            } else if case == "forged_batch" && op["kind"] == "set_schematic_symbol"
+                            {
+                                op["symbol"]["value"] = json!("Forged recorded value");
+                            }
+                        }
+                    }
+                }
+                _ => {}
+            }
+        }
+        let mut prior = model.journal.clone();
+        *prior.last_mut().unwrap() = tampered.clone();
+        assert!(capture(&tampered, &prior).is_none(), "Accepted {case}");
+    }
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
 fn native_assignment_multigate_history_refuses_semantic_and_paired_membership_tampering() {
     let (root, mut model, members, ci, alternate) = setup("assignment-multigate-history-tamper");
     let gate = options(&model, members[0], &[])
@@ -22,6 +98,7 @@ fn native_assignment_multigate_history_refuses_semantic_and_paired_membership_ta
         &mut model,
         &root,
         Action::CreateAssignment {
+            component: None,
             proposal_id: Uuid::new_v4(),
             symbol: members[0],
             instance_path: vec![],
@@ -113,7 +190,10 @@ fn native_assignment_multigate_history_refuses_semantic_and_paired_membership_ta
                 "source preimage accepted {case}"
             );
         } else {
-            assert!(capture(&tampered).is_none(), "classifier accepted {case}");
+            assert!(
+                capture(&tampered, &candidate.journal).is_none(),
+                "classifier accepted {case}"
+            );
         }
     }
     std::fs::remove_dir_all(root).unwrap();

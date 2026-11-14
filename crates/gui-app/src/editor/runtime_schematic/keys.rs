@@ -148,7 +148,11 @@ impl Runtime {
                 if picker
                     && !self.workspace().schematic_authoring.bus
                     && self.workspace().schematic_authoring.gate_draft.is_none()
-                    && self.workspace().schematic_authoring.choices.is_empty() =>
+                    && self
+                        .workspace()
+                        .schematic_authoring
+                        .picker_choices()
+                        .is_empty() =>
             {
                 return self.browse_schematic_libraries();
             }
@@ -169,7 +173,7 @@ impl Runtime {
             }
             Key::Named(NamedKey::Tab) if picker => {
                 let e = &mut self.session.workspace_mut().schematic_authoring;
-                e.field = if e.field == PlacementField::Reference {
+                e.field = if e.field == PlacementField::Reference && !e.components.active {
                     PlacementField::Value
                 } else {
                     PlacementField::Reference

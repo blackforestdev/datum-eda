@@ -105,6 +105,7 @@ fn shared_symbol_rows_keep_four_distinct_part_gate_choices_and_symbol_only_first
         instance_path: vec![],
         library_symbol: state.choices[index].id,
         explicit_part: state.choices[index].explicit_part.clone(),
+        component: None,
         reference: state.reference.clone(),
         value: state.value.clone(),
         x_nm: 0,

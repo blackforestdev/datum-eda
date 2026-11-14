@@ -19,6 +19,7 @@ fn library_body_and_controls_remain_outside_board_clip_after_selection_compositi
     acquisition.loaded = true;
     acquisition.selected = Some("Body preview".into());
     acquisition.preview = Some(LibraryAcquisitionPreview {
+            native_part: None,
         name: "Body preview".into(),
         source_digest: "display-fixture".into(),
         source_path: "display-fixture.kicad_sym".into(),

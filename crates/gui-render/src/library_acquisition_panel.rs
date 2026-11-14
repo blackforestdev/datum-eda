@@ -6,7 +6,7 @@ mod footprint;
 
 pub(super) fn render(p: &mut Painter<'_>) {
     let a = p.state.library.acquisition.as_ref().unwrap();
-    if a.bundled {
+    if a.bundled() {
         p.line("Datum symbol library");
         p.line(if a.placement_pane.is_some() {
             "Search, then Enter or choose a result to place"
@@ -14,12 +14,16 @@ pub(super) fn render(p: &mut Painter<'_>) {
             "Choose a symbol to inspect"
         });
     } else {
-        p.line(if a.footprints {
+        p.line(if a.native_parts() {
+            "Browse reusable native Parts"
+        } else if a.footprints() {
             "Browse KiCad footprints"
         } else {
             "Browse KiCad symbols"
         });
-        p.line(if a.footprints {
+        p.line(if a.native_parts() {
+            "Saved native Datum project folder"
+        } else if a.footprints() {
             "Library folder, .pretty folder or .kicad_mod file"
         } else {
             "Library folder or .kicad_sym file"
@@ -29,11 +33,31 @@ pub(super) fn render(p: &mut Painter<'_>) {
     }
     p.line(&format!("Search {}s (Ctrl+F)", a.object_label()));
     field(p, &a.search, a.search_editor, C::AcquireSearch);
-    if a.placement_pane.is_some() {
+    if a.placement_pane.is_some() && !a.is_native_part() {
         p.button("Project symbols…", C::ProjectSymbols);
     }
     if let Some(preview) = &a.preview {
         p.line(&format!("Selected: {}", preview.name));
+        if let Some(part) = &preview.native_part {
+            p.line(&format!(
+                "{} gates · {} native definitions",
+                part.gate_count, part.object_count
+            ));
+            p.line(&format!(
+                "Package: {} · Footprint: {}",
+                part.package["name"].as_str().unwrap_or("Unavailable"),
+                part.footprint["name"].as_str().unwrap_or("Unavailable")
+            ));
+            p.line("Complete explicit pin/pad map · identical saved definitions reused");
+            match part.mapping_labels() {
+                Ok(rows) => {
+                    for row in rows {
+                        p.line(&row);
+                    }
+                }
+                Err(reason) => p.line(&reason),
+            }
+        }
         if preview
             .notices
             .iter()
@@ -42,9 +66,11 @@ pub(super) fn render(p: &mut Painter<'_>) {
             p.line("Uses this Project's saved symbol.");
         }
         p.button(
-            if a.placement_pane.is_some() {
+            if a.placement_pane.is_some() && a.is_native_part() {
+                "Add component"
+            } else if a.placement_pane.is_some() {
                 "Place symbol"
-            } else if a.bundled {
+            } else if a.bundled() {
                 "Add to Project library"
             } else {
                 "Import into Project pool"
@@ -55,9 +81,48 @@ pub(super) fn render(p: &mut Painter<'_>) {
             x: p.rect.x + 8.,
             y: p.y,
             width: (p.rect.width - 16.).max(0.),
-            height: if a.footprints { 210. } else { 120. },
+            height: if a.native_parts() {
+                300.
+            } else if a.footprints() {
+                210.
+            } else {
+                120.
+            },
         };
-        if let Some(physical) = &preview.footprint {
+        if let Some(part) = &preview.native_part {
+            for (name, unit, symbol) in &part.gate_symbols {
+                p.line(&format!("Gate: {name}"));
+                super::super::library_preview::electrical::symbol(
+                    symbol,
+                    Some(unit),
+                    RectPx {
+                        y: p.y,
+                        height: 120.,
+                        ..rect
+                    },
+                    p.quads,
+                    p.text,
+                );
+                p.y += 125.;
+            }
+            let physical =
+                datum_gui_protocol::library_browser::acquisition::FootprintAcquisitionPreview {
+                    package: part.package.clone(),
+                    footprint: part.footprint.clone(),
+                    padstacks: part.padstacks.clone(),
+                };
+            footprint::render(
+                &physical,
+                RectPx {
+                    y: p.y,
+                    height: 170.,
+                    ..rect
+                },
+                p.quads,
+                p.text,
+            );
+            p.y += 175.;
+        } else if let Some(physical) = &preview.footprint {
             footprint::render(physical, rect, p.quads, p.text);
         } else {
             super::super::library_preview::electrical::symbol(
@@ -68,7 +133,9 @@ pub(super) fn render(p: &mut Painter<'_>) {
                 p.text,
             );
         }
-        p.y += rect.height;
+        if preview.native_part.is_none() {
+            p.y += rect.height;
+        }
     }
     if a.loading {
         p.line("Reading local source…");
@@ -83,7 +150,9 @@ pub(super) fn render(p: &mut Painter<'_>) {
         let results = a.results();
         p.line(&format!("{} matching {}s", results.len(), a.object_label()));
         if results.is_empty() {
-            p.line(if a.footprints {
+            p.line(if a.is_native_part() {
+                "No matching complete Parts. Try a value, manufacturer or part number."
+            } else if a.footprints() {
                 "No matching footprints. Try R_0603, SOT or connector."
             } else {
                 "No matching symbols. Try a name such as resistor or capacitor."
@@ -103,9 +172,13 @@ pub(super) fn render(p: &mut Painter<'_>) {
             p.button("Next results", C::AcquirePage(true));
         }
     }
-    if a.bundled {
+    if a.bundled() || a.is_native_part() {
         p.button(
-            if a.include_unavailable {
+            if a.is_native_part() && a.include_unavailable {
+                "Hide unavailable Parts"
+            } else if a.is_native_part() {
+                "Show unavailable Parts"
+            } else if a.include_unavailable {
                 "Hide unavailable symbols"
             } else {
                 "Show unavailable symbols"
@@ -114,7 +187,7 @@ pub(super) fn render(p: &mut Painter<'_>) {
         );
     }
     if !a.catalog_notices.is_empty() {
-        if !a.bundled {
+        if !a.bundled() && !a.is_native_part() {
             p.line(&format!(
                 "{} source files could not be read",
                 a.catalog_notices.len()
@@ -164,12 +237,12 @@ pub(super) fn field(
 
 pub(super) fn inspector(p: &mut Painter<'_>) {
     let a = p.state.library.acquisition.as_ref().unwrap();
-    p.line(if a.bundled {
+    p.line(if a.bundled() {
         "Shipped symbol · preview only"
     } else {
         "Local source acquisition · preview only"
     });
-    if !a.bundled {
+    if !a.bundled() {
         p.line(&a.path);
     }
     p.line("Checks: unchecked · approval: unavailable");

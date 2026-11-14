@@ -1,6 +1,103 @@
 //! Recorded Part assignment family, including complete same-sheet shared owners.
 use super::*;
-pub(super) fn capture(target: &TransactionRecord) -> Option<(BTreeSet<Uuid>, Uuid)> {
+fn symbol_image(ops: &[Operation], sheet: Uuid, symbol: Uuid) -> Option<&Value> {
+    let rows: Vec<_> = ops
+        .iter()
+        .filter_map(|op| match op {
+            Operation::SetSchematicSymbol {
+                sheet_id,
+                symbol_id,
+                symbol: raw,
+            } if *sheet_id == sheet && *symbol_id == symbol => Some(raw),
+            _ => None,
+        })
+        .collect();
+    match rows.as_slice() {
+        [raw] => Some(*raw),
+        _ => None,
+    }
+}
+
+/// Only the exact value images from a guarded, applied component assignment
+/// can extend the legacy family. Canonical compensation resolves its normal
+/// origin first; it never turns an arbitrary value edit into an assignment.
+fn recorded_value_change(
+    target: &TransactionRecord,
+    prior: &[TransactionRecord],
+    sheet: Uuid,
+    symbol: Uuid,
+    forward: &Value,
+    inverse: &Value,
+) -> Option<()> {
+    use crate::substrate::{TransactionKind, component_instance};
+    let origin = component_instance::assignment_origin(target, prior)?;
+    let receipt = component_instance::assignment_receipt(origin, symbol).ok()?;
+    let after = symbol_image(&origin.operations, sheet, symbol)?;
+    let before = symbol_image(&origin.inverse_operations, sheet, symbol)?;
+    let pair_matches = if target.transaction_kind == TransactionKind::Undo {
+        forward == before && inverse == after
+    } else {
+        forward == after && inverse == before
+    };
+    if !pair_matches || !after["value"].is_string() || !before["value"].is_string() {
+        return None;
+    }
+    let part: Uuid = serde_json::from_value(after["part"].clone()).ok()?;
+    let revisions: Vec<_> = receipt
+        .batch
+        .operations
+        .iter()
+        .filter_map(|op| match op {
+            Operation::GuardObjectRevision {
+                object_id,
+                expected_object_revision,
+            } if *object_id == part => Some(expected_object_revision.0),
+            _ => None,
+        })
+        .collect();
+    let [revision] = revisions.as_slice() else {
+        return None;
+    };
+    let owners: Vec<_> = origin
+        .operations
+        .iter()
+        .filter_map(|op| match op {
+            Operation::CreateComponentInstance {
+                component_instance, ..
+            }
+            | Operation::SetComponentInstance {
+                component_instance, ..
+            } => Some(component_instance),
+            _ => None,
+        })
+        .collect();
+    let [owner] = owners.as_slice() else {
+        return None;
+    };
+    if owner["part_ref"]["object_id"] != serde_json::json!(part)
+        || owner["part_ref"]["object_revision"] != serde_json::json!(revision)
+    {
+        return None;
+    }
+    let bindings: Vec<_> = owner["library_bindings"]
+        .as_object()?
+        .values()
+        .filter(|binding| binding["binding_role"] == "part")
+        .collect();
+    let [binding] = bindings.as_slice() else {
+        return None;
+    };
+    if binding["target_object_id"] != serde_json::json!(part)
+        || binding["pinned_object_revision"] != serde_json::json!(revision)
+    {
+        return None;
+    }
+    Some(())
+}
+pub(super) fn capture(
+    target: &TransactionRecord,
+    prior: &[TransactionRecord],
+) -> Option<(BTreeSet<Uuid>, Uuid)> {
     let ops = &target.inverse_operations;
     let shared = ops
         .iter()
@@ -49,6 +146,10 @@ pub(super) fn capture(target: &TransactionRecord) -> Option<(BTreeSet<Uuid>, Uui
                     } else {
                         allowed.as_object_mut()?.remove(*key);
                     }
+                }
+                if allowed["value"] != next["value"] {
+                    recorded_value_change(target, prior, *sheet_id, *symbol_id, previous, next)?;
+                    allowed["value"] = next["value"].clone();
                 }
                 if allowed != *next {
                     return None;

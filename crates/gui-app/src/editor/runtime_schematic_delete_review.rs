@@ -81,7 +81,23 @@ impl Runtime {
         if self.handle_field_table_key(event) {
             return true;
         }
-        match review_decision(&event.logical_key, self.modifiers) {
+        self.handle_schematic_review_input(&event.logical_key, event.state)
+    }
+    /// Window dispatch keeps field-table priority before this logical-key route.
+    pub(crate) fn handle_schematic_review_input(
+        &mut self,
+        key: &winit::keyboard::Key,
+        state: ElementState,
+    ) -> bool {
+        if state != ElementState::Pressed
+            || self.workspace().schematic_authoring.delete_review.is_none()
+        {
+            return false;
+        }
+        if self.native_edit.pending() {
+            return true;
+        }
+        match review_decision(key, self.modifiers) {
             Some(accept) => self.confirm_delete_review(accept),
             None => true,
         }

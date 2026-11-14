@@ -72,6 +72,22 @@ impl Runtime {
                         .components
                         .get(index)
                         .context("Component row unavailable")?;
+                    anyhow::ensure!(
+                        !row.component_choice,
+                        "The component already declares its physical choice; review a component update to change it"
+                    );
+                    anyhow::ensure!(
+                        self.ensure_selection_authority()?,
+                        "Native source unavailable"
+                    );
+                    let current = &self.native_selection.as_ref().unwrap().model;
+                    anyhow::ensure!(
+                        current.project.project_id == review.plan.project_id
+                            && current.model_revision == review.plan.expected_model_revision
+                            && eda_engine::revision::transaction_tip(&current.journal)
+                                == review.plan.expected_tip,
+                        "Design changed; reopen the component transfer review before choosing a map"
+                    );
                     let ci = row
                         .component_instance
                         .context("Component identity unresolved")?;

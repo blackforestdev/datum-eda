@@ -21,6 +21,7 @@ fn native_assignment_history_rejects_semantic_and_epoch_tampering() {
         proposal::execute(&mut model, &request).unwrap()
     };
     act(Action::CreateAssignment {
+        component: None,
         proposal_id,
         symbol,
         instance_path: vec![],
@@ -85,6 +86,7 @@ fn native_bound_fields_history_rejects_unrecorded_semantics() {
     let id = Uuid::new_v4();
     for action in [
         Action::CreateAssignment {
+            component: None,
             proposal_id: id,
             symbol,
             instance_path: vec![],

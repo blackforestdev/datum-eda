@@ -86,7 +86,7 @@ fn repin(raw: &mut Value, pins: &std::collections::BTreeMap<Uuid, u64>) -> Optio
     Some(())
 }
 fn normalized(target: &TransactionRecord, prior: &[TransactionRecord]) -> Option<Vec<Operation>> {
-    let members = family::capture(target)?;
+    let members = family::capture(target, prior)?;
     let index = prior
         .iter()
         .position(|tx| tx.transaction_id == target.transaction_id)?;
@@ -157,7 +157,7 @@ pub(super) fn prepare(
     if deletion::prepare(model, target, batch)? {
         return Ok(true);
     }
-    let Some(members) = family::capture(target) else {
+    let Some(members) = family::capture(target, &model.journal) else {
         return Ok(false);
     };
     if !super::journal_history::current_target(&model.journal, target)

@@ -22,6 +22,8 @@ mod footprint;
 #[cfg(test)]
 #[path = "library_acquisition_footprint_tests.rs"]
 mod footprint_tests;
+#[path = "library_acquisition_native_part.rs"]
+pub mod native_part;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -56,6 +58,9 @@ pub fn build_acquisition(
     provenance: WriteProvenance,
     request: LibraryAcquisitionRequest,
 ) -> Result<PreparedWrite, EngineError> {
+    if request.source_format == "datum_native_part" {
+        return native_part::build(context, provenance, request);
+    }
     if request.source_format == "kicad_footprint" {
         return footprint::build(context, provenance, request);
     }

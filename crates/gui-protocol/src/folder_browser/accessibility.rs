@@ -75,6 +75,15 @@ impl FolderBrowserState {
             );
             let selected = self.selected.and_then(|i| self.entries.get(i));
             add(
+                "show-hidden",
+                "Show hidden files",
+                Role::CheckBox,
+                Some(self.show_hidden.to_string()),
+                self.naming.is_none() && self.menu.is_none(),
+                Some(ShowHidden),
+                "Show files and folders whose names start with a dot. Hidden by default; explicit Location paths remain usable.",
+            );
+            add(
                 "folders",
                 &self
                     .suggestions

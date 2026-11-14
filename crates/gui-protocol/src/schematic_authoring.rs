@@ -11,6 +11,9 @@ use uuid::Uuid;
 #[path = "schematic_part_choices.rs"]
 mod part_choices;
 pub use eda_engine::api::native_write::schematic_library::part_placement::PartGateSelection;
+#[path = "schematic_component_placement.rs"]
+mod component_placement;
+pub use component_placement::ComponentPlacement;
 #[path = "schematic_named_point.rs"]
 mod named_point;
 #[path = "schematic_selection_edit.rs"]
@@ -58,6 +61,9 @@ pub mod project_annotation;
 pub struct LibrarySymbolChoice {
     pub id: Uuid,
     pub explicit_part: Option<PartGateSelection>,
+    pub component: Option<
+        eda_engine::api::native_write::schematic_library::part_placement::CompletePartSelection,
+    >,
     pub name: String,
     pub prefix: String,
     pub value: String,
@@ -183,6 +189,7 @@ pub struct SchematicAuthoring {
     /// Legacy unbound sources keep the ordinary current-source display basis.
     pub placed_symbol_definitions: std::collections::BTreeMap<Uuid, Result<Option<Symbol>, String>>,
     pub choices: Vec<LibrarySymbolChoice>,
+    pub components: ComponentPlacement,
     pub chosen: Option<usize>,
     pub choice_offset: usize,
     pub picker: bool,
@@ -357,6 +364,7 @@ impl SchematicAuthoring {
                 Ok(LibrarySymbolChoice {
                     id: symbol.uuid,
                     explicit_part: None,
+                    component: None,
                     name: symbol.name.clone(),
                     value: symbol.name.clone(),
                     symbol: symbol.clone(),
@@ -418,15 +426,22 @@ impl SchematicAuthoring {
         Ok(state)
     }
     pub fn picker_choices(&self) -> &[LibrarySymbolChoice] {
-        self.gate_draft
-            .as_ref()
-            .map_or(&self.choices, |draft| &draft.choices)
+        self.gate_draft.as_ref().map_or_else(
+            || {
+                if self.components.active {
+                    self.components.choices.as_slice()
+                } else {
+                    &self.choices
+                }
+            },
+            |draft| &draft.choices,
+        )
     }
     pub fn select(&mut self, index: usize) -> bool {
         if self.gate_draft.is_some() {
             return false;
         }
-        let Some(choice) = self.choices.get(index) else {
+        let Some(choice) = self.picker_choices().get(index).cloned() else {
             return false;
         };
         if let Some(refusal) = &choice.refusal {

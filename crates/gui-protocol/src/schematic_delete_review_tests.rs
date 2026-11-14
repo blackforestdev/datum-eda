@@ -413,6 +413,7 @@ fn part_assignment_review_keeps_named_choices_source_and_component_identity_thro
         ..first.clone()
     };
     let mut evidence = AssignmentEvidence {
+        components: Default::default(),
         target: Id {
             id: original.uuid,
             class: Class::Symbol,
@@ -580,6 +581,7 @@ fn part_assignment_noop_requires_existing_component_and_stale_preview_never_stag
     original.entity = Some(choice.entity);
     original.gate = Some(choice.gate);
     let mut evidence = AssignmentEvidence {
+        components: Default::default(),
         target: Id {
             id: original.uuid,
             class: Class::Symbol,

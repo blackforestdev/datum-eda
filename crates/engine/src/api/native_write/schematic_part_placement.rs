@@ -9,6 +9,9 @@ use crate::{
 };
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
+#[path = "schematic_component_choice.rs"]
+mod physical;
+pub use physical::CompletePartSelection;
 
 /// Captured source intent, never an inferred preferred Part or gate.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -123,4 +126,4 @@ impl PartGateSelection {
 
 #[cfg(test)]
 #[path = "schematic_part_placement_tests.rs"]
-mod tests;
+pub(crate) mod tests;

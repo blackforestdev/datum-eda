@@ -13,6 +13,7 @@ fn component_instance_final_replay_keeps_current_and_excludes_stale_references()
         let id = Uuid::new_v4();
         for action in [
             NativeProposalAction::CreateAssignment {
+                component: None,
                 proposal_id: id,
                 symbol,
                 instance_path: vec![],

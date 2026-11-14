@@ -28,6 +28,7 @@ pub(crate) fn setup(name: &str) -> (PathBuf, DesignModel, Uuid, Uuid, Uuid, Uuid
         &mut model,
         &root,
         NativeProposalAction::CreateAssignment {
+            component: None,
             proposal_id: Uuid::new_v4(),
             symbol,
             instance_path: vec![],

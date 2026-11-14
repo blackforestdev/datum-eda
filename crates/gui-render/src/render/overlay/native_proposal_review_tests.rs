@@ -399,6 +399,7 @@ fn part_assignment_inline_review_names_binding_without_deleting_symbol_geometry(
     let review = state.schematic_authoring.delete_review.as_mut().unwrap();
     review.targets.clear();
     review.assignment = Some(AssignmentEvidence {
+        components: Default::default(),
         target: datum_gui_protocol::AuthoredSelectionIdentity {
             id: symbol,
             class: datum_gui_protocol::AuthoredSelectionClass::Symbol,

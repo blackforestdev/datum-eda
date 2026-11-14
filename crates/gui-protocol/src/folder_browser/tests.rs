@@ -251,3 +251,36 @@ fn folder_browser_compact_and_stale_listings_use_current_typed_location() {
     );
     assert!(folder_navigation_focus_order(true).contains(&FolderBrowserFocus::Folders));
 }
+
+#[test]
+fn shared_hidden_checkbox_defaults_off_and_has_keyboard_order_and_accessible_state() {
+    for mode in [FolderBrowserMode::New, FolderBrowserMode::Open] {
+        let mut state = ready(mode);
+        assert!(!state.show_hidden);
+        let order = folder_navigation_focus_order(true);
+        assert!(order.windows(3).any(|w| w
+            == [
+                FolderBrowserFocus::Home,
+                FolderBrowserFocus::ShowHidden,
+                FolderBrowserFocus::Folders
+            ]));
+        for checked in [false, true] {
+            state.show_hidden = checked;
+            let nodes = state.accessibility_nodes(Some(FolderBrowserFocus::ShowHidden), None, true);
+            let check = nodes
+                .iter()
+                .find(|n| n.id == "folder-navigation-show-hidden")
+                .unwrap();
+            assert_eq!(check.role, crate::GlobalPreferencesAccessibleRole::CheckBox);
+            assert_eq!(check.value, Some(checked.to_string()));
+            assert!(check.focused && check.available);
+        }
+        state.expanded = false;
+        assert!(
+            !state
+                .accessibility_nodes(None, None, true)
+                .iter()
+                .any(|n| n.id == "folder-navigation-show-hidden")
+        );
+    }
+}

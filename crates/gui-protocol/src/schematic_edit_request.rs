@@ -88,6 +88,10 @@ pub enum SchematicEditRequest {
         library_symbol: Uuid,
         #[serde(default)]
         explicit_part: Option<PartGateSelection>,
+        #[serde(default)]
+        component: Option<
+            eda_engine::api::native_write::schematic_library::part_placement::CompletePartSelection,
+        >,
         reference: String,
         value: String,
         x_nm: i64,
@@ -279,6 +283,7 @@ impl SchematicEditRequest {
                 instance_path,
                 library_symbol,
                 explicit_part,
+                component,
                 reference,
                 value,
                 x_nm,
@@ -287,7 +292,7 @@ impl SchematicEditRequest {
                 mirrored,
             } => (
                 "datum.schematic.place_symbol",
-                serde_json::json!({"sheet":sheet,"instance_path":instance_path,"library_symbol":library_symbol,"explicit_part":explicit_part,"reference":reference,"value":value,"x_nm":x_nm,"y_nm":y_nm,"rotation_deg":rotation_deg,"mirrored":mirrored}),
+                serde_json::json!({"sheet":sheet,"instance_path":instance_path,"library_symbol":library_symbol,"explicit_part":explicit_part,"component":component,"reference":reference,"value":value,"x_nm":x_nm,"y_nm":y_nm,"rotation_deg":rotation_deg,"mirrored":mirrored}),
             ),
             Self::DrawWire {
                 sheet,

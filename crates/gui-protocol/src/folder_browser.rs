@@ -33,6 +33,7 @@ impl FolderBrowserMode {
 pub enum FolderBrowserFocus {
     Up,
     Home,
+    ShowHidden,
     Path,
     Browse,
     Folders,
@@ -46,6 +47,7 @@ pub enum FolderBrowserFocus {
 pub struct FolderBrowserState {
     pub mode: FolderBrowserMode,
     pub expanded: bool,
+    pub show_hidden: bool,
     pub path_input: String,
     pub directory: String,
     pub suggestions: Option<FolderSuggestions>,
@@ -79,6 +81,7 @@ impl FolderBrowserState {
         Self {
             mode,
             expanded: false,
+            show_hidden: false,
             path_input: directory,
             directory: String::new(),
             suggestions: None,
@@ -199,7 +202,7 @@ pub fn folder_navigation_focus_order(expanded: bool) -> Vec<FolderBrowserFocus> 
     use FolderBrowserFocus::*;
     let mut order = vec![Path, Browse];
     if expanded {
-        order.extend([Up, Home, Folders]);
+        order.extend([Up, Home, ShowHidden, Folders]);
     }
     order.push(Preview);
     order

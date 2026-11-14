@@ -47,6 +47,7 @@ fn setup(name: &str) -> (PathBuf, DesignModel, Uuid, Uuid, Uuid) {
     let mut ci = None;
     for action in [
         Action::CreateAssignment {
+            component: None,
             proposal_id,
             symbol,
             instance_path: vec![],

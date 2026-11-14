@@ -66,14 +66,15 @@ impl FootprintAcquisitionPreview {
 impl LibraryAcquisition {
     pub fn use_footprint_source(&mut self) {
         self.source_changed();
-        self.bundled = false;
-        self.footprints = true;
+        self.source = crate::library_browser::acquisition::AcquisitionSource::KiCadFootprints;
         self.path = "/usr/share/kicad/footprints".into();
         self.path_editor = SingleLineEditor::at_end(&self.path);
     }
 
     pub fn object_label(&self) -> &'static str {
-        if self.footprints {
+        if self.native_parts() {
+            "Part"
+        } else if self.footprints() {
             "footprint"
         } else {
             "symbol"
@@ -84,8 +85,20 @@ impl LibraryAcquisition {
         &self,
         preview: &LibraryAcquisitionPreview,
     ) -> Result<(), String> {
-        if self.footprints != preview.footprint.is_some()
-            || (self.footprints && (self.bundled || self.placement_pane.is_some()))
+        if self.native_parts() {
+            return if preview.native_part.is_some() && preview.footprint.is_none() {
+                Ok(())
+            } else {
+                Err("Native Part preview belongs to a different acquisition workflow".into())
+            };
+        }
+        if preview.native_part.is_some() {
+            return Err(
+                "Native Part preview cannot be acquired as a bare symbol or footprint".into(),
+            );
+        }
+        if self.footprints() != preview.footprint.is_some()
+            || (self.footprints() && (self.bundled() || self.placement_pane.is_some()))
         {
             return Err("Library preview belongs to a different acquisition workflow".into());
         }
@@ -104,6 +117,7 @@ mod tests {
         acquisition.selected = Some("R_0603".into());
         acquisition.selected_source = Some("/library/R_0603.kicad_mod".into());
         acquisition.preview = Some(LibraryAcquisitionPreview {
+            native_part: None,
             name: "R_0603".into(),
             source_digest: "hash".into(),
             source_path: "/library/R_0603.kicad_mod".into(),
@@ -122,7 +136,7 @@ mod tests {
         acquisition.placement_pane = Some(crate::PaneId(1));
         assert!(acquisition.request().is_err());
         acquisition.placement_pane = None;
-        acquisition.footprints = false;
+        acquisition.source = crate::library_browser::acquisition::AcquisitionSource::KiCadSymbols;
         assert!(acquisition.request().is_err());
     }
 }

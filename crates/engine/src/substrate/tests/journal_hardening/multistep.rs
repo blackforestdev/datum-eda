@@ -72,6 +72,7 @@ fn journal_multistep_assigned_fields_pose_reopen_and_branch() {
     let mut ci = None;
     for action in [
         Action::CreateAssignment {
+            component: None,
             proposal_id,
             symbol,
             instance_path: vec![],

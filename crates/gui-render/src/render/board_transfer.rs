@@ -92,17 +92,25 @@ pub(super) fn render(
         let selected = row
             .pin_pad_map
             .and_then(|id| row.map_options.iter().find(|o| o.pin_pad_map == id));
-        let label = selected.map_or_else(
-            || "Choose footprint / pin-pad map…".to_string(),
-            |o| format!("Footprint: {} — click to cycle maps", o.footprint_name),
-        );
+        let label = if row.component_choice {
+            selected.map_or_else(
+                || "Component definition requires review".into(),
+                |o| format!("Footprint: {} · from component", o.footprint_name),
+            )
+        } else {
+            selected.map_or_else(
+                || "Choose footprint / pin-pad map…".to_string(),
+                |o| format!("Footprint: {} — click to cycle maps", o.footprint_name),
+            )
+        };
         let rect = RectPx {
             x,
             y,
             width,
             height: 25.0,
         };
-        let available = row.component_instance.is_some()
+        let available = !row.component_choice
+            && row.component_instance.is_some()
             && row.existing_packages.is_empty()
             && !row.map_options.is_empty();
         button(&label, rect, false, available, &mut painter, text);

@@ -116,6 +116,7 @@ fn act(model: &mut DesignModel, root: &Path, action: Action) -> proposal::Native
 }
 fn create(symbol: Uuid, part: Uuid) -> Action {
     Action::CreateAssignment {
+        component: None,
         proposal_id: Uuid::new_v4(),
         symbol,
         instance_path: vec![],

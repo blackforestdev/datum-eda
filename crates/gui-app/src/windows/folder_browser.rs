@@ -25,6 +25,7 @@ pub(super) struct FolderBrowser {
     pub state: Option<FolderBrowserState>,
     scanner: Option<scan::Scanner>,
     pending: Option<u64>,
+    assisted: bool,
     last_refusal: Option<String>,
     last_announced_destination: Option<String>,
     last_suggestion_announcement: Option<String>,
@@ -51,6 +52,7 @@ pub(crate) struct BrowserPresentation {
     parent: Option<(u64, u64)>,
     entries: Vec<datum_gui_protocol::BrowserEntry>,
     expanded: bool,
+    show_hidden: bool,
     ready: bool,
     suggestions: Option<datum_gui_protocol::FolderSuggestions>,
     menu: Option<(
@@ -66,6 +68,7 @@ impl FolderBrowser {
             state: None,
             scanner: None,
             pending: None,
+            assisted: false,
             last_click: None,
             last_refusal: None,
             last_announced_destination: None,
@@ -91,6 +94,7 @@ impl FolderBrowser {
             scanner.cancel();
         }
         self.pending = None;
+        self.assisted = false;
         self.last_click = None;
         self.last_refusal = None;
         self.last_announced_destination = None;
@@ -110,6 +114,7 @@ impl Runtime {
             parent: state.parent_identity,
             entries: state.entries.clone(),
             expanded: state.expanded,
+            show_hidden: state.show_hidden,
             ready: state.listing_ready(),
             suggestions: state.suggestions.clone(),
             menu: state

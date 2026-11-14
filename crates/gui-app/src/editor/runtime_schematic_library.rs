@@ -9,6 +9,7 @@ pub(crate) struct PlacementOrigin {
     document: SchematicDocumentKey,
     zoom: Option<PaneId>,
     temporary_library: Option<PaneId>,
+    component: bool,
 }
 
 fn origin_is_current(
@@ -50,6 +51,9 @@ impl Runtime {
         else {
             return;
         };
+        if a.is_native_part() {
+            return;
+        }
         let Some(preview) = &a.preview else { return };
         let Some(symbol_id) = preview
             .symbol
@@ -124,7 +128,16 @@ impl Runtime {
             return true;
         }
         let zoom = self.workspace().ui.layout.zoomed;
-        self.activate_library(LibraryControl::BrowseBundled);
+        if self.workspace().schematic_authoring.components.active {
+            let index = datum_gui_protocol::library_browser::KINDS
+                .iter()
+                .position(|(kind, _)| *kind == "parts")
+                .unwrap();
+            self.activate_library(LibraryControl::Kind(index));
+            self.activate_library(LibraryControl::Acquire);
+        } else {
+            self.activate_library(LibraryControl::BrowseBundled);
+        }
         let Some(acquisition) = &mut self.session.workspace_mut().library.acquisition else {
             return true;
         };
@@ -165,6 +178,7 @@ impl Runtime {
             document: acquisition.placement_document.clone()?,
             zoom: acquisition.placement_zoom,
             temporary_library: acquisition.placement_temporary_pane,
+            component: acquisition.is_native_part(),
         })
     }
 
@@ -182,13 +196,17 @@ impl Runtime {
             if acquisition.loading || acquisition.request().is_err() {
                 return Err("Preview a supported symbol before using it");
             }
-            let id = acquisition
-                .preview
-                .as_ref()
-                .and_then(|p| p.symbol.get("uuid"))
-                .and_then(serde_json::Value::as_str)
-                .and_then(|s| s.parse().ok())
-                .ok_or("Selected symbol identity unavailable")?;
+            let id = if origin.component {
+                acquisition.selected_native_part()
+            } else {
+                acquisition
+                    .preview
+                    .as_ref()
+                    .and_then(|p| p.symbol.get("uuid"))
+                    .and_then(serde_json::Value::as_str)
+                    .and_then(|s| s.parse().ok())
+            }
+            .ok_or("Selected component or symbol identity unavailable")?;
             Ok((origin, id))
         })();
         let (origin, id) = match result {
@@ -201,12 +219,13 @@ impl Runtime {
                 return true;
             }
         };
-        if self
-            .workspace()
-            .schematic_authoring
-            .choices
-            .iter()
-            .any(|c| c.id == id)
+        if !origin.component
+            && self
+                .workspace()
+                .schematic_authoring
+                .choices
+                .iter()
+                .any(|c| c.id == id)
         {
             self.session.workspace_mut().library.acquisition = None;
             self.library_acquisition_work.cancel();
@@ -263,18 +282,44 @@ impl Runtime {
         {
             let editor = &mut self.session.workspace_mut().schematic_authoring;
             editor.chosen = None;
-            if let Some(index) = editor
-                .choices
-                .iter()
-                .position(|c| c.id == id && c.explicit_part.is_none())
-            {
+            if origin.component {
+                editor.begin_component_placement();
+                editor.chosen = None;
+            }
+            if let Some(index) = editor.picker_choices().iter().position(|c| {
+                if origin.component {
+                    c.component.as_ref().is_some_and(|c| c.part.part == id)
+                } else {
+                    c.id == id && c.explicit_part.is_none()
+                }
+            }) {
                 editor.select(index);
                 editor.choice_offset = (index / 4) * 4;
             } else {
-                editor.refusal = Some("The selected symbol is unavailable in this Project".into());
+                editor.refusal = Some(
+                    "The selected complete component or symbol is unavailable in this Project"
+                        .into(),
+                );
             }
         }
-        self.start_symbol_preview();
+        let editor = &self.workspace().schematic_authoring;
+        let gate_count = if origin.component {
+            editor
+                .picker_choices()
+                .iter()
+                .filter(|choice| {
+                    choice
+                        .component
+                        .as_ref()
+                        .is_some_and(|component| component.part.part == id)
+                })
+                .count()
+        } else {
+            1
+        };
+        if editor.chosen.is_some() && gate_count == 1 {
+            self.start_symbol_preview();
+        }
         self.invalidate_frame();
     }
 }
@@ -297,6 +342,7 @@ mod tests {
         state.schematic_documents.project = Some(key.project);
         state.schematic_documents.panes.insert(pane, key.clone());
         let origin = PlacementOrigin {
+            component: false,
             pane,
             document: key.clone(),
             zoom: None,
@@ -340,6 +386,7 @@ mod tests {
             true,
         );
         let mut origin = PlacementOrigin {
+            component: false,
             pane,
             document: SchematicDocumentKey {
                 project: eda_engine::substrate::ObjectId::new_v4(),

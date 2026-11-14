@@ -196,6 +196,7 @@ fn native_gate_preserves_partial_singleton_edit_delete_assignment_history() {
         &mut model,
         &root,
         Action::CreateAssignment {
+            component: None,
             proposal_id: Uuid::new_v4(),
             symbol: first,
             instance_path: vec![],

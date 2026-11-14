@@ -167,6 +167,8 @@ struct PlaceParams {
     library_symbol: Uuid,
     #[serde(default)]
     explicit_part: Option<super::schematic_library::part_placement::PartGateSelection>,
+    #[serde(default)]
+    component: Option<super::schematic_library::part_placement::CompletePartSelection>,
     reference: String,
     value: String,
     x_nm: i64,
@@ -208,9 +210,28 @@ fn place_symbol(
         ));
     }
     let id = params.library_symbol.to_string();
-    let resolved = match &params.explicit_part {
-        Some(intent) => Some(intent.resolve(context.model, params.library_symbol)?),
-        None => resolve_pool_symbol_component_binding(context.model, Some(&id))?.binding,
+    let resolved = match (&params.component, &params.explicit_part) {
+        (Some(component), intent) => {
+            component.verify(context.model)?;
+            if component.part.symbol != params.library_symbol
+                || component.value != params.value
+                || intent
+                    .as_ref()
+                    .is_some_and(|intent| intent != &component.part)
+            {
+                return Err(EngineError::Validation(
+                    "Component value, Symbol or Part changed; choose the complete component again"
+                        .into(),
+                ));
+            }
+            Some(
+                component
+                    .part
+                    .resolve(context.model, params.library_symbol)?,
+            )
+        }
+        (None, Some(intent)) => Some(intent.resolve(context.model, params.library_symbol)?),
+        (None, None) => resolve_pool_symbol_component_binding(context.model, Some(&id))?.binding,
     };
     let binding = resolved.as_ref();
     let part_binding = binding
@@ -263,6 +284,9 @@ fn place_symbol(
     )?;
     if let Some(intent) = &params.explicit_part {
         intent.guard(&mut prepared);
+    }
+    if let Some(component) = &params.component {
+        component.guard(&mut prepared);
     }
     prepare_native_birth(context.model, prepared)
 }

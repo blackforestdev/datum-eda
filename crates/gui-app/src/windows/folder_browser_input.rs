@@ -42,13 +42,18 @@ impl Runtime {
                 }
             }
             HitTarget::FolderBrowser(focus) => {
-                if matches!(focus, Focus::Up | Focus::Home | Focus::Folders)
-                    && !self.folder_browser.state.as_ref().unwrap().expanded
+                if matches!(
+                    focus,
+                    Focus::Up | Focus::Home | Focus::ShowHidden | Focus::Folders
+                ) && !self.folder_browser.state.as_ref().unwrap().expanded
                 {
                     return false;
                 }
                 self.set_folder_navigation_focus(*focus);
-                if matches!(focus, Focus::Up | Focus::Home | Focus::Browse) {
+                if matches!(
+                    focus,
+                    Focus::Up | Focus::Home | Focus::ShowHidden | Focus::Browse
+                ) {
                     self.activate_folder_browser_focus(*focus);
                 }
             }
@@ -67,6 +72,24 @@ impl Runtime {
         let Some(state) = self.folder_browser.state.as_ref() else {
             return;
         };
+        if focus == Focus::ShowHidden {
+            let state = self.folder_browser.state.as_mut().unwrap();
+            if !state.expanded || state.menu.is_some() || state.naming.is_some() {
+                return;
+            }
+            state.show_hidden = !state.show_hidden;
+            let assisted = self.folder_browser.assisted;
+            let path = entered_path(&state.path_input);
+            self.folder_browser.qualification = None;
+            match path {
+                Ok(path) => self.read_folder_request(path, false, assisted),
+                Err(error) => {
+                    self.folder_browser.invalidate_listing();
+                    self.folder_browser.state.as_mut().unwrap().error = Some(error);
+                }
+            }
+            return;
+        }
         if focus == Focus::Browse {
             let state = self.folder_browser.state.as_mut().unwrap();
             state.expanded = true;
@@ -104,6 +127,7 @@ impl Runtime {
                 path
             }
             Focus::Preview
+            | Focus::ShowHidden
             | Focus::Browse
             | Focus::NameEditor
             | Focus::NameCancel
@@ -147,14 +171,21 @@ impl Runtime {
             return false;
         };
         let state = self.folder_browser.state.as_mut().unwrap();
-        if matches!(focus, Focus::Up | Focus::Home | Focus::Folders) && !state.expanded {
+        if matches!(
+            focus,
+            Focus::Up | Focus::Home | Focus::ShowHidden | Focus::Folders
+        ) && !state.expanded
+        {
             return false;
         }
         match &event.logical_key {
             Key::Named(NamedKey::Tab | NamedKey::Escape) => return false,
             Key::Named(NamedKey::Enter) => self.activate_folder_browser_focus(focus),
             Key::Named(NamedKey::Space)
-                if matches!(focus, Focus::Up | Focus::Home | Focus::Browse) =>
+                if matches!(
+                    focus,
+                    Focus::Up | Focus::Home | Focus::ShowHidden | Focus::Browse
+                ) =>
             {
                 self.activate_folder_browser_focus(focus)
             }

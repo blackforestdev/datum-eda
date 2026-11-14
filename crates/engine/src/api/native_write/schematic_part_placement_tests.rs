@@ -1,4 +1,8 @@
 //! Real canonical library graph with multiple Parts and shared-Symbol gates.
+#[path = "schematic_component_choice_tests.rs"]
+mod complete_component;
+#[path = "../../substrate/component_instance/part_physical_source_tests.rs"]
+mod physical_history;
 use super::*;
 use crate::api::native_write::{
     self as native, commit_prepared,
@@ -133,6 +137,34 @@ fn params(f: &F, intent: Option<&PartGateSelection>) -> Value {
 }
 fn journal(f: &F) -> Vec<u8> {
     std::fs::read(crate::substrate::transaction_journal_path(&f.root)).unwrap()
+}
+
+/// Reuse the real library graph for substrate compensation refusal controls.
+pub(crate) fn complete_assignment_history_fixture() -> (PathBuf, DesignModel) {
+    use native::schematic_delete_proposal::NativeProposalAction as Action;
+    let mut f = fixture();
+    let request = params(&f, None);
+    let placed = write(&mut f, "datum.schematic.place_symbol", request);
+    let component = CompletePartSelection::capture(&f.model, f.other, f.a, f.symbol).unwrap();
+    let proposal_id = Uuid::new_v4();
+    native::schematic_gate_placement::tests::action(
+        &mut f.model,
+        &f.root,
+        Action::CreateAssignment {
+            proposal_id,
+            symbol: placed,
+            instance_path: vec![],
+            part: f.other,
+            gate: f.a,
+            component: Some(component),
+        },
+    );
+    native::schematic_gate_placement::tests::action(
+        &mut f.model,
+        &f.root,
+        Action::AcceptApply { proposal_id },
+    );
+    (f.root, f.model)
 }
 #[test]
 fn explicit_shared_symbol_multi_part_gate_and_multigate_map_keep_exact_binding_through_cold_history()

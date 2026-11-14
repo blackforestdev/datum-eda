@@ -225,3 +225,83 @@ fn folder_browser_shorthand_row_navigation_reads_actual_child_and_admits_listing
     }
     std::fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+fn shared_hidden_policy_filters_files_folders_links_and_suggestions_but_not_occupied_names() {
+    use datum_gui_protocol::{BrowserEntry, BrowserEntryKind, FolderSuggestions};
+    for mode in [Mode::New, Mode::Open] {
+        for assisted in [false, true] {
+            let mut navigation = Some(state(mode, "/parent"));
+            assert!(!navigation.as_ref().unwrap().show_hidden);
+            let answer = |ticket| scan::ScanResult {
+                ticket,
+                input: Some("/parent".into()),
+                directory: PathBuf::from("/parent"),
+                result: Ok(scan::Listing {
+                    entries: [
+                        (".hidden-dir", BrowserEntryKind::Directory),
+                        (".hidden-file", BrowserEntryKind::File),
+                        (".hidden-link", BrowserEntryKind::Link { directory: true }),
+                        ("visible", BrowserEntryKind::Directory),
+                        ("visible.with.dot", BrowserEntryKind::File),
+                    ]
+                    .into_iter()
+                    .map(|(name, kind)| BrowserEntry {
+                        name: name.into(),
+                        kind,
+                        identity: Some((1, 1)),
+                    })
+                    .collect(),
+                    parent_identity: Some((1, 1)),
+                    suggestions: assisted.then(|| FolderSuggestions {
+                        input: String::new(),
+                        parent: "/".into(),
+                        fragment: "parent".into(),
+                    }),
+                    occupied: [".hidden-dir".to_owned(), "visible".to_owned()].into(),
+                    notice: None,
+                }),
+            };
+            let mut pending = Some(1);
+            assert!(admit_answer(&mut navigation, &mut pending, answer(1)));
+            assert_eq!(
+                navigation
+                    .as_ref()
+                    .unwrap()
+                    .entries
+                    .iter()
+                    .map(|e| e.name.as_str())
+                    .collect::<Vec<_>>(),
+                ["visible", "visible.with.dot"]
+            );
+            assert!(
+                navigation
+                    .as_ref()
+                    .unwrap()
+                    .occupied
+                    .contains(".hidden-dir")
+            );
+            navigation.as_mut().unwrap().show_hidden = true;
+            pending = Some(2);
+            assert!(!admit_answer(&mut navigation, &mut pending, answer(1)));
+            assert!(admit_answer(&mut navigation, &mut pending, answer(2)));
+            assert_eq!(navigation.as_ref().unwrap().entries.len(), 5);
+            navigation.as_mut().unwrap().show_hidden = false;
+            pending = Some(3);
+            assert!(admit_answer(&mut navigation, &mut pending, answer(3)));
+            assert_eq!(navigation.as_ref().unwrap().entries.len(), 2);
+        }
+        let navigation = state(mode, "/parent/.explicit-hidden");
+        assert_eq!(
+            navigation.preview((mode == Mode::New).then_some("new")),
+            Some(
+                if mode == Mode::New {
+                    "/parent/.explicit-hidden/new"
+                } else {
+                    "/parent/.explicit-hidden"
+                }
+                .into()
+            )
+        );
+    }
+}

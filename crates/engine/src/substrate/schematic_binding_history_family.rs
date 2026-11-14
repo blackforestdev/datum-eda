@@ -7,8 +7,11 @@ mod fields;
 #[path = "schematic_binding_history_assignment.rs"]
 mod assignment;
 
-pub(super) fn capture(target: &TransactionRecord) -> Option<BTreeMap<Uuid, BTreeSet<Uuid>>> {
-    if let Some((symbols, component)) = assignment::capture(target) {
+pub(super) fn capture(
+    target: &TransactionRecord,
+    prior: &[TransactionRecord],
+) -> Option<BTreeMap<Uuid, BTreeSet<Uuid>>> {
+    if let Some((symbols, component)) = assignment::capture(target, prior) {
         return Some(BTreeMap::from([(component, symbols)]));
     }
     transform(target)

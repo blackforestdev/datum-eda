@@ -19,6 +19,7 @@ fn assign(model: &mut DesignModel, root: &Path, symbol: Uuid, part: Uuid) -> Uui
     let mut component = None;
     for action in [
         Action::CreateAssignment {
+            component: None,
             proposal_id,
             symbol,
             instance_path: vec![],

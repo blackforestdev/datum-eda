@@ -1,8 +1,8 @@
 //! Read-only Entity evidence at an effective canonical placement or assignment.
 use super::super::{DesignModel, Operation, TransactionKind};
+use super::declaration_history::authenticate_assignment;
 use super::*;
 use serde_json::Value;
-use std::collections::{BTreeMap, BTreeSet};
 
 fn invalid(message: &str) -> EngineError {
     EngineError::Validation(format!("Placed Entity source: {message}"))
@@ -33,40 +33,14 @@ impl DesignModel {
             .ok_or_else(|| invalid("authenticated placed Symbol basis is unavailable"))?;
         // Validate established compensation ordering, then identify which normal
         // adoptions remain effective. Geometry/annotation Sets never adopt a chain.
-        super::super::journal_history::targets(&self.journal).map_err(EngineError::Operation)?;
-        let mut origins = BTreeMap::new();
-        let mut effective = BTreeSet::new();
-        let mut births = 0;
-        for tx in &self.journal {
-            let origin = match tx.transaction_kind {
-                TransactionKind::Normal => tx.transaction_id,
-                TransactionKind::Undo | TransactionKind::Redo => {
-                    let link = tx
-                        .undo_of
-                        .or(tx.redo_of)
-                        .ok_or_else(|| invalid("compensation origin is unavailable"))?;
-                    *origins
-                        .get(&link)
-                        .ok_or_else(|| invalid("compensation origin is missing"))?
-                }
-            };
-            origins.insert(tx.transaction_id, origin);
-            if tx.transaction_kind == TransactionKind::Undo {
-                effective.remove(&origin);
-            } else {
-                effective.insert(origin);
-            }
-            if tx.transaction_kind == TransactionKind::Normal {
-                births += tx
-                    .operations
-                    .iter()
-                    .filter(|op| {
-                        matches!(op,
-                    Operation::CreateSchematicSymbol { symbol_id, .. } if *symbol_id == placed)
-                    })
-                    .count();
-            }
-        }
+        let history = super::declaration_history::effective_history(self)?;
+        let origins = history.origins;
+        let effective = history.effective;
+        let births = self.journal.iter()
+            .filter(|tx| tx.transaction_kind == TransactionKind::Normal)
+            .flat_map(|tx| &tx.operations)
+            .filter(|op| matches!(op, Operation::CreateSchematicSymbol { symbol_id, .. } if *symbol_id == placed))
+            .count();
         if births > 1 {
             return Err(invalid("canonical placement birth is ambiguous"));
         }
@@ -325,86 +299,4 @@ impl DesignModel {
         }
         Err(invalid("effective captured gate chain is unavailable"))
     }
-}
-
-// Use the existing durable accepted Proposal receipt, never a new classifier or
-// a hand-written identity-changing Set, as evidence of explicit reassignment.
-fn authenticate_assignment(
-    model: &DesignModel,
-    tx: &TransactionRecord,
-    placed: Uuid,
-) -> Result<(), EngineError> {
-    let receipts: Vec<_> = tx
-        .operations
-        .iter()
-        .filter_map(|op| match op {
-            Operation::SetProposalMetadata {
-                proposal_id,
-                relative_path,
-                previous_proposal,
-                proposal,
-            } => Some((*proposal_id, relative_path, previous_proposal, proposal)),
-            _ => None,
-        })
-        .collect();
-    let [(id, path, previous, raw)] = receipts.as_slice() else {
-        return Err(invalid(
-            "captured assignment has no unique applied Proposal receipt",
-        ));
-    };
-    let proposal: super::super::Proposal = serde_json::from_value((*raw).clone())?;
-    let previous: super::super::Proposal = serde_json::from_value((*previous).clone())?;
-    let expected_path = format!(".datum/proposals/{id}.json");
-    if proposal.schema_version != 1
-        || proposal.project_id != model.project.project_id
-        || proposal.proposal_id != *id
-        || **path != expected_path
-        || proposal.status != super::super::ProposalStatus::Applied
-        || proposal.applied_transaction_id != Some(tx.transaction_id)
-        || previous.status != super::super::ProposalStatus::Accepted
-        || previous.proposal_id != *id
-        || previous.batch != proposal.batch
-    {
-        return Err(invalid(
-            "captured assignment Proposal identity or applied lineage differs",
-        ));
-    }
-    let design: Vec<_> = tx
-        .operations
-        .iter()
-        .filter(|op| {
-            !matches!(
-                op,
-                Operation::SetProposalMetadata { .. } | Operation::GuardObjectRevision { .. }
-            )
-        })
-        .collect();
-    let recorded: Vec<_> = proposal
-        .batch
-        .operations
-        .iter()
-        .filter(|op| !matches!(op, Operation::GuardObjectRevision { .. }))
-        .collect();
-    if design != recorded
-        || !recorded.iter().any(|op| match op {
-            Operation::CreateComponentInstance {
-                component_instance, ..
-            }
-            | Operation::SetComponentInstance {
-                component_instance, ..
-            } => component_instance["placed_symbol_refs"]
-                .as_array()
-                .is_some_and(|members| {
-                    members.iter().any(|r| {
-                        r["object_id"].as_str().and_then(|s| s.parse::<Uuid>().ok()) == Some(placed)
-                    })
-                }),
-            _ => false,
-        })
-    {
-        return Err(invalid(
-            "captured assignment design batch differs from its recorded Proposal",
-        ));
-    }
-    Ok(())
 }

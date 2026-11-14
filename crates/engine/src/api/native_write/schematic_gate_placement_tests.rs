@@ -207,6 +207,7 @@ fn gate_delete_history(child: bool) {
             &mut model,
             &root,
             Action::CreateAssignment {
+                component: None,
                 proposal_id: Uuid::new_v4(),
                 symbol: first,
                 instance_path: vec![child.instance],
