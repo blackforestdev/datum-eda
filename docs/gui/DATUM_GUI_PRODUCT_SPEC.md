@@ -631,6 +631,21 @@ execution, physical/HUMAN input, owner-circuit migration, manufacturer pinout
 qualification or full qualification. Approval and the separate reviewed
 cross-editor/ECO workflow remain outside this increment.
 
+The subsequent bounded Reference/display Value revision target
+(`dat-schematic-pcb-revision-loop-cf5t`, study S-P) is separate from initial
+transfer. In the existing root-schematic transfer review, **Review PCB
+reference/value changes** opens the shared inline Proposal review in the same
+captured schematic context. Each qualified existing one-to-one counterpart
+shows read-only Part/Footprint identity and both old/new fields, including
+unchanged fields. Acceptance updates only board Reference/display Value;
+placement, physical choice, pads, nets and routes remain unchanged. Review and
+dismissal write no design changes. Apply/Tab requires complete, current, ready
+content with the fields and acceptance hint visible together; insufficient fit
+withholds acceptance, and Esc dismisses. Stale or ambiguous sources, topology or
+physical-library revision changes, and unsupported hierarchy refuse without
+writes. This synthetic target does not claim native delivery, general ECO,
+library adoption, component addition/removal or full qualification.
+
 **Command and mutation boundary.** Menus, tool palettes, shortcuts and command
 palette use the existing application registry. The target families remain native
 Symbol placement, transform and heterogeneous deletion; Wire creation; label

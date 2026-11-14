@@ -994,6 +994,26 @@ Bus's source binding. No names or surviving-entry heuristics reconstruct binding
   the bounded ordinary App evidence above; it does not broaden earlier receipts
   or deliver general library ECO.
 
+  **Bounded mapped-component metadata target (native delivery pending):**
+  `dat-schematic-pcb-revision-loop-cf5t` extends Reference/Value authoring only
+  for qualified existing one-to-one counterparts with unchanged logical and
+  physical bindings. Authenticated metadata history must retain component,
+  Symbol, pin, pad and net identities and the pinned physical source; it does
+  not adopt a library revision or relax other mapped-component restrictions.
+  Board text changes require a separate explicit review after schematic edits.
+  The existing root-schematic transfer card opens the shared inline Proposal
+  review in the captured root context (study S-P), showing read-only
+  Part/Footprint identity and every old/new Reference and display Value.
+  Apply/Tab is available only when the complete, current, ready payload and
+  acceptance hint fit visibly together, clear of the status strip; otherwise
+  acceptance is unavailable with a reason. Esc dismisses without design writes.
+  Accepted board changes use canonical history and preserve placement,
+  footprints, pads, nets and routes through Undo/Redo, Save and reopening.
+  Stale/ambiguous sources, topology or physical-library revision changes and
+  unsupported hierarchy refuse without writes. This prospective exception
+  neither changes the scope of earlier delivery receipts nor delivers general
+  ECO, arbitrary bound edits or hierarchy synchronization.
+
   Earlier bounded Part assignment implementation (`dat-schematic-part-assignment-dres`)
   adds named compatible Part/Gate choices through the selected Symbol Inspector
   and existing `Assign Part…` context command. It retains the native pool Symbol's

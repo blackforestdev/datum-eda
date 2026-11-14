@@ -147,8 +147,11 @@ have distinct authority:
    footprint). Decision 005, clarified.
 3. **AI collaboration = agent-in-terminal + inline ghost overlay.** There is **no
    separate "Assistant/Agent tab."** The agent runs in the native terminal; its
-   *proposals* render as the inline ghost overlay on the canvas (Tab / Esc). This
-   corrects the M7 distortion (a bolted-on assistant lane — same family as the
+   *proposals* render as the inline ghost overlay on the canvas (Tab / Esc). The
+   shared review also presents manual changes that require explicit Proposal
+   acceptance. The schematic authoring study's S-P target configures it for
+   reviewing PCB Reference/display Value changes; it adds no agent dependency.
+   Inline presentation corrects the M7 distortion (a bolted-on assistant lane — same family as the
    vacated 013 misfire). **There is no Output tab either** — CAM/export results are **files in the
    project working directory** (produced via the terminal), viewed in the gerber/drill
    viewer or a paperspace viewport (decision 020), not a supervision lane (the same
@@ -516,6 +519,17 @@ with parent-layer fade/blur). The AI dock-vs-overlay comparison is illustrated i
    canvas; terminal lane = the agent conversation. Both ship. (Note the AI need not
    be one large model — e.g. a small GPU-resident routing model handles routing;
    the surfaces above are model-agnostic.)
+   The bounded manual PCB field-revision target is illustrated by
+   `schematic-authoring-states-study.html#S-P`: a plainly named control in the
+   existing root-schematic transfer card opens the same inline Proposal review
+   in that captured schematic context. Each existing counterpart shows read-only
+   Part/Footprint identity and complete old/new Reference and display Value,
+   including unchanged fields. Apply/Tab requires a complete, current, ready
+   review with every required field and the action hints visible together;
+   insufficient space disables acceptance and explains how to proceed. Esc
+   remains reachable, and stale sources refuse without writes. The normal and
+   narrow target states keep their action controls clear of the shared status
+   strip. This is a synthetic design target, with native delivery pending.
 2. **Fonts**: embed IBM Plex Sans; choose the data-mono face (Design Book leaves
    it open).
 3. **Context menus — RESOLVED (2026-07-06)** into the "Context Menu System"

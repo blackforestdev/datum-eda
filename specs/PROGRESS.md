@@ -465,6 +465,16 @@ Admission and repair evidence are historical; current selection and authorizatio
 
 ## Native product outcomes
 
+*PCB Reference/display Value revision target:* the bounded
+`dat-schematic-pcb-revision-loop-cf5t` increment has a reviewed synthetic S-P
+study in the schematic authoring prototype: existing transfer-card entry,
+complete old/new fields, read-only counterpart identity, explicit shared
+Proposal acceptance/dismissal and truthful fit/currentness refusal. Actual
+normal/narrow captures exposed hidden action controls; the corrected target
+was independently reviewed with those controls visible above the status strip.
+Native implementation and workflow proof remain pending. This target changes
+no Frontier selection, historical proof scope or whole-PCB qualification.
+
 *Earlier bounded PCB target checkpoint (historical):* the owner-goal `dat-practical-pcb-design-3qbp`
 has delivered the native Route/Zone GUI controls (source `711e0fc1`,
 metadata `7a9f71bf`) with independently accepted ordinary proof (M30
