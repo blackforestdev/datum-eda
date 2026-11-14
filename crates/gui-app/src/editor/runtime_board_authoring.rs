@@ -7,6 +7,8 @@ use datum_gui_protocol::native_edit_client::{NativeEditAction, NativeEditIntent}
 use eda_engine::api::native_write::schematic_wire_edit::WireRouteConfig;
 #[path = "runtime_board_authoring/controls.rs"]
 mod controls;
+#[path = "runtime_board_authoring/delete.rs"]
+mod delete;
 #[path = "runtime_board_authoring/keys.rs"]
 mod keys;
 
@@ -310,6 +312,14 @@ impl Runtime {
         &mut self,
         action: NativeEditAction,
     ) -> Result<Option<NativeEditIntent>, String> {
+        if let NativeEditAction::DeleteBoardTrack { track } = action {
+            self.capture_native_authoring_view(Some(self.workspace().ui.layout.focused))?;
+            return datum_gui_protocol::native_edit_client::board_delete::capture(
+                self.workspace(),
+                track,
+            )
+            .map(Some);
+        }
         if !matches!(
             action,
             NativeEditAction::BoardRoute

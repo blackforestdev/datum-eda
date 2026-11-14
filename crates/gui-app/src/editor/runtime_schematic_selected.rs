@@ -236,6 +236,9 @@ impl Runtime {
     }
 
     pub(crate) fn delete_selected_schematic(&mut self) -> bool {
+        if self.workspace().ui.layout.focused_content() == PaneContent::Board {
+            return self.delete_selected_board_track();
+        }
         if matches!(&self.workspace().selection,datum_gui_protocol::SelectionTarget::Native(view) if view.members.len()>1)
         {
             return self.begin_schematic_delete_review();

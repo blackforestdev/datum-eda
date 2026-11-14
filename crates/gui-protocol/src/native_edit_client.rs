@@ -12,6 +12,8 @@ use std::{
 };
 use uuid::Uuid;
 
+#[path = "native_board_delete.rs"]
+pub mod board_delete;
 #[path = "native_board_rule.rs"]
 pub mod board_rule;
 
@@ -76,6 +78,9 @@ pub enum NativeEditAction {
     LibraryAcquire,
     BoardTransfer,
     BoardRoute,
+    DeleteBoardTrack {
+        track: Uuid,
+    },
     CreateBoardClearance,
     BoardZone,
     BoardOutline,
@@ -108,6 +113,7 @@ impl NativeEditAction {
             | Self::BoardTransfer
             | Self::CreateBoardClearance
             | Self::BoardRoute
+            | Self::DeleteBoardTrack { .. }
             | Self::BoardOutline
             | Self::BoardZone
             | Self::PrepareBoardSources { .. } => false,
@@ -473,6 +479,10 @@ impl NativeProjectClient {
                         .as_ref()
                         .context("Route edit payload missing")?,
                 )?,
+            ),
+            NativeEditAction::DeleteBoardTrack { track } => (
+                eda_engine::api::native_write::board_routing::track_delete::VERB,
+                json!({"track":track}),
             ),
             NativeEditAction::BoardOutline => (
                 "datum.pcb.set_outline",

@@ -53,6 +53,7 @@ pub fn native_write_verbs() -> &'static [NativeWriteVerb] {
         verbs.extend_from_slice(super::board_components::VERBS);
         verbs.extend_from_slice(super::board_layout::outline::VERBS);
         verbs.extend_from_slice(super::board_routing::VERBS);
+        verbs.extend_from_slice(super::board_routing::track_delete::VERBS);
         verbs.extend_from_slice(super::board_routing::zone::VERBS);
         verbs.extend_from_slice(super::waivers::VERBS);
         verbs.extend_from_slice(super::schematic_edit::VERBS);

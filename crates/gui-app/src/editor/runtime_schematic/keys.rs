@@ -33,8 +33,10 @@ impl Runtime {
         if !self.workspace().schematic_authoring.active()
             && !self.workspace().schematic_authoring.picker
         {
-            if self.workspace().ui.layout.focused_content() == PaneContent::Schematic
-                && matches!(event.logical_key, Key::Named(NamedKey::Delete))
+            if matches!(
+                self.workspace().ui.layout.focused_content(),
+                PaneContent::Schematic | PaneContent::Board
+            ) && matches!(event.logical_key, Key::Named(NamedKey::Delete))
                 && !self.modifiers.control_key()
                 && !self.modifiers.alt_key()
                 && !self.modifiers.super_key()

@@ -18,12 +18,14 @@ pub(super) fn parse_params(value: Value) -> Result<NativeWriteParams, String> {
                 | "datum.schematic.align_symbols"
                 | "datum.schematic.transfer_to_pcb"
                 | "datum.pcb.prepare_footprint_sources"
+                | "datum.pcb.delete_track"
         )
     ) && value.get("expected_transaction_tip").is_none()
     {
         let action = match value.get("verb").and_then(Value::as_str) {
             Some("datum.schematic.create_sheet") => "sheet creation",
             Some("datum.schematic.align_symbols") => "Symbol alignment",
+            Some("datum.pcb.delete_track") => "PCB Track deletion",
             Some("datum.schematic.transfer_to_pcb" | "datum.pcb.prepare_footprint_sources") => {
                 "PCB transfer"
             }
@@ -104,6 +106,7 @@ pub(super) fn native_write_response(
                 | "datum.schematic.transfer_to_pcb"
                 | "datum.pcb.prepare_footprint_sources"
                 | "datum.pcb.move_component"
+                | "datum.pcb.delete_track"
                 | "datum.journal.undo"
                 | "datum.journal.redo"
                 | "datum.schematic.create_sheet"
@@ -129,6 +132,7 @@ pub(super) fn native_write_response(
                 | "datum.schematic.transfer_to_pcb"
                 | "datum.pcb.prepare_footprint_sources"
                 | "datum.pcb.move_component"
+                | "datum.pcb.delete_track"
                 | "datum.journal.undo"
                 | "datum.journal.redo"
                 | "datum.schematic.create_sheet"

@@ -17,6 +17,8 @@ mod package_creation_controls;
 mod symbol_alignment_controls;
 #[path = "main_tests_native_write/symbol_move_controls.rs"]
 mod symbol_move_controls;
+#[path = "main_tests_native_write/track_delete_controls.rs"]
+mod track_delete_controls;
 
 use eda_engine::api::native_write::genesis::{GenesisSpec, bootstrap_native_project};
 

@@ -28,6 +28,7 @@ use super::context::{BatchComposer, PreparedWrite, WriteProvenance};
 
 pub mod route;
 pub mod stop;
+pub mod track_delete;
 pub mod zone;
 pub(crate) use route::VERBS;
 

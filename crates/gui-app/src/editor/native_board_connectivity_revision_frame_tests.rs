@@ -12,6 +12,8 @@ use serde_json::{Value, json};
 use uuid::Uuid;
 #[path = "native_board_connectivity_revision_frame_tests/fixture.rs"]
 mod fixture;
+#[path = "native_board_connectivity_revision_frame_tests/repair.rs"]
+mod repair;
 struct Workflow {
     host: Fixture,
     root: PathBuf,

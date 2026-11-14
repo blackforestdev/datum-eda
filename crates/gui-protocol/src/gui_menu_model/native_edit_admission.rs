@@ -16,6 +16,7 @@ pub(super) fn native_edit_verb(verb: &str) -> bool {
         verb,
         "datum.pcb.move_component"
             | "datum.pcb.draw_track"
+            | "datum.pcb.delete_track"
             | "datum.pcb.place_zone"
             | "datum.pcb.set_outline"
             | "datum.check.fill_zones"

@@ -7,6 +7,11 @@ impl Runtime {
         if self.workspace().authoring.board_controls.is_some() && self.native_edit.pending() {
             return true;
         }
+        if tool == WorkspaceTool::Delete
+            && (self.native_edit.pending() || self.check_work.pending())
+        {
+            return self.board_authoring_error("Wait for the pending native edit or check");
+        }
         match tool {
             WorkspaceTool::DrawBoardTrack => {
                 return self.begin_native_board_tool(BoardToolKind::Route);
@@ -28,6 +33,10 @@ impl Runtime {
         }
         if !matches!(tool, WorkspaceTool::Select)
             && !(tool == WorkspaceTool::Move && self.native_edit_available())
+            && !(tool == WorkspaceTool::Delete
+                && datum_gui_protocol::native_edit_client::board_delete::available(
+                    self.workspace(),
+                ))
         {
             self.log_console_refusal(
                 ConsoleFeedbackSource::Tool,
@@ -58,6 +67,8 @@ impl Runtime {
     pub(crate) fn active_tool_is_authoring(&self) -> bool {
         self.workspace().authoring.board_controls.is_some()
             || self.workspace().tool == WorkspaceTool::Move && self.native_edit_available()
+            || self.workspace().tool == WorkspaceTool::Delete
+                && self.workspace().ui.layout.focused_content() == PaneContent::Board
     }
 
     pub(crate) fn handle_authoring_pointer_move(&mut self, screen_pos: (f32, f32)) -> bool {
@@ -162,6 +173,10 @@ impl Runtime {
                 return true;
             }
             WorkspaceTool::Delete => {
+                if let Some(handled) = self.native_board_pointer_delete(target_object_id.as_deref())
+                {
+                    return handled;
+                }
                 let Some(target) = target_object_id else {
                     self.log_console_refusal(
                         ConsoleFeedbackSource::Tool,

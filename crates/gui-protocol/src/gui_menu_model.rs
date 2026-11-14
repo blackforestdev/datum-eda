@@ -196,6 +196,11 @@ impl GuiMenuItem {
             self.binding(),
             GuiMenuBinding::GuiLocal("schematic.selection.delete")
         ) {
+            if state.ui.layout.focused_content() == crate::PaneContent::Board {
+                return crate::native_edit_client::board_delete::selected_track(state)
+                    .err()
+                    .map(|_| "Select one current, visible and unlocked native PCB Track");
+            }
             let Ok((_, target)) = selected::delete_target(state) else {
                 return Some(
                     "Select one current schematic Symbol, Wire, Label, Junction or No-Connect",
@@ -205,6 +210,14 @@ impl GuiMenuItem {
                 return Some("This selected object cannot be deleted here");
             };
             return native_edit_unavailable_reason(state, kind.verb_and_key().0);
+        }
+        if matches!(
+            self.binding(),
+            GuiMenuBinding::Verb("datum.pcb.delete_track")
+        ) {
+            return crate::native_edit_client::board_delete::selected_track(state)
+                .err()
+                .map(|_| "Select one current, visible and unlocked native PCB Track");
         }
         if matches!(
             self.binding(),
