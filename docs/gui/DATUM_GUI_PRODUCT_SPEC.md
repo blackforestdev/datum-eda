@@ -636,35 +636,37 @@ The historical `dat-single-component-picker-b5xf` source-first picker
 bounded synthetic-source prefix, failed cold capture and later targeted checks
 remain historical evidence, not renewed QA readiness.
 
-The `dat-jmxm` correction translates the reviewed L-H target
-`f09a2f177113d9f3c42c60c7458307b35769223a1116a56a015d8288f2dfdc3b` into
-focused **Place Component** search on the captured schematic. Search combines
-qualified complete Parts in this project with the existing shipped Symbol
-catalog. Part metadata and complete symbol/physical/map previews remain
-qualified. A Symbol is visibly **schematic only** in its row, preview and Place
-action; no Part or physical definition is invented. Library source setup and
-adoption management remain separate from normal placement.
+The `dat-jmxm` QA008–011 correction translates reviewed L-H target
+`a8a7c8a43469aebabac811856d1af7b34a90d52c8db7d353cdcbbed1e5ba127c`
+into focused **Place Component** Search on the captured schematic. Search combines
+qualified project Parts with shipped Symbols, preserving complete Part authority
+and explicit **schematic-only** Symbol intent. Library management stays separate.
+Down enters the results; arrows select/reveal/update preview, PageUp/PageDown and
+wheel/native pixel input navigate one continuous list, and Tab visits major
+controls. Normal placement has no four-row Previous/Next pages.
 
-Primary picker body, input, result, refusal and action text uses the reviewed
-16-logical-pixel candidate with measured wrapping and larger controls. Search
-and the footer stay visible while the body scrolls, including at 1344×806 and
-560×720. The shared input and pointer-caret metrics agree; ordinary typography
-elsewhere is unchanged. This establishes no global minimum, new preference or
-WCAG conformance claim.
+Compact identity/type/status rows use measured single-line fitting. Primary text
+and input/actions retain the reviewed 16-logical-pixel styling, with smaller
+secondary descriptions and badges. Search/footer stay fixed; normal results and
+selected preview are adjacent, and narrow results occupy a bounded strip above
+the preview. Identity, kind/physical absence and geometry remain visible while
+lower details scroll independently. The shared caret metrics remain aligned.
+This defines no global text minimum, new preference or WCAG claim.
 
-Real evidence follows ordinary GUI Project creation/Main navigation, immediate
-`resistor` typing, actual shipped `Device:R` preview/Cancel, and a real `R1`
-placed on the captured sheet with canonical Undo/Redo. Source Unit/Symbol/pin
-identities and the separate acquisition/placement/history transactions are
-checked against the real project and existing CLI journal. A finite follow-up
-cold-opens a verified copy of that design through File Open without Fit, then
-observes the terminal Save acknowledgement and narrow preview/Cancel. It does
-not claim a second reopen after the acknowledged Save. The existing task binds
-these exact candidate scopes, reviewed metadata delta and final matching smoke;
-owner QA findings remain open until owner recheck. No synthetic acceptance data,
-complete-Part physical case, QoS threshold, HUMAN or full qualification is claimed.
-The historical `dat-zyg9` failures and their unknown cause remain separately
-recorded; no general startup qualification follows from this one public-open case.
+Actual ordinary GUI creation/Main navigation, first direct resistor input,
+Down/Up/Page/wheel/major-control Tab, real Device:R preview/Cancel and real R1
+placement/exact history are recorded on the earlier candidate. Canonical source
+identities, two pins and four separate acquisition/placement/history records are
+checked with the existing CLI. Independent review covers the final rendering
+delta; matching finite real-design-copy smoke covers clean long rows and normal/
+narrow selection/preview/Cancel. The normal smoke's later resize-fence FAIL stays
+recorded; actual corrected 560×720 evidence uses a closed-picker resize/public
+size fence before Place. No placement/history replay on the final rendering bits
+is claimed. Historical cold Open before Save acknowledgement keeps its original
+scope, without a Save-then-second-reopen claim. Exact candidate/evidence bindings
+remain in the same task; owner findings stay open for owner recheck. No synthetic
+acceptance data, hardware two-finger execution, complete-Part physical case, QoS,
+HUMAN or full qualification is claimed. `dat-zyg9` remains separately unresolved.
 
 Existing Symbol-only projects need explicit component definitions for PCB
 transfer. The accepted L-K target in `library-surfaces-study.html` gives an

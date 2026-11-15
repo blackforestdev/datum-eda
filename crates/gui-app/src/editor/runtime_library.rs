@@ -79,7 +79,7 @@ impl Runtime {
             | C::AcquireResult(_)
             | C::AcquirePage(_)
             | C::AcquireImport => unreachable!(),
-            C::Scroll { .. } => {}
+            C::Scroll { .. } | C::AcquirePreviewScroll { .. } => {}
             C::Relationship(i) => {
                 let s = self.workspace();
                 let target = s.library.selected(&s.selection).and_then(|e| {
@@ -405,6 +405,9 @@ impl Runtime {
         if self.native_edit.pending() {
             return true;
         }
+        if self.handle_component_picker_navigation(key) {
+            return true;
+        }
         if self.handle_shared_editor_input(key, state) {
             return true;
         }
@@ -626,22 +629,30 @@ impl Runtime {
         wheel: crate::app_native_events::scroll_input::VerticalWheel,
     ) -> Option<bool> {
         let (x, y) = self.last_cursor_pos?;
-        let (content, height, offset) = self.presented_hits.regions().iter().find_map(|r| {
-            if r.rect.contains(x, y) {
-                if let HitTarget::Library(C::Scroll {
-                    content,
-                    height,
-                    offset,
-                }) = r.target
-                {
-                    Some((content, height, offset))
+        let (content, height, offset, preview) =
+            self.presented_hits.regions().iter().find_map(|r| {
+                if r.rect.contains(x, y) {
+                    if let HitTarget::Library(C::Scroll {
+                        content,
+                        height,
+                        offset,
+                    }) = r.target
+                    {
+                        Some((content, height, offset, false))
+                    } else if let HitTarget::Library(C::AcquirePreviewScroll {
+                        content,
+                        height,
+                        offset,
+                    }) = r.target
+                    {
+                        Some((content, height, offset, true))
+                    } else {
+                        None
+                    }
                 } else {
                     None
                 }
-            } else {
-                None
-            }
-        })?;
+            })?;
         let mut scroll = datum_gui_viewport::scroll::ScrollViewport::default();
         scroll.layout(
             datum_gui_viewport::ScreenRectPx {
@@ -655,7 +666,11 @@ impl Runtime {
         scroll.set_offset(offset as f32);
         let changed = scroll.wheel(wheel.pixels(24.));
         let b = &mut self.session.workspace_mut().library;
-        b.scroll_offset = scroll.offset() as usize;
+        if preview {
+            b.acquisition.as_mut()?.preview_scroll_offset = scroll.offset() as usize;
+        } else {
+            b.scroll_offset = scroll.offset() as usize;
+        }
         b.reveal_focus = false;
         if changed {
             self.invalidate_frame();

@@ -12,6 +12,9 @@ pub use footprint::FootprintAcquisitionPreview;
 mod native_part;
 pub use native_part::NativePartAcquisitionPreview;
 
+/// One continuous picker list uses the same measured row pitch for reveal and paint.
+pub const COMPONENT_PICKER_ROW_HEIGHT: f32 = 34.;
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum AcquisitionSource {
     KiCadSymbols,
@@ -70,6 +73,7 @@ pub struct LibraryAcquisition {
     pub loading: bool,
     pub loaded: bool,
     pub offset: usize,
+    pub preview_scroll_offset: usize,
 }
 
 impl LibraryAcquisitionPreview {
@@ -120,6 +124,7 @@ impl LibraryAcquisition {
             loading: false,
             loaded: false,
             offset: 0,
+            preview_scroll_offset: 0,
         }
     }
 
@@ -203,6 +208,7 @@ impl LibraryAcquisition {
 
     /// A changed query retires a selected preview, not the catalog being read.
     pub fn search_changed(&mut self) {
+        self.preview_scroll_offset = 0;
         self.placement_confirmation = None;
         self.offset = 0;
         self.refusal = None;
@@ -217,6 +223,7 @@ impl LibraryAcquisition {
 
     /// Editing the source invalidates all results and outstanding reads of it.
     pub fn source_changed(&mut self) {
+        self.preview_scroll_offset = 0;
         self.placement_confirmation = None;
         self.session = Uuid::new_v4();
         self.names.clear();

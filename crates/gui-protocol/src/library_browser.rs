@@ -47,6 +47,11 @@ pub enum LibraryControl {
         height: usize,
         offset: usize,
     },
+    AcquirePreviewScroll {
+        content: usize,
+        height: usize,
+        offset: usize,
+    },
     ResultsPage(bool),
     New,
     Edit,

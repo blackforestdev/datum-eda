@@ -439,6 +439,15 @@ pub(crate) fn render(
 }
 
 fn scroll_content(p: &mut Painter<'_>, starts: (usize, usize, usize), fixed_quads: usize) {
+    scroll_acquisition_content(p, starts, fixed_quads, false);
+}
+
+fn scroll_acquisition_content(
+    p: &mut Painter<'_>,
+    starts: (usize, usize, usize),
+    fixed_quads: usize,
+    preview: bool,
+) {
     let rect = p.rect;
     let state = p.state;
     let content = p.y - rect.y;
@@ -452,8 +461,16 @@ fn scroll_content(p: &mut Painter<'_>, starts: (usize, usize, usize), fixed_quad
         },
         content,
     );
-    scroll.set_offset(state.library.scroll_offset as f32);
-    if state.library.reveal_focus
+    scroll.set_offset(if preview {
+        state
+            .library
+            .acquisition
+            .as_ref()
+            .map_or(0, |a| a.preview_scroll_offset)
+    } else {
+        state.library.scroll_offset
+    } as f32);
+    if !preview && state.library.reveal_focus
         && let Some(region) = p.hits[starts.2..].iter().find(|r| matches!(&r.target, HitTarget::Library(c) if Some(c) == state.library.focus.as_ref())) {
             scroll.reveal(region.rect.y - rect.y, region.rect.y + region.rect.height - rect.y);
         }
@@ -475,10 +492,18 @@ fn scroll_content(p: &mut Painter<'_>, starts: (usize, usize, usize), fixed_quad
     p.hits.insert(
         starts.2,
         HitRegion {
-            target: HitTarget::Library(C::Scroll {
-                content: content.ceil() as usize,
-                height: rect.height as usize,
-                offset: offset as usize,
+            target: HitTarget::Library(if preview {
+                C::AcquirePreviewScroll {
+                    content: content.ceil() as usize,
+                    height: rect.height as usize,
+                    offset: offset as usize,
+                }
+            } else {
+                C::Scroll {
+                    content: content.ceil() as usize,
+                    height: rect.height as usize,
+                    offset: offset as usize,
+                }
             }),
             rect,
         },

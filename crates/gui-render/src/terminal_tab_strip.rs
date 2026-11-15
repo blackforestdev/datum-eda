@@ -13,6 +13,7 @@ use crate::terminal_session_chrome::{
 
 #[path = "terminal_context_chrome.rs"]
 mod context;
+pub(crate) use context::fit_end;
 
 pub(super) const TAB_GAP_PX: f32 = 8.0;
 const CLOSE_WIDTH_PX: f32 = 28.0;

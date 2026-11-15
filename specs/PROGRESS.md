@@ -464,19 +464,24 @@ source-first target `978f0e4b` and its bounded prior evidence remain historical.
 Owner QA hard-failed ordinary placement/readability and withdrew readiness; the
 raw failures are retained rather than upgraded by the correction.
 
-**Bounded routine correction — `dat-jmxm`:** the separately authorized correction
-uses the reviewed L-H target `f09a2f17…dc3b`: readable focused search across
-qualified project Parts and existing shipped Symbols, explicit schematic-only
-Symbol intent, separate Library management, fixed search/footer and scrolling
-body. Real GUI creation/Main navigation, direct resistor search, actual Device:R
-preview/Cancel, real R1 placement and canonical Undo/Redo are evidenced without a
-synthetic Part pack. A finite real-design-copy follow-up verifies public cold
-File Open, then Save acknowledgement and narrow preview/Cancel; no second reopen
-after that Save is claimed. The task retains source/delta reviews, exact binary
-and final smoke bindings, factual consumer review and landing evidence. Owner QA
-findings remain open for owner recheck; physical Part cases, S05 policy, HUMAN,
-QoS and full qualification remain unclaimed. `dat-zyg9` retains its separate
-unknown cause. This routine correction changes no Frontier selection or grant.
+**Bounded routine correction — `dat-jmxm`:** owner-approved QA008–011 follow-up
+uses reviewed L-H target `a8a7c8a4…127c`: Search Down enters results, arrows select/
+reveal/preview, Page and wheel/native pixel scrolling traverse one continuous
+list, and Tab visits major controls. Compact measured single-line rows replace
+four-row paging; normal results/preview are adjacent and narrow results use a
+bounded strip. Search/actions and selected identity/type/physical absence/geometry
+stay visible; lower details scroll separately. Qualified Parts and schematic-only
+Symbols retain existing reader/canonical placement paths and separate Library
+management. Real ordinary GUI creation/Main/direct resistor entry, keyboard/scroll/
+Tab, preview/Cancel, actual R1 and exact history are recorded with canonical source
+pins and four journal records. Final rendering delta review and matching finite
+normal/narrow real-design smoke have separate pins; no final-bits placement replay
+is claimed. Normal smoke's later resize-fence FAIL is retained, with corrected
+narrow proof from public closed-picker resize before Place. Earlier cold Open
+before acknowledged Save retains its scope, without a new Save/reopen claim. Owner
+findings remain open for recheck; no synthetic data, physical Part case, hardware
+two-finger test, S05 policy, HUMAN, QoS or full qualification claim. `dat-zyg9`
+retains its separate unknown cause. This changes no Frontier selection or grant.
 
 ### Workflow repair admission transaction
 

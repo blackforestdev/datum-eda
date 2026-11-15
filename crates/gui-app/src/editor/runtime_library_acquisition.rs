@@ -302,6 +302,7 @@ impl Runtime {
                     None
                 };
                 a.session = eda_engine::substrate::ObjectId::new_v4();
+                a.preview_scroll_offset = 0;
                 a.placement_confirmation =
                     (a.placement_pane.is_some() && source.is_some() && !a.component_picker)
                         .then_some(a.session);

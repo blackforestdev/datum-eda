@@ -6,6 +6,147 @@ use datum_gui_protocol::library_browser::acquisition::{
 };
 
 impl Runtime {
+    pub(crate) fn handle_component_picker_navigation(&mut self, key: &Key) -> bool {
+        if !matches!(
+            key,
+            Key::Named(
+                NamedKey::Tab
+                    | NamedKey::ArrowDown
+                    | NamedKey::ArrowUp
+                    | NamedKey::PageDown
+                    | NamedKey::PageUp
+            )
+        ) || !self.component_picker_open()
+        {
+            return false;
+        }
+        let library = &self.workspace().library;
+        let a = library.acquisition.as_ref().unwrap();
+        let results = a.results();
+        let selected = results.iter().position(|index| {
+            let source = &a.sources[*index];
+            a.selected.as_deref() == Some(source.name.as_str())
+                && a.selected_source.as_ref() == Some(&source.path)
+        });
+        let focus = library.focus.clone();
+        let row_height =
+            datum_gui_protocol::library_browser::acquisition::COMPONENT_PICKER_ROW_HEIGHT;
+        let viewport = self.presented_hits.regions().iter().find_map(|hit| {
+            if let HitTarget::Library(C::Scroll { height, offset, .. }) = &hit.target {
+                Some((*height as f32, *offset as f32))
+            } else {
+                None
+            }
+        });
+        if matches!(key, Key::Named(NamedKey::Tab)) {
+            let mut controls = vec![C::AcquireSearch];
+            if let Some(index) = selected.or_else(|| (!results.is_empty()).then_some(0)) {
+                controls.push(C::AcquireResult(results[index]));
+            }
+            if a.unavailable_count() > 0 {
+                controls.push(C::AcquireShowUnavailable);
+            }
+            if a.picker_can_place(library) {
+                controls.push(C::AcquireImport);
+            }
+            controls.push(C::Cancel);
+            let current = focus
+                .as_ref()
+                .and_then(|c| controls.iter().position(|v| v == c));
+            let next = current.map_or(0, |i| {
+                (i + if self.modifiers.shift_key() {
+                    controls.len() - 1
+                } else {
+                    1
+                }) % controls.len()
+            });
+            let control = controls[next].clone();
+            if let C::AcquireResult(index) = control {
+                self.select_component_picker_result(index);
+            } else {
+                let library = &mut self.session.workspace_mut().library;
+                library.focus = Some(control);
+                library.reveal_focus = true;
+            }
+            self.invalidate_frame();
+            return true;
+        }
+        let from_search = focus == Some(C::AcquireSearch);
+        let in_results = matches!(focus, Some(C::AcquireResult(_)));
+        let direction = match key {
+            Key::Named(NamedKey::ArrowDown) if from_search || in_results => 1isize,
+            Key::Named(NamedKey::ArrowUp) if in_results => -1,
+            Key::Named(NamedKey::PageDown) if from_search || in_results => {
+                (viewport.map_or(row_height, |v| v.0) / row_height)
+                    .floor()
+                    .max(1.) as isize
+            }
+            Key::Named(NamedKey::PageUp) if in_results => {
+                -((viewport.map_or(row_height, |v| v.0) / row_height)
+                    .floor()
+                    .max(1.) as isize)
+            }
+            _ => return false,
+        };
+        if !results.is_empty() {
+            let position = if from_search {
+                selected.unwrap_or(0)
+            } else {
+                (selected.unwrap_or(0) as isize + direction).clamp(0, results.len() as isize - 1)
+                    as usize
+            };
+            self.select_component_picker_result(results[position]);
+        }
+        self.invalidate_frame();
+        true
+    }
+
+    fn select_component_picker_result(&mut self, index: usize) {
+        let library = &self.workspace().library;
+        let a = library.acquisition.as_ref().unwrap();
+        let results = a.results();
+        let Some(position) = results.iter().position(|i| *i == index) else {
+            return;
+        };
+        let source = &a.sources[index];
+        let already_selected = a.selected.as_deref() == Some(source.name.as_str())
+            && a.selected_source.as_ref() == Some(&source.path);
+        let row_height =
+            datum_gui_protocol::library_browser::acquisition::COMPONENT_PICKER_ROW_HEIGHT;
+        let viewport = self.presented_hits.regions().iter().find_map(|hit| {
+            if let HitTarget::Library(C::Scroll { height, offset, .. }) = &hit.target {
+                Some((*height as f32, *offset as f32))
+            } else {
+                None
+            }
+        });
+        if let Some((height, offset)) = viewport {
+            let mut scroll = datum_gui_viewport::scroll::ScrollViewport::default();
+            scroll.layout(
+                datum_gui_viewport::ScreenRectPx {
+                    x: 0.,
+                    y: 0.,
+                    width: 1.,
+                    height,
+                },
+                results.len() as f32 * row_height,
+            );
+            scroll.set_offset(offset);
+            scroll.reveal(
+                position as f32 * row_height,
+                (position + 1) as f32 * row_height,
+            );
+            self.session.workspace_mut().library.scroll_offset = scroll.offset() as usize;
+        }
+        if already_selected {
+            let library = &mut self.session.workspace_mut().library;
+            library.focus = Some(C::AcquireResult(index));
+            library.reveal_focus = true;
+        } else {
+            self.activate_library(C::AcquireResult(index));
+        }
+    }
+
     pub(crate) fn component_picker_input_size(&self, search: bool) -> f32 {
         if search && self.component_picker_open() {
             16.

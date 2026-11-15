@@ -615,38 +615,42 @@ QA rejected that ordinary workflow and its readability, withdrawing QA readiness
 The original failed cold capture and its limited interaction-assisted follow-up
 retain their recorded scopes.
 
-The `dat-jmxm` correction follows the reviewed L-H target
-`f09a2f177113d9f3c42c60c7458307b35769223a1116a56a015d8288f2dfdc3b`.
-**Place Component** opens focused search on the captured schematic document and
-occurrence. It queries complete Parts already qualified in the current project
-and the existing shipped Symbol catalog. Part rows preserve the complete declared
-Value/Package/Footprint/map graph; their declared description, tags, Package name
-and existing manufacturer/MPN/value fields are searchable. Symbol rows, previews
-and Place actions explicitly say **schematic only**. Local Reference/Value fields
-do not grant Part, Package, Footprint or pin-pad authority. Library source setup
-and adoption management belong to Library; no directory, Read or source-selection
-control appears in normal placement.
+The `dat-jmxm` QA008–011 correction follows reviewed L-H target
+`a8a7c8a43469aebabac811856d1af7b34a90d52c8db7d353cdcbbed1e5ba127c`.
+**Place Component** opens focused Search on the captured schematic and occurrence.
+It queries already-qualified project Parts and the shipped Symbol catalog. Part
+metadata search and complete declared Value/Package/Footprint/map authority stay
+qualified; a Symbol remains explicitly **schematic only**, without invented
+physical definitions. Source setup and adoption management remain in Library.
 
-Search, preview and Cancel author nothing. Explicit Symbol placement reuses the
-existing canonical acquisition when the project lacks its definitions, followed
-by the existing captured-sheet ghost and separate canvas transaction. Existing
-project definitions are reused without silently updating them. Complete-Part
-selection retains current qualification and source checks; stale definitions
-refuse placement. Unloaded/loading catalogs cannot produce a false no-match.
-Search and actions remain visible while the picker body scrolls.
+Down from Search enters results. Up/Down selects, reveals and previews a result;
+PageUp/PageDown traverses one continuous filtered list, with wheel/native pixel
+scrolling and Tab among major controls. Four-row Previous/Next paging is absent
+from normal placement. Results use compact identity/type/status rows and measured
+single-line ellipsis. Normal results and preview are adjacent; narrow results use
+a bounded strip above the preview. Search and Place/Cancel stay fixed. Selected
+identity, type, physical absence and geometry stay visible while lower details
+scroll separately. Existing reader sessions reject stale previews; Part checks,
+explicit Symbol-only acquisition, captured-sheet ghost and separate placement
+transaction retain their canonical paths. Search/preview/Cancel author nothing.
 
-The real-data correction evidence uses ordinary GUI Project creation and Main
-navigation, direct typing of `resistor`, shipped `Device:R`, its actual preview,
-Cancel, a real `R1` with the exact two source pins, and canonical placement
-Undo/Redo. A finite follow-up opens an exact copy of that real design through
-public File Open without Fit, then obtains an acknowledged Save and inspects the
-picker at 560×720. Cold opening precedes that Save acknowledgement; this is not
-an acknowledged-Save-then-reopen claim. Current source, reviewed metadata delta,
-matching executable and focused smoke evidence remain bound in `dat-jmxm`.
-No synthetic Part pack supports renewed readiness. Physical Part qualification,
-S05 approval/basis policy, HUMAN input and full qualification remain unclaimed;
-owner QA findings remain open for owner recheck. The separate `dat-zyg9` capture
-issue is not explained away by this bounded successful public-open case.
+Actual ordinary GUI Project creation/Main navigation and first direct `resistor`
+input support real Device:R keyboard selection/preview, continuous wheel/Page
+navigation, major-control Tab, normal/narrow preview, Cancel with no canonical
+delta, real R1 placement and exact Undo/Redo. Existing CLI journal inspection
+confirms separate acquisition/placement/inverse Undo/Redo and the exact source
+Unit/Symbol/two pins, without Part/Entity/Gate bindings or pool writes in placement
+history. That full workflow retains its earlier candidate pin; the final measured
+ellipsis/fixed-disclosure delta has independent source review and matching finite
+normal/narrow real-design-copy smoke. The normal smoke's later resize-fence timeout
+is retained as FAIL; corrected narrow evidence comes from a closed-picker resize
+and public size fence before Place, with clean owned-process cleanup. No full
+placement replay on the final rendering bits is claimed. Earlier public cold Open
+before Save acknowledgement retains its original scope, without a new Save-then-
+reopen claim. Exact pins and evidence are bound in the same task. Owner QA findings
+remain open for owner recheck. No synthetic acceptance, hardware two-finger test,
+physical Part qualification, S05 policy, QoS, HUMAN or full qualification is claimed;
+`dat-zyg9` retains its separate unknown cause.
 
 The accepted bounded recovery target `library-surfaces-study.html#L-K`
 (`dat-existing-project-component-resolution-i89r`) connects an unbound transfer

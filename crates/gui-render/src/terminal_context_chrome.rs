@@ -39,7 +39,7 @@ pub(super) fn end_ellipsis(text: &str, available: f32) -> String {
     fit_end(text, available, SIZE, TextFace::Mono)
 }
 
-fn fit_end(text: &str, available: f32, size: f32, face: TextFace) -> String {
+pub(crate) fn fit_end(text: &str, available: f32, size: f32, face: TextFace) -> String {
     if measure(text, size, face) <= available {
         return text.to_owned();
     }
