@@ -281,19 +281,38 @@
     /* Scoped to #L-H only; shared surface-studies.css is untouched. Candidate readable
        typography: primary picker text 16 logical px with grown, focusable controls. */
     #L-H .p16 .srch{font-size:16px;line-height:1.4;min-height:38px;display:flex;align-items:center;margin:10px 12px;padding:4px 12px}
-    #L-H .p16 .res{font-size:16px;line-height:1.4;min-height:40px;grid-template-columns:96px minmax(0,1fr) auto}
+    /* QA-009/QA-011: one continuous filtered list of compact single-line identity/type/status
+       rows — readable 16 px primary text without cramming; no four-row Previous/Next paging. */
+    #L-H .p16 .res{font-size:16px;line-height:1.3;min-height:34px;padding:2px 11px;grid-template-columns:84px minmax(0,1fr) auto}
     #L-H .p16 .res .kd,#L-H .p16 .res .o{font-size:12px}
+    #L-H .p16 .res>span:nth-child(2){white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     #L-H .p16 .kv{font-size:16px;min-height:32px;grid-template-columns:128px 1fr}
     #L-H .p16 .note,#L-H .p16 .banner{font-size:16px;line-height:1.45}
     #L-H .p16 .empty,#L-H .p16 .empty b{font-size:16px}
     #L-H .p16 .btn{font-size:16px;padding:7px 18px;border-radius:6px}
     #L-H .p16 .acts{background:var(--s01);padding:10px 12px}
     /* Fixed reachable footer: the picker is a flex column that fits its pane; header,
-       search and actions stay put while ONE body (results + preview + facts) scrolls. */
+       search, interaction hints and actions stay put while the list scrolls. */
     #L-H .fit{display:flex;flex-direction:column;min-height:0}
     #L-H .card.fit{max-height:590px}
-    #L-H .fit>.phd0,#L-H .fit>.phd,#L-H .fit>.srch,#L-H .fit>.row,#L-H .fit>.acts{flex:0 0 auto}
+    #L-H .fit>.phd0,#L-H .fit>.phd,#L-H .fit>.srch,#L-H .fit>.row,#L-H .fit>.hint,#L-H .fit>.acts{flex:0 0 auto}
     #L-H .fit>.bodyscroll{flex:1 1 auto;min-height:0;overflow-y:auto}
+    /* QA-010: persistent selected identification + preview BESIDE the results at normal
+       width; only the list scrolls, the side panel stays visible while browsing. */
+    #L-H .fit>.cols{flex:1 1 auto;min-height:0;display:flex}
+    #L-H .cols>.reslist{flex:1 1 auto;min-width:0;overflow-y:auto;border-right:1px solid var(--bd-sub)}
+    #L-H .cols>.side{flex:0 0 300px;min-height:0;overflow-y:auto;display:flex;flex-direction:column}
+    /* Side-panel facts take their full measured wrapped height: never compressed by the
+       flex column (no shrink), top-aligned labels, auto row height. */
+    #L-H .side>*{flex:0 0 auto}
+    #L-H .side .kv{grid-template-columns:84px 1fr;align-items:start;min-height:0;padding:5px 12px}
+    #L-H .side .kv .v{line-height:1.35}
+    /* Narrow: the list scrolls inside a bounded strip so the preview is never buried
+       below all results. */
+    #L-H .narrowlist{flex:0 0 auto;max-height:150px;overflow-y:auto;border-bottom:1px solid var(--bd-sub)}
+    /* QA-008: owner-approved interaction annotations, fixed above the actions. */
+    #L-H .hint{display:flex;gap:12px 16px;flex-wrap:wrap;padding:5px 12px;border-top:1px solid var(--bd-sub);font-family:var(--mono);font-size:12px;color:var(--tx3)}
+    #L-H .hint b{color:var(--tx2);font-weight:600}
     #L-H .p16 .res[tabindex]:focus-visible,#L-H .p16 .btn:focus-visible{outline:2px solid var(--acc-h);outline-offset:1px}
   </style>
   <p class="cap">Normal placement is one readable <b>Place Component</b> picker opened directly on the schematic being edited: the target document
@@ -317,38 +336,46 @@
         <div class="pbody"><div class="card p16 fit" id="H1" style="margin:10px auto;max-width:720px">
           <div class="phd0"><span>Place Component</span><span class="r">target captured · Schematic Design · occurrence /</span></div>
           <div class="srch f" role="searchbox" aria-label="Search this project's Parts and the shipped Symbols">resistor▏</div>
-          <div class="row" style="font-size:13px;color:var(--tx3);padding:0 13px 4px">Parts of this project list first — none is declared yet · then shipped Symbols, by name <span class="tag own" style="margin-left:6px">◐ ranking within kinds open</span></div>
-          <div class="bodyscroll">
-            <div class="res sel" tabindex="0"><span class="kd">Symbol</span><span>R <span style="color:var(--tx3)">— Resistor · Device</span></span><span class="o">schematic only</span></div>
-            <div class="res" tabindex="0"><span class="kd">Symbol</span><span>R_Small <span style="color:var(--tx3)">— Resistor, small symbol</span></span><span class="o">schematic only</span></div>
-            <div class="res" tabindex="0"><span class="kd">Symbol</span><span>R_US <span style="color:var(--tx3)">— Resistor, US symbol</span></span><span class="o">schematic only</span></div>
-            <div class="res" tabindex="0"><span class="kd">Symbol</span><span>R_Variable <span style="color:var(--tx3)">— Variable resistor</span></span><span class="o">schematic only</span></div>
-            <div class="res" tabindex="0"><span class="kd">Symbol</span><span>Thermistor <span style="color:var(--tx3)">— Temperature dependent resistor</span></span><span class="o">schematic only</span></div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px">
-            <div><div class="sh">Symbol — Device:R</div><div class="pv"><svg viewBox="0 0 300 170" style="height:128px" role="img" aria-label="Shipped Device:R symbol preview — IEC rectangular resistor with two pins">
-              <rect x="134" y="52" width="32" height="66" fill="none" stroke="var(--tx2)" stroke-width="1.6"/>
-              <path d="M150 20v32M150 118v32" stroke="var(--tx2)" stroke-width="1.6"/>
-              <text x="176" y="90" font-size="12" font-family="monospace" fill="var(--tx2)">R</text>
-              <text x="150" y="14" font-size="9" font-family="monospace" fill="var(--tx3)" text-anchor="middle">Device:R — Resistor · drawn from its shipped converted record</text>
-            </svg></div></div>
-            <div><div class="sh">Physical</div><div class="empty" style="min-height:128px"><span class="st na">∅ none — SCHEMATIC ONLY</span><b>No Value binding, no Package, no Footprint, no pin-pad map.</b>Nothing physical is substituted silently. Declaring a complete Part is Library authoring (L-B4); explicit later assignment is L-K.</div></div>
+          <div class="row" style="font-size:13px;color:var(--tx3);padding:0 13px 4px">97 matching components and Symbols — one continuous filtered list, no paging · Parts of this project list first (none is declared yet) <span class="tag own" style="margin-left:6px">◐ ranking within kinds open</span></div>
+          <div class="cols">
+            <div class="reslist" role="listbox" aria-label="97 matching components and Symbols in one continuous scrollable list">
+              <div class="res sel" tabindex="0"><span class="kd">Symbol</span><span>R <span style="color:var(--tx3)">— Resistor · Device</span></span><span class="o">sch only</span></div>
+              <div class="res" tabindex="0"><span class="kd">Symbol</span><span>INA253 <span style="color:var(--tx3)">— High Voltage, Bidirectional, Zero-Drift, Current-Shunt Monitor… · Amplifier_Current</span></span><span class="o">sch only</span></div>
+              <div class="res" tabindex="0"><span class="kd">Symbol</span><span>LTC2942-1 <span style="color:var(--tx3)">— 1A Battery Gas Gauge with Internal Sense Resistor… · Battery_Management</span></span><span class="o">sch only</span></div>
+              <div class="res" tabindex="0"><span class="kd">Symbol</span><span>Q_NPN_BRT <span style="color:var(--tx3)">— NPN bias resistor bipolar junction transistor · Device</span></span><span class="o">sch only</span></div>
+              <div class="row" style="font-size:13px;color:var(--tx3);padding:4px 11px">… 93 more rows in the same continuous list — scroll, PgUp / PgDn; there is no Previous / Next. Rows above are the first matches exactly as the owner's recorded query returned them; the product ordering is not redefined here.</div>
+            </div>
+            <div class="side">
+              <div class="sh">Selected — stays beside the list</div>
+              <div class="pv"><svg viewBox="0 0 300 150" style="height:116px" role="img" aria-label="Shipped Device:R symbol preview — IEC rectangular resistor with two pins">
+                <rect x="134" y="42" width="32" height="62" fill="none" stroke="var(--tx2)" stroke-width="1.6"/>
+                <path d="M150 14v28M150 104v32" stroke="var(--tx2)" stroke-width="1.6"/>
+                <text x="176" y="78" font-size="12" font-family="monospace" fill="var(--tx2)">R</text>
+              </svg></div>
+              <div class="kv"><span class="k">Selected</span><span class="v">R — Resistor · Device:R · shipped bundled Symbol</span></div>
+              <div class="kv"><span class="k">Kind</span><span class="v"><b>Symbol — SCHEMATIC ONLY</b></span></div>
+              <div class="kv"><span class="k">Physical</span><span class="v"><span class="st na">∅ none</span> — no Value binding, no Package, no Footprint, no pin-pad map; nothing invented, nothing substituted. Part work is L-B4 / L-K</span></div>
+              <div class="kv"><span class="k">Qualification</span><span class="v"><span class="st na">∅ not established</span> — stated, never upgraded</span></div>
+              <div class="note" style="font-size:14px">Place = the existing canonical acquisition commit, then the existing placement ghost on the captured schematic — each with its own undo.</div>
+            </div>
           </div>
-          <div class="kv"><span class="k">Selected</span><span class="v">R — Resistor · shipped bundled Symbol · library Device · converted native record</span></div>
-          <div class="kv"><span class="k">Kind</span><span class="v"><b>Symbol — SCHEMATIC ONLY</b> · never a hidden stand-in for a complete Part</span></div>
-          <div class="kv"><span class="k">On Place</span><span class="v">the exact shipped definitions enter the project library through the one existing canonical acquisition commit (its own undo); the canvas click is the existing placement transaction with its own undo</span></div>
-          <div class="kv"><span class="k">Qualification</span><span class="v"><span class="st na">∅ not established</span> — shipped-source acquisition establishes no library approval or standards compliance; stated, never upgraded</span></div>
-          </div>
+          <div class="hint" aria-label="Owner-approved picker interaction"><span><b>↓</b> from Search enters the results</span><span><b>↑ ↓</b> move selection, keep it visible, update the preview</span><span><b>PgUp PgDn</b> page the one list</span><span>wheel / two-finger scrolls</span><span><b>Tab</b> moves among major controls</span></div>
           <div class="acts"><span class="btn" tabindex="0">Cancel — nothing placed, nothing changed</span><span class="btn pri" tabindex="0">Place R — schematic only</span></div>
         </div></div>
       </div></div>
     </div>
     <div class="dock"><span class="dt on">bash</span><span class="dt">+</span><span class="h">Terminal — available, never required for placement</span></div>
   </div>
-  <p class="cell-cap"><b>H1 — the one picker, normal state (owner geometry 1344 × 806).</b> Focused 16 px search over this project's Parts and the
-  shipped Symbols at once, explicit kind on every row, the genuine shipped Device:R previewed from its record, the schematic-only fact stated in
-  the body and on the Place action itself. The card fits its pane (≤ 590 px tall inside the 1344 × 806 window): header, search and the actions
-  footer stay put while the one body — results, preview and facts — scrolls between them, so Cancel and Place are always on screen. All rows are
-  real shipped records. The Library pane is not involved and is not open.</p>
+  <p class="cell-cap"><b>H1 — the one picker, normal state (owner geometry 1344 × 806).</b> The owner's real QA query is drawn: “resistor” over the
+  shipped catalog returns 97 matches, and the rows are the first matches in the exact order the owner's recorded capture shows (R, INA253,
+  LTC2942-1, Q_NPN_BRT) — the product's ordering is drawn, not redefined. One continuous filtered list of compact single-line
+  identity / type / status rows — no four-row Previous / Next paging (QA-009), no repeated long row prefixes (QA-011) — with the selected
+  identification and Device:R preview persistent <i>beside</i> the list, never buried below it (QA-010). Search stays prominent and the
+  Cancel / Place footer stays reachable; the list scrolls independently while the selected preview remains beside it, and the details beneath the
+  preview can scroll separately. The hint bar states the owner-approved interaction (QA-008): ↓ from Search enters
+  the results; ↑/↓ move the selection, keep it visible and update the preview; PgUp/PgDn page the one list; wheel / two-finger scrolls; Tab moves
+  among major controls. These semantics are owner-approved Datum behavior, not a new mechanism. The Library pane is not involved and is not
+  open.</p>
   <div class="grid2" style="margin-top:16px">
     <div class="card p16" id="H2"><div class="phd0"><span>Part results — the complete component kind</span><span class="r">described, not fabricated</span></div>
       <div class="res" aria-label="Anatomy of a Part result row — placeholders, not data"><span class="kd">Part</span><span>⟨name⟩ <span style="color:var(--tx3)">— ⟨declared Value⟩ · ⟨Package⟩</span></span><span class="o">map ⟨n/n⟩</span></div>
@@ -380,44 +407,54 @@
   </div>
   <div class="grid2" style="margin-top:16px">
     <div>
-      <div class="shell narrow" id="H5">
+      <div class="shell narrow" id="H5" style="width:560px">
       <div class="mb"><span class="tl btn">☰ Navigator</span><span class="brand" style="margin-left:6px">Datum<b>·</b>EDA</span><span class="sp"></span><span class="tl btn">Inspector ▸</span></div>
-      <div class="ws" style="height:470px;flex:0 0 470px"><div class="panes"><div class="pane pnl focus p16 fit">
+      <div class="ws" style="height:646px;flex:0 0 646px"><div class="panes"><div class="pane pnl focus p16 fit">
         <div class="phd"><span class="pt">Place Component · occurrence /</span><span class="fdot"><i></i>FOCUS</span></div>
         <div class="srch f">resistor▏</div>
-        <div class="bodyscroll">
-        <div class="res sel" tabindex="0"><span class="kd">Symbol</span><span>R — Resistor · Device</span><span class="o">schematic only</span></div>
-        <div class="res" tabindex="0"><span class="kd">Symbol</span><span>R_Small — Resistor, small symbol</span><span class="o">schematic only</span></div>
-        <div class="pv"><svg viewBox="0 0 170 120" style="height:96px" role="img" aria-label="Shipped Device:R symbol preview in the narrow picker">
-          <rect x="74" y="28" width="22" height="52" fill="none" stroke="var(--tx2)" stroke-width="1.6"/>
-          <path d="M85 8v20M85 80v22" stroke="var(--tx2)" stroke-width="1.6"/>
-          <text x="104" y="58" font-size="11" font-family="monospace" fill="var(--tx2)">R</text>
-        </svg></div>
-        <div class="kv"><span class="k">Kind</span><span class="v"><b>Symbol — SCHEMATIC ONLY</b> · no Footprint, no map</span></div>
+        <div class="row" style="font-size:13px;color:var(--tx3);padding:0 13px 4px">97 matches — one continuous list</div>
+        <div class="narrowlist" role="listbox" aria-label="Matching rows — the list scrolls inside this strip so the preview below stays visible">
+          <div class="res sel" tabindex="0"><span class="kd">Symbol</span><span>R <span style="color:var(--tx3)">— Resistor · Device</span></span><span class="o">sch only</span></div>
+          <div class="res" tabindex="0"><span class="kd">Symbol</span><span>INA253 <span style="color:var(--tx3)">— High Voltage, Bidirectional, Zero-Drift… · Amplifier_Current</span></span><span class="o">sch only</span></div>
+          <div class="res" tabindex="0"><span class="kd">Symbol</span><span>LTC2942-1 <span style="color:var(--tx3)">— 1A Battery Gas Gauge… · Battery_Management</span></span><span class="o">sch only</span></div>
+          <div class="row" style="font-size:13px;color:var(--tx3);padding:3px 11px">… 94 more in recorded order — this strip scrolls; the preview below does not move away</div>
         </div>
+        <div class="sh">Selected — visible without scrolling past the list</div>
+        <div class="pv"><svg viewBox="0 0 170 110" style="height:88px" role="img" aria-label="Shipped Device:R symbol preview in the narrow picker">
+          <rect x="74" y="24" width="22" height="48" fill="none" stroke="var(--tx2)" stroke-width="1.6"/>
+          <path d="M85 6v18M85 72v22" stroke="var(--tx2)" stroke-width="1.6"/>
+          <text x="104" y="52" font-size="11" font-family="monospace" fill="var(--tx2)">R</text>
+        </svg></div>
+        <div class="kv"><span class="k">Selected</span><span class="v">R — Resistor · Device:R</span></div>
+        <div class="kv"><span class="k">Kind</span><span class="v"><b>Symbol — SCHEMATIC ONLY</b> · no Footprint, no map</span></div>
+        <div class="hint"><span><b>↓</b> enters results</span><span><b>↑ ↓</b> select + preview</span><span><b>PgUp PgDn</b> page</span><span><b>Tab</b> controls</span></div>
         <div class="acts"><span class="btn">Cancel</span><span class="btn pri">Place R — schematic only</span></div>
       </div></div></div><div class="dock"><span class="dt on">bash</span></div>
       </div>
-      <p class="cell-cap"><b>H5 — narrow composition.</b> The same picker in a narrow pane: 16 px search, rows, the schematic-only fact and both
-      actions remain; the body scrolls and the footer stays reachable; nothing collapses into an identifier or a developer phrase.</p>
+      <p class="cell-cap"><b>H5 — narrow composition (560 × 720).</b> The same picker stacked for a narrow pane: the result list scrolls inside a
+      bounded strip, so the selected identification and preview stay on screen instead of being buried below all 97 rows (QA-010); search, the
+      interaction hints and both actions remain fixed and reachable; nothing collapses into an identifier or a developer phrase.</p>
     </div>
     <div class="card" id="H6"><div class="phd0"><span>Status — stated honestly</span><span class="r">owner QA supersedes prior readiness</span></div>
       <div class="kv w"><span class="v"><b>Delivered, at recorded scope only:</b> the bounded component-first engine and isolated debug-App evidence
       (<code>dat-component-first-capture-3btd</code>) and the unified saved-source picker landing. No whole-run PASS, no HUMAN observation, no full
       qualification.</span></div>
       <div class="kv w"><span class="v"><b>Rejected:</b> the prior explicit-source-first L-H one-picker presentation hard-failed owner QA as the
-      normal Place flow and is superseded by this frame; the delivered mechanics it described keep their recorded evidence scope.</span></div>
+      normal Place flow, and the first corrected build failed QA-008..011 — Down could not enter the results, four-row Previous / Next paging,
+      the preview buried below all results, cramped enlarged typography. This frame draws the owner-approved correction; the delivered
+      mechanics keep their recorded evidence scope.</span></div>
       <div class="kv w"><span class="v"><b>Target gate — the running application, not this page:</b> normal Place → type “resistor” → the shipped
       <b>Device:R</b> → preview → an actual R ghost placed on the schematic, with Cancel and Undo preserved. A mockup validates none of it, and
       this frame claims no delivered PASS.</span></div>
     </div>
   </div>
   <p class="cap" style="margin-top:12px"><b>Candidate typography and geometry (this frame only).</b> Primary picker text — search input, result
-  rows, declared facts, refusals, action labels — is 16 logical px at ≈1.4 line height; the search control is ≥38 px tall, result rows ≥40 px,
-  action buttons ≥34 px with 16 px labels; kind badges and counts are 12–13 px secondary text; focus is visible (accent ring) on the search, rows
-  and actions. Normal geometry is the owner's 1344 × 806 window with a ~720 px picker card that fits its pane (≤ 590 px tall): header, search and
-  actions are fixed while the single body — results, preview, facts — scrolls, keeping the footer reachable; the narrow pane uses the same
-  fixed-footer, scrolling-body column and wraps rows rather than truncating. These
+  rows, declared facts, refusals, action labels — is 16 logical px; result rows are compact single lines (≥34 px, long shipped descriptions
+  ellipsized, not wrapped), so readability does not crowd out the list or the preview (QA-011); the search control is ≥38 px tall, action buttons
+  ≥34 px with 16 px labels; kind / status badges, counts and the interaction hints are 12–13 px secondary text; focus is visible (accent ring) on
+  the search, rows and actions. Normal geometry is the owner's 1344 × 806 window with a ~720 px picker card that fits its pane (≤ 590 px tall):
+  search, hints and actions are fixed, the continuous list scrolls, and the 300 px selected panel stays beside it. Narrow geometry is 560 × 720:
+  the list scrolls inside a bounded strip with the preview permanently below it and the footer fixed. These
   are measured candidate values for review — <b>no WCAG-minimum conformance is claimed, and no global UI scale or preference change stands in for
   them</b>; tokens still govern the native translation.</p>
 </section>
