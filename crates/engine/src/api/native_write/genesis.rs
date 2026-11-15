@@ -40,6 +40,8 @@ use crate::ir::serialization::to_json_deterministic;
 use crate::ir::units::{ProjectUnitsSeedReceipt, UnitsProfile, project_profile_to_value};
 use crate::substrate::ProjectResolver;
 
+mod initial_documents;
+
 /// Root object ids to reuse when re-running genesis over an existing
 /// scaffold (`project new` is idempotent for an already-created project).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -70,8 +72,7 @@ pub struct GenesisReport {
     pub schematic_uuid: Uuid,
     pub board_uuid: Uuid,
     pub rules_uuid: Uuid,
-    /// The four canonical shards, in write order: project, schematic, board,
-    /// rules.
+    /// Canonical root shards followed by the initial sheet for product genesis.
     pub files_written: Vec<PathBuf>,
 }
 
@@ -263,7 +264,8 @@ pub fn bootstrap_native_project_with_units_receipt_value(
     profile
         .resolve()
         .map_err(|reason| EngineError::Validation(format!("invalid Units seed: {reason:?}")))?;
-    bootstrap_native_project_inner(root, spec, Some((profile, receipt)))
+    let report = bootstrap_native_project_inner(root, spec, Some((profile, receipt)))?;
+    initial_documents::complete(root, report)
 }
 
 fn bootstrap_native_project_inner(

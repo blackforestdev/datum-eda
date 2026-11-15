@@ -84,6 +84,103 @@ fn project_tree(root: &std::path::Path) -> BTreeMap<PathBuf, Vec<u8>> {
 }
 
 #[test]
+fn product_creation_starts_with_one_blank_main_sheet_and_board_and_replays_without_clobber() {
+    let fixture = Fixture::new("initial-documents");
+    let request = fixture.request("Named QA Project");
+    let actor = fixture.actor();
+    let first = fixture
+        .service
+        .create_project(request.clone(), &actor)
+        .unwrap();
+    let mut model = ProjectResolver::new(&request.destination)
+        .resolve()
+        .unwrap();
+    use crate::substrate::SourceShardKind;
+    let index = model
+        .materialized_source_shard_value(SourceShardKind::SchematicRoot)
+        .unwrap();
+    let sheets = index["sheets"].as_object().unwrap();
+    assert_eq!(sheets.len(), 1);
+    let (sheet, relative) = sheets.iter().next().unwrap();
+    let sheet_id: uuid::Uuid = sheet.parse().unwrap();
+    let sheet_path = request
+        .destination
+        .join("schematic")
+        .join(relative.as_str().unwrap());
+    let blank: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(&sheet_path).unwrap()).unwrap();
+    assert_eq!(blank["name"], "Main");
+    assert_eq!(blank["uuid"], json!(sheet_id));
+    for key in [
+        "symbols",
+        "wires",
+        "junctions",
+        "labels",
+        "buses",
+        "bus_entries",
+        "ports",
+        "noconnects",
+        "texts",
+        "drawings",
+    ] {
+        assert!(blank[key].as_object().unwrap().is_empty(), "{key}");
+    }
+    assert_eq!(model.project.name, request.project_name);
+    assert_eq!(
+        model
+            .materialized_source_shard_value(SourceShardKind::BoardRoot)
+            .unwrap()["name"],
+        "Named QA Project Board"
+    );
+    assert!(
+        model.journal.is_empty(),
+        "Initial documents are genesis content, not an undoable edit"
+    );
+    let before_replay = project_tree(&request.destination);
+    assert_eq!(
+        fixture
+            .service
+            .create_project(request.clone(), &actor)
+            .unwrap(),
+        first
+    );
+    assert_eq!(project_tree(&request.destination), before_replay);
+
+    // A later ordinary edit must survive another identical creation request.
+    use crate::api::native_write::{WriteProvenance, commit_prepared, schematic_connectivity};
+    let label = crate::schematic::NetLabel {
+        uuid: uuid::Uuid::new_v4(),
+        name: "QA_SIGNAL".into(),
+        kind: crate::schematic::LabelKind::Local,
+        position: crate::ir::geometry::Point::new(0, 0),
+    };
+    let prepared = schematic_connectivity::build_create_schematic_label(
+        &model,
+        WriteProvenance::new(
+            "test",
+            crate::substrate::CommitSource::Test,
+            "Edit initial sheet",
+        ),
+        sheet_id,
+        &label,
+    )
+    .unwrap();
+    commit_prepared(&mut model, &request.destination, prepared).unwrap();
+    let edited = project_tree(&request.destination);
+    fixture
+        .service
+        .create_project(request.clone(), &actor)
+        .unwrap();
+    assert_eq!(project_tree(&request.destination), edited);
+    let cold = ProjectResolver::new(&request.destination)
+        .resolve()
+        .unwrap();
+    assert!(cold.objects.contains_key(&sheet_id));
+    assert!(cold.objects.contains_key(&label.uuid));
+    assert_eq!(cold.journal.len(), 1);
+}
+
+#[test]
 fn factory_only_service_cannot_be_reused_as_a_global_preferences_reader() {
     let service = GlobalPreferencesProductService::factory_only("factory-only-test").unwrap();
     let refusal = service
