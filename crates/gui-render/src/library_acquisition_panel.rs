@@ -1,6 +1,8 @@
 //! Local-source acquisition in the existing library pane and focus sequence.
 use super::*;
 use crate::global_preferences_primitives::{ControlMeshCache, ControlPainter};
+#[path = "component_picker.rs"]
+pub(super) mod component_picker;
 #[path = "library_footprint_preview.rs"]
 mod footprint;
 

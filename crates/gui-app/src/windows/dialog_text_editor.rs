@@ -103,6 +103,9 @@ impl Runtime {
         {
             return Some(Target::SchematicName);
         }
+        if self.component_picker_open() {
+            return super::library_text_editor::target(self);
+        }
         if !ui.new_project.open
             && !ui.project_open.open
             && ui.active_menu.is_none()

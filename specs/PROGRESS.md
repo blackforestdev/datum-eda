@@ -459,6 +459,18 @@
 
 <!-- ACTIVE FRONTIER:END -->
 
+**Bounded routine GUI implementation — `dat-single-component-picker-b5xf`:** accepted
+L-H target `978f0e4b` is translated into one Place Component picker for an
+explicitly chosen complete native source, with session source reuse and separate
+canonical adoption/placement history. The task composes the reviewed release-B
+workflow prefix with final release-D contextual labels, normal/narrow previews
+and failed-read retirement checks. The raw prefix ended in rejected cold capture;
+whole-run PASS and acknowledged Save remain unclaimed. Final independent
+review and landing state
+belongs to that task, not the Frontier selector. No default component content,
+S05 policy change or full qualification; intermittent initial cold capture
+`dat-zyg9` remains separately tracked with its unknown cause.
+
 ### Workflow repair admission transaction
 
 Admission and repair evidence are historical; current selection and authorization come from the Active Frontier. [Detailed evidence](progress/workflow_governance_details.md#workflow-repair-admission-transaction).

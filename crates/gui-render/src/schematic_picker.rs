@@ -40,6 +40,17 @@ pub(super) fn render(
         return label::render(state, layout, quads, text, hits);
     }
     let authoring = &state.schematic_authoring;
+    if state
+        .library
+        .acquisition
+        .as_ref()
+        .is_some_and(|a| a.component_picker)
+    {
+        crate::side_panels::library_surface::render_component_picker(
+            state, layout, quads, text, hits,
+        );
+        return Ok(());
+    }
     if authoring.picker {
         let editing = authoring.editing.is_some();
         let bus = authoring.bus;

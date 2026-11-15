@@ -17,6 +17,41 @@ pub struct NativePartAcquisitionPreview {
     pub gate_symbols: Vec<(String, Value, Value)>,
 }
 impl NativePartAcquisitionPreview {
+    /// Placement reuses exact saved definitions, never just a matching Part ID.
+    pub fn in_project(&self, library: &crate::library_browser::LibraryBrowser) -> bool {
+        let definitions = [
+            ("parts", &self.part),
+            ("entities", &self.entity),
+            ("packages", &self.package),
+            ("footprints", &self.footprint),
+            ("pin_pad_maps", &self.pin_pad_map),
+        ];
+        definitions
+            .into_iter()
+            .chain(self.padstacks.iter().map(|raw| ("padstacks", raw)))
+            .chain(
+                self.gate_symbols
+                    .iter()
+                    .flat_map(|(_, unit, symbol)| [("units", unit), ("symbols", symbol)]),
+            )
+            .all(|(kind, raw)| {
+                let Some(id) = raw
+                    .get("uuid")
+                    .and_then(Value::as_str)
+                    .and_then(|s| s.parse::<Uuid>().ok())
+                else {
+                    return false;
+                };
+                let mut matches = library
+                    .entries
+                    .iter()
+                    .filter(|entry| entry.kind == kind && entry.id == id);
+                matches
+                    .next()
+                    .is_some_and(|entry| entry.warning.is_none() && &entry.raw == raw)
+                    && matches.next().is_none()
+            })
+    }
     /// Labels follow the authored UUID relationships, never matching pin/pad names.
     pub fn mapping_labels(&self) -> Result<Vec<String>, String> {
         let reference = |raw: &Value, key: &str| -> Result<Uuid, String> {

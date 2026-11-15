@@ -8,7 +8,8 @@ pub(super) fn target(runtime: &Runtime) -> Option<Target> {
     if state.ui.active_menu.is_some()
         || state.ui.new_project.open
         || state.ui.project_open.open
-        || state.ui.layout.focused_content() != PaneContent::Library
+        || (state.ui.layout.focused_content() != PaneContent::Library
+            && !runtime.component_picker_open())
         || runtime.application_focus()
             != datum_gui_protocol::ApplicationFocus::Editor(state.ui.layout.focused)
     {

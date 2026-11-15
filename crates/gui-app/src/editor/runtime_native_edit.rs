@@ -231,6 +231,7 @@ impl Runtime {
             return true;
         }
         if !matches!(action, NativeEditAction::Schematic)
+            && !(matches!(action, NativeEditAction::LibraryAcquire) && self.component_picker_open())
             && (self.workspace().schematic_authoring.active()
                 || self.workspace().schematic_authoring.picker
                 || self.workspace().schematic_authoring.creation.is_some())
@@ -512,6 +513,13 @@ impl Runtime {
         let placement = matches!(answer.intent.action, NativeEditAction::LibraryAcquire)
             .then(|| self.acquisition_placement_origin())
             .flatten();
+        let inline_acquisition = self
+            .workspace()
+            .library
+            .acquisition
+            .as_ref()
+            .filter(|a| a.component_picker)
+            .cloned();
         let placement_symbol = self.workspace().library.acquisition.as_ref().and_then(|a| {
             if a.is_native_part() {
                 a.selected_native_part()
@@ -576,7 +584,9 @@ impl Runtime {
         if let (Err(reason), Some(editing)) = (&answer.result, editing) {
             self.restore_selected_schematic_edit(editing, reason);
         }
-        if acquired && let Some(origin) = placement {
+        if acquired && let Some(acquisition) = inline_acquisition {
+            self.restore_component_picker_after_adoption(acquisition);
+        } else if acquired && let Some(origin) = placement {
             self.resume_library_placement(origin, placement_symbol);
         }
         match answer.result {

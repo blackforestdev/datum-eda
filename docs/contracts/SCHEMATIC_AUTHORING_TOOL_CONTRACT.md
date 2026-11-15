@@ -608,6 +608,33 @@ development behavior, not component-workflow release-GUI execution, physical/HUM
 input, manufacturer pinout qualification, owner-circuit migration or full
 qualification.
 
+The bounded single-picker follow-up (`dat-single-component-picker-b5xf`), under
+accepted `library-surfaces-study.html#L-H` target `978f0e4b`, presents **Place
+Component** on the captured schematic document and occurrence. An explicitly
+chosen saved native project supplies declared complete Parts; source path,
+metadata search, symbol, footprint and pin/pad correspondence previews stay in
+this picker. The source choice is reused within this project/session, without a
+persisted preference or a separate Library pane. No stock component catalog or
+new component content is supplied.
+
+Search/preview Cancel leaves canonical source and project bytes unchanged.
+Explicit adoption into the project library uses the existing library-only
+commit/Undo; later Cancel retains those committed definitions. Place rechecks
+the selected source and exact saved definition graph before entering the existing
+placement ghost, whose canvas commit has its own Undo/Redo. Failed or changed
+source reads invalidate the selected preview and placement eligibility. Existing
+approval/basis information and engine refusals remain authoritative; this picker
+does not settle S05, add a writer, migrate old projects or combine the commits.
+The task records a scoped composition: the reviewed release-B workflow prefix
+proves search, previews, Cancel, adoption and placement history; final release-D
+checks prove contextual labels, normal/narrow previews and failed-read eligibility
+retirement. The raw prefix run ended with a rejected cold capture; it is not a
+whole-run PASS or acknowledged Save. Independent review binds those candidate
+scopes separately. The intermittent initial
+cold capture issue `dat-zyg9` remains unknown between rendering and capture;
+interaction-assisted cold reopening is distinct from healthy automatic startup.
+Physical/HUMAN, production content and full qualification remain unclaimed.
+
 The accepted bounded recovery target `library-surfaces-study.html#L-K`
 (`dat-existing-project-component-resolution-i89r`) connects an unbound transfer
 row to existing Assign Part and Library authoring. A compatible complete Part

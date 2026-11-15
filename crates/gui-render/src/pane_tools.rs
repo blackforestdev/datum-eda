@@ -180,7 +180,7 @@ const TOOLS: [(EditorTool, f32); 5] = [
     (EditorTool::Select, 42.0),
     (EditorTool::Move, 38.0),
     (EditorTool::Wire, 48.0),
-    (EditorTool::Symbol, 48.0),
+    (EditorTool::Component, 48.0),
     (EditorTool::Power, 44.0),
 ];
 pub(crate) fn reserve(header: RectPx) -> f32 {
@@ -274,6 +274,7 @@ pub(super) fn render(
             let label = match tool {
                 EditorTool::Select => "Sel",
                 EditorTool::Symbol => "Sym",
+                EditorTool::Component => "Comp",
                 _ => tool.label(),
             };
             draw_text(
@@ -313,7 +314,7 @@ fn icon(tool: EditorTool, x: f32, y: f32, color: [f32; 3], quads: &mut Vec<Quad>
     let paths: &[&[(f32, f32)]] = match tool {
         EditorTool::Select => &[&[(5., 3.), (12., 20.), (14.2, 13.2), (21., 11.), (5., 3.)]],
         EditorTool::Wire => &[&[(3., 6.), (11., 6.), (11., 18.), (21., 18.)]],
-        EditorTool::Symbol => &[
+        EditorTool::Symbol | EditorTool::Component => &[
             &[(8., 7.), (16., 7.), (16., 17.), (8., 17.), (8., 7.)],
             &[(4., 10.), (8., 10.)],
             &[(4., 14.), (8., 14.)],
@@ -453,7 +454,7 @@ mod tests {
             hits.iter()
                 .any(|hit| hit.target == HitTarget::SetWorkspaceTool(WorkspaceTool::Select))
         );
-        for label in ["Wire", "Symbol", "Power Port"] {
+        for label in ["Wire", "Component", "Power Port"] {
             assert!(hits.iter().any(|hit| matches!(&hit.target,
                 HitTarget::MenuItem { menu, label: found } if menu == "Place" && found == label)));
         }

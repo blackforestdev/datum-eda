@@ -1,5 +1,7 @@
 //! Library browsing returns to the exact schematic occurrence that requested it.
 use super::*;
+#[path = "runtime_component_picker.rs"]
+mod component_picker;
 use datum_gui_protocol::{
     PaneId, library_browser::LibraryControl, schematic_documents::SchematicDocumentKey,
 };
@@ -173,6 +175,13 @@ impl Runtime {
 
     pub(crate) fn acquisition_placement_origin(&self) -> Option<PlacementOrigin> {
         let acquisition = self.workspace().library.acquisition.as_ref()?;
+        self.acquisition_placement_origin_for(acquisition)
+    }
+
+    fn acquisition_placement_origin_for(
+        &self,
+        acquisition: &datum_gui_protocol::library_browser::acquisition::LibraryAcquisition,
+    ) -> Option<PlacementOrigin> {
         Some(PlacementOrigin {
             pane: acquisition.placement_pane?,
             document: acquisition.placement_document.clone()?,

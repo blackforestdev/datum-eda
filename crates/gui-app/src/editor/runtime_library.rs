@@ -364,7 +364,8 @@ impl Runtime {
         true
     }
     pub(super) fn handle_library_key(&mut self, event: &winit::event::KeyEvent) -> bool {
-        if self.workspace().ui.layout.focused_content() == PaneContent::Library
+        if (self.workspace().ui.layout.focused_content() == PaneContent::Library
+            || self.component_picker_open())
             && matches!(
                 self.application_focus(),
                 datum_gui_protocol::ApplicationFocus::Editor(_)
@@ -389,7 +390,8 @@ impl Runtime {
     }
     /// Shared logical-key consumer, also exercised by programmatic App proof.
     pub(super) fn handle_library_input(&mut self, key: &Key, state: ElementState) -> bool {
-        if self.workspace().ui.layout.focused_content() != PaneContent::Library
+        if (self.workspace().ui.layout.focused_content() != PaneContent::Library
+            && !self.component_picker_open())
             || !matches!(
                 self.application_focus(),
                 datum_gui_protocol::ApplicationFocus::Editor(_)

@@ -52,6 +52,8 @@ pub struct LibraryAcquisition {
     pub placement_document: Option<crate::schematic_documents::SchematicDocumentKey>,
     pub placement_zoom: Option<crate::PaneId>,
     pub placement_temporary_pane: Option<crate::PaneId>,
+    /// Component search stays on its captured schematic instead of opening Library.
+    pub component_picker: bool,
     /// Explicit confirmation belongs to one source read, never a later query.
     pub placement_confirmation: Option<Uuid>,
     pub preview: Option<LibraryAcquisitionPreview>,
@@ -83,6 +85,7 @@ impl LibraryAcquisition {
             placement_document: None,
             placement_zoom: None,
             placement_temporary_pane: None,
+            component_picker: false,
             placement_confirmation: None,
             preview: None,
             refusal: None,

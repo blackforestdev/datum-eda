@@ -32,6 +32,15 @@ struct Painter<'a> {
     text: &'a mut Vec<TextRun>,
     hits: &'a mut Vec<HitRegion>,
 }
+pub(crate) fn render_component_picker(
+    state: &ReviewWorkspaceState,
+    layout: &ShellLayout,
+    quads: &mut Vec<Quad>,
+    text: &mut Vec<TextRun>,
+    hits: &mut Vec<HitRegion>,
+) {
+    acquisition_panel::component_picker::render(state, layout, quads, text, hits);
+}
 impl Painter<'_> {
     fn line(&mut self, label: &str) {
         let width = (self.rect.width - 16.).max(1.);
@@ -409,6 +418,12 @@ pub(crate) fn render(
             p.button("Next metadata row", C::DetailPage(true));
         }
     }
+    scroll_content(&mut p, starts, 1);
+}
+
+fn scroll_content(p: &mut Painter<'_>, starts: (usize, usize, usize), fixed_quads: usize) {
+    let rect = p.rect;
+    let state = p.state;
     let content = p.y - rect.y;
     let mut scroll = datum_gui_viewport::scroll::ScrollViewport::default();
     scroll.layout(
@@ -426,7 +441,7 @@ pub(crate) fn render(
             scroll.reveal(region.rect.y - rect.y, region.rect.y + region.rect.height - rect.y);
         }
     let offset = scroll.offset();
-    for quad in &mut p.quads[starts.0 + 1..] {
+    for quad in &mut p.quads[starts.0 + fixed_quads..] {
         for point in &mut quad.points {
             point.1 -= offset;
         }
@@ -453,6 +468,7 @@ pub(crate) fn render(
     );
     crate::hit_clipping::clip_content(p.quads, p.text, p.hits, starts.0, starts.1, starts.2, rect);
 }
+
 pub(crate) fn inspector(
     state: &ReviewWorkspaceState,
     rect: RectPx,

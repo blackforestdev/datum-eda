@@ -26,6 +26,15 @@ mod marker;
 mod selected;
 impl Runtime {
     pub(super) fn begin_native_schematic(&mut self, wire: bool) -> bool {
+        if self.workspace().library.acquisition.is_some()
+            || self.workspace().library.draft.is_some()
+        {
+            self.log_console_refusal(
+                ConsoleFeedbackSource::Tool,
+                "Finish or cancel the current library action first",
+            );
+            return true;
+        }
         if !self.prepare_native_circuit(wire) {
             return true;
         }
@@ -34,6 +43,7 @@ impl Runtime {
                 .workspace_mut()
                 .schematic_authoring
                 .begin_component_placement();
+            self.open_component_picker();
             self.invalidate_frame();
         }
         true
@@ -197,6 +207,11 @@ impl Runtime {
         if self.workspace().schematic_authoring.label.is_some() {
             return self.handle_label_chrome(target);
         }
+        if self.component_picker_open()
+            && let HitTarget::Library(control) = target
+        {
+            return self.activate_library_pointer(control.clone());
+        }
         match target {
             HitTarget::SchematicCustomField(control) => {
                 return self.handle_custom_field_control(*control);
@@ -260,7 +275,12 @@ impl Runtime {
                     self.finish_dialog_editor_pointer();
                 }
             }
-            HitTarget::SchematicPlace => return self.start_symbol_preview(),
+            HitTarget::SchematicPlace => {
+                if self.component_picker_open() {
+                    return self.confirm_component_picker();
+                }
+                return self.start_symbol_preview();
+            }
             HitTarget::SchematicEditApply => return self.apply_selected_symbol_fields(),
             HitTarget::SchematicCancel => {
                 self.cancel_native_schematic();

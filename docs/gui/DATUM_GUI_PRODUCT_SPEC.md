@@ -631,6 +631,26 @@ execution, physical/HUMAN input, owner-circuit migration, manufacturer pinout
 qualification or full qualification. Approval and the separate reviewed
 cross-editor/ECO workflow remain outside this increment.
 
+The bounded `dat-single-component-picker-b5xf` follow-up uses the accepted
+`library-surfaces-study.html#L-H` one-picker target (`978f0e4b`). **Place Component**
+keeps an explicitly chosen saved native source, declared-metadata search and
+selected symbol/physical footprint/pin-pad preview on the captured schematic and
+occurrence. It remembers that source for this project/session only. Read/search/
+preview/Cancel do not author content; no default catalog, generic resistor or
+production source is invented. Explicit **Adopt into project library** is the
+existing separate library-only commit and Undo. Cancelling afterward retains
+that adoption; **Place Component** starts the existing ghost and the later canvas
+click commits placement with its own Undo/Redo. Source re-read failures retire
+the preview and Place action; exact saved identities and complete graph checks
+remain in force. S05 approval/basis policy and Library authoring stay separate.
+The task records reviewed release-B search/adoption/placement/history prefix
+evidence composed with final release-D normal/narrow preview, contextual-label
+and failed-read retirement checks. This is not a whole-run PASS for the prefix
+run, which ended in rejected cold capture, or an acknowledged Save. Independent
+review retains the separate candidate scopes. Initial cold captures (`dat-zyg9`) are not
+explained as capture-only or a healthy startup result; interaction-assisted cold
+proof supplies only its declared scope. No HUMAN or full qualification is claimed.
+
 Existing Symbol-only projects need explicit component definitions for PCB
 transfer. The accepted L-K target in `library-surfaces-study.html` gives an
 unbound row a Resolve action into existing compatible-Part assignment or

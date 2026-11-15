@@ -18,12 +18,15 @@ struct Answer {
     result: Result<ReadResult, String>,
 }
 pub(crate) struct AcquisitionWork {
+    pub(crate) component_sources:
+        std::collections::BTreeMap<eda_engine::substrate::ObjectId, String>,
     pending: Option<mpsc::Receiver<Answer>>,
     wake: winit::event_loop::EventLoopProxy<()>,
 }
 impl AcquisitionWork {
     pub(crate) fn new(wake: winit::event_loop::EventLoopProxy<()>) -> Self {
         Self {
+            component_sources: Default::default(),
             pending: None,
             wake,
         }
@@ -31,7 +34,18 @@ impl AcquisitionWork {
     pub(crate) fn cancel(&mut self) {
         self.pending = None;
     }
-    fn start(&mut self, acquisition: &LibraryAcquisition, source: Option<LibrarySourceSymbol>) {
+    pub(crate) fn start(
+        &mut self,
+        acquisition: &LibraryAcquisition,
+        source: Option<LibrarySourceSymbol>,
+    ) {
+        if acquisition.component_picker
+            && !acquisition.path.trim().is_empty()
+            && let Some(document) = &acquisition.placement_document
+        {
+            self.component_sources
+                .insert(document.project, acquisition.path.clone());
+        }
         let (sender, receiver) = mpsc::channel();
         self.pending = Some(receiver);
         let session = acquisition.session;
@@ -102,18 +116,38 @@ impl Runtime {
                 a.loaded = true;
                 catalog_arrived = true;
             }
-            Ok(ReadResult::Preview(preview)) => a.preview = Some(preview),
+            Ok(ReadResult::Preview(preview)) => {
+                if a.component_picker
+                    && a.placement_confirmation == Some(a.session)
+                    && a.preview
+                        .as_ref()
+                        .is_none_or(|p| p.source_digest != preview.source_digest)
+                {
+                    a.preview = None;
+                    a.placement_confirmation = None;
+                    a.refusal = Some("Component source changed since preview; refresh the source and choose again".into());
+                } else {
+                    a.preview = Some(preview);
+                }
+            }
             Err(reason) => {
+                if a.component_picker {
+                    a.preview = None;
+                }
                 a.placement_confirmation = None;
                 a.refusal = Some(reason);
             }
         }
-        let confirmed = a.take_placement_confirmation() && !a.is_native_part();
+        let confirmed = a.take_placement_confirmation();
+        let component = a.component_picker;
+        let native_part = a.is_native_part();
         self.preview_existing_project_symbol();
         if confirmed {
-            if catalog_arrived {
+            if component {
+                self.finish_component_picker_placement();
+            } else if catalog_arrived {
                 self.confirm_acquisition_search();
-            } else {
+            } else if !native_part {
                 self.acquire_symbol_for_placement();
             }
         }
@@ -232,7 +266,11 @@ impl Runtime {
                     }
                     if a.placement_pane.is_some() && source.is_unavailable() {
                         a.search_changed();
-                        a.refusal = Some("This symbol is unavailable for placement".into());
+                        a.refusal = Some(if a.component_picker {
+                            source.description.clone()
+                        } else {
+                            "This symbol is unavailable for placement".into()
+                        });
                         self.invalidate_frame();
                         return true;
                     }
@@ -252,7 +290,8 @@ impl Runtime {
                 };
                 a.session = eda_engine::substrate::ObjectId::new_v4();
                 a.placement_confirmation =
-                    (a.placement_pane.is_some() && source.is_some()).then_some(a.session);
+                    (a.placement_pane.is_some() && source.is_some() && !a.component_picker)
+                        .then_some(a.session);
                 a.selected = source.as_ref().map(|s| s.name.clone());
                 a.selected_source = source.as_ref().map(|s| s.path.clone());
                 a.preview = None;
@@ -276,6 +315,18 @@ impl Runtime {
                 }
             }
             C::AcquireImport => {
+                if self.component_picker_open()
+                    && self
+                        .workspace()
+                        .library
+                        .acquisition
+                        .as_ref()
+                        .and_then(|a| a.preview.as_ref())
+                        .and_then(|p| p.native_part.as_ref())
+                        .is_some_and(|part| part.in_project(&self.workspace().library))
+                {
+                    return self.confirm_component_picker();
+                }
                 if self
                     .workspace()
                     .library

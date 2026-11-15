@@ -147,7 +147,7 @@ fn native_catalog_exposes_declared_search_metadata_without_changing_source_or_qu
     let original = preview(&source.root, id).unwrap();
     let choices = catalog(&source.root).unwrap();
     let choice = choices.iter().find(|row| row.id == id).unwrap();
-    assert_eq!(choice.label, "Designer REUSABLE · 10k");
+    assert_eq!(choice.label, "Designer REUSABLE · 10k · 0603 chip package");
     assert!(choice.refusal.is_none());
     for declared in [
         "Precision resistor",

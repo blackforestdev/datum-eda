@@ -76,6 +76,64 @@ fn ready() -> LibraryAcquisition {
     });
     a
 }
+
+#[test]
+fn component_reuse_requires_the_complete_exact_saved_graph() {
+    use crate::library_browser::{LibraryBrowser, LibraryEntry};
+    let mut a = ready();
+    let p = a.preview.as_mut().unwrap().native_part.as_mut().unwrap();
+    p.entity = json!({"uuid":Uuid::new_v4()});
+    p.package = json!({"uuid":Uuid::new_v4(), "name":"Declared package"});
+    p.footprint = json!({"uuid":Uuid::new_v4()});
+    p.pin_pad_map = json!({"uuid":Uuid::new_v4()});
+    p.padstacks = vec![json!({"uuid":Uuid::new_v4()})];
+    p.gate_symbols = vec![(
+        "A".into(),
+        json!({"uuid":Uuid::new_v4()}),
+        json!({"uuid":Uuid::new_v4()}),
+    )];
+    let mut library = LibraryBrowser::default();
+    for (kind, raw) in [
+        ("parts", &p.part),
+        ("entities", &p.entity),
+        ("packages", &p.package),
+        ("footprints", &p.footprint),
+        ("pin_pad_maps", &p.pin_pad_map),
+        ("padstacks", &p.padstacks[0]),
+        ("units", &p.gate_symbols[0].1),
+        ("symbols", &p.gate_symbols[0].2),
+    ] {
+        let id = raw["uuid"].as_str().unwrap().parse().unwrap();
+        library.entries.push(LibraryEntry {
+            id,
+            kind: kind.into(),
+            name: "Named definition".into(),
+            source_path: format!("pool/{kind}/{id}.json"),
+            revision: None,
+            raw: raw.clone(),
+            warning: None,
+        });
+    }
+    assert!(p.in_project(&library));
+    let original = library.entries[2].raw.clone();
+    library.entries[2].raw["name"] = json!("Changed without changing identity");
+    assert!(
+        !p.in_project(&library),
+        "Part identity alone cannot authorize placement"
+    );
+    library.entries[2].raw = original;
+    let entry = library.entries.pop().unwrap();
+    assert!(
+        !p.in_project(&library),
+        "Every referenced gate symbol must be saved"
+    );
+    library.entries.push(entry.clone());
+    library.entries.push(entry);
+    assert!(
+        !p.in_project(&library),
+        "Ambiguous definitions refuse reuse"
+    );
+}
 #[test]
 fn native_part_request_uses_identity_not_display_or_gate_symbol() {
     let mut a = ready();

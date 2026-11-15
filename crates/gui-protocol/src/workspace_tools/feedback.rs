@@ -10,6 +10,7 @@ pub enum EditorTool {
     BusEntry,
     Field,
     Symbol,
+    Component,
     Power,
     Label,
     Text,
@@ -61,6 +62,12 @@ mod tests {
         state.schematic_authoring.cancel();
         state.schematic_authoring.picker = true;
         assert_eq!(EditorTool::active(&state), EditorTool::Symbol);
+        state.schematic_authoring.components.active = true;
+        let component = EditorTool::active(&state);
+        assert_eq!(component.label(), "Component");
+        assert_eq!(component.menu_entry(), Some(("Place", "Component")));
+        state.schematic_authoring.components.active = false;
+        assert_eq!(EditorTool::active(&state).label(), "Symbol");
         state.schematic_authoring.cancel();
         assert_eq!(EditorTool::active(&state), EditorTool::Select);
         for (kind, tool) in [
@@ -125,6 +132,9 @@ impl EditorTool {
                 };
             }
             if schematic.picker || schematic.chosen.is_some() || schematic.editing.is_some() {
+                if schematic.components.active && schematic.editing.is_none() {
+                    return Self::Component;
+                }
                 return Self::Symbol;
             }
         }
@@ -144,6 +154,7 @@ impl EditorTool {
             Self::BusEntry => "Bus Entry",
             Self::Field => "Field text",
             Self::Symbol => "Symbol",
+            Self::Component => "Component",
             Self::Power => "Power",
             Self::Label => "Label",
             Self::Text => "Text",
@@ -160,6 +171,7 @@ impl EditorTool {
             Self::Bus => Some(("Place", "Bus")),
             Self::BusEntry => Some(("Place", "Bus Entry")),
             Self::Symbol => Some(("Place", "Symbol")),
+            Self::Component => Some(("Place", "Component")),
             Self::Power => Some(("Place", "Power Port")),
             Self::Label => Some(("Place", "Net Label")),
             Self::Text => Some(("Place", "Text")),

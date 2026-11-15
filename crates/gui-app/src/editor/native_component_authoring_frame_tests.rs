@@ -200,7 +200,7 @@ impl Workflow {
                     .unwrap();
                 r.session.workspace_mut().ui.layout.focused = pane;
                 r.set_application_focus(datum_gui_protocol::ApplicationFocus::Editor(pane));
-                self.host.menu("Symbol");
+                self.host.menu("Component");
             }
             1 => {
                 assert!(r.workspace().schematic_authoring.components.active);
@@ -210,9 +210,12 @@ impl Workflow {
                         .picker_choices()
                         .is_empty()
                 );
+                assert!(r.component_picker_open());
+                assert_eq!(
+                    r.workspace().ui.layout.focused_content(),
+                    PaneContent::Schematic
+                );
                 self.capture("empty-complete-component-picker");
-                self.host
-                    .control(events, HitTarget::SchematicBrowseLibraries);
             }
             2 => {
                 assert!(
@@ -223,6 +226,16 @@ impl Workflow {
                         .unwrap()
                         .is_native_part()
                 );
+                if r.workspace().library.acquisition.as_ref().unwrap().path
+                    == self.source.to_str().unwrap()
+                {
+                    assert_eq!(
+                        r.workspace().ui.layout.focused_content(),
+                        PaneContent::Schematic
+                    );
+                    self.stage = 3;
+                    return;
+                }
                 self.host
                     .control(events, HitTarget::Library(C::AcquirePath));
                 let path = self.source.to_str().unwrap().to_owned();
@@ -269,9 +282,10 @@ impl Workflow {
                 }
             }
             5 => {
-                if r.workspace().library.acquisition.is_some() {
-                    return;
-                }
+                assert!(
+                    r.component_picker_open(),
+                    "Adoption returns to the same picker"
+                );
                 assert_eq!(
                     self.sheet(),
                     self.original,
@@ -299,19 +313,17 @@ impl Workflow {
                             .as_ref()
                             .is_some_and(|c| c.part.part == self.part && c.value == "Signal"))
                 );
-                self.host
-                    .app
-                    .runtime
-                    .as_mut()
-                    .unwrap()
-                    .cancel_native_schematic();
-                self.host.menu("Symbol");
+                self.capture("adopted-library-separate-placement");
             }
             6 => {
                 self.capture("value-package-component-picker");
-                self.host.control(events, HitTarget::SchematicPlace);
+                self.host
+                    .control(events, HitTarget::Library(C::AcquireImport));
             }
             7 => {
+                if r.workspace().library.acquisition.is_some() {
+                    return;
+                }
                 assert!(r.workspace().schematic_authoring.active());
                 self.host.world(
                     events,
@@ -533,11 +545,9 @@ impl Workflow {
                 assert!(r.workspace().library.acquisition.is_none());
                 assert_eq!(snapshot(&self.target), self.before_acquisition);
                 assert_eq!(snapshot(&self.source), self.source_bytes);
-                self.host.menu("Symbol");
+                self.host.menu("Component");
             }
             31 => {
-                self.host
-                    .control(events, HitTarget::SchematicBrowseLibraries);
                 self.stage = 1;
             }
             _ => unreachable!(),

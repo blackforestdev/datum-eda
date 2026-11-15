@@ -103,7 +103,10 @@ pub fn catalog(path: &Path) -> Result<Vec<NativePartChoice>, EngineError> {
             .join("\n");
         rows.push(NativePartChoice {
             id: part.uuid,
-            label: format!("{} {} · {}", part.manufacturer, part.mpn, part.value),
+            label: format!(
+                "{} {} · {} · {}",
+                part.manufacturer, part.mpn, part.value, package_name
+            ),
             search_text,
             refusal: source::capture(path, &model, &index, part.uuid)
                 .err()

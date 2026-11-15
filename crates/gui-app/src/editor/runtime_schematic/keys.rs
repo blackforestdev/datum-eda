@@ -12,6 +12,9 @@ impl Runtime {
         if self.consume_coordinate_escape_release(event) {
             return true;
         }
+        if self.component_picker_open() {
+            return self.handle_library_key(event);
+        }
         if event.state != ElementState::Pressed {
             return false;
         }

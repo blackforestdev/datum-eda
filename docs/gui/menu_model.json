@@ -283,7 +283,7 @@
       "active_editor": "schematic",
       "items": [
         {
-          "label": "Symbol",
+          "label": "Component",
           "icon": "symbol",
           "verb": "datum.schematic.place_symbol"
         },
@@ -1282,7 +1282,7 @@
     "schematic.empty": {
       "cardinal": {
         "N": {
-          "label": "Place Symbol",
+          "label": "Place Component",
           "icon": "symbol",
           "verb": "datum.schematic.place_symbol"
         },
