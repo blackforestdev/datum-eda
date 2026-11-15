@@ -374,8 +374,12 @@
   Cancel / Place footer stays reachable; the list scrolls independently while the selected preview remains beside it, and the details beneath the
   preview can scroll separately. The hint bar states the owner-approved interaction (QA-008): ↓ from Search enters
   the results; ↑/↓ move the selection, keep it visible and update the preview; PgUp/PgDn page the one list; wheel / two-finger scrolls; Tab moves
-  among major controls. These semantics are owner-approved Datum behavior, not a new mechanism. The Library pane is not involved and is not
-  open.</p>
+  among major controls. Enter (QA-012): on the selected eligible result it invokes the existing Place action — the picker closes and the existing
+  placement ghost starts on the captured schematic at the actual cursor position, never a fabricated center or a cursor warp; a second distinct
+  Enter, or a left click, then places through the existing canonical path. Enter does not accept while the preview is pending, unavailable or
+  stale; Enter on Cancel cancels; outside the captured canvas a placement Enter is consumed and refused, placing nothing. All of these semantics,
+  including Enter, are owner-approved Datum behavior requirements, not a new mechanism — and this mockup proves none of them at runtime. The
+  Library pane is not involved and is not open.</p>
   <div class="grid2" style="margin-top:16px">
     <div class="card p16" id="H2"><div class="phd0"><span>Part results — the complete component kind</span><span class="r">described, not fabricated</span></div>
       <div class="res" aria-label="Anatomy of a Part result row — placeholders, not data"><span class="kd">Part</span><span>⟨name⟩ <span style="color:var(--tx3)">— ⟨declared Value⟩ · ⟨Package⟩</span></span><span class="o">map ⟨n/n⟩</span></div>
