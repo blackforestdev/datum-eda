@@ -74,6 +74,9 @@ impl Drop for Project {
     }
 }
 fn complete() -> (Project, Uuid) {
+    complete_with_metadata("Native source", &[], "Reusable package")
+}
+fn complete_with_metadata(description: &str, tags: &[&str], package_name: &str) -> (Project, Uuid) {
     let mut p = Project::new();
     let [
         unit,
@@ -101,7 +104,7 @@ fn complete() -> (Project, Uuid) {
             symbol,
             json!({"name":"Reusable body","unit":unit,"drawings":[{"Rect":{"min":{"x":-1000000,"y":-1000000},"max":{"x":1000000,"y":1000000},"width":100000}}],"pin_anchors":[{"pin":pin,"position":{"x":-2000000,"y":0},"style":{"orientation":"Right","length_nm":1000000,"decoration":"none"}}]}),
         ),
-        ("packages", package, json!({"name":"Reusable package"})),
+        ("packages", package, json!({"name":package_name})),
         (
             "padstacks",
             stack,
@@ -120,7 +123,7 @@ fn complete() -> (Project, Uuid) {
         (
             "parts",
             part,
-            json!({"manufacturer":"Designer","mpn":"REUSABLE","description":"Native source","datasheet":"","value":"10k","entity":entity,"package":package,"default_footprint":footprint}),
+            json!({"manufacturer":"Designer","mpn":"REUSABLE","description":description,"tags":tags,"datasheet":"","value":"10k","entity":entity,"package":package,"default_footprint":footprint}),
         ),
         (
             "pin_pad_maps",
@@ -131,6 +134,32 @@ fn complete() -> (Project, Uuid) {
         p.create(kind, id, fields);
     }
     (p, part)
+}
+
+#[test]
+fn native_catalog_exposes_declared_search_metadata_without_changing_source_or_qualification() {
+    let (source, id) = complete_with_metadata(
+        "Precision resistor",
+        &["passive", "analog"],
+        "0603 chip package",
+    );
+    let before = source.bytes();
+    let original = preview(&source.root, id).unwrap();
+    let choices = catalog(&source.root).unwrap();
+    let choice = choices.iter().find(|row| row.id == id).unwrap();
+    assert_eq!(choice.label, "Designer REUSABLE · 10k");
+    assert!(choice.refusal.is_none());
+    for declared in [
+        "Precision resistor",
+        "passive",
+        "analog",
+        "0603 chip package",
+    ] {
+        assert!(choice.search_text.contains(declared), "Missing {declared}");
+    }
+    assert_eq!(catalog(&source.root).unwrap(), choices);
+    assert_eq!(preview(&source.root, id).unwrap(), original);
+    assert_eq!(source.bytes(), before);
 }
 fn seed_symbols(target: &mut Project, snapshot: &NativePartPreview) {
     let specs = snapshot

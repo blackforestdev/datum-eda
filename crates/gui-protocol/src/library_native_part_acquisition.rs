@@ -84,6 +84,45 @@ impl LibraryAcquisitionPreview {
     }
 }
 impl LibraryAcquisition {
+    /// Shared native-source projection for the browser and placement search.
+    pub fn native_part_catalog(
+        path: &std::path::Path,
+        choices: Vec<
+            eda_engine::api::native_write::library_acquisition::native_part::NativePartChoice,
+        >,
+    ) -> super::catalog::SourceCatalog {
+        use super::catalog::SourceAvailability;
+        super::catalog::SourceCatalog {
+            symbols: choices
+                .into_iter()
+                .map(|part| {
+                    let availability = if part.refusal.is_some() {
+                        SourceAvailability::Unavailable
+                    } else {
+                        SourceAvailability::Supported
+                    };
+                    let mut description = part.search_text;
+                    if let Some(reason) = part.refusal {
+                        if !description.is_empty() {
+                            description.push('\n');
+                        }
+                        description.push_str(&reason);
+                    }
+                    super::LibrarySourceSymbol {
+                        path: path.to_owned(),
+                        name: part.id.to_string(),
+                        label: part.label,
+                        description,
+                        availability,
+                    }
+                })
+                .collect(),
+            notices: vec![
+                "Choose one complete native Part; source project stays unchanged.".into(),
+            ],
+        }
+    }
+
     pub fn bundled(&self) -> bool {
         self.source == AcquisitionSource::BundledSymbols
     }

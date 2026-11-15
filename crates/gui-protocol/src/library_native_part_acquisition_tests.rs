@@ -2,6 +2,52 @@ use super::*;
 use crate::library_browser::acquisition::{AcquisitionSource, NativePartAcquisitionPreview};
 use serde_json::json;
 
+#[test]
+fn native_component_search_uses_shared_declared_metadata_and_preserves_availability_and_identity() {
+    use eda_engine::api::native_write::library_acquisition::native_part::NativePartChoice;
+    let [available, refused] = std::array::from_fn(|_| Uuid::new_v4());
+    let path = std::path::Path::new("/saved/native/library");
+    let catalog = LibraryAcquisition::native_part_catalog(
+        path,
+        vec![
+            NativePartChoice {
+                id: available,
+                label: "Maker RX10 · 10k".into(),
+                search_text: "Precision resistor\n0603\npassive".into(),
+                refusal: None,
+            },
+            NativePartChoice {
+                id: refused,
+                label: "Maker RX20 · 20k".into(),
+                search_text: "Precision resistor\n0805\npassive".into(),
+                refusal: Some("Incomplete physical mapping".into()),
+            },
+        ],
+    );
+    let mut a = LibraryAcquisition::begin("rev".into(), None);
+    a.use_native_part_source();
+    a.names = catalog.symbols.iter().map(|s| s.label.clone()).collect();
+    a.sources = catalog.symbols;
+    for query in ["RESISTOR", "0603", "passive", "Maker", "RX10", "10k"] {
+        a.search = query.into();
+        assert_eq!(a.results(), vec![0], "Query {query}");
+        let source = &a.sources[a.results()[0]];
+        assert_eq!(source.name, available.to_string());
+        assert_eq!(source.path, path);
+    }
+    a.search = "0805".into();
+    assert!(a.results().is_empty(), "Unavailable components stay hidden");
+    a.include_unavailable = true;
+    assert_eq!(a.results(), vec![1]);
+    assert_eq!(a.sources[1].name, refused.to_string());
+    assert!(a.sources[1].is_unavailable());
+    assert!(
+        a.sources[1]
+            .description
+            .contains("Incomplete physical mapping")
+    );
+}
+
 fn ready() -> LibraryAcquisition {
     let id = Uuid::new_v4();
     let mut a = LibraryAcquisition::begin("target revision".into(), None);

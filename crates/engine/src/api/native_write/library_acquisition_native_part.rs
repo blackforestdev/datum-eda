@@ -38,6 +38,8 @@ pub struct NativePartPreview {
 pub struct NativePartChoice {
     pub id: Uuid,
     pub label: String,
+    /// Declared descriptive metadata; never physical qualification or identity.
+    pub search_text: String,
     pub refusal: Option<String>,
 }
 fn invalid(message: impl Into<String>) -> EngineError {
@@ -75,14 +77,34 @@ pub fn catalog(path: &Path) -> Result<Vec<NativePartChoice>, EngineError> {
                 rows.push(NativePartChoice {
                     id: object.object_id,
                     label: "Native Part source unavailable".into(),
+                    search_text: String::new(),
                     refusal: Some(error.to_string()),
                 });
                 continue;
             }
         };
+        let package_name = index
+            .node(part.package, "packages")
+            .ok()
+            .and_then(|node| {
+                node.object
+                    .get("name")
+                    .and_then(Value::as_str)
+                    .map(str::to_owned)
+            })
+            .unwrap_or_default();
+        let mut tags: Vec<_> = part.tags.iter().cloned().collect();
+        tags.sort();
+        let search_text = std::iter::once(part.description.as_str())
+            .chain(std::iter::once(package_name.as_str()))
+            .chain(tags.iter().map(String::as_str))
+            .filter(|text| !text.is_empty())
+            .collect::<Vec<_>>()
+            .join("\n");
         rows.push(NativePartChoice {
             id: part.uuid,
             label: format!("{} {} · {}", part.manufacturer, part.mpn, part.value),
+            search_text,
             refusal: source::capture(path, &model, &index, part.uuid)
                 .err()
                 .map(|e| e.to_string()),

@@ -300,29 +300,12 @@ fn read_native_parts(
     path: &std::path::Path,
     source: Option<LibrarySourceSymbol>,
 ) -> Result<ReadResult, String> {
-    use datum_gui_protocol::library_browser::acquisition::catalog::SourceAvailability;
     use eda_engine::api::native_write::library_acquisition::native_part;
     match source {
-        None => Ok(ReadResult::Names(SourceCatalog {
-            symbols: native_part::catalog(path)
-                .map_err(|e| e.to_string())?
-                .into_iter()
-                .map(|p| LibrarySourceSymbol {
-                    path: path.to_path_buf(),
-                    name: p.id.to_string(),
-                    label: p.label,
-                    description: p.refusal.clone().unwrap_or_default(),
-                    availability: if p.refusal.is_some() {
-                        SourceAvailability::Unavailable
-                    } else {
-                        SourceAvailability::Supported
-                    },
-                })
-                .collect(),
-            notices: vec![
-                "Choose one complete native Part; source project stays unchanged.".into(),
-            ],
-        })),
+        None => Ok(ReadResult::Names(LibraryAcquisition::native_part_catalog(
+            path,
+            native_part::catalog(path).map_err(|e| e.to_string())?,
+        ))),
         Some(source) => {
             let id = source
                 .name
