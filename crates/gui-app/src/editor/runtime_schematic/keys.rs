@@ -165,6 +165,31 @@ impl Runtime {
             Key::Named(NamedKey::Enter) if self.workspace().schematic_authoring.wire => {
                 return self.finish_native_wire();
             }
+            Key::Named(NamedKey::Enter)
+                if !picker
+                    && self.modifiers.is_empty()
+                    && self.workspace().schematic_authoring.chosen.is_some()
+                    && self
+                        .workspace()
+                        .schematic_authoring
+                        .design_placement
+                        .is_none()
+                    && self.workspace().schematic_authoring.gate_draft.is_none() =>
+            {
+                // The accepting menu press is consumed there. Held-key repeats
+                // must not turn its new ghost into an unintended placement.
+                if event.repeat || self.native_edit.pending() {
+                    return true;
+                }
+                if let Some(screen) = self.last_cursor_pos
+                    && let Some((world, SceneSurface::Schematic)) = self
+                        .prepared_scene()
+                        .and_then(|scene| scene.world_point_at_screen(screen.0, screen.1))
+                {
+                    return self.native_schematic_click(world, screen);
+                }
+                return true;
+            }
             Key::Named(NamedKey::Tab)
                 if !picker
                     && !self.workspace().schematic_authoring.wire

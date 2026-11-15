@@ -328,6 +328,9 @@ impl Runtime {
         };
         if editor.chosen.is_some() && gate_count == 1 {
             self.start_symbol_preview();
+            if let Some(screen) = self.last_cursor_pos {
+                self.native_schematic_pointer(screen);
+            }
         }
         self.invalidate_frame();
     }

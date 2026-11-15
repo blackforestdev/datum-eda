@@ -634,6 +634,17 @@ scroll separately. Existing reader sessions reject stale previews; Part checks,
 explicit Symbol-only acquisition, captured-sheet ghost and separate placement
 transaction retain their canonical paths. Search/preview/Cancel author nothing.
 
+The owner-approved QA012 Enter annotation is recorded in the genuine L-H source
+`a475c2e7785614a4ef58d69bc9e3d891de471c720ac370bf0ed6f6af9c533751`,
+reusing the unchanged layout. Enter on the selected eligible Part/Symbol invokes
+the existing typed Place action. After any required canonical acquisition, the
+picker closes and the existing ghost belongs to the captured schematic; its
+position comes only from the actual cursor on that canvas. A second distinct,
+unmodified, nonrepeat Enter or a left-click uses the same guarded/snapped canonical
+placement. Pending, unavailable and stale selections cannot accept; other control
+semantics remain, including Enter on Cancel. Enter outside the captured canvas
+does not place or fabricate coordinates; Escape still cancels the ghost.
+
 Actual ordinary GUI Project creation/Main navigation and first direct `resistor`
 input support real Device:R keyboard selection/preview, continuous wheel/Page
 navigation, major-control Tab, normal/narrow preview, Cancel with no canonical
@@ -651,6 +662,17 @@ reopen claim. Exact pins and evidence are bound in the same task. Owner QA findi
 remain open for owner recheck. No synthetic acceptance, hardware two-finger test,
 physical Part qualification, S05 policy, QoS, HUMAN or full qualification is claimed;
 `dat-zyg9` retains its separate unknown cause.
+
+QA012's finite real-design-copy proof reuses already-present Device:R definitions:
+menu Enter produces the cursor ghost with no canonical write in this case, then
+a distinct Enter commits R2; another menu Enter followed by left-click commits
+R3. Both pass exact sheet Undo/Redo with unchanged pool/original R1/source. Ghost
+Escape, outside-canvas Enter and Enter on focused Cancel place nothing. The held
+accept-key interval is not a latency budget or quantified repeat-event coverage;
+first-time missing-definition acquisition and complete Parts have source-review
+coverage here, not new runtime cases. The unchanged visual baseline and exact
+matching build/source/outcome evidence retain separate bindings in the same task.
+Owner QA012 and the other owner findings remain open for owner recheck.
 
 The accepted bounded recovery target `library-surfaces-study.html#L-K`
 (`dat-existing-project-component-resolution-i89r`) connects an unbound transfer

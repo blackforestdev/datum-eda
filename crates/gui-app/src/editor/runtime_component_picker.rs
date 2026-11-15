@@ -11,6 +11,7 @@ impl Runtime {
             key,
             Key::Named(
                 NamedKey::Tab
+                    | NamedKey::Enter
                     | NamedKey::ArrowDown
                     | NamedKey::ArrowUp
                     | NamedKey::PageDown
@@ -29,6 +30,26 @@ impl Runtime {
                 && a.selected_source.as_ref() == Some(&source.path)
         });
         let focus = library.focus.clone();
+        if matches!(key, Key::Named(NamedKey::Enter)) {
+            if self.modifiers.alt_key() || self.modifiers.shift_key() {
+                return false;
+            }
+            let Some(C::AcquireResult(index)) = focus else {
+                return false;
+            };
+            let eligible = results.contains(&index)
+                && a.sources.get(index).is_some_and(|source| {
+                    !source.is_unavailable()
+                        && a.selected.as_deref() == Some(source.name.as_str())
+                        && a.selected_source.as_ref() == Some(&source.path)
+                })
+                && a.picker_can_place(library);
+            return if eligible {
+                self.activate_library(C::AcquireImport)
+            } else {
+                true
+            };
+        }
         let row_height =
             datum_gui_protocol::library_browser::acquisition::COMPONENT_PICKER_ROW_HEIGHT;
         let viewport = self.presented_hits.regions().iter().find_map(|hit| {

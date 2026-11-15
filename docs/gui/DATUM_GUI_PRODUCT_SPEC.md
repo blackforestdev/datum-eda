@@ -645,6 +645,15 @@ Down enters the results; arrows select/reveal/update preview, PageUp/PageDown an
 wheel/native pixel input navigate one continuous list, and Tab visits major
 controls. Normal placement has no four-row Previous/Next pages.
 
+QA012 adds owner-approved Enter semantics in the genuine L-H caption
+`a475c2e7785614a4ef58d69bc9e3d891de471c720ac370bf0ed6f6af9c533751`
+without a layout change. Enter on the selected eligible result runs the existing
+Place action and hands off to the captured-schematic cursor ghost after any
+required acquisition. The next distinct unmodified, nonrepeat Enter or left-click
+uses the existing guarded placement path. Loading/unavailable/stale cases retain
+their guards; Enter on Cancel cancels. Outside-canvas Enter places nothing and
+leaves the ghost until Escape; coordinates are never fabricated or warped.
+
 Compact identity/type/status rows use measured single-line fitting. Primary text
 and input/actions retain the reviewed 16-logical-pixel styling, with smaller
 secondary descriptions and badges. Search/footer stay fixed; normal results and
@@ -667,6 +676,15 @@ scope, without a Save-then-second-reopen claim. Exact candidate/evidence binding
 remain in the same task; owner findings stay open for owner recheck. No synthetic
 acceptance data, hardware two-finger execution, complete-Part physical case, QoS,
 HUMAN or full qualification is claimed. `dat-zyg9` remains separately unresolved.
+
+Finite matching QA012 proof uses a verified copy of an actual GUI-created design
+with Device:R definitions already present: menu Enter writes nothing before the
+ghost, distinct Enter and left-click commit separate real R2/R3 placements, and
+both have exact Undo/Redo. Pool, original R1 and original source stay unchanged;
+ghost Escape, outside-canvas Enter and focused Cancel Enter do not place. The held
+key interval supplies no latency or quantified repeat-event claim. Missing-
+definition acquisition and complete-Part cases are not new runtime proof. The
+same task binds independent source/outcome reviews; owner findings remain open.
 
 Existing Symbol-only projects need explicit component definitions for PCB
 transfer. The accepted L-K target in `library-surfaces-study.html` gives an

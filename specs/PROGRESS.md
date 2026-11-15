@@ -483,6 +483,18 @@ findings remain open for recheck; no synthetic data, physical Part case, hardwar
 two-finger test, S05 policy, HUMAN, QoS or full qualification claim. `dat-zyg9`
 retains its separate unknown cause. This changes no Frontier selection or grant.
 
+The same `dat-jmxm` QA012 follow-up makes selected-result Enter run the existing
+Place action, close to the captured-schematic actual-cursor ghost, then use a
+second distinct unmodified, nonrepeat Enter or left-click for canonical placement.
+Pending/unavailable/stale guards and focused Cancel semantics stay intact;
+outside-canvas Enter places nothing, and Escape cancels the ghost. Genuine L-H
+caption `a475c2e7…3751` reuses the unchanged layout. A real design copy with existing
+Device:R definitions proves menu handoff/no canonical write for this reuse case,
+R2 by Enter/R3 by click, exact histories and unchanged pool/R1/original source.
+Held-key duration is not a latency or quantified repeat-event result; first-time
+acquisition/complete-Part runtime proof is not added. Independent source/outcome
+reviews and matching bits remain scoped; owner findings remain open for recheck.
+
 ### Workflow repair admission transaction
 
 Admission and repair evidence are historical; current selection and authorization come from the Active Frontier. [Detailed evidence](progress/workflow_governance_details.md#workflow-repair-admission-transaction).
