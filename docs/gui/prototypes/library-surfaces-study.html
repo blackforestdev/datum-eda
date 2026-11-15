@@ -63,7 +63,7 @@
     <a href="library-kind-editors-study.html#L-E">L-E Models</a>
     <a href="library-surfaces-study.html#L-F">L-F Provenance, basis, approval</a>
     <a href="library-surfaces-study.html#L-G">L-G Footprint generation</a>
-    <a href="library-surfaces-study.html#L-H">L-H Placement eligibility</a>
+    <a href="library-surfaces-study.html#L-H">L-H Place Component</a>
     <a href="library-surfaces-study.html#L-I">L-I Placed update</a>
     <a href="library-layout-accessibility-study.html#L-J">L-J Layout and accessibility</a>
     <a href="library-surfaces-study.html#L-K">L-K Unresolved transfer resolution</a>
@@ -275,152 +275,151 @@
 
 <!-- ======================================================== L-H -->
 <section class="fr" id="L-H">
-  <div class="sec-label"><span class="n">L-H</span><span>Place Component — one picker: explicit source, inline search, preview, placement eligibility</span><span class="rule"></span>
-    <span class="tag cur">● CURRENT · bounded (retained Symbol-only proof)</span><span class="tag tgt">○ TARGET · not delivered</span><span class="tag syn">◇ SYNTHETIC</span></div>
-  <p class="cap">Normal placement is component-first through <b>one Place Component picker</b> opened on the schematic being edited: the target
-  document and occurrence are captured when the picker opens, and everything below binds to that capture — no switch to a separate Library pane.
-  The picker searches an <b>explicitly chosen saved native component source</b> — this project's own pool, or another saved native project chosen
-  the same explicit way — reading it at a pinned snapshot. It lists <b>existing declared Parts only</b>: declared Value and Package are shown as
-  declared, never edited here, and there is no stock catalog, no manufacturer feed, no template semantics and no zero-configuration default.
-  Search matches name, declared description, tags, Package name and existing manufacturer / MPN / value fields — no parametric claim. The
-  qualified selection previews its IEC symbol and its physical footprint with the pin-pad map, then places through the existing placement ghost
-  and canvas commit (<code>schematic-surfaces-study.html#S-D</code>); the picker adds no second write path. Eligibility is the complete declared
-  default graph — Value, Package, default Footprint, full pin-pad map — with exact identities pinned at the source snapshot, stated by the
-  existing engine checks rather than decided by the picker; an incomplete graph refuses with its exact reason, and whether a non-approved or
-  unknown-basis Part additionally warns or blocks stays the S05 owner disposition.
-  The chosen source is reused for the next Place Component in this project and session; it is never a persisted preference. Search, preview and
-  Cancel mutate nothing. Today's delivered evidence remains the narrow named Symbol picker at its recorded scope; this picker is the target.</p>
+  <div class="sec-label"><span class="n">L-H</span><span>Place Component — focused search on the captured schematic: project Parts and shipped Symbols</span><span class="rule"></span>
+    <span class="tag tgt">○ TARGET · not delivered</span><span class="tag cur">● CURRENT · bounded, at recorded scope only</span><span class="tag own">◐ OWNER CHOICE · S05</span></div>
+  <style>
+    /* Scoped to #L-H only; shared surface-studies.css is untouched. Candidate readable
+       typography: primary picker text 16 logical px with grown, focusable controls. */
+    #L-H .p16 .srch{font-size:16px;line-height:1.4;min-height:38px;display:flex;align-items:center;margin:10px 12px;padding:4px 12px}
+    #L-H .p16 .res{font-size:16px;line-height:1.4;min-height:40px;grid-template-columns:96px minmax(0,1fr) auto}
+    #L-H .p16 .res .kd,#L-H .p16 .res .o{font-size:12px}
+    #L-H .p16 .kv{font-size:16px;min-height:32px;grid-template-columns:128px 1fr}
+    #L-H .p16 .note,#L-H .p16 .banner{font-size:16px;line-height:1.45}
+    #L-H .p16 .empty,#L-H .p16 .empty b{font-size:16px}
+    #L-H .p16 .btn{font-size:16px;padding:7px 18px;border-radius:6px}
+    #L-H .p16 .acts{background:var(--s01);padding:10px 12px}
+    /* Fixed reachable footer: the picker is a flex column that fits its pane; header,
+       search and actions stay put while ONE body (results + preview + facts) scrolls. */
+    #L-H .fit{display:flex;flex-direction:column;min-height:0}
+    #L-H .card.fit{max-height:590px}
+    #L-H .fit>.phd0,#L-H .fit>.phd,#L-H .fit>.srch,#L-H .fit>.row,#L-H .fit>.acts{flex:0 0 auto}
+    #L-H .fit>.bodyscroll{flex:1 1 auto;min-height:0;overflow-y:auto}
+    #L-H .p16 .res[tabindex]:focus-visible,#L-H .p16 .btn:focus-visible{outline:2px solid var(--acc-h);outline-offset:1px}
+  </style>
+  <p class="cap">Normal placement is one readable <b>Place Component</b> picker opened directly on the schematic being edited: the target document
+  and occurrence are captured when it opens and the search is focused immediately — no source step, no path, no snapshot choice, nothing to
+  configure first. It searches exactly two explicit result kinds. <b>Part</b> — a complete declared Part available in this project — retains its
+  qualification and its symbol + footprint / pin-pad map. <b>Symbol — schematic only</b> — an existing shipped bundled Symbol, one of the converted
+  native records the engine already embeds and reads — previews its graphics and places through the existing schematic-only intent, the existing
+  one canonical acquisition commit and the existing placement ghost and history (<code>schematic-surfaces-study.html#S-D</code>); the picker adds
+  no second write path. A Symbol never silently stands in for a Part: no Value binding, no Package, no Footprint, no pin-pad map — its row, its
+  preview and its Place action all say so. The picker contains no directory, source, Read, snapshot or adoption management; managing libraries is
+  separate Library surface work (L-A, L-B, L-G) — EAGLE's split between <code>ADD</code> (place from the library) and <code>USE</code> (manage
+  which libraries are loaded). Search, preview and Cancel mutate nothing. Part eligibility is stated by the existing engine checks — the complete
+  declared default graph — and whether a non-approved or unknown-basis Part warns or blocks stays the S05 owner disposition. Everything drawn
+  below is the genuine shipped <b>Device:R</b> record (“Resistor”) and its real shipped neighbours; no demo Part, MPN, footprint or provenance
+  value is invented. Only the window-chrome project name is the study's usual illustrative shell.</p>
   <div class="shell">
     <div class="mb"><span class="brand">Datum<b>·</b>EDA</span><span class="m">File</span><span class="m">Edit</span><span class="m">View</span><span class="m">Place</span><span class="m">Project</span><span class="m">Checks</span><span class="m">Window</span><span class="m">Help</span><span class="sp"></span><span class="pill">demo-sensor-node · rev 7c21e0</span></div>
     <div class="ws" style="height:640px">
       <div class="panes"><div class="pane focus">
         <div class="phd"><span class="pt">Schematic Design</span><span class="cx">occurrence <b>/</b></span><span class="fdot"><i></i>FOCUS</span></div>
-        <div class="pbody"><div class="card" id="H1" style="margin:10px auto;max-width:680px">
+        <div class="pbody"><div class="card p16 fit" id="H1" style="margin:10px auto;max-width:720px">
           <div class="phd0"><span>Place Component</span><span class="r">target captured · Schematic Design · occurrence /</span></div>
-          <div class="kv"><span class="k">Source</span><span class="v"><span class="fld f">demo-local — this project's pool ▾</span> · chosen explicitly · snapshot <b>src-4b9c21</b> pinned <span class="tag syn">◇</span></span></div>
-          <div class="kv w"><span class="v" style="font-size:12px;color:var(--tx2)">Another saved native project is chosen the same explicit way. The choice is reused for this
-          project and session only — never a persisted preference, never assumed.</span></div>
-          <div class="srch f" role="searchbox" aria-label="Search declared Parts in the chosen source">opa▏</div>
-          <div class="row" style="font-size:11px;color:var(--tx3);padding:0 11px 4px">2 declared Parts match · listed by name <span class="tag own" style="margin-left:6px">◐ ordering open</span></div>
-          <div class="res sel" tabindex="0"><span class="kd">Part</span><span>DEMO-OPA2-T <span style="color:var(--tx3)">— value DEMO-OPA2-T · Demo SOIC-8 body</span></span><span class="o">map ✓ 8/8</span></div>
-          <div class="res" tabindex="0"><span class="kd">Part</span><span>DEMO-OPA2-D <span style="color:var(--tx3)">— value DEMO-OPA2-D · Demo SOIC-8 body</span></span><span class="o">map △ pad 8</span></div>
+          <div class="srch f" role="searchbox" aria-label="Search this project's Parts and the shipped Symbols">resistor▏</div>
+          <div class="row" style="font-size:13px;color:var(--tx3);padding:0 13px 4px">Parts of this project list first — none is declared yet · then shipped Symbols, by name <span class="tag own" style="margin-left:6px">◐ ranking within kinds open</span></div>
+          <div class="bodyscroll">
+            <div class="res sel" tabindex="0"><span class="kd">Symbol</span><span>R <span style="color:var(--tx3)">— Resistor · Device</span></span><span class="o">schematic only</span></div>
+            <div class="res" tabindex="0"><span class="kd">Symbol</span><span>R_Small <span style="color:var(--tx3)">— Resistor, small symbol</span></span><span class="o">schematic only</span></div>
+            <div class="res" tabindex="0"><span class="kd">Symbol</span><span>R_US <span style="color:var(--tx3)">— Resistor, US symbol</span></span><span class="o">schematic only</span></div>
+            <div class="res" tabindex="0"><span class="kd">Symbol</span><span>R_Variable <span style="color:var(--tx3)">— Variable resistor</span></span><span class="o">schematic only</span></div>
+            <div class="res" tabindex="0"><span class="kd">Symbol</span><span>Thermistor <span style="color:var(--tx3)">— Temperature dependent resistor</span></span><span class="o">schematic only</span></div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px">
-            <div><div class="sh">Symbol — gate A</div><div class="pv"><svg viewBox="0 0 300 170" style="height:128px" role="img" aria-label="IEC rectangular symbol preview of the selected Part, gate A">
-              <rect x="105" y="42" width="90" height="86" fill="none" stroke="var(--tx2)" stroke-width="1.6"/>
-              <path d="M63 64h42M63 106h42M195 85h42" stroke="var(--tx2)" stroke-width="1.6"/>
-              <text x="112" y="68" font-size="9" font-family="monospace" fill="var(--tx2)">IN+</text>
-              <text x="112" y="110" font-size="9" font-family="monospace" fill="var(--tx2)">IN−</text>
-              <text x="188" y="89" font-size="9" font-family="monospace" fill="var(--tx2)" text-anchor="end">OUT</text>
-              <text x="150" y="30" font-size="9" font-family="monospace" fill="var(--tx3)" text-anchor="middle">DEMO-OPA2-T · gate A of A, B, PWR</text>
+            <div><div class="sh">Symbol — Device:R</div><div class="pv"><svg viewBox="0 0 300 170" style="height:128px" role="img" aria-label="Shipped Device:R symbol preview — IEC rectangular resistor with two pins">
+              <rect x="134" y="52" width="32" height="66" fill="none" stroke="var(--tx2)" stroke-width="1.6"/>
+              <path d="M150 20v32M150 118v32" stroke="var(--tx2)" stroke-width="1.6"/>
+              <text x="176" y="90" font-size="12" font-family="monospace" fill="var(--tx2)">R</text>
+              <text x="150" y="14" font-size="9" font-family="monospace" fill="var(--tx3)" text-anchor="middle">Device:R — Resistor · drawn from its shipped converted record</text>
             </svg></div></div>
-            <div><div class="sh">Footprint · pin-pad map</div><div class="pv"><svg viewBox="0 0 300 170" style="height:128px" role="img" aria-label="Physical footprint preview with mapped lands"><use href="#fp8"/></svg></div></div>
+            <div><div class="sh">Physical</div><div class="empty" style="min-height:128px"><span class="st na">∅ none — SCHEMATIC ONLY</span><b>No Value binding, no Package, no Footprint, no pin-pad map.</b>Nothing physical is substituted silently. Declaring a complete Part is Library authoring (L-B4); explicit later assignment is L-K.</div></div>
           </div>
-          <div class="kv"><span class="k">Selected</span><span class="v">DEMO-OPA2-T · Part · id pt-demo-02 · rev 1 · at snapshot src-4b9c21 <span class="tag syn">◇ made-up</span></span></div>
-          <div class="kv"><span class="k">Declared</span><span class="v">value <b>DEMO-OPA2-T</b> · Package <b>Demo SOIC-8 body</b> — declared on the Part, not edited here</span></div>
-          <div class="kv"><span class="k">Physical</span><span class="v">default Footprint Demo SOIC-8 land · map OPA2-T → SOIC-8 · <span class="st ok">✓ 8 of 8 pads mapped</span></span></div>
-          <div class="kv"><span class="k">Eligibility</span><span class="v"><span class="st ok">✓ complete declared default graph</span> — stated by the existing engine checks, not decided by the picker · approval <span class="st na">∅ unavailable</span> · basis <span class="st na">? unknown</span> — whether that warns or blocks is S05 <span class="tag own">◐</span></span></div>
-          <div class="note">Place starts the existing placement ghost on the captured schematic; the canvas click is the existing placement
-          transaction with its existing undo. Search, preview and Cancel make no change of any kind.</div>
-          <div class="acts"><span class="btn">Cancel — nothing placed, nothing changed</span><span class="btn pri">Place DEMO-OPA2-T · gate A</span></div>
+          <div class="kv"><span class="k">Selected</span><span class="v">R — Resistor · shipped bundled Symbol · library Device · converted native record</span></div>
+          <div class="kv"><span class="k">Kind</span><span class="v"><b>Symbol — SCHEMATIC ONLY</b> · never a hidden stand-in for a complete Part</span></div>
+          <div class="kv"><span class="k">On Place</span><span class="v">the exact shipped definitions enter the project library through the one existing canonical acquisition commit (its own undo); the canvas click is the existing placement transaction with its own undo</span></div>
+          <div class="kv"><span class="k">Qualification</span><span class="v"><span class="st na">∅ not established</span> — shipped-source acquisition establishes no library approval or standards compliance; stated, never upgraded</span></div>
+          </div>
+          <div class="acts"><span class="btn" tabindex="0">Cancel — nothing placed, nothing changed</span><span class="btn pri" tabindex="0">Place R — schematic only</span></div>
         </div></div>
       </div></div>
     </div>
     <div class="dock"><span class="dt on">bash</span><span class="dt">+</span><span class="h">Terminal — available, never required for placement</span></div>
   </div>
-  <p class="cell-cap"><b>H1 — the one picker, normal state.</b> Captured target in the picker header, explicit pinned source, inline search over
-  declared metadata, declared value / package on each result, symbol and physical footprint / map preview of the qualified selection, and the
-  explicit Place. The Library pane is not involved and is not open.</p>
+  <p class="cell-cap"><b>H1 — the one picker, normal state (owner geometry 1344 × 806).</b> Focused 16 px search over this project's Parts and the
+  shipped Symbols at once, explicit kind on every row, the genuine shipped Device:R previewed from its record, the schematic-only fact stated in
+  the body and on the Place action itself. The card fits its pane (≤ 590 px tall inside the 1344 × 806 window): header, search and the actions
+  footer stay put while the one body — results, preview and facts — scrolls between them, so Cancel and Place are always on screen. All rows are
+  real shipped records. The Library pane is not involved and is not open.</p>
   <div class="grid2" style="margin-top:16px">
-    <div class="card" id="H2"><div class="phd0"><span>Place Component — explicit refusal</span><span class="r">same picker · DEMO-OPA2-D selected</span></div>
-      <table class="t in" aria-label="Binding and qualification of the refused selection">
-        <tr><th>Choice</th><th>Selected</th><th>Binding</th><th>Qualification</th></tr>
-        <tr><td class="n">Part</td><td>DEMO-OPA2-D <span class="tag syn">◇ made-up</span></td><td><span class="st ok">✓ resolved · rev 2 at src-4b9c21</span></td><td><span class="st na">? unknown</span></td></tr>
-        <tr><td class="n">Value</td><td>DEMO-OPA2-D</td><td><span class="st ok">✓ declared on the Part</span></td><td>—</td></tr>
-        <tr><td class="n">Package</td><td>Demo SOIC-8 body</td><td><span class="st ok">✓ declared on the Part</span></td><td>—</td></tr>
-        <tr><td class="n">Gate to place</td><td>A (then B, PWR)</td><td><span class="st ok">✓ 3 gates</span></td><td>—</td></tr>
-        <tr><td class="n">Footprint</td><td>Demo SOIC-8 land</td><td><span class="st ok">✓ Part default, carried</span></td><td><span class="st na">∅ approval unavailable</span></td></tr>
-        <tr><td class="n">Pin-pad map</td><td>OPA2-D → SOIC-8 · rev 2</td><td><span class="st warn">△ 1 unmapped pad (pad 8)</span></td><td>—</td></tr>
-      </table>
-      <div class="note">Normal placement requires the selected Part's complete authored default graph. The partial map above stays editable as
-      library authoring, but it is not normal placement readiness, and the missing pin mapping is not delegated to any eligibility policy — the
-      action below is unavailable with the binding reason. Qualification is the separate fact; eligibility is stated, not decided: whether a
-      non-approved or unknown-basis Part warns or blocks is an owner choice. <span class="tag own">◐ S05</span></div>
-      <div class="acts"><span class="btn">Cancel</span><span class="btn na">Place gate A — default map incomplete: pad 8 unmapped</span></div>
-      <p class="cell-cap"><b>H2 — explicit refusal.</b> The same picker states the exact binding reason; nothing is placed and nothing is repaired
-      silently. Completing the map is Library authoring (L-B8).</p></div>
-    <div class="card" id="H3"><div class="phd0"><span>Place Component — no source chosen</span><span class="r">truthful prerequisite · same picker</span></div>
-      <div class="empty" style="min-height:190px"><span class="st na">∅ no component source</span><b>No component source is chosen for this project yet.</b>
-      Place Component searches an explicitly chosen saved native source — this project's pool or another saved native project that declares
-      complete Parts. Nothing ships pre-filled: no stock library, no bundled catalog, no zero-configuration default, so until a source is chosen
-      there is nothing to search. Declaring Parts is Library authoring (L-B4, L-G) — separate work, not this picker.</div>
-      <div class="acts"><span class="btn">Cancel — nothing placed</span><span class="btn pri">Choose source…</span></div>
-      <p class="cell-cap"><b>H3 — unconfigured source.</b> The prerequisite is explained in the picker itself, truthfully; no source is invented
-      or assumed, and the picker does not pretend an empty catalog is an error.</p></div>
+    <div class="card p16" id="H2"><div class="phd0"><span>Part results — the complete component kind</span><span class="r">described, not fabricated</span></div>
+      <div class="res" aria-label="Anatomy of a Part result row — placeholders, not data"><span class="kd">Part</span><span>⟨name⟩ <span style="color:var(--tx3)">— ⟨declared Value⟩ · ⟨Package⟩</span></span><span class="o">map ⟨n/n⟩</span></div>
+      <div class="note">Row anatomy only — no example Part, Value, MPN, footprint or provenance figure is invented. The genuine shipped Device:R
+      above is the only drawn content of this frame.</div>
+      <div class="kv"><span class="k">Lists</span><span class="v">before Symbols, whenever this project declares complete Parts</span></div>
+      <div class="kv"><span class="k">Carries</span><span class="v">declared Value · Package · default Footprint · full pin-pad map · qualification status — declared on the Part, never edited here</span></div>
+      <div class="kv"><span class="k">Preview</span><span class="v">its symbol and its physical footprint with the pin-pad map</span></div>
+      <div class="kv"><span class="k">Place</span><span class="v">the same existing ghost and placement transaction, with physical readiness carried</span></div>
+      <div class="kv"><span class="k">Refusal</span><span class="v">an incomplete declared graph refuses with the exact engine reason — eligibility is stated by the existing checks, never decided by the picker; completing it is Library authoring (L-B4, L-B8)</span></div>
+      <div class="kv"><span class="k">S05</span><span class="v">whether a non-approved or unknown-basis Part additionally warns or blocks stays the owner disposition <span class="tag own">◐</span></span></div>
+      <p class="cell-cap"><b>H2 — Part kind, described without invented data.</b> Complete-Part behaviour is specified by its fields and its
+      existing checks; the mock invents no Part.</p></div>
+    <div class="card p16" id="H3"><div class="phd0"><span>Deliberately absent from this picker</span><span class="r">library management is separate</span></div>
+      <div class="kv"><span class="k">No</span><span class="v">directory or source-path field · Read / re-read control · snapshot management · adoption or import controls · library tree</span></div>
+      <div class="kv"><span class="k">Instead</span><span class="v">managing pools, sources and adoption is the Library surface (L-A, L-B, L-G); the acquisition a Symbol place performs is an engine fact reported in the journal and history, not a control here</span></div>
+      <div class="kv"><span class="k">Precedent</span><span class="v">EAGLE separates <code>ADD</code> — place a component from the library — from <code>USE</code> — manage which libraries are loaded (<code>docs/EAGLE_BLUEPRINT.md</code>); Altium's lesson is one component whose representations travel together (<code>docs/ALTIUM_LESSONS.md</code> §4.1)</span></div>
+      <p class="cell-cap"><b>H3 — no management controls.</b> The normal picker is for placing; it never becomes a library manager.</p></div>
   </div>
   <div class="grid4" style="margin-top:16px">
-    <div><div class="card"><div class="phd0"><span>Place Component</span></div><div class="empty"><span class="st info">⧗ loading</span><b>Reading demo-parts at its snapshot…</b>No result rows and no Place until the source query returns.</div></div>
-      <p class="cell-cap"><b>H4a — loading.</b> No fictitious rows, nothing pre-selected.</p></div>
-    <div><div class="card"><div class="banner"><span class="bic">△</span>demo-parts could not be read.</div><div class="empty" style="min-height:104px"><b>The exact read error is shown; nothing is placed.</b>Retry or choose another source. No partial or remembered result stands in for the failed read.</div></div>
-      <p class="cell-cap"><b>H4b — source error.</b> A failed read is stated as a failed read, never papered over.</p></div>
-    <div><div class="card"><div class="phd0"><span>Place Component</span></div><div class="empty"><span class="st na">∅ no declared Parts</span><b>demo-new declares no complete Part.</b>An empty source is a fact about the source. Authoring Parts is Library work (L-B4); none is invented here.</div></div>
-      <p class="cell-cap"><b>H4c — empty source.</b> Distinct from no-match and from a failed read.</p></div>
-    <div><div class="card"><div class="phd0"><span>Place Component</span></div><div class="srch">xtal</div><div class="empty" style="min-height:104px"><span class="st na">∅ no match</span><b>No declared Part matches “xtal” in demo-local.</b>Searched: name, declared description, tags, Package name, manufacturer / MPN, value.</div></div>
-      <p class="cell-cap"><b>H4d — no match.</b> States the searched scope; no parametric search is claimed.</p></div>
-  </div>
-  <div class="grid2" style="margin-top:16px">
-    <div class="card" id="H5"><div class="banner"><span class="bic">△</span>demo-parts changed since snapshot src-4b9c21 was read.</div>
-      <div class="kv w"><span class="v">Results, preview and eligibility are pinned to the snapshot this picker read. When the saved source no
-      longer matches that snapshot, <b>Place refuses</b> rather than adopting drift silently — the same stale-source rule the delivered placement
-      path already enforces.</span></div>
-      <div class="acts"><span class="btn">Cancel — nothing placed</span><span class="btn">Re-read source…</span><span class="btn na">Place — unavailable: source changed since snapshot</span></div>
-      <div class="note">Re-read is explicit: it pins a fresh snapshot, re-runs the search and re-qualifies the selection. Components already
-      placed are untouched; their reviewed update path is L-I.</div>
-      <p class="cell-cap"><b>H5 — stale source refusal.</b> Exact IDs and the pinned snapshot stay the authority; drift is refused, never merged.</p></div>
-    <div class="card" id="H6"><div class="phd0"><span>Adoption into the project library</span><span class="r">explicit · Library-only commit</span></div>
-      <div class="kv"><span class="k">When</span><span class="v">the qualified selection lives in another saved source and this project's library must hold its definitions</span></div>
-      <div class="kv"><span class="k">What</span><span class="v"><span class="btn">Adopt into project library…</span> — one real canonical Library-only commit of the exact pinned definitions, with the existing Library undo</span></div>
-      <div class="kv"><span class="k">Then</span><span class="v">placement is the separate existing placement transaction on the captured schematic, with its own undo</span></div>
-      <div class="note">No combined adoption-plus-placement transaction is promised, and cancelling a later step never rolls back a Library
-      commit already made — the same rule as L-K. Each commit keeps its own existing undo.</div>
-      <p class="cell-cap"><b>H6 — explicit adoption.</b> Adoption is a stated Library-only commit, not a hidden side effect of Place.</p></div>
+    <div><div class="card p16"><div class="phd0"><span>Place Component</span></div><div class="empty"><span class="st info">⧗ loading</span><b>Reading this project's declared Parts…</b>Shipped Symbols are already listed; no Part rows and no Part placement until the read returns.</div></div>
+      <p class="cell-cap"><b>H4a — loading.</b> Nothing fictitious, nothing pre-selected.</p></div>
+    <div><div class="card p16"><div class="phd0"><span>Place Component</span></div><div class="srch">qqz</div><div class="empty" style="min-height:120px"><span class="st na">∅ no match</span><b>Nothing matches “qqz” in this project's Parts or the shipped Symbols.</b>Searched: Part name, declared description, tags, Package name, manufacturer / MPN, value; Symbol name and shipped description.</div></div>
+      <p class="cell-cap"><b>H4b — no match.</b> States the searched scope; no parametric search is claimed.</p></div>
+    <div><div class="card p16"><div class="banner"><span class="bic">△</span>The original schematic view changed; cancel and open Place Component again.</div><div class="empty" style="min-height:120px"><b>The captured target is revalidated before placing.</b>This is the existing delivered refusal, word for word; nothing is placed against a changed view.</div><div class="acts"><span class="btn">Cancel</span></div></div>
+      <p class="cell-cap"><b>H4c — changed capture.</b> The delivered guard and its exact wording are kept.</p></div>
+    <div><div class="card p16"><div class="phd0"><span>Place Component</span></div><div class="res"><span class="kd">Symbol</span><span>R_Network03_Split <span style="color:var(--tx3)">— 3 resistor network, star topology, bussed resistors, split</span></span><span class="o">✕ refused</span></div><div class="empty" style="min-height:96px"><b>This shipped record's native conversion was refused.</b>The recorded refusal reason is shown; it cannot be placed, and nothing is repaired or substituted.</div></div>
+      <p class="cell-cap"><b>H4d — refused shipped record.</b> A real refused catalog entry, stated as refused.</p></div>
   </div>
   <div class="grid2" style="margin-top:16px">
     <div>
-      <div class="shell narrow" id="H7">
+      <div class="shell narrow" id="H5">
       <div class="mb"><span class="tl btn">☰ Navigator</span><span class="brand" style="margin-left:6px">Datum<b>·</b>EDA</span><span class="sp"></span><span class="tl btn">Inspector ▸</span></div>
-      <div class="ws" style="height:430px;flex:0 0 430px"><div class="panes"><div class="pane pnl focus">
+      <div class="ws" style="height:470px;flex:0 0 470px"><div class="panes"><div class="pane pnl focus p16 fit">
         <div class="phd"><span class="pt">Place Component · occurrence /</span><span class="fdot"><i></i>FOCUS</span></div>
-        <div class="kv"><span class="k">Source</span><span class="v"><span class="fld f">demo-local ▾</span> · snapshot src-4b9c21</span></div>
-        <div class="srch f">opa▏</div>
-        <div class="res sel"><span class="kd">Part</span><span>DEMO-OPA2-T · SOIC-8</span><span class="o">✓ 8/8</span></div>
-        <div class="res"><span class="kd">Part</span><span>DEMO-OPA2-D · SOIC-8</span><span class="o">△ pad 8</span></div>
-        <div class="kv"><span class="k">Declared</span><span class="v">value DEMO-OPA2-T · Demo SOIC-8 body</span></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px">
-          <div><div class="sh">Symbol</div><div class="pv"><svg viewBox="0 0 170 130" style="height:104px" role="img" aria-label="IEC rectangular symbol preview in the narrow picker">
-            <rect x="55" y="30" width="60" height="70" fill="none" stroke="var(--tx2)" stroke-width="1.6"/>
-            <path d="M25 46h30M25 84h30M115 65h30" stroke="var(--tx2)" stroke-width="1.6"/>
-            <text x="60" y="50" font-size="10" font-family="monospace" fill="var(--tx2)">IN+</text>
-            <text x="60" y="88" font-size="10" font-family="monospace" fill="var(--tx2)">IN−</text>
-            <text x="110" y="69" font-size="10" font-family="monospace" fill="var(--tx2)" text-anchor="end">OUT</text>
-            <text x="85" y="18" font-size="9" font-family="monospace" fill="var(--tx3)" text-anchor="middle">gate A</text>
-          </svg></div></div>
-          <div><div class="sh">Footprint · map</div><div class="pv"><svg viewBox="0 0 300 170" style="height:104px" role="img" aria-label="Physical footprint preview in the narrow picker"><use href="#fp8"/></svg></div></div>
+        <div class="srch f">resistor▏</div>
+        <div class="bodyscroll">
+        <div class="res sel" tabindex="0"><span class="kd">Symbol</span><span>R — Resistor · Device</span><span class="o">schematic only</span></div>
+        <div class="res" tabindex="0"><span class="kd">Symbol</span><span>R_Small — Resistor, small symbol</span><span class="o">schematic only</span></div>
+        <div class="pv"><svg viewBox="0 0 170 120" style="height:96px" role="img" aria-label="Shipped Device:R symbol preview in the narrow picker">
+          <rect x="74" y="28" width="22" height="52" fill="none" stroke="var(--tx2)" stroke-width="1.6"/>
+          <path d="M85 8v20M85 80v22" stroke="var(--tx2)" stroke-width="1.6"/>
+          <text x="104" y="58" font-size="11" font-family="monospace" fill="var(--tx2)">R</text>
+        </svg></div>
+        <div class="kv"><span class="k">Kind</span><span class="v"><b>Symbol — SCHEMATIC ONLY</b> · no Footprint, no map</span></div>
         </div>
-        <div class="kv"><span class="k">Eligibility</span><span class="v"><span class="st ok">✓ complete declared graph</span> · engine-checked · approval <span class="st na">∅ unavailable</span></span></div>
-        <div class="acts"><span class="btn">Cancel</span><span class="btn pri">Place · gate A</span></div>
+        <div class="acts"><span class="btn">Cancel</span><span class="btn pri">Place R — schematic only</span></div>
       </div></div></div><div class="dock"><span class="dt on">bash</span></div>
       </div>
-      <p class="cell-cap"><b>H7 — narrow composition.</b> The same one picker in a fixed 430 px body: explicit pinned source, search, declared
-      facts, symbol and physical footprint / map preview, and the qualified Place; nothing collapses into an identifier or a developer phrase.</p>
+      <p class="cell-cap"><b>H5 — narrow composition.</b> The same picker in a narrow pane: 16 px search, rows, the schematic-only fact and both
+      actions remain; the body scrolls and the footer stays reachable; nothing collapses into an identifier or a developer phrase.</p>
     </div>
-    <div class="card"><div class="phd0"><span>Symbol picker — retained historical proof</span><span class="r">explicit Symbol-only mode · original scope</span></div>
-      <div class="srch f">cap▏</div>
-      <div class="res sel"><span class="kd">Symbol</span><span>Demo Capacitor</span><span class="o"></span></div>
-      <div class="res"><span class="kd">Symbol</span><span>Demo Capacitor, polarised</span><span class="o"></span></div>
-      <div class="note">Retained historical proof of the explicit Symbol-only mode at its original scope — not the normal component-first
-      default. Picks a named Symbol, previews, cancels or places (see <code>schematic-surfaces-study.html#S-D</code>, D1–D2). It does not choose
-      Part, variant, footprint or map, and its test data is synthetic — not an approved seed.</div></div>
+    <div class="card" id="H6"><div class="phd0"><span>Status — stated honestly</span><span class="r">owner QA supersedes prior readiness</span></div>
+      <div class="kv w"><span class="v"><b>Delivered, at recorded scope only:</b> the bounded component-first engine and isolated debug-App evidence
+      (<code>dat-component-first-capture-3btd</code>) and the unified saved-source picker landing. No whole-run PASS, no HUMAN observation, no full
+      qualification.</span></div>
+      <div class="kv w"><span class="v"><b>Rejected:</b> the prior explicit-source-first L-H one-picker presentation hard-failed owner QA as the
+      normal Place flow and is superseded by this frame; the delivered mechanics it described keep their recorded evidence scope.</span></div>
+      <div class="kv w"><span class="v"><b>Target gate — the running application, not this page:</b> normal Place → type “resistor” → the shipped
+      <b>Device:R</b> → preview → an actual R ghost placed on the schematic, with Cancel and Undo preserved. A mockup validates none of it, and
+      this frame claims no delivered PASS.</span></div>
+    </div>
   </div>
+  <p class="cap" style="margin-top:12px"><b>Candidate typography and geometry (this frame only).</b> Primary picker text — search input, result
+  rows, declared facts, refusals, action labels — is 16 logical px at ≈1.4 line height; the search control is ≥38 px tall, result rows ≥40 px,
+  action buttons ≥34 px with 16 px labels; kind badges and counts are 12–13 px secondary text; focus is visible (accent ring) on the search, rows
+  and actions. Normal geometry is the owner's 1344 × 806 window with a ~720 px picker card that fits its pane (≤ 590 px tall): header, search and
+  actions are fixed while the single body — results, preview, facts — scrolls, keeping the footer reachable; the narrow pane uses the same
+  fixed-footer, scrolling-body column and wraps rows rather than truncating. These
+  are measured candidate values for review — <b>no WCAG-minimum conformance is claimed, and no global UI scale or preference change stands in for
+  them</b>; tokens still govern the native translation.</p>
 </section>
 
 <!-- ======================================================== L-I -->
@@ -641,7 +640,7 @@
     <tr><td class="n">#L-E</td><td>LIBRARY-MANUAL-USE</td><td>Models</td><td>—</td><td>Target</td></tr>
     <tr><td class="n">#L-F</td><td>LIBRARY-VALIDATION · OWNER-RATIFICATION</td><td>Source, basis, process and approval; guarded status in Authoring, readiness and checks</td><td>Warning / block for non-approved or UnknownBasis</td><td>Target</td></tr>
     <tr><td class="n">#L-G</td><td>LIBRARY-MANUAL-USE</td><td>Supported native footprint synthesis paragraph</td><td>Generator family / basis / naming stay with their own authority</td><td>Target</td></tr>
-    <tr><td class="n">#L-H</td><td>LIBRARY-MANUAL-USE</td><td>Ordinary workflow row — place a complete named Part with carried Value / Package / Footprint / map</td><td>Warning / block policy for non-approved or UnknownBasis (S05)</td><td>Narrow picker current; rest target</td></tr>
+    <tr><td class="n">#L-H</td><td>LIBRARY-MANUAL-USE</td><td>Ordinary workflow row — place a complete named Part with carried Value / Package / Footprint / map; shipped bundled Symbols place explicitly schematic-only</td><td>Warning / block policy for non-approved or UnknownBasis (S05); result ranking within kinds</td><td>Delivered picker bounded at recorded scope; owner QA failed the source-first normal flow; corrected focused-search picker is target</td></tr>
     <tr><td class="n">#L-I</td><td>LIBRARY-VALIDATION</td><td>Relationships and revisions — update candidate paragraph</td><td>Placed-impact trigger (separate authority)</td><td>Target</td></tr>
     <tr><td class="n">#L-J</td><td>SHARED-MUTATION</td><td>Accessibility and visual frames</td><td>Narrow pool / kind / Navigator / Inspector access; refusal placement</td><td>Target</td></tr>
     <tr><td class="n">#L-K</td><td>LIBRARY-MANUAL-USE · LIBRARY-VALIDATION</td><td>Ordinary workflow row — resolve an unresolved transfer component to a complete named Part by explicit assignment or existing authoring from its placed Symbol</td><td>—</td><td>Target</td></tr>
