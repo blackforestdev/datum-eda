@@ -28,7 +28,7 @@ mod naming_bar;
 mod new_project_dialog;
 mod popup_control;
 mod single_line_control;
-pub use single_line_control::single_line_caret_at;
+pub use single_line_control::{single_line_caret_at, single_line_caret_at_sized};
 #[path = "render/resource_observation.rs"]
 pub mod resource_observation;
 mod revision_workspace;

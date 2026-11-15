@@ -51,14 +51,7 @@ pub(super) fn read(
         eda_engine::import::kicad_library::convert(&source.path, &source.name)
     }
     .map_err(|error| error.to_string())?;
-    Ok(ReadResult::Preview(LibraryAcquisitionPreview {
-        native_part: None,
-        name: source.name,
-        source_digest: converted.source_hash,
-        source_path: converted.source_path,
-        unit: serde_json::to_value(converted.unit).map_err(|e| e.to_string())?,
-        symbol: serde_json::to_value(converted.symbol).map_err(|e| e.to_string())?,
-        footprint: None,
-        notices: converted.warnings,
-    }))
+    Ok(ReadResult::Preview(
+        LibraryAcquisitionPreview::from_converted_symbol(converted)?,
+    ))
 }

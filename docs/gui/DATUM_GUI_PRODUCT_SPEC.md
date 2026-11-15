@@ -631,25 +631,40 @@ execution, physical/HUMAN input, owner-circuit migration, manufacturer pinout
 qualification or full qualification. Approval and the separate reviewed
 cross-editor/ECO workflow remain outside this increment.
 
-The bounded `dat-single-component-picker-b5xf` follow-up uses the accepted
-`library-surfaces-study.html#L-H` one-picker target (`978f0e4b`). **Place Component**
-keeps an explicitly chosen saved native source, declared-metadata search and
-selected symbol/physical footprint/pin-pad preview on the captured schematic and
-occurrence. It remembers that source for this project/session only. Read/search/
-preview/Cancel do not author content; no default catalog, generic resistor or
-production source is invented. Explicit **Adopt into project library** is the
-existing separate library-only commit and Undo. Cancelling afterward retains
-that adoption; **Place Component** starts the existing ghost and the later canvas
-click commits placement with its own Undo/Redo. Source re-read failures retire
-the preview and Place action; exact saved identities and complete graph checks
-remain in force. S05 approval/basis policy and Library authoring stay separate.
-The task records reviewed release-B search/adoption/placement/history prefix
-evidence composed with final release-D normal/narrow preview, contextual-label
-and failed-read retirement checks. This is not a whole-run PASS for the prefix
-run, which ended in rejected cold capture, or an acknowledged Save. Independent
-review retains the separate candidate scopes. Initial cold captures (`dat-zyg9`) are not
-explained as capture-only or a healthy startup result; interaction-assisted cold
-proof supplies only its declared scope. No HUMAN or full qualification is claimed.
+The historical `dat-single-component-picker-b5xf` source-first picker
+(`978f0e4b`) hard-failed owner QA for ordinary placement and readability. Its
+bounded synthetic-source prefix, failed cold capture and later targeted checks
+remain historical evidence, not renewed QA readiness.
+
+The `dat-jmxm` correction translates the reviewed L-H target
+`f09a2f177113d9f3c42c60c7458307b35769223a1116a56a015d8288f2dfdc3b` into
+focused **Place Component** search on the captured schematic. Search combines
+qualified complete Parts in this project with the existing shipped Symbol
+catalog. Part metadata and complete symbol/physical/map previews remain
+qualified. A Symbol is visibly **schematic only** in its row, preview and Place
+action; no Part or physical definition is invented. Library source setup and
+adoption management remain separate from normal placement.
+
+Primary picker body, input, result, refusal and action text uses the reviewed
+16-logical-pixel candidate with measured wrapping and larger controls. Search
+and the footer stay visible while the body scrolls, including at 1344×806 and
+560×720. The shared input and pointer-caret metrics agree; ordinary typography
+elsewhere is unchanged. This establishes no global minimum, new preference or
+WCAG conformance claim.
+
+Real evidence follows ordinary GUI Project creation/Main navigation, immediate
+`resistor` typing, actual shipped `Device:R` preview/Cancel, and a real `R1`
+placed on the captured sheet with canonical Undo/Redo. Source Unit/Symbol/pin
+identities and the separate acquisition/placement/history transactions are
+checked against the real project and existing CLI journal. A finite follow-up
+cold-opens a verified copy of that design through File Open without Fit, then
+observes the terminal Save acknowledgement and narrow preview/Cancel. It does
+not claim a second reopen after the acknowledged Save. The existing task binds
+these exact candidate scopes, reviewed metadata delta and final matching smoke;
+owner QA findings remain open until owner recheck. No synthetic acceptance data,
+complete-Part physical case, QoS threshold, HUMAN or full qualification is claimed.
+The historical `dat-zyg9` failures and their unknown cause remain separately
+recorded; no general startup qualification follows from this one public-open case.
 
 Existing Symbol-only projects need explicit component definitions for PCB
 transfer. The accepted L-K target in `library-surfaces-study.html` gives an

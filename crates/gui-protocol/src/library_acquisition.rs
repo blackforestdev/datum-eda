@@ -20,6 +20,13 @@ pub enum AcquisitionSource {
     NativeParts,
 }
 
+/// Normal search discloses whether a row carries physical component authority.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ComponentPickerResultKind {
+    CompletePart,
+    Symbol,
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct LibraryAcquisitionPreview {
     pub name: String,
@@ -54,6 +61,8 @@ pub struct LibraryAcquisition {
     pub placement_temporary_pane: Option<crate::PaneId>,
     /// Component search stays on its captured schematic instead of opening Library.
     pub component_picker: bool,
+    /// Qualified current-project Parts, distinct from the shipped Symbol catalog.
+    pub project_components: Vec<LibrarySourceSymbol>,
     /// Explicit confirmation belongs to one source read, never a later query.
     pub placement_confirmation: Option<Uuid>,
     pub preview: Option<LibraryAcquisitionPreview>,
@@ -61,6 +70,24 @@ pub struct LibraryAcquisition {
     pub loading: bool,
     pub loaded: bool,
     pub offset: usize,
+}
+
+impl LibraryAcquisitionPreview {
+    /// One disposable projection for the existing converted-symbol reader and UI.
+    pub fn from_converted_symbol(
+        converted: eda_engine::import::kicad_library::ConvertedSymbol,
+    ) -> Result<Self, String> {
+        Ok(Self {
+            name: converted.source_symbol,
+            source_digest: converted.source_hash,
+            source_path: converted.source_path,
+            unit: serde_json::to_value(converted.unit).map_err(|error| error.to_string())?,
+            symbol: serde_json::to_value(converted.symbol).map_err(|error| error.to_string())?,
+            footprint: None,
+            native_part: None,
+            notices: converted.warnings,
+        })
+    }
 }
 
 impl LibraryAcquisition {
@@ -86,12 +113,35 @@ impl LibraryAcquisition {
             placement_zoom: None,
             placement_temporary_pane: None,
             component_picker: false,
+            project_components: Vec::new(),
             placement_confirmation: None,
             preview: None,
             refusal: None,
             loading: false,
             loaded: false,
             offset: 0,
+        }
+    }
+
+    pub fn picker_can_place(&self, library: &crate::library_browser::LibraryBrowser) -> bool {
+        !self.loading
+            && self.request().is_ok()
+            && self.preview.as_ref().is_some_and(|preview| {
+                preview.native_part.as_ref().is_none_or(|part| {
+                    part.in_project(library) && self.selected_native_part().is_some()
+                })
+            })
+    }
+
+    pub fn picker_result_kind(&self, source: &LibrarySourceSymbol) -> ComponentPickerResultKind {
+        if self
+            .project_components
+            .iter()
+            .any(|part| part.name == source.name && part.path == source.path)
+        {
+            ComponentPickerResultKind::CompletePart
+        } else {
+            ComponentPickerResultKind::Symbol
         }
     }
 
@@ -127,7 +177,15 @@ impl LibraryAcquisition {
                 .sources
                 .get(*index)
                 .is_some_and(LibrarySourceSymbol::is_unavailable);
-            (!exact, unavailable, self.names[*index].to_lowercase())
+            let kind = if self.component_picker
+                && self.sources.get(*index).is_some_and(|source| {
+                    self.picker_result_kind(source) == ComponentPickerResultKind::Symbol
+                }) {
+                1
+            } else {
+                0
+            };
+            (kind, !exact, unavailable, self.names[*index].to_lowercase())
         });
         results
     }
@@ -236,6 +294,12 @@ mod tests {
         let first = &acquisition.sources[acquisition.results()[0]];
         assert_eq!(first.label, "Device:R");
         assert_eq!(first.availability, catalog::SourceAvailability::Supported);
+        assert_eq!(
+            acquisition.picker_result_kind(first),
+            ComponentPickerResultKind::Symbol
+        );
+        let real = eda_engine::import::library_bundle::preview(&first.path, &first.name).unwrap();
+        assert_eq!(real.symbol.name, "R");
         assert_eq!(first.display_label(), "Resistor — Device:R");
         assert_eq!(first.path, std::path::Path::new("kicad/Device.kicad_sym"));
 

@@ -18,15 +18,12 @@ struct Answer {
     result: Result<ReadResult, String>,
 }
 pub(crate) struct AcquisitionWork {
-    pub(crate) component_sources:
-        std::collections::BTreeMap<eda_engine::substrate::ObjectId, String>,
     pending: Option<mpsc::Receiver<Answer>>,
     wake: winit::event_loop::EventLoopProxy<()>,
 }
 impl AcquisitionWork {
     pub(crate) fn new(wake: winit::event_loop::EventLoopProxy<()>) -> Self {
         Self {
-            component_sources: Default::default(),
             pending: None,
             wake,
         }
@@ -39,13 +36,6 @@ impl AcquisitionWork {
         acquisition: &LibraryAcquisition,
         source: Option<LibrarySourceSymbol>,
     ) {
-        if acquisition.component_picker
-            && !acquisition.path.trim().is_empty()
-            && let Some(document) = &acquisition.placement_document
-        {
-            self.component_sources
-                .insert(document.project, acquisition.path.clone());
-        }
         let (sender, receiver) = mpsc::channel();
         self.pending = Some(receiver);
         let session = acquisition.session;
@@ -109,7 +99,10 @@ impl Runtime {
         a.loading = false;
         let mut catalog_arrived = false;
         match answer.result {
-            Ok(ReadResult::Names(catalog)) => {
+            Ok(ReadResult::Names(mut catalog)) => {
+                if a.component_picker {
+                    catalog.symbols.splice(0..0, a.project_components.clone());
+                }
                 a.names = catalog.symbols.iter().map(|s| s.label.clone()).collect();
                 a.sources = catalog.symbols;
                 a.catalog_notices = catalog.notices;
@@ -143,11 +136,11 @@ impl Runtime {
         let native_part = a.is_native_part();
         self.preview_existing_project_symbol();
         if confirmed {
-            if component {
-                self.finish_component_picker_placement();
-            } else if catalog_arrived {
+            if catalog_arrived {
                 self.confirm_acquisition_search();
-            } else if !native_part {
+            } else if component && native_part {
+                self.finish_component_picker_placement();
+            } else if !component && !native_part {
                 self.acquire_symbol_for_placement();
             }
         }
@@ -168,6 +161,11 @@ impl Runtime {
             a.placement_confirmation = Some(a.session);
             return true;
         }
+        if !a.loaded {
+            a.refusal = Some("The library catalog is not available yet".into());
+            self.invalidate_frame();
+            return true;
+        }
         let first = a.results().into_iter().find(|index| {
             a.sources
                 .get(*index)
@@ -176,7 +174,14 @@ impl Runtime {
         if let Some(index) = first {
             return self.activate_acquisition(&C::AcquireResult(index));
         }
-        a.refusal = Some("No usable symbol matches this search".into());
+        a.refusal = Some(
+            if a.component_picker {
+                "No matching components or schematic-only Symbols"
+            } else {
+                "No usable symbol matches this search"
+            }
+            .into(),
+        );
         self.invalidate_frame();
         true
     }
@@ -264,7 +269,9 @@ impl Runtime {
                     if !a.results().contains(index) {
                         return true;
                     }
-                    if a.placement_pane.is_some() && source.is_unavailable() {
+                    if a.placement_pane.is_some() && source.is_unavailable()
+                        && (!a.component_picker || a.picker_result_kind(&source) == datum_gui_protocol::library_browser::acquisition::ComponentPickerResultKind::CompletePart)
+                    {
                         a.search_changed();
                         a.refusal = Some(if a.component_picker {
                             source.description.clone()
@@ -278,10 +285,16 @@ impl Runtime {
                         && a.selected.as_deref() == Some(source.name.as_str())
                         && a.selected_source.as_ref() == Some(&source.path)
                     {
-                        if a.placement_pane.is_some() {
+                        if a.placement_pane.is_some() && !a.component_picker {
                             a.placement_confirmation = Some(a.session);
                         }
                         return true;
+                    }
+                    if a.component_picker {
+                        a.source = match a.picker_result_kind(&source) {
+                            datum_gui_protocol::library_browser::acquisition::ComponentPickerResultKind::CompletePart => datum_gui_protocol::library_browser::acquisition::AcquisitionSource::NativeParts,
+                            datum_gui_protocol::library_browser::acquisition::ComponentPickerResultKind::Symbol => datum_gui_protocol::library_browser::acquisition::AcquisitionSource::BundledSymbols,
+                        };
                     }
                     Some(source)
                 } else {
@@ -321,9 +334,7 @@ impl Runtime {
                         .library
                         .acquisition
                         .as_ref()
-                        .and_then(|a| a.preview.as_ref())
-                        .and_then(|p| p.native_part.as_ref())
-                        .is_some_and(|part| part.in_project(&self.workspace().library))
+                        .is_some_and(|a| a.is_native_part())
                 {
                     return self.confirm_component_picker();
                 }

@@ -7,13 +7,18 @@ use crate::global_preferences_primitives::{
 };
 use datum_gui_protocol::single_line_editor::SingleLineEditor;
 const FONT_SIZE: f32 = 11.5; // Approved .tin/.ned, start-page target.
-fn width(text: &str) -> anyhow::Result<f32> {
-    measured_text_run_width_px(text, FONT_SIZE, TextFace::Mono)
+fn width(text: &str, font_size: f32) -> anyhow::Result<f32> {
+    measured_text_run_width_px(text, font_size, TextFace::Mono)
 }
-fn scroll(value: &str, editor: SingleLineEditor, available: f32) -> anyhow::Result<f32> {
+fn scroll(
+    value: &str,
+    editor: SingleLineEditor,
+    available: f32,
+    font_size: f32,
+) -> anyhow::Result<f32> {
     let mut editor = editor;
     editor.position(value, editor.caret, true);
-    Ok((width(&value[..editor.caret])? - available.max(0.0) + 1.0).max(0.0))
+    Ok((width(&value[..editor.caret], font_size)? - available.max(0.0) + 1.0).max(0.0))
 }
 fn boundaries(value: &str) -> Vec<usize> {
     value
@@ -22,11 +27,16 @@ fn boundaries(value: &str) -> Vec<usize> {
         .chain(std::iter::once(value.len()))
         .collect()
 }
-fn prefix_at_or_before(value: &str, boundaries: &[usize], target: f32) -> anyhow::Result<usize> {
+fn prefix_at_or_before(
+    value: &str,
+    boundaries: &[usize],
+    target: f32,
+    font_size: f32,
+) -> anyhow::Result<usize> {
     let (mut low, mut high) = (0, boundaries.len() - 1);
     while low < high {
         let middle = low + (high - low).div_ceil(2);
-        if width(&value[..boundaries[middle]])? <= target {
+        if width(&value[..boundaries[middle]], font_size)? <= target {
             low = middle;
         } else {
             high = middle - 1;
@@ -37,14 +47,20 @@ fn prefix_at_or_before(value: &str, boundaries: &[usize], target: f32) -> anyhow
 /// Shape only this bounded visible projection. The global shaped-buffer owner
 /// caps width to the surface; feeding a full offscreen value would wrap its
 /// tail below the one-line clip. Caller text and byte-based editing stay whole.
-fn visible_text(value: &str, offset: f32, available: f32) -> anyhow::Result<(&str, f32)> {
+fn visible_text(
+    value: &str,
+    offset: f32,
+    available: f32,
+    font_size: f32,
+) -> anyhow::Result<(&str, f32)> {
     let boundaries = boundaries(value);
-    let start = prefix_at_or_before(value, &boundaries, offset)?;
-    let end = (prefix_at_or_before(value, &boundaries, offset + available.max(0.0))? + 1)
-        .min(boundaries.len() - 1);
+    let start = prefix_at_or_before(value, &boundaries, offset, font_size)?;
+    let end = (prefix_at_or_before(value, &boundaries, offset + available.max(0.0), font_size)?
+        + 1)
+    .min(boundaries.len() - 1);
     Ok((
         &value[boundaries[start]..boundaries[end]],
-        width(&value[..boundaries[start]])?,
+        width(&value[..boundaries[start]], font_size)?,
     ))
 }
 /// Coordinates are relative to the field's logical left, using the same font
@@ -55,13 +71,24 @@ pub fn single_line_caret_at(
     field_width: f32,
     x: f32,
 ) -> anyhow::Result<usize> {
-    let target = (x - 9.0 + scroll(value, editor, field_width - 18.0)?).max(0.0);
+    single_line_caret_at_sized(value, editor, field_width, x, FONT_SIZE)
+}
+/// Contextual typography uses the same measured font for paint and pointer edits.
+pub fn single_line_caret_at_sized(
+    value: &str,
+    editor: SingleLineEditor,
+    field_width: f32,
+    x: f32,
+    font_size: f32,
+) -> anyhow::Result<usize> {
+    let target = (x - 9.0 + scroll(value, editor, field_width - 18.0, font_size)?).max(0.0);
     let boundaries = boundaries(value);
-    let low = prefix_at_or_before(value, &boundaries, target)?;
+    let low = prefix_at_or_before(value, &boundaries, target, font_size)?;
     let left = boundaries[low];
     let right = *boundaries.get(low + 1).unwrap_or(&left);
     Ok(
-        if target - width(&value[..left])? <= width(&value[..right])? - target {
+        if target - width(&value[..left], font_size)? <= width(&value[..right], font_size)? - target
+        {
             left
         } else {
             right
@@ -80,6 +107,34 @@ pub(crate) fn paint(
     text: &mut Vec<TextRun>,
     hits: &mut Vec<HitRegion>,
     target: HitTarget,
+) -> anyhow::Result<()> {
+    paint_sized(
+        value,
+        placeholder,
+        editor,
+        focused,
+        editable,
+        rect,
+        painter,
+        text,
+        hits,
+        target,
+        FONT_SIZE,
+    )
+}
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn paint_sized(
+    value: &str,
+    placeholder: &str,
+    editor: SingleLineEditor,
+    focused: bool,
+    editable: bool,
+    rect: RectPx,
+    painter: &mut ControlPainter<'_>,
+    text: &mut Vec<TextRun>,
+    hits: &mut Vec<HitRegion>,
+    target: HitTarget,
+    font_size: f32,
 ) -> anyhow::Result<()> {
     let border = if focused {
         design_tokens::chrome::STATUS_INFO
@@ -103,14 +158,16 @@ pub(crate) fn paint(
         width: (rect.width - 18.0).max(0.0),
         height: (rect.height - 12.0).max(0.0),
     };
-    let offset = scroll(value, editor, inner.width)?;
+    let offset = scroll(value, editor, inner.width, font_size)?;
     let x = inner.x - offset;
     let selection = editor.selection(value);
     let selection_rect = RectPx {
-        x: x + width(&value[..selection.start])?,
+        x: x + width(&value[..selection.start], font_size)?,
         y: rect.y + 7.0,
-        width: (width(&value[..selection.end])? - width(&value[..selection.start])?).max(0.0),
-        height: 18.0,
+        width: (width(&value[..selection.end], font_size)?
+            - width(&value[..selection.start], font_size)?)
+        .max(0.0),
+        height: 18.0 * font_size / FONT_SIZE,
     };
     if focused
         && !selection.is_empty()
@@ -121,7 +178,7 @@ pub(crate) fn paint(
     let (shown, shown_x) = if value.is_empty() {
         (placeholder, inner.x + if focused { 3.0 } else { 0.0 })
     } else {
-        let (shown, prefix_width) = visible_text(value, offset, inner.width)?;
+        let (shown, prefix_width) = visible_text(value, offset, inner.width, font_size)?;
         (shown, x + prefix_width)
     };
     let run_start = text.len();
@@ -129,7 +186,7 @@ pub(crate) fn paint(
         shown,
         shown_x,
         rect.y + 10.0,
-        FONT_SIZE,
+        font_size,
         if value.is_empty() || !editable {
             TEXT_MUTED
         } else {
@@ -140,7 +197,10 @@ pub(crate) fn paint(
         text,
     );
     if let Some(run) = text.get_mut(run_start) {
-        run.layout_size = Some((width(shown)?.max(inner.width) + 1.0, 24.0));
+        run.layout_size = Some((
+            width(shown, font_size)?.max(inner.width) + 1.0,
+            (24.0 * font_size / FONT_SIZE),
+        ));
     }
     if focused
         && !selection.is_empty()
@@ -150,24 +210,27 @@ pub(crate) fn paint(
             shown,
             shown_x,
             rect.y + 10.0,
-            FONT_SIZE,
+            font_size,
             design_tokens::chrome::TEXT_ON_ACCENT,
             TextFace::Mono,
             clip,
             text,
         );
         if let Some(run) = text.last_mut() {
-            run.layout_size = Some((width(shown)?.max(inner.width) + 1.0, 24.0));
+            run.layout_size = Some((
+                width(shown, font_size)?.max(inner.width) + 1.0,
+                (24.0 * font_size / FONT_SIZE),
+            ));
         }
     }
     if focused && editable {
         let mut editor = editor;
         editor.position(value, editor.caret, true);
         let caret = RectPx {
-            x: x + width(&value[..editor.caret])?,
+            x: x + width(&value[..editor.caret], font_size)?,
             y: rect.y + 7.0,
             width: 1.0,
-            height: 18.0,
+            height: 18.0 * font_size / FONT_SIZE,
         };
         if let Some(visible) = caret.intersect(inner) {
             painter.push(Quad::from_rect(visible, TEXT_PRIMARY));

@@ -1,9 +1,19 @@
 //! Existing native acquisition and placement, presented on the captured sheet.
 use super::*;
 use datum_gui_protocol::library_browser::LibraryControl as C;
-use datum_gui_protocol::library_browser::acquisition::LibraryAcquisition;
+use datum_gui_protocol::library_browser::acquisition::{
+    AcquisitionSource, LibraryAcquisition, LibrarySourceSymbol, catalog::SourceAvailability,
+};
 
 impl Runtime {
+    pub(crate) fn component_picker_input_size(&self, search: bool) -> f32 {
+        if search && self.component_picker_open() {
+            16.
+        } else {
+            11.5
+        }
+    }
+
     pub(crate) fn component_picker_open(&self) -> bool {
         self.workspace()
             .library
@@ -31,29 +41,59 @@ impl Runtime {
                 .as_ref()
                 .and_then(|tip| tip.parse().ok()),
         );
-        acquisition.use_native_part_source();
+        acquisition.source = AcquisitionSource::BundledSymbols;
+        acquisition.path.clear();
         acquisition.component_picker = true;
         acquisition.placement_pane = Some(pane);
-        acquisition.placement_document = Some(document.clone());
+        acquisition.placement_document = Some(document);
         acquisition.placement_zoom = state.ui.layout.zoomed;
-        if let Some(path) = self
-            .library_acquisition_work
-            .component_sources
-            .get(&document.project)
-            .cloned()
-        {
-            acquisition.path = path;
-            acquisition.path_editor =
-                datum_gui_protocol::single_line_editor::SingleLineEditor::at_end(&acquisition.path);
-            acquisition.loading = true;
-            self.library_acquisition_work.start(&acquisition, None);
+        if let Some(backing) = &state.backing {
+            let mut parts = std::collections::BTreeMap::new();
+            for choice in &state.schematic_authoring.components.choices {
+                if let Some(component) = &choice.component {
+                    let metadata = state
+                        .library
+                        .entries
+                        .iter()
+                        .find(|entry| entry.kind == "parts" && entry.id == component.part.part)
+                        .map(|entry| {
+                            format!(
+                                "{} {}",
+                                entry
+                                    .raw
+                                    .get("description")
+                                    .and_then(serde_json::Value::as_str)
+                                    .unwrap_or(""),
+                                entry
+                                    .raw
+                                    .get("tags")
+                                    .map(ToString::to_string)
+                                    .unwrap_or_default()
+                            )
+                        })
+                        .unwrap_or_default();
+                    parts
+                        .entry(component.part.part)
+                        .or_insert_with(|| LibrarySourceSymbol {
+                            path: backing.request.project_root.clone(),
+                            name: component.part.part.to_string(),
+                            label: choice.name.clone(),
+                            description: format!(
+                                "{} {} {} {}",
+                                choice.name, choice.value, component.package_name, metadata
+                            ),
+                            availability: SourceAvailability::Supported,
+                        });
+                }
+            }
+            acquisition.project_components = parts.into_values().collect();
         }
+        acquisition.loading = true;
+        self.library_acquisition_work.start(&acquisition, None);
         let browser = &mut self.session.workspace_mut().library;
-        browser.focus = Some(if acquisition.path.is_empty() {
-            C::AcquirePath
-        } else {
-            C::AcquireSearch
-        });
+        browser.focus = Some(C::AcquireSearch);
+        browser.scroll_offset = 0;
+        browser.reveal_focus = true;
         browser.acquisition = Some(acquisition);
     }
 
@@ -76,9 +116,7 @@ impl Runtime {
                 .and_then(|p| p.native_part.as_ref())
                 .is_some_and(|part| part.in_project(&self.workspace().library))
             {
-                return Err(
-                    "Adopt the selected definitions into the project library before placing",
-                );
+                return Err("The project component changed; cancel and search again");
             }
             a.sources
                 .iter()

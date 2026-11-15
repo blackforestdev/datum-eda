@@ -415,14 +415,16 @@ impl Runtime {
                 let s = self.workspace();
                 let mut controls = Vec::new();
                 if let Some(a) = &s.library.acquisition {
-                    if !a.bundled() {
+                    if !a.component_picker && !a.bundled() {
                         controls.extend([C::AcquirePath, C::AcquireLoad]);
                     }
                     controls.push(C::AcquireSearch);
-                    if a.placement_pane.is_some() && !a.is_native_part() {
+                    if !a.component_picker && a.placement_pane.is_some() && !a.is_native_part() {
                         controls.push(C::ProjectSymbols);
                     }
-                    if a.preview.is_some() {
+                    if a.preview.is_some()
+                        && (!a.component_picker || a.picker_can_place(&s.library))
+                    {
                         controls.push(C::AcquireImport);
                     }
                     controls.extend(
@@ -435,7 +437,11 @@ impl Runtime {
                     if a.results().len() > 4 {
                         controls.extend([C::AcquirePage(false), C::AcquirePage(true)]);
                     }
-                    if a.bundled() || a.is_native_part() {
+                    if if a.component_picker {
+                        a.unavailable_count() > 0
+                    } else {
+                        a.bundled() || a.is_native_part()
+                    } {
                         controls.push(C::AcquireShowUnavailable);
                     }
                     controls.push(C::Cancel);

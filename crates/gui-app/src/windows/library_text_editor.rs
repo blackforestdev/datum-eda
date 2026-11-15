@@ -84,6 +84,9 @@ pub(super) fn store(runtime: &mut Runtime, target: Target, snapshot: Snapshot, c
                     a.search_editor = snapshot.editor;
                     if changed {
                         a.search_changed();
+                        if a.component_picker {
+                            browser.scroll_offset = 0;
+                        }
                     }
                 }
             }

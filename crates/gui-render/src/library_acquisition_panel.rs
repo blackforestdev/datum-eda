@@ -215,10 +215,11 @@ pub(super) fn field(
         x: p.rect.x + 6.,
         y: p.y,
         width: (p.rect.width - 12.).max(0.),
-        height: 34.,
+        height: if p.font_size() > 12. { 46. } else { 34. },
     };
+    let font_size = if p.font_size() > 12. { 16. } else { 11.5 };
     let mut cache = ControlMeshCache::default();
-    let _ = crate::single_line_control::paint(
+    let _ = crate::single_line_control::paint_sized(
         value,
         if control == C::AcquireSearch {
             "resistor, capacitor, connector…"
@@ -233,8 +234,9 @@ pub(super) fn field(
         p.text,
         p.hits,
         HitTarget::Library(control),
+        font_size,
     );
-    p.y += 38.;
+    p.y += rect.height + 4.;
 }
 
 pub(super) fn inspector(p: &mut Painter<'_>) {

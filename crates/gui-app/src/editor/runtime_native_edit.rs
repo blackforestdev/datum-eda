@@ -518,7 +518,7 @@ impl Runtime {
             .library
             .acquisition
             .as_ref()
-            .filter(|a| a.component_picker)
+            .filter(|a| a.component_picker && a.is_native_part())
             .cloned();
         let placement_symbol = self.workspace().library.acquisition.as_ref().and_then(|a| {
             if a.is_native_part() {

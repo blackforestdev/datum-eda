@@ -584,11 +584,12 @@ impl Runtime {
         let Some(mut snapshot) = self.editor_snapshot(target) else {
             return false;
         };
-        let Ok(byte) = datum_gui_render::single_line_caret_at(
+        let Ok(byte) = datum_gui_render::single_line_caret_at_sized(
             &snapshot.text,
             snapshot.editor,
             region.rect.width / scale,
             (x - region.rect.x) / scale,
+            self.component_picker_input_size(matches!(target, Target::LibrarySearch)),
         ) else {
             return true;
         };
@@ -677,9 +678,13 @@ impl Runtime {
             self.folder_browser.editor_drag = None;
             return false;
         };
-        if let Ok(byte) =
-            datum_gui_render::single_line_caret_at(&snapshot.text, snapshot.editor, width, offset)
-        {
+        if let Ok(byte) = datum_gui_render::single_line_caret_at_sized(
+            &snapshot.text,
+            snapshot.editor,
+            width,
+            offset,
+            self.component_picker_input_size(matches!(target, Target::LibrarySearch)),
+        ) {
             snapshot.editor.position(&snapshot.text, byte, true);
             self.store_editor(target, snapshot, false);
             self.refresh_folder_browser();

@@ -608,32 +608,45 @@ development behavior, not component-workflow release-GUI execution, physical/HUM
 input, manufacturer pinout qualification, owner-circuit migration or full
 qualification.
 
-The bounded single-picker follow-up (`dat-single-component-picker-b5xf`), under
-accepted `library-surfaces-study.html#L-H` target `978f0e4b`, presents **Place
-Component** on the captured schematic document and occurrence. An explicitly
-chosen saved native project supplies declared complete Parts; source path,
-metadata search, symbol, footprint and pin/pad correspondence previews stay in
-this picker. The source choice is reused within this project/session, without a
-persisted preference or a separate Library pane. No stock component catalog or
-new component content is supplied.
+The historical single-picker follow-up (`dat-single-component-picker-b5xf`,
+L-H target `978f0e4b`) put saved-source selection and adoption in normal
+placement. Its bounded release-B/release-D evidence remains historical; owner
+QA rejected that ordinary workflow and its readability, withdrawing QA readiness.
+The original failed cold capture and its limited interaction-assisted follow-up
+retain their recorded scopes.
 
-Search/preview Cancel leaves canonical source and project bytes unchanged.
-Explicit adoption into the project library uses the existing library-only
-commit/Undo; later Cancel retains those committed definitions. Place rechecks
-the selected source and exact saved definition graph before entering the existing
-placement ghost, whose canvas commit has its own Undo/Redo. Failed or changed
-source reads invalidate the selected preview and placement eligibility. Existing
-approval/basis information and engine refusals remain authoritative; this picker
-does not settle S05, add a writer, migrate old projects or combine the commits.
-The task records a scoped composition: the reviewed release-B workflow prefix
-proves search, previews, Cancel, adoption and placement history; final release-D
-checks prove contextual labels, normal/narrow previews and failed-read eligibility
-retirement. The raw prefix run ended with a rejected cold capture; it is not a
-whole-run PASS or acknowledged Save. Independent review binds those candidate
-scopes separately. The intermittent initial
-cold capture issue `dat-zyg9` remains unknown between rendering and capture;
-interaction-assisted cold reopening is distinct from healthy automatic startup.
-Physical/HUMAN, production content and full qualification remain unclaimed.
+The `dat-jmxm` correction follows the reviewed L-H target
+`f09a2f177113d9f3c42c60c7458307b35769223a1116a56a015d8288f2dfdc3b`.
+**Place Component** opens focused search on the captured schematic document and
+occurrence. It queries complete Parts already qualified in the current project
+and the existing shipped Symbol catalog. Part rows preserve the complete declared
+Value/Package/Footprint/map graph; their declared description, tags, Package name
+and existing manufacturer/MPN/value fields are searchable. Symbol rows, previews
+and Place actions explicitly say **schematic only**. Local Reference/Value fields
+do not grant Part, Package, Footprint or pin-pad authority. Library source setup
+and adoption management belong to Library; no directory, Read or source-selection
+control appears in normal placement.
+
+Search, preview and Cancel author nothing. Explicit Symbol placement reuses the
+existing canonical acquisition when the project lacks its definitions, followed
+by the existing captured-sheet ghost and separate canvas transaction. Existing
+project definitions are reused without silently updating them. Complete-Part
+selection retains current qualification and source checks; stale definitions
+refuse placement. Unloaded/loading catalogs cannot produce a false no-match.
+Search and actions remain visible while the picker body scrolls.
+
+The real-data correction evidence uses ordinary GUI Project creation and Main
+navigation, direct typing of `resistor`, shipped `Device:R`, its actual preview,
+Cancel, a real `R1` with the exact two source pins, and canonical placement
+Undo/Redo. A finite follow-up opens an exact copy of that real design through
+public File Open without Fit, then obtains an acknowledged Save and inspects the
+picker at 560×720. Cold opening precedes that Save acknowledgement; this is not
+an acknowledged-Save-then-reopen claim. Current source, reviewed metadata delta,
+matching executable and focused smoke evidence remain bound in `dat-jmxm`.
+No synthetic Part pack supports renewed readiness. Physical Part qualification,
+S05 approval/basis policy, HUMAN input and full qualification remain unclaimed;
+owner QA findings remain open for owner recheck. The separate `dat-zyg9` capture
+issue is not explained away by this bounded successful public-open case.
 
 The accepted bounded recovery target `library-surfaces-study.html#L-K`
 (`dat-existing-project-component-resolution-i89r`) connects an unbound transfer

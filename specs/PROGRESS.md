@@ -459,17 +459,24 @@
 
 <!-- ACTIVE FRONTIER:END -->
 
-**Bounded routine GUI implementation — `dat-single-component-picker-b5xf`:** accepted
-L-H target `978f0e4b` is translated into one Place Component picker for an
-explicitly chosen complete native source, with session source reuse and separate
-canonical adoption/placement history. The task composes the reviewed release-B
-workflow prefix with final release-D contextual labels, normal/narrow previews
-and failed-read retirement checks. The raw prefix ended in rejected cold capture;
-whole-run PASS and acknowledged Save remain unclaimed. Final independent
-review and landing state
-belongs to that task, not the Frontier selector. No default component content,
-S05 policy change or full qualification; intermittent initial cold capture
-`dat-zyg9` remains separately tracked with its unknown cause.
+**Historical routine GUI implementation — `dat-single-component-picker-b5xf`:**
+source-first target `978f0e4b` and its bounded prior evidence remain historical.
+Owner QA hard-failed ordinary placement/readability and withdrew readiness; the
+raw failures are retained rather than upgraded by the correction.
+
+**Bounded routine correction — `dat-jmxm`:** the separately authorized correction
+uses the reviewed L-H target `f09a2f17…dc3b`: readable focused search across
+qualified project Parts and existing shipped Symbols, explicit schematic-only
+Symbol intent, separate Library management, fixed search/footer and scrolling
+body. Real GUI creation/Main navigation, direct resistor search, actual Device:R
+preview/Cancel, real R1 placement and canonical Undo/Redo are evidenced without a
+synthetic Part pack. A finite real-design-copy follow-up verifies public cold
+File Open, then Save acknowledgement and narrow preview/Cancel; no second reopen
+after that Save is claimed. The task retains source/delta reviews, exact binary
+and final smoke bindings, factual consumer review and landing evidence. Owner QA
+findings remain open for owner recheck; physical Part cases, S05 policy, HUMAN,
+QoS and full qualification remain unclaimed. `dat-zyg9` retains its separate
+unknown cause. This routine correction changes no Frontier selection or grant.
 
 ### Workflow repair admission transaction
 

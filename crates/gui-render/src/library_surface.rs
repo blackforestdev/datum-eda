@@ -42,18 +42,35 @@ pub(crate) fn render_component_picker(
     acquisition_panel::component_picker::render(state, layout, quads, text, hits);
 }
 impl Painter<'_> {
+    fn font_size(&self) -> f32 {
+        if self
+            .state
+            .library
+            .acquisition
+            .as_ref()
+            .is_some_and(|a| a.component_picker)
+        {
+            16.
+        } else {
+            12.
+        }
+    }
     fn line(&mut self, label: &str) {
         let width = (self.rect.width - 16.).max(1.);
-        let height =
-            crate::text_metrics::measured_text_run_height_px(label, width, 12., TextFace::Ui)
-                .unwrap_or(16.)
-                + 8.;
+        let height = crate::text_metrics::measured_text_run_height_px(
+            label,
+            width,
+            self.font_size(),
+            TextFace::Ui,
+        )
+        .unwrap_or(16.)
+            + 8.;
         if self.unbounded || self.y + height <= self.rect.y + self.rect.height {
             draw_text_clipped(
                 label,
                 self.rect.x + 8.,
                 self.y + 4.,
-                12.,
+                self.font_size(),
                 TEXT_PRIMARY,
                 TextFace::Ui,
                 RectPx {
@@ -75,12 +92,12 @@ impl Painter<'_> {
             height: (crate::text_metrics::measured_text_run_height_px(
                 label,
                 (self.rect.width - 24.).max(1.),
-                12.,
+                self.font_size(),
                 TextFace::Ui,
             )
             .unwrap_or(16.)
                 + 12.)
-                .max(25.),
+                .max(if self.font_size() > 12. { 40. } else { 25. }),
         };
         if self.unbounded || rect.y + rect.height <= self.rect.y + self.rect.height {
             self.quads
@@ -92,7 +109,7 @@ impl Painter<'_> {
                 label,
                 rect.x + 6.,
                 rect.y + 6.,
-                12.,
+                self.font_size(),
                 TEXT_PRIMARY,
                 TextFace::Ui,
                 rect,
