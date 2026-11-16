@@ -218,6 +218,7 @@ fn refreshed_library(
         .selected(previous_selection)
         .map(|entry| entry.key());
     next.kind = previous.kind;
+    next.resolution = previous.resolution.clone();
     next.search = previous.search.clone();
     next.result_offset = previous.result_offset;
     if let Some((kind, _)) = &acquired {

@@ -69,9 +69,10 @@ pub fn catalog(path: &Path) -> Result<Vec<NativePartChoice>, EngineError> {
         .filter(|o| o.domain == "pool" && o.kind == "parts")
     {
         let result = index.node(object.object_id, "parts").and_then(|raw| {
-            serde_json::from_value::<crate::pool::Part>(raw.object).map_err(EngineError::from)
+            let part = serde_json::from_value::<crate::pool::Part>(raw.object.clone())?;
+            Ok((part, raw.object))
         });
-        let part = match result {
+        let (part, raw) = match result {
             Ok(part) => part,
             Err(error) => {
                 rows.push(NativePartChoice {
@@ -82,6 +83,12 @@ pub fn catalog(path: &Path) -> Result<Vec<NativePartChoice>, EngineError> {
                 });
                 continue;
             }
+        };
+        let identity = if part.mpn.trim().is_empty() {
+            crate::api::native_write::library_definition::part_display_identity(&raw)
+                .unwrap_or_default()
+        } else {
+            format!("{} {}", part.manufacturer, part.mpn)
         };
         let package_name = index
             .node(part.package, "packages")
@@ -103,10 +110,7 @@ pub fn catalog(path: &Path) -> Result<Vec<NativePartChoice>, EngineError> {
             .join("\n");
         rows.push(NativePartChoice {
             id: part.uuid,
-            label: format!(
-                "{} {} · {} · {}",
-                part.manufacturer, part.mpn, part.value, package_name
-            ),
+            label: format!("{} · {} · {}", identity, part.value, package_name),
             search_text,
             refusal: source::capture(path, &model, &index, part.uuid)
                 .err()

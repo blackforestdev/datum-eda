@@ -3,6 +3,8 @@ use super::*;
 use crate::global_preferences_primitives::{ControlMeshCache, ControlPainter, button};
 use datum_gui_protocol::board_transfer::BoardTransferAction as Action;
 use eda_engine::api::native_write::schematic_board_transfer::TransferStatus;
+#[path = "../component_resolution.rs"]
+mod component_resolution;
 #[allow(clippy::too_many_arguments)]
 pub(super) fn render(
     state: &ReviewWorkspaceState,
@@ -13,6 +15,9 @@ pub(super) fn render(
     text: &mut Vec<TextRun>,
     hits: &mut Vec<HitRegion>,
 ) {
+    if component_resolution::render(state, layout, controls, scale, quads, text, hits) {
+        return;
+    }
     let Some(review) = &state.ui.board_transfer else {
         return;
     };
@@ -116,15 +121,32 @@ pub(super) fn render(
             width,
             height: 25.0,
         };
+        let unresolved = row.component_instance.is_none() && row.symbols.len() == 1;
+        let label = if unresolved {
+            "Resolve physical definition…"
+        } else {
+            &label
+        };
         let available = !row.component_choice
             && row.component_instance.is_some()
             && row.existing_packages.is_empty()
             && !row.map_options.is_empty();
-        button(&label, rect, false, available, &mut painter, text);
-        if available {
+        button(
+            label,
+            rect,
+            false,
+            available || unresolved,
+            &mut painter,
+            text,
+        );
+        if available || unresolved {
             hits.push(HitRegion {
                 rect,
-                target: HitTarget::BoardTransfer(Action::ChooseMap(index)),
+                target: HitTarget::BoardTransfer(if unresolved {
+                    Action::Resolve(index)
+                } else {
+                    Action::ChooseMap(index)
+                }),
             });
         }
         y += 28.0;

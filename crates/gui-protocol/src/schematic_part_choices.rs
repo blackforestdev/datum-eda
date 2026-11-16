@@ -31,15 +31,22 @@ pub(super) fn append(state: &mut SchematicAuthoring, model: &DesignModel) {
             continue;
         }
         let result = (|| -> anyhow::Result<()> {
-            let part: Part = serde_json::from_value(object(model, record.object_id, "parts")?)?;
+            let raw = object(model, record.object_id, "parts")?;
+            let part: Part = serde_json::from_value(raw.clone())?;
+            let identity = if part.mpn.trim().is_empty() {
+                eda_engine::api::native_write::library_definition::part_display_identity(&raw)
+                    .unwrap_or_default()
+            } else {
+                format!("{} {}", part.manufacturer, part.mpn)
+            };
             let entity: Entity = serde_json::from_value(object(model, part.entity, "entities")?)?;
             for gate in entity.gates.values() {
                 let Some(mut choice) = symbols.iter().find(|c| c.id == gate.symbol).cloned() else {
                     return Err(anyhow::anyhow!("A Part gate Symbol is unavailable"));
                 };
                 choice.name = format!(
-                    "Part: {} {} · {} · {} / {}",
-                    part.manufacturer, part.mpn, gate.name, entity.name, choice.symbol.name
+                    "Part: {} · {} · {} / {}",
+                    identity, gate.name, entity.name, choice.symbol.name
                 );
                 choice.prefix = entity.prefix.clone();
                 choice.value = part.value.clone();

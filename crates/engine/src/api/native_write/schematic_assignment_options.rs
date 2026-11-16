@@ -102,7 +102,14 @@ pub fn options(
             }
             choices.push(AssignmentChoice {
                 part: object.object_id,
-                part_name: part["mpn"].as_str().unwrap_or("").into(),
+                part_name: part["mpn"]
+                    .as_str()
+                    .filter(|mpn| !mpn.trim().is_empty())
+                    .map(str::to_owned)
+                    .or_else(|| {
+                        crate::api::native_write::library_definition::part_display_identity(&part)
+                    })
+                    .unwrap_or_default(),
                 entity: entity_id,
                 entity_name: entity["name"].as_str().unwrap_or("").into(),
                 gate,

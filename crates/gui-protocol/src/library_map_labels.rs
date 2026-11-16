@@ -58,12 +58,7 @@ fn reference(entries: &[LibraryEntry], value: Option<&Value>, kind: &str) -> Str
 
 pub(crate) fn display_identity(kind: &str, value: &Value) -> Option<String> {
     if kind == "parts" {
-        text(value, "mpn")
-            .map(|mpn| match text(value, "manufacturer") {
-                Some(manufacturer) => format!("{manufacturer} {mpn}"),
-                None => mpn.to_owned(),
-            })
-            .or_else(|| text(value, "name").map(str::to_owned))
+        eda_engine::api::native_write::library_definition::part_display_identity(value)
     } else {
         text(value, "name").map(str::to_owned)
     }

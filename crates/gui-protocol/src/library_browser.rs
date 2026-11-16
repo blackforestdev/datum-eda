@@ -7,6 +7,8 @@ use uuid::Uuid;
 #[path = "library_map_labels.rs"]
 mod map_labels;
 pub(crate) use map_labels::display_identity;
+#[path = "component_resolution.rs"]
+pub mod component_resolution;
 
 #[path = "library_acquisition.rs"]
 pub mod acquisition;
@@ -149,6 +151,7 @@ pub struct LibraryLink {
 
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct LibraryBrowser {
+    pub resolution: Option<component_resolution::ComponentResolution>,
     pub entries: Vec<LibraryEntry>,
     pub basis: Option<Arc<DesignModel>>,
     pub kind: usize,
@@ -299,8 +302,9 @@ impl LibraryBrowser {
             });
             let name = raw
                 .get("name")
-                .or_else(|| raw.get("mpn"))
                 .and_then(Value::as_str)
+                .filter(|name| !name.trim().is_empty())
+                .or_else(|| raw.get("mpn").and_then(Value::as_str))
                 .unwrap_or("Unnamed source")
                 .to_owned();
             browser.entries.push(LibraryEntry {

@@ -18,6 +18,9 @@ impl Runtime {
         if event.state != ElementState::Pressed {
             return false;
         }
+        if self.component_resolution_key(event) {
+            return true;
+        }
         if self.handle_move_coordinate_key(event) {
             return true;
         }

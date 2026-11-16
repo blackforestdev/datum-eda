@@ -15,6 +15,7 @@ pub(super) fn build(
         return edit::build(context, provenance, request);
     }
     const FIELDS: &[&str] = &[
+        "name",
         "manufacturer",
         "mpn",
         "value",
@@ -35,9 +36,7 @@ pub(super) fn build(
             .and_then(Value::as_str)
             .ok_or_else(|| refusal(format!("Part {key} must be text")))
     };
-    if text("manufacturer")?.trim().is_empty() || text("mpn")?.trim().is_empty() {
-        return Err(refusal("Enter a manufacturer and MPN"));
-    }
+    library_definition::validate_part_identity(&Value::Object(request.fields.clone()))?;
     let reference = |key: &str| -> Result<Uuid, EngineError> {
         request
             .fields
@@ -87,6 +86,9 @@ pub(super) fn build(
         "Unknown",
     );
     object["default_footprint"] = json!(footprint);
+    if let Some(name) = request.fields.get("name") {
+        object["name"] = name.clone();
+    }
     let tags: std::collections::BTreeSet<String> = match request.fields.get("tags") {
         Some(v) => serde_json::from_value(v.clone())?,
         None => Default::default(),

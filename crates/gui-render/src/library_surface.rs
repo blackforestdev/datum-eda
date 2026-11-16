@@ -162,6 +162,7 @@ pub(crate) fn render(
             p.line("Tolerances, terminal positions and governed models unavailable");
         }
         if d.kind == "parts" {
+            p.line("Without manufacturer / MPN: explicit Part name required; procurement unspecified, unapproved / not orderable");
             if let Some(raw) = &d.part.original {
                 part_form::saved_links(&mut p, raw);
             } else {
@@ -359,6 +360,9 @@ pub(crate) fn render(
             p.y += preview.height;
         }
     } else {
+        if state.library.resolution.is_some() {
+            p.button("Return to retained component / assignment", C::Cancel);
+        }
         browser_panel::render(&mut p);
         if let Some(e) = state.library.selected(&state.selection) {
             p.line(&format!("{} · {}", e.label(), e.name));

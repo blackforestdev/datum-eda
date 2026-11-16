@@ -89,6 +89,7 @@ impl LibraryDraft {
                 .map_err(|_| "Saved Part data is unavailable")?;
         }
         for (key, label) in [
+            ("name", "Part name (required if procurement unspecified)"),
             ("manufacturer", "Manufacturer"),
             ("mpn", "MPN"),
             ("value", "Value"),
@@ -364,6 +365,7 @@ impl LibraryDraft {
                 fields.insert("package".into(), json!(package));
             }
             for key in [
+                "name",
                 "manufacturer",
                 "mpn",
                 "value",
@@ -375,9 +377,6 @@ impl LibraryDraft {
                     continue;
                 }
                 let value = self.value(key);
-                if matches!(key, "manufacturer" | "mpn") && value.trim().is_empty() {
-                    return Err("Enter a manufacturer and MPN".into());
-                }
                 let value = if key == "tags" {
                     json!(
                         value
@@ -404,14 +403,28 @@ impl LibraryDraft {
                     fields.insert("default_pin_pad_map".into(), json!(map));
                 }
             }
+            let mut identity = self.part.original.clone().unwrap_or_else(|| json!({}));
+            for (key, value) in fields.iter() {
+                identity[key] = value.clone();
+            }
+            eda_engine::api::native_write::library_definition::validate_part_identity(&identity)
+                .map_err(|error| error.to_string())?;
             return Ok(());
         }
-        if self.value("manufacturer").trim().is_empty() || self.value("mpn").trim().is_empty() {
-            return Err("Enter a manufacturer and MPN".into());
-        }
-        for key in ["manufacturer", "mpn", "value", "description", "datasheet"] {
+        for key in [
+            "name",
+            "manufacturer",
+            "mpn",
+            "value",
+            "description",
+            "datasheet",
+        ] {
             fields.insert(key.into(), json!(self.value(key)));
         }
+        eda_engine::api::native_write::library_definition::validate_part_identity(&Value::Object(
+            fields.clone(),
+        ))
+        .map_err(|error| error.to_string())?;
         for (field, target, label) in [
             ("part_entity", "entity", "Entity"),
             ("part_package", "package", "Package"),

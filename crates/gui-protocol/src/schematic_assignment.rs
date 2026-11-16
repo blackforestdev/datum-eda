@@ -8,6 +8,19 @@ use eda_engine::api::native_write::{
 };
 use uuid::Uuid;
 
+impl super::delete_review::DeleteReview {
+    /// Re-enter the existing review with an explicitly retained, requalified target.
+    pub fn capture_assignment_target(
+        state: &ReviewWorkspaceState,
+        target: &AuthoredSelectionIdentity,
+    ) -> Result<Self, String> {
+        let evidence = AssignmentEvidence::capture(state, target)?;
+        let mut review = Self::capture_source(state)?;
+        review.assignment = Some(evidence);
+        Ok(review)
+    }
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct AssignmentEvidence {
     pub target: AuthoredSelectionIdentity,
@@ -123,6 +136,17 @@ impl AssignmentEvidence {
         state: &ReviewWorkspaceState,
         target: &AuthoredSelectionIdentity,
     ) -> Result<Self, String> {
+        let evidence = Self::capture_resolution(state, target)?;
+        if evidence.options.choices.is_empty() {
+            return Err("No complete compatible component yet. Add a component with its value, package, footprint and pin map in the Library".into());
+        }
+        Ok(evidence)
+    }
+    /// The same admission and qualification, retaining an honest empty choice set.
+    pub fn capture_resolution(
+        state: &ReviewWorkspaceState,
+        target: &AuthoredSelectionIdentity,
+    ) -> Result<Self, String> {
         let basis = Self::admit_target(state, target)?;
         let model = state
             .library
@@ -147,9 +171,6 @@ impl AssignmentEvidence {
                 Err(_) => false,
             }
         });
-        if options.choices.is_empty() {
-            return Err("No complete compatible component yet. Add a component with its value, package, footprint and pin map in the Library".into());
-        }
         Ok(Self {
             target: target.clone(),
             options,

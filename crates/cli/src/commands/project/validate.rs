@@ -656,7 +656,7 @@ fn validate_board_root(
     )?;
     let net_uuids: BTreeSet<_> = nets.iter().map(|value| value.uuid).collect();
     for net in &nets {
-        if !net_class_uuids.contains(&net.class) {
+        if !net.class.is_nil() && !net_class_uuids.contains(&net.class) {
             push_issue(
                 issues,
                 "error",

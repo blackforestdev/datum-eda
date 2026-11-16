@@ -60,7 +60,7 @@ impl Runtime {
         handled
     }
     pub(super) fn activate_library(&mut self, control: C) -> bool {
-        if self.native_edit.pending() {
+        if self.native_edit.pending() || self.resolution_library_return(&control) {
             return true;
         }
         self.session.workspace_mut().library.focus = Some(control.clone());
@@ -508,6 +508,9 @@ impl Runtime {
                     controls.extend([C::Preview, C::Commit, C::Cancel]);
                 } else {
                     controls.extend([C::BrowseBundled, C::Acquire]);
+                    if s.library.resolution.is_some() {
+                        controls.push(C::Cancel);
+                    }
                     controls.extend((0..8).map(C::Kind));
                     controls.push(C::Search);
                     controls.extend(s.library.results().into_iter().map(C::Result));

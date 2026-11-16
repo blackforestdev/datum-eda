@@ -11,6 +11,8 @@ pub struct BoardTransferReview {
 }
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum BoardTransferAction {
+    Resolve(usize),
+    Resolution(crate::library_browser::component_resolution::ResolutionAction),
     Surface,
     ChooseMap(usize),
     Previous,

@@ -9,6 +9,7 @@ pub(super) fn build(
     request: LibraryDefinitionRequest,
 ) -> Result<PreparedWrite, EngineError> {
     const METADATA: &[&str] = &[
+        "name",
         "manufacturer",
         "mpn",
         "value",
@@ -16,6 +17,13 @@ pub(super) fn build(
         "datasheet",
         "tags",
     ];
+    let (_, mut merged) = saved_source::load(context.model, request.object_id, "parts")?;
+    for (key, value) in &request.fields {
+        if METADATA.contains(&key.as_str()) {
+            merged[key] = value.clone();
+        }
+    }
+    library_definition::validate_part_identity(&merged)?;
     let entity_edit = request.fields.contains_key("entity");
     let package_edit = request.fields.contains_key("package");
     if !entity_edit
@@ -29,7 +37,7 @@ pub(super) fn build(
             request,
             "parts",
             METADATA,
-            &["manufacturer", "mpn"],
+            &[],
         );
     }
     if request.kind != "parts" {
@@ -77,12 +85,9 @@ pub(super) fn build(
             if key == "tags" {
                 let _: Vec<String> = serde_json::from_value(value.clone())?;
             } else {
-                let text = value
+                value
                     .as_str()
                     .ok_or_else(|| refusal(format!("{key} must be text")))?;
-                if matches!(key.as_str(), "manufacturer" | "mpn") && text.trim().is_empty() {
-                    return Err(refusal(format!("Enter {key}")));
-                }
             }
             object.as_object_mut().unwrap().insert(key, value);
         }

@@ -62,10 +62,62 @@ impl Runtime {
         if self.native_edit.pending() {
             return true;
         }
+        if let Action::Resolution(action) = action {
+            return self.handle_component_resolution(action);
+        }
+        if action == Action::Surface
+            && self
+                .workspace()
+                .library
+                .resolution
+                .as_ref()
+                .is_some_and(|c| !c.in_library)
+        {
+            return true;
+        }
         let Some(mut review) = self.workspace().ui.board_transfer.clone() else {
             return false;
         };
         match action {
+            Action::Resolution(_) => unreachable!(),
+            Action::Resolve(index) => {
+                let result = (|| -> Result<(), String> {
+                    let row = review
+                        .plan
+                        .components
+                        .get(index)
+                        .ok_or("Component row unavailable")?;
+                    let [symbol] = row.symbols.as_slice() else {
+                        return Err("Resolve one supported placed Symbol at a time".into());
+                    };
+                    let basis =
+                        datum_gui_protocol::AuthoringViewBasis::capture_unique_root_schematic(
+                            self.workspace(),
+                            self.workspace().ui.layout.focused,
+                        )?;
+                    if basis.source != review.plan.sheet
+                        || basis.project != review.plan.project_id
+                        || basis.revision != review.plan.expected_model_revision.0
+                    {
+                        return Err("Design changed; reopen transfer review".into());
+                    }
+                    let target = datum_gui_protocol::AuthoredSelectionIdentity {
+                        class: datum_gui_protocol::AuthoredSelectionClass::Symbol,
+                        id: *symbol,
+                        instance_path: basis
+                            .document
+                            .as_ref()
+                            .ok_or("Schematic occurrence unavailable")?
+                            .instance_path
+                            .clone(),
+                    };
+                    self.begin_component_resolution(target, true)
+                })();
+                if let Err(reason) = result {
+                    review.refusal = Some(reason);
+                    self.session.workspace_mut().ui.board_transfer = Some(review);
+                }
+            }
             Action::Surface => {}
             Action::Cancel => {
                 self.session.workspace_mut().ui.board_transfer = None;

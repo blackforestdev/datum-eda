@@ -1,14 +1,19 @@
 //! A compatible Part/Gate configures the existing choice form and Proposal worker.
 use super::*;
 use datum_gui_protocol::schematic_authoring::{LabelDraft, delete_review::DeleteReview};
+#[path = "runtime_component_resolution.rs"]
+mod resolution;
 impl Runtime {
     pub(crate) fn begin_schematic_assignment(&mut self) -> bool {
         let result = (|| {
             self.selected_schematic_idle()?;
-            DeleteReview::capture_assignment(self.workspace())
+            if self.begin_empty_component_resolution()? {
+                return Ok(None);
+            }
+            DeleteReview::capture_assignment(self.workspace()).map(Some)
         })();
         match result {
-            Ok(review) => {
+            Ok(Some(review)) => {
                 if !self.prepare_native_circuit(false) {
                     return true;
                 }
@@ -18,6 +23,7 @@ impl Runtime {
                 e.assignment_draft = Some(review);
                 e.refusal = None;
             }
+            Ok(None) => {}
             Err(reason) => self.log_console_refusal(ConsoleFeedbackSource::Tool, reason),
         }
         self.invalidate_frame();

@@ -13,6 +13,52 @@ use crate::substrate::DesignModel;
 
 use super::library::pool_padstack_payload;
 
+/// Existing commercial identity, with an explicitly authored name as fallback.
+pub fn part_display_identity(value: &serde_json::Value) -> Option<String> {
+    let text = |key: &str| {
+        value
+            .get(key)?
+            .as_str()
+            .map(str::trim)
+            .filter(|s| !s.is_empty())
+    };
+    text("mpn")
+        .map(|mpn| match text("manufacturer") {
+            Some(manufacturer) => format!("{manufacturer} {mpn}"),
+            None => mpn.to_owned(),
+        })
+        .or_else(|| text("name").map(str::to_owned))
+}
+
+/// A manually named Part may leave procurement unspecified; it is not approved
+/// or orderable merely because its physical definition is complete.
+pub fn validate_part_identity(value: &serde_json::Value) -> Result<(), EngineError> {
+    let text = |key: &str| {
+        value
+            .get(key)
+            .and_then(serde_json::Value::as_str)
+            .ok_or_else(|| validation(format!("Part {key} must be text")))
+    };
+    let manufacturer = text("manufacturer")?;
+    let mpn = text("mpn")?;
+    if let Some(name) = value.get("name") {
+        if !name.is_string() {
+            return Err(validation("Part name must be text"));
+        }
+    }
+    if (manufacturer.trim().is_empty() || mpn.trim().is_empty())
+        && value
+            .get("name")
+            .and_then(serde_json::Value::as_str)
+            .is_none_or(|name| name.trim().is_empty())
+    {
+        return Err(validation(
+            "Enter a Part name when manufacturer or MPN is unspecified",
+        ));
+    }
+    Ok(())
+}
+
 /// Independently supplied aperture arguments, retaining conflicting-input errors.
 #[derive(Debug, Clone, Copy, Default)]
 pub struct PadstackDefinitionInput<'a> {

@@ -177,10 +177,42 @@ impl LibraryDraft {
                             .find(|(key, _)| key.parse::<Uuid>().ok() == Some(id))?
                             .1;
                         let unit = linked(b, "units", uuid(raw, "unit")?)?;
+                        // Designator captions are optional projection, never admission.
+                        let anchors = uuid(raw, "symbol")
+                            .and_then(|id| linked(b, "symbols", id))
+                            .filter(|s| uuid(&s.raw, "unit") == Some(unit.id))
+                            .and_then(|s| s.raw.get("pin_anchors"))
+                            .and_then(Value::as_array)
+                            .map(Vec::as_slice)
+                            .unwrap_or(&[]);
+                        let pins = names(&unit.raw, "pins")
+                            .into_iter()
+                            .map(|mut pin| {
+                                let numbers: Vec<_> = anchors
+                                    .iter()
+                                    .filter(|a| uuid(a, "pin") == pin.id)
+                                    .filter_map(|a| a.get("number").and_then(Value::as_str))
+                                    .filter(|number| !number.trim().is_empty())
+                                    .collect();
+                                if let [number] = numbers.as_slice() {
+                                    if anchors
+                                        .iter()
+                                        .filter(|a| {
+                                            a.get("number").and_then(Value::as_str) == Some(*number)
+                                        })
+                                        .count()
+                                        == 1
+                                    {
+                                        pin.label = format!("Pin {number}");
+                                    }
+                                }
+                                pin
+                            })
+                            .collect();
                         Some(MappingGate {
                             id,
                             label: format!("{} · {}", g.label, unit.name),
-                            pins: names(&unit.raw, "pins"),
+                            pins,
                         })
                     })
                     .collect();

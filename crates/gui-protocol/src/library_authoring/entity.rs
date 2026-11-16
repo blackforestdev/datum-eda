@@ -24,6 +24,31 @@ impl EntityDraft {
     }
 }
 impl LibraryDraft {
+    /// Configure the retained target's exact identities, not a name-based guess.
+    pub fn retain_entity_symbol(&mut self, symbol: Uuid, unit: Uuid) -> Result<(), String> {
+        if !self.create
+            || self.kind != "entities"
+            || !self
+                .entity
+                .symbols
+                .iter()
+                .any(|(s, u, _)| *s == symbol && *u == unit)
+        {
+            return Err("Retained Symbol and Unit are unavailable for this Entity".into());
+        }
+        self.fields
+            .iter_mut()
+            .find(|f| f.key == "gate_unit")
+            .ok_or("Entity Unit control unavailable")?
+            .set_text(unit.to_string());
+        self.refresh_entity_symbols();
+        self.fields
+            .iter_mut()
+            .find(|f| f.key == "gate_symbol")
+            .ok_or("Entity Symbol control unavailable")?
+            .set_text(symbol.to_string());
+        Ok(())
+    }
     pub(super) fn entity_fields(
         &mut self,
         browser: &LibraryBrowser,
