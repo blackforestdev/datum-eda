@@ -181,7 +181,7 @@ PM029 adoption, external purchases and destructive Git operations retain PM059's
 specific approval boundaries. Required literal human actions remain evidence
 requirements, not events an agent may assert occurred. Manager authority does not supply missing evidence, invent a numerical
 budget or authorize successors lacking their own grant. Preserve independent
-review, source health, canonical mutation and the Claude prototype lane.
+review, source health, canonical mutation and the owner-assigned prototype lane.
 
 The delivery unit is complete designer behavior. Within an authorized unit, build,
 test, fix, document and deliver through the required independent review. Continue

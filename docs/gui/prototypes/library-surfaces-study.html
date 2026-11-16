@@ -35,7 +35,7 @@
   Padstack, PinPadMap. Models, metadata, provenance, basis and findings are linked detail surfaces; there is no ninth kind. Combined
   independent review (SURFACE-REVIEW) and the owner's disposition (SURFACE-S05) are still ahead. Nothing here selects a ranking, pool precedence,
   writable target, warning-or-block policy, generator family, standards basis, process default or implementation breadth.</p>
-  <p class="sub">Every pool, object, manufacturer, MPN, identifier, hash, dimension and value drawn here is an <b>illustrative synthetic
+  <p class="sub">Except real-source corrective frames L-H and L-K (whose data sources are named locally), every pool, object, manufacturer, MPN, identifier, hash, dimension and value drawn here is an <b>illustrative synthetic
   first-party example</b>. None is an approved library asset, a real manufacturer part, a standards-derived number, a real digest or a production
   seed. Where a number appears it is a made-up example that shows <i>where</i> a value is displayed and compared, not what it should be.
   Pixel sizes and font stacks are mockup placeholders; tokens govern.</p>
@@ -66,7 +66,7 @@
     <a href="library-surfaces-study.html#L-H">L-H Place Component</a>
     <a href="library-surfaces-study.html#L-I">L-I Placed update</a>
     <a href="library-layout-accessibility-study.html#L-J">L-J Layout and accessibility</a>
-    <a href="library-surfaces-study.html#L-K">L-K Unresolved transfer resolution</a>
+    <a href="library-surfaces-study.html#L-K">L-K Component Properties</a>
     <a href="library-surfaces-study.html#L-MAP">Frame → clause map</a>
   </nav>
 </header>
@@ -275,192 +275,43 @@
 
 <!-- ======================================================== L-H -->
 <section class="fr" id="L-H">
-  <div class="sec-label"><span class="n">L-H</span><span>Place Component — focused search on the captured schematic: project Parts and shipped Symbols</span><span class="rule"></span>
-    <span class="tag tgt">○ TARGET · not delivered</span><span class="tag cur">● CURRENT · bounded, at recorded scope only</span><span class="tag own">◐ OWNER CHOICE · S05</span></div>
-  <style>
-    /* Scoped to #L-H only; shared surface-studies.css is untouched. Candidate readable
-       typography: primary picker text 16 logical px with grown, focusable controls. */
-    #L-H .p16 .srch{font-size:16px;line-height:1.4;min-height:38px;display:flex;align-items:center;margin:10px 12px;padding:4px 12px}
-    /* QA-009/QA-011: one continuous filtered list of compact single-line identity/type/status
-       rows — readable 16 px primary text without cramming; no four-row Previous/Next paging. */
-    #L-H .p16 .res{font-size:16px;line-height:1.3;min-height:34px;padding:2px 11px;grid-template-columns:84px minmax(0,1fr) auto}
-    #L-H .p16 .res .kd,#L-H .p16 .res .o{font-size:12px}
-    #L-H .p16 .res>span:nth-child(2){white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    #L-H .p16 .kv{font-size:16px;min-height:32px;grid-template-columns:128px 1fr}
-    #L-H .p16 .note,#L-H .p16 .banner{font-size:16px;line-height:1.45}
-    #L-H .p16 .empty,#L-H .p16 .empty b{font-size:16px}
-    #L-H .p16 .btn{font-size:16px;padding:7px 18px;border-radius:6px}
-    #L-H .p16 .acts{background:var(--s01);padding:10px 12px}
-    /* Fixed reachable footer: the picker is a flex column that fits its pane; header,
-       search, interaction hints and actions stay put while the list scrolls. */
-    #L-H .fit{display:flex;flex-direction:column;min-height:0}
-    #L-H .card.fit{max-height:590px}
-    #L-H .fit>.phd0,#L-H .fit>.phd,#L-H .fit>.srch,#L-H .fit>.row,#L-H .fit>.hint,#L-H .fit>.acts{flex:0 0 auto}
-    #L-H .fit>.bodyscroll{flex:1 1 auto;min-height:0;overflow-y:auto}
-    /* QA-010: persistent selected identification + preview BESIDE the results at normal
-       width; only the list scrolls, the side panel stays visible while browsing. */
-    #L-H .fit>.cols{flex:1 1 auto;min-height:0;display:flex}
-    #L-H .cols>.reslist{flex:1 1 auto;min-width:0;overflow-y:auto;border-right:1px solid var(--bd-sub)}
-    #L-H .cols>.side{flex:0 0 300px;min-height:0;overflow-y:auto;display:flex;flex-direction:column}
-    /* Side-panel facts take their full measured wrapped height: never compressed by the
-       flex column (no shrink), top-aligned labels, auto row height. */
-    #L-H .side>*{flex:0 0 auto}
-    #L-H .side .kv{grid-template-columns:84px 1fr;align-items:start;min-height:0;padding:5px 12px}
-    #L-H .side .kv .v{line-height:1.35}
-    /* Narrow: the list scrolls inside a bounded strip so the preview is never buried
-       below all results. */
-    #L-H .narrowlist{flex:0 0 auto;max-height:150px;overflow-y:auto;border-bottom:1px solid var(--bd-sub)}
-    /* QA-008: owner-approved interaction annotations, fixed above the actions. */
-    #L-H .hint{display:flex;gap:12px 16px;flex-wrap:wrap;padding:5px 12px;border-top:1px solid var(--bd-sub);font-family:var(--mono);font-size:12px;color:var(--tx3)}
-    #L-H .hint b{color:var(--tx2);font-weight:600}
-    #L-H .p16 .res[tabindex]:focus-visible,#L-H .p16 .btn:focus-visible{outline:2px solid var(--acc-h);outline-offset:1px}
-  </style>
-  <p class="cap">Normal placement is one readable <b>Place Component</b> picker opened directly on the schematic being edited: the target document
-  and occurrence are captured when it opens and the search is focused immediately — no source step, no path, no snapshot choice, nothing to
-  configure first. It searches exactly two explicit result kinds. <b>Part</b> — a complete declared Part available in this project — retains its
-  qualification and its symbol + footprint / pin-pad map. <b>Symbol — schematic only</b> — an existing shipped bundled Symbol, one of the converted
-  native records the engine already embeds and reads — previews its graphics and places through the existing schematic-only intent, the existing
-  one canonical acquisition commit and the existing placement ghost and history (<code>schematic-surfaces-study.html#S-D</code>); the picker adds
-  no second write path. A Symbol never silently stands in for a Part: no Value binding, no Package, no Footprint, no pin-pad map — its row, its
-  preview and its Place action all say so. The picker contains no directory, source, Read, snapshot or adoption management; managing libraries is
-  separate Library surface work (L-A, L-B, L-G) — EAGLE's split between <code>ADD</code> (place from the library) and <code>USE</code> (manage
-  which libraries are loaded). Search, preview and Cancel mutate nothing. Part eligibility is stated by the existing engine checks — the complete
-  declared default graph — and whether a non-approved or unknown-basis Part warns or blocks stays the S05 owner disposition. Everything drawn
-  below is the genuine shipped <b>Device:R</b> record (“Resistor”) and its real shipped neighbours; no demo Part, MPN, footprint or provenance
-  value is invented. Only the window-chrome project name is the study's usual illustrative shell.</p>
-  <div class="shell">
-    <div class="mb"><span class="brand">Datum<b>·</b>EDA</span><span class="m">File</span><span class="m">Edit</span><span class="m">View</span><span class="m">Place</span><span class="m">Project</span><span class="m">Checks</span><span class="m">Window</span><span class="m">Help</span><span class="sp"></span><span class="pill">demo-sensor-node · rev 7c21e0</span></div>
-    <div class="ws" style="height:640px">
-      <div class="panes"><div class="pane focus">
-        <div class="phd"><span class="pt">Schematic Design</span><span class="cx">occurrence <b>/</b></span><span class="fdot"><i></i>FOCUS</span></div>
-        <div class="pbody"><div class="card p16 fit" id="H1" style="margin:10px auto;max-width:720px">
-          <div class="phd0"><span>Place Component</span><span class="r">target captured · Schematic Design · occurrence /</span></div>
-          <div class="srch f" role="searchbox" aria-label="Search this project's Parts and the shipped Symbols">resistor▏</div>
-          <div class="row" style="font-size:13px;color:var(--tx3);padding:0 13px 4px">97 matching components and Symbols — one continuous filtered list, no paging · Parts of this project list first (none is declared yet) <span class="tag own" style="margin-left:6px">◐ ranking within kinds open</span></div>
-          <div class="cols">
-            <div class="reslist" role="listbox" aria-label="97 matching components and Symbols in one continuous scrollable list">
-              <div class="res sel" tabindex="0"><span class="kd">Symbol</span><span>R <span style="color:var(--tx3)">— Resistor · Device</span></span><span class="o">sch only</span></div>
-              <div class="res" tabindex="0"><span class="kd">Symbol</span><span>INA253 <span style="color:var(--tx3)">— High Voltage, Bidirectional, Zero-Drift, Current-Shunt Monitor… · Amplifier_Current</span></span><span class="o">sch only</span></div>
-              <div class="res" tabindex="0"><span class="kd">Symbol</span><span>LTC2942-1 <span style="color:var(--tx3)">— 1A Battery Gas Gauge with Internal Sense Resistor… · Battery_Management</span></span><span class="o">sch only</span></div>
-              <div class="res" tabindex="0"><span class="kd">Symbol</span><span>Q_NPN_BRT <span style="color:var(--tx3)">— NPN bias resistor bipolar junction transistor · Device</span></span><span class="o">sch only</span></div>
-              <div class="row" style="font-size:13px;color:var(--tx3);padding:4px 11px">… 93 more rows in the same continuous list — scroll, PgUp / PgDn; there is no Previous / Next. Rows above are the first matches exactly as the owner's recorded query returned them; the product ordering is not redefined here.</div>
-            </div>
-            <div class="side">
-              <div class="sh">Selected — stays beside the list</div>
-              <div class="pv"><svg viewBox="0 0 300 150" style="height:116px" role="img" aria-label="Shipped Device:R symbol preview — IEC rectangular resistor with two pins">
-                <rect x="134" y="42" width="32" height="62" fill="none" stroke="var(--tx2)" stroke-width="1.6"/>
-                <path d="M150 14v28M150 104v32" stroke="var(--tx2)" stroke-width="1.6"/>
-                <text x="176" y="78" font-size="12" font-family="monospace" fill="var(--tx2)">R</text>
-              </svg></div>
-              <div class="kv"><span class="k">Selected</span><span class="v">R — Resistor · Device:R · shipped bundled Symbol</span></div>
-              <div class="kv"><span class="k">Kind</span><span class="v"><b>Symbol — SCHEMATIC ONLY</b></span></div>
-              <div class="kv"><span class="k">Physical</span><span class="v"><span class="st na">∅ none</span> — no Value binding, no Package, no Footprint, no pin-pad map; nothing invented, nothing substituted. Part work is L-B4 / L-K</span></div>
-              <div class="kv"><span class="k">Qualification</span><span class="v"><span class="st na">∅ not established</span> — stated, never upgraded</span></div>
-              <div class="note" style="font-size:14px">Place = the existing canonical acquisition commit, then the existing placement ghost on the captured schematic — each with its own undo.</div>
-            </div>
-          </div>
-          <div class="hint" aria-label="Owner-approved picker interaction"><span><b>↓</b> from Search enters the results</span><span><b>↑ ↓</b> move selection, keep it visible, update the preview</span><span><b>PgUp PgDn</b> page the one list</span><span>wheel / two-finger scrolls</span><span><b>Tab</b> moves among major controls</span></div>
-          <div class="acts"><span class="btn" tabindex="0">Cancel — nothing placed, nothing changed</span><span class="btn pri" tabindex="0">Place R — schematic only</span></div>
-        </div></div>
-      </div></div>
-    </div>
-    <div class="dock"><span class="dt on">bash</span><span class="dt">+</span><span class="h">Terminal — available, never required for placement</span></div>
-  </div>
-  <p class="cell-cap"><b>H1 — the one picker, normal state (owner geometry 1344 × 806).</b> The owner's real QA query is drawn: “resistor” over the
-  shipped catalog returns 97 matches, and the rows are the first matches in the exact order the owner's recorded capture shows (R, INA253,
-  LTC2942-1, Q_NPN_BRT) — the product's ordering is drawn, not redefined. One continuous filtered list of compact single-line
-  identity / type / status rows — no four-row Previous / Next paging (QA-009), no repeated long row prefixes (QA-011) — with the selected
-  identification and Device:R preview persistent <i>beside</i> the list, never buried below it (QA-010). Search stays prominent and the
-  Cancel / Place footer stays reachable; the list scrolls independently while the selected preview remains beside it, and the details beneath the
-  preview can scroll separately. The hint bar states the owner-approved interaction (QA-008): ↓ from Search enters
-  the results; ↑/↓ move the selection, keep it visible and update the preview; PgUp/PgDn page the one list; wheel / two-finger scrolls; Tab moves
-  among major controls. Enter (QA-012): on the selected eligible result it invokes the existing Place action — the picker closes and the existing
-  placement ghost starts on the captured schematic at the actual cursor position, never a fabricated center or a cursor warp; a second distinct
-  Enter, or a left click, then places through the existing canonical path. Enter does not accept while the preview is pending, unavailable or
-  stale; Enter on Cancel cancels; outside the captured canvas a placement Enter is consumed and refused, placing nothing. All of these semantics,
-  including Enter, are owner-approved Datum behavior requirements, not a new mechanism — and this mockup proves none of them at runtime. The
-  Library pane is not involved and is not open.</p>
-  <div class="grid2" style="margin-top:16px">
-    <div class="card p16" id="H2"><div class="phd0"><span>Part results — the complete component kind</span><span class="r">described, not fabricated</span></div>
-      <div class="res" aria-label="Anatomy of a Part result row — placeholders, not data"><span class="kd">Part</span><span>⟨name⟩ <span style="color:var(--tx3)">— ⟨declared Value⟩ · ⟨Package⟩</span></span><span class="o">map ⟨n/n⟩</span></div>
-      <div class="note">Row anatomy only — no example Part, Value, MPN, footprint or provenance figure is invented. The genuine shipped Device:R
-      above is the only drawn content of this frame.</div>
-      <div class="kv"><span class="k">Lists</span><span class="v">before Symbols, whenever this project declares complete Parts</span></div>
-      <div class="kv"><span class="k">Carries</span><span class="v">declared Value · Package · default Footprint · full pin-pad map · qualification status — declared on the Part, never edited here</span></div>
-      <div class="kv"><span class="k">Preview</span><span class="v">its symbol and its physical footprint with the pin-pad map</span></div>
-      <div class="kv"><span class="k">Place</span><span class="v">the same existing ghost and placement transaction, with physical readiness carried</span></div>
-      <div class="kv"><span class="k">Refusal</span><span class="v">an incomplete declared graph refuses with the exact engine reason — eligibility is stated by the existing checks, never decided by the picker; completing it is Library authoring (L-B4, L-B8)</span></div>
-      <div class="kv"><span class="k">S05</span><span class="v">whether a non-approved or unknown-basis Part additionally warns or blocks stays the owner disposition <span class="tag own">◐</span></span></div>
-      <p class="cell-cap"><b>H2 — Part kind, described without invented data.</b> Complete-Part behaviour is specified by its fields and its
-      existing checks; the mock invents no Part.</p></div>
-    <div class="card p16" id="H3"><div class="phd0"><span>Deliberately absent from this picker</span><span class="r">library management is separate</span></div>
-      <div class="kv"><span class="k">No</span><span class="v">directory or source-path field · Read / re-read control · snapshot management · adoption or import controls · library tree</span></div>
-      <div class="kv"><span class="k">Instead</span><span class="v">managing pools, sources and adoption is the Library surface (L-A, L-B, L-G); the acquisition a Symbol place performs is an engine fact reported in the journal and history, not a control here</span></div>
-      <div class="kv"><span class="k">Precedent</span><span class="v">EAGLE separates <code>ADD</code> — place a component from the library — from <code>USE</code> — manage which libraries are loaded (<code>docs/EAGLE_BLUEPRINT.md</code>); Altium's lesson is one component whose representations travel together (<code>docs/ALTIUM_LESSONS.md</code> §4.1)</span></div>
-      <p class="cell-cap"><b>H3 — no management controls.</b> The normal picker is for placing; it never becomes a library manager.</p></div>
-  </div>
-  <div class="grid4" style="margin-top:16px">
-    <div><div class="card p16"><div class="phd0"><span>Place Component</span></div><div class="empty"><span class="st info">⧗ loading</span><b>Reading this project's declared Parts…</b>Shipped Symbols are already listed; no Part rows and no Part placement until the read returns.</div></div>
-      <p class="cell-cap"><b>H4a — loading.</b> Nothing fictitious, nothing pre-selected.</p></div>
-    <div><div class="card p16"><div class="phd0"><span>Place Component</span></div><div class="srch">qqz</div><div class="empty" style="min-height:120px"><span class="st na">∅ no match</span><b>Nothing matches “qqz” in this project's Parts or the shipped Symbols.</b>Searched: Part name, declared description, tags, Package name, manufacturer / MPN, value; Symbol name and shipped description.</div></div>
-      <p class="cell-cap"><b>H4b — no match.</b> States the searched scope; no parametric search is claimed.</p></div>
-    <div><div class="card p16"><div class="banner"><span class="bic">△</span>The original schematic view changed; cancel and open Place Component again.</div><div class="empty" style="min-height:120px"><b>The captured target is revalidated before placing.</b>This is the existing delivered refusal, word for word; nothing is placed against a changed view.</div><div class="acts"><span class="btn">Cancel</span></div></div>
-      <p class="cell-cap"><b>H4c — changed capture.</b> The delivered guard and its exact wording are kept.</p></div>
-    <div><div class="card p16"><div class="phd0"><span>Place Component</span></div><div class="res"><span class="kd">Symbol</span><span>R_Network03_Split <span style="color:var(--tx3)">— 3 resistor network, star topology, bussed resistors, split</span></span><span class="o">✕ refused</span></div><div class="empty" style="min-height:96px"><b>This shipped record's native conversion was refused.</b>The recorded refusal reason is shown; it cannot be placed, and nothing is repaired or substituted.</div></div>
-      <p class="cell-cap"><b>H4d — refused shipped record.</b> A real refused catalog entry, stated as refused.</p></div>
-  </div>
-  <div class="grid2" style="margin-top:16px">
-    <div>
-      <div class="shell narrow" id="H5" style="width:560px">
-      <div class="mb"><span class="tl btn">☰ Navigator</span><span class="brand" style="margin-left:6px">Datum<b>·</b>EDA</span><span class="sp"></span><span class="tl btn">Inspector ▸</span></div>
-      <div class="ws" style="height:646px;flex:0 0 646px"><div class="panes"><div class="pane pnl focus p16 fit">
-        <div class="phd"><span class="pt">Place Component · occurrence /</span><span class="fdot"><i></i>FOCUS</span></div>
-        <div class="srch f">resistor▏</div>
-        <div class="row" style="font-size:13px;color:var(--tx3);padding:0 13px 4px">97 matches — one continuous list</div>
-        <div class="narrowlist" role="listbox" aria-label="Matching rows — the list scrolls inside this strip so the preview below stays visible">
-          <div class="res sel" tabindex="0"><span class="kd">Symbol</span><span>R <span style="color:var(--tx3)">— Resistor · Device</span></span><span class="o">sch only</span></div>
-          <div class="res" tabindex="0"><span class="kd">Symbol</span><span>INA253 <span style="color:var(--tx3)">— High Voltage, Bidirectional, Zero-Drift… · Amplifier_Current</span></span><span class="o">sch only</span></div>
-          <div class="res" tabindex="0"><span class="kd">Symbol</span><span>LTC2942-1 <span style="color:var(--tx3)">— 1A Battery Gas Gauge… · Battery_Management</span></span><span class="o">sch only</span></div>
-          <div class="row" style="font-size:13px;color:var(--tx3);padding:3px 11px">… 94 more in recorded order — this strip scrolls; the preview below does not move away</div>
-        </div>
-        <div class="sh">Selected — visible without scrolling past the list</div>
-        <div class="pv"><svg viewBox="0 0 170 110" style="height:88px" role="img" aria-label="Shipped Device:R symbol preview in the narrow picker">
-          <rect x="74" y="24" width="22" height="48" fill="none" stroke="var(--tx2)" stroke-width="1.6"/>
-          <path d="M85 6v18M85 72v22" stroke="var(--tx2)" stroke-width="1.6"/>
-          <text x="104" y="52" font-size="11" font-family="monospace" fill="var(--tx2)">R</text>
-        </svg></div>
-        <div class="kv"><span class="k">Selected</span><span class="v">R — Resistor · Device:R</span></div>
-        <div class="kv"><span class="k">Kind</span><span class="v"><b>Symbol — SCHEMATIC ONLY</b> · no Footprint, no map</span></div>
-        <div class="hint"><span><b>↓</b> enters results</span><span><b>↑ ↓</b> select + preview</span><span><b>PgUp PgDn</b> page</span><span><b>Tab</b> controls</span></div>
-        <div class="acts"><span class="btn">Cancel</span><span class="btn pri">Place R — schematic only</span></div>
-      </div></div></div><div class="dock"><span class="dt on">bash</span></div>
-      </div>
-      <p class="cell-cap"><b>H5 — narrow composition (560 × 720).</b> The same picker stacked for a narrow pane: the result list scrolls inside a
-      bounded strip, so the selected identification and preview stay on screen instead of being buried below all 97 rows (QA-010); search, the
-      interaction hints and both actions remain fixed and reachable; nothing collapses into an identifier or a developer phrase.</p>
-    </div>
-    <div class="card" id="H6"><div class="phd0"><span>Status — stated honestly</span><span class="r">owner QA supersedes prior readiness</span></div>
-      <div class="kv w"><span class="v"><b>Delivered, at recorded scope only:</b> the bounded component-first engine and isolated debug-App evidence
-      (<code>dat-component-first-capture-3btd</code>) and the unified saved-source picker landing. No whole-run PASS, no HUMAN observation, no full
-      qualification.</span></div>
-      <div class="kv w"><span class="v"><b>Rejected:</b> the prior explicit-source-first L-H one-picker presentation hard-failed owner QA as the
-      normal Place flow, and the first corrected build failed QA-008..011 — Down could not enter the results, four-row Previous / Next paging,
-      the preview buried below all results, cramped enlarged typography. This frame draws the owner-approved correction; the delivered
-      mechanics keep their recorded evidence scope.</span></div>
-      <div class="kv w"><span class="v"><b>Target gate — the running application, not this page:</b> normal Place → type “resistor” → the shipped
-      <b>Device:R</b> → preview → an actual R ghost placed on the schematic, with Cancel and Undo preserved. A mockup validates none of it, and
-      this frame claims no delivered PASS.</span></div>
-    </div>
-  </div>
-  <p class="cap" style="margin-top:12px"><b>Candidate typography and geometry (this frame only).</b> Primary picker text — search input, result
-  rows, declared facts, refusals, action labels — is 16 logical px; result rows are compact single lines (≥34 px, long shipped descriptions
-  ellipsized, not wrapped), so readability does not crowd out the list or the preview (QA-011); the search control is ≥38 px tall, action buttons
-  ≥34 px with 16 px labels; kind / status badges, counts and the interaction hints are 12–13 px secondary text; focus is visible (accent ring) on
-  the search, rows and actions. Normal geometry is the owner's 1344 × 806 window with a ~720 px picker card that fits its pane (≤ 590 px tall):
-  search, hints and actions are fixed, the continuous list scrolls, and the 300 px selected panel stays beside it. Narrow geometry is 560 × 720:
-  the list scrolls inside a bounded strip with the preview permanently below it and the footer fixed. These
-  are measured candidate values for review — <b>no WCAG-minimum conformance is claimed, and no global UI scale or preference change stands in for
-  them</b>; tokens still govern the native translation.</p>
+<div class="sec-label"><span class="n">L-H</span><span>Place Component — value and physical choice together</span><span class="tag tgt">TARGET · corrective workflow</span></div>
+<style>
+#L-H .cw-card,#L-K .cw-card{max-width:720px;margin:16px auto;font-size:16px;line-height:1.4;color:var(--tx1)}
+#L-H .cw-body,#L-K .cw-body{padding:12px;max-height:560px;overflow:auto}
+#L-H input,#L-K input{background:var(--s01);color:var(--tx1);border:1px solid var(--bd-sub);font:inherit;padding:6px 8px;width:100%;min-width:0;box-sizing:border-box}
+#L-H .muted,#L-K .muted{color:var(--tx3);font-size:13px}
+#L-H .cw-body{height:500px;display:flex;flex-direction:column;overflow:hidden}
+#L-H .cw-search,#L-H .cw-body>.muted,#L-H .cw-body>.cw-note{flex-shrink:0}
+#L-H .cw-columns{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:12px;margin-top:12px;flex:1;min-height:0}
+#L-H .cw-details{overflow:auto;min-height:0;display:flex;flex-direction:column}
+#L-H .cw-details>*{flex-shrink:0}
+#L-H .cw-details>.cw-previews{order:-1;position:sticky;top:0;background:var(--s01);z-index:1}
+#L-H .cw-details>b{order:-2}
+#L-H .cw-results{max-height:360px;overflow:auto;min-width:0}
+#L-H .cw-results .res{font-size:14px;min-height:34px;grid-template-columns:56px minmax(0,1fr) 64px}
+#L-H .cw-results .res>span:nth-child(2){white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#L-H .cw-row,#L-K .cw-row{display:grid;grid-template-columns:86px minmax(0,1fr);gap:10px;padding:8px 0;align-items:center}
+#L-H .cw-row>div,#L-K .cw-row>div{min-width:0;overflow-wrap:anywhere;display:flex;gap:6px;flex-wrap:wrap}
+#L-H .cw-previews,#L-K .cw-previews{display:grid;grid-template-columns:1fr 1fr;gap:12px;height:92px;margin:10px 0}
+#L-H .cw-previews svg,#L-K .cw-previews svg{width:100%;height:92px;background:var(--s01)}
+#L-H .cw-empty,#L-K .cw-empty{background:var(--s01);font-size:13px;padding:12px;color:var(--tx3)}
+#L-H .cw-note,#L-K .cw-note{font-size:13px;color:var(--tx3);margin:8px 0}
+#L-H button,#L-K button{font-family:inherit;color:var(--tx1);font-size:14px;cursor:pointer}
+#L-H button:disabled,#L-K button:disabled{opacity:.45;cursor:default}
+#L-H input:focus-visible,#L-K input:focus-visible,#L-H button:focus-visible,#L-K button:focus-visible{outline:2px solid var(--acc-h);outline-offset:2px}
+#L-H .acts,#L-K .acts{display:flex;justify-content:flex-end;gap:10px;padding:12px;flex-wrap:wrap}
+#L-H .cw-map,#L-K .cw-map{display:flex;gap:8px;flex-wrap:wrap}
+#L-H .cw-narrow,#L-K .cw-narrow{width:min(528px,100%)}
+#L-H .cw-narrow .cw-columns{grid-template-columns:1fr;grid-template-rows:110px minmax(0,1fr)}
+#L-H .cw-narrow .cw-results{max-height:110px}
+#L-K .cw-body>label{display:block;margin:8px 0}
+#L-K .cw-chooser-preview{height:110px;width:100%}
+@media(max-width:640px){#L-H .cw-columns{grid-template-columns:1fr;grid-template-rows:110px minmax(0,1fr)}#L-H .cw-results{max-height:110px}}
+</style><p class="cap">Normal placement configures one component, with its electrical symbol, explicit designer value and actual footprint. Existing complete Parts keep their complete qualified binding; a shipped Symbol requires configuration before Place becomes eligible. Search/results/preview, continuous scrolling, keyboard navigation and the captured schematic remain as accepted. No normal schematic-only fallback or Entity/Part/Map editor visits. These are design targets, not runtime or owner acceptance.</p>
+<div class="card cw-card" id="H1"><div class="phd0">Place Component</div><div class="cw-body"><input class="cw-search" aria-label="Search components" value="resistor"><div class="muted">97 matches · one continuous list</div><div class="cw-columns"><div class="cw-results"><div class="res sel" tabindex="0"><span class="kd">Symbol</span><span>R — Resistor · Device</span><span class="o">configure</span></div><div class="res" tabindex="0"><span class="kd">Symbol</span><span>INA253 · Amplifier_Current</span><span class="o">configure</span></div><div class="res" tabindex="0"><span class="kd">Symbol</span><span>LTC2942-1 · Battery_Management</span><span class="o">configure</span></div><div class="res" tabindex="0"><span class="kd">Symbol</span><span>Q_NPN_BRT · Device</span><span class="o">configure</span></div></div><div class="cw-details"><b>R — Device:R</b><div class="cw-row"><label>Value</label><div><input aria-label="Value" value="10k"></div></div><div class="cw-row"><label>Footprint</label><div><span class="muted">Not chosen</span><button class="btn">Choose…</button></div></div><div class="cw-previews"><svg viewBox="0 0 120 100" aria-label="Device:R electrical preview"><path d="M60 5v20m0 50v20" stroke="var(--tx2)" fill="none"/><rect x="48" y="25" width="24" height="50" fill="none" stroke="var(--tx2)"/><text x="71" y="19" fill="var(--tx2)" font-size="10">1</text><text x="71" y="91" fill="var(--tx2)" font-size="10">2</text></svg><div class="cw-empty">Choose a footprint<br>to see its pads</div></div><p class="cw-note">Choose value and footprint before Place. Existing component identity and mapping travel to PCB.</p></div></div><div class="cw-note">↓ from Search enters results · ↑ ↓ select · PgUp / PgDn page · wheel / two-finger scroll · Tab controls · eligible Enter → ghost → Enter / click to place</div></div><div class="acts"><button class="btn">Cancel</button><button class="btn pri" disabled>Place Component</button></div></div><p class="cell-cap">H1 — normal search and pending configuration. The value 10k is explicit designer input, not an approved Part, rating or catalog claim.</p><div class="card cw-card" id="H2"><div class="phd0">Place Component</div><div class="cw-body"><input class="cw-search" aria-label="Search components" value="resistor"><div class="muted">97 matches · one continuous list</div><div class="cw-columns"><div class="cw-results"><div class="res sel" tabindex="0"><span class="kd">Symbol</span><span>R — Resistor · Device</span><span class="o">configure</span></div><div class="res" tabindex="0"><span class="kd">Symbol</span><span>INA253 · Amplifier_Current</span><span class="o">configure</span></div><div class="res" tabindex="0"><span class="kd">Symbol</span><span>LTC2942-1 · Battery_Management</span><span class="o">configure</span></div><div class="res" tabindex="0"><span class="kd">Symbol</span><span>Q_NPN_BRT · Device</span><span class="o">configure</span></div></div><div class="cw-details"><b>R — Device:R</b><div class="cw-row"><label>Value</label><div><input aria-label="Value" value="10k"></div></div><div class="cw-row"><label>Footprint</label><div><span>R_0805_2012Metric</span><button class="btn">Change…</button></div></div><div class="cw-previews"><svg viewBox="0 0 120 100" aria-label="Device:R electrical preview"><path d="M60 5v20m0 50v20" stroke="var(--tx2)" fill="none"/><rect x="48" y="25" width="24" height="50" fill="none" stroke="var(--tx2)"/><text x="71" y="19" fill="var(--tx2)" font-size="10">1</text><text x="71" y="91" fill="var(--tx2)" font-size="10">2</text></svg><svg viewBox="-1.8 -1.1 3.6 2.2" aria-label="Installed R_0805_2012Metric footprint preview"><rect x="-1.68" y="-.95" width="3.36" height="1.9" fill="none" stroke="var(--tx3)" stroke-width=".025"/><rect x="-1" y="-.625" width="2" height="1.25" fill="none" stroke="var(--tx2)" stroke-width=".025"/><g fill="var(--pad)"><rect x="-1.425" y="-.7" width="1.025" height="1.4" rx=".25"/><rect x=".4" y="-.7" width="1.025" height="1.4" rx=".25"/></g><g font-size=".3" text-anchor="middle" fill="#141619"><text x="-.9125" y=".1">1</text><text x=".9125" y=".1">2</text></g></svg></div><div class="cw-row"><label>Pin mapping</label><div>Pad 1 → Pin 1 · Pad 2 → Pin 2<br><span class="muted">Confirmed for these exact sources</span></div></div><p class="cw-note">Choose value and footprint before Place. Existing component identity and mapping travel to PCB.</p></div></div><div class="cw-note">↓ from Search enters results · ↑ ↓ select · PgUp / PgDn page · wheel / two-finger scroll · Tab controls · eligible Enter → ghost → Enter / click to place</div></div><div class="acts"><button class="btn">Cancel</button><button class="btn pri">Place Component</button></div></div><p class="cell-cap">H2 — eligible choice after explicit mapping confirmation, or reuse of an exact qualified mapping. No pad-name guessing.</p><div class="card cw-card cw-narrow" id="H5"><div class="phd0">Place Component</div><div class="cw-body"><input class="cw-search" aria-label="Search components" value="resistor"><div class="muted">97 matches · one continuous list</div><div class="cw-columns"><div class="cw-results"><div class="res sel" tabindex="0"><span class="kd">Symbol</span><span>R — Resistor · Device</span><span class="o">configure</span></div><div class="res" tabindex="0"><span class="kd">Symbol</span><span>INA253 · Amplifier_Current</span><span class="o">configure</span></div><div class="res" tabindex="0"><span class="kd">Symbol</span><span>LTC2942-1 · Battery_Management</span><span class="o">configure</span></div><div class="res" tabindex="0"><span class="kd">Symbol</span><span>Q_NPN_BRT · Device</span><span class="o">configure</span></div></div><div class="cw-details"><b>R — Device:R</b><div class="cw-row"><label>Value</label><div><input aria-label="Value" value="10k"></div></div><div class="cw-row"><label>Footprint</label><div><span>R_0805_2012Metric</span><button class="btn">Change…</button></div></div><div class="cw-previews"><svg viewBox="0 0 120 100" aria-label="Device:R electrical preview"><path d="M60 5v20m0 50v20" stroke="var(--tx2)" fill="none"/><rect x="48" y="25" width="24" height="50" fill="none" stroke="var(--tx2)"/><text x="71" y="19" fill="var(--tx2)" font-size="10">1</text><text x="71" y="91" fill="var(--tx2)" font-size="10">2</text></svg><svg viewBox="-1.8 -1.1 3.6 2.2" aria-label="Installed R_0805_2012Metric footprint preview"><rect x="-1.68" y="-.95" width="3.36" height="1.9" fill="none" stroke="var(--tx3)" stroke-width=".025"/><rect x="-1" y="-.625" width="2" height="1.25" fill="none" stroke="var(--tx2)" stroke-width=".025"/><g fill="var(--pad)"><rect x="-1.425" y="-.7" width="1.025" height="1.4" rx=".25"/><rect x=".4" y="-.7" width="1.025" height="1.4" rx=".25"/></g><g font-size=".3" text-anchor="middle" fill="#141619"><text x="-.9125" y=".1">1</text><text x=".9125" y=".1">2</text></g></svg></div><div class="cw-row"><label>Pin mapping</label><div>Pad 1 → Pin 1 · Pad 2 → Pin 2<br><span class="muted">Confirmed for these exact sources</span></div></div><p class="cw-note">Choose value and footprint before Place. Existing component identity and mapping travel to PCB.</p></div></div><div class="cw-note">↓ from Search enters results · ↑ ↓ select · PgUp / PgDn page · wheel / two-finger scroll · Tab controls · eligible Enter → ghost → Enter / click to place</div></div><div class="acts"><button class="btn">Cancel</button><button class="btn pri">Place Component</button></div></div><p class="cell-cap">H5 — narrow viewport: the list scrolls separately and configuration remains below it, with reachable Place/Cancel.</p>
+<div class="grid2"><div class="card cw-card" id="H4a"><div class="phd0">Place Component</div><div class="cw-body">Reading project components… Shipped symbols remain searchable. No fictitious selection.</div><div class="acts"><button class="btn">Cancel</button></div></div><div class="card cw-card" id="H4b"><div class="phd0">Place Component</div><div class="cw-body">No matches. Refine the search. Nothing is placed.</div><div class="acts"><button class="btn">Cancel</button></div></div><div class="card cw-card" id="H4c"><div class="phd0">Place Component</div><div class="cw-body">The original schematic view changed; cancel and open Place Component again.</div><div class="acts"><button class="btn">Cancel</button></div></div><div class="card cw-card" id="H4d"><div class="phd0">Unavailable source</div><div class="cw-body">A refused shipped record remains unavailable; show its real refusal and do not substitute a component.</div><div class="acts"><button class="btn">Cancel</button></div></div></div>
+<p class="cell-cap">Data source: the shipped Device:R symbol and installed Resistor_SMD.pretty/R_0805_2012Metric.kicad_mod. Physical preview projects the actual two roundrect pads and body geometry from that file; it does not infer a rating, approval, procurement record or pin mapping. Library management remains separate.</p>
 </section>
 
 <!-- ======================================================== L-I -->
@@ -534,137 +385,10 @@
 
 <!-- ======================================================== L-K -->
 <section class="fr" id="L-K">
-  <div class="sec-label"><span class="n">L-K</span><span>Unresolved transfer component — source-qualified resolution: assign a compatible Part or author one from the placed Symbol</span><span class="rule"></span>
-    <span class="tag tgt">○ TARGET · not delivered</span><span class="tag syn">◇ SYNTHETIC</span></div>
-  <p class="cap">The retained root-schematic transfer review (trigger context: <code>schematic-pcb-connectivity-revision-study.html#Q1</code>) can meet a
-  project whose placed symbols have only saved Unit / Symbol definitions — no Entity, Part, Package, Footprint, Padstack or PinPadMap exists yet. Such a
-  component is <b>unresolved for transfer</b> and is never guessed: no component, pin map or footprint is invented, no redraw or new project is suggested,
-  and nothing external is imported or adopted silently. Each unresolved row names its reference and value and carries an explicit <b>Resolve…</b> action.
-  Resolution is <b>source-qualified</b>: a compatible Part must reference <b>this placed Symbol's exact existing Unit / Symbol identity</b> — a same-looking
-  Part built on a different Unit or Symbol is stated incompatible, never offered as a near match. Where a compatible complete Part exists, the existing
-  explicit Assign Part flow binds it through the shared Preview / Proposal / human-acceptance path, preserving the placed symbol's identity, pins, pose and
-  wiring. Where none exists, the flow states exactly which definitions are missing and offers the <b>existing</b> Library editors (L-B3…L-B8, L-G) to author
-  them from the placed Symbol's own Unit / Symbol, keeping the target reference visible while authoring. Return to assignment and transfer retry are
-  explicit; returning restores the exact original placed symbol and schematic occurrence. Committing Library definitions is the purpose of this recovery,
-  so Library-only revisions made along the way never make the flow stale: on return the original placed-symbol preimage, its project root, its
-  pane / document / occurrence and source-definition compatibility are revalidated unchanged. A genuinely changed, missing or rebound placed target, or a
-  switched project or view, refuses and restarts truthfully — stated as meaningful names and next actions; the revalidation guards are internal.
-  Cancelling or navigating away makes no assignment and no new design edit, and never rewinds a separately committed Library edit; a pending uncommitted
-  draft or running authoring step must be finished, cancelled or awaited explicitly — never discarded silently. Every name, value and count is synthetic.</p>
-  <div class="shell">
-    <div class="mb"><span class="brand">Datum<b>·</b>EDA</span><span class="m">File</span><span class="m">Edit</span><span class="m">View</span><span class="m">Place</span><span class="m">Project</span><span class="m">Checks</span><span class="m">Window</span><span class="m">Help</span><span class="sp"></span><span class="pill">demo-first-board · rev 3f09a1</span></div>
-    <div class="ws" style="height:370px">
-      <div class="panes"><div class="pane focus">
-        <div class="phd"><span class="pt">Schematic Design</span><span class="cx">occurrence <b>/</b></span><span class="fdot"><i></i>FOCUS</span></div>
-        <div class="pbody"><div class="card" id="K1" style="margin:14px auto;max-width:640px">
-          <div class="phd0"><span>Transfer root schematic to PCB</span><span class="r">retained transfer review</span></div>
-          <table class="t in" aria-label="Initial transfer components, all unresolved">
-            <tr><th>Component</th><th>Placed Symbol</th><th>Transfer state</th><th>Action</th></tr>
-            <tr><td class="n">U1 · DEMO-MCU-A</td><td>Demo MCU A — body</td><td><span class="st warn">△ unresolved — no Part bound</span></td><td><span class="btn">Resolve…</span></td></tr>
-            <tr class="ed"><td class="n">✎ U2 · DEMO-OPA1</td><td>Demo Op-Amp — body</td><td><span class="st warn">△ unresolved — no Part bound</span></td><td><span class="btn">Resolve…</span></td></tr>
-            <tr><td class="n">C1 · 100n</td><td>Demo Capacitor</td><td><span class="st warn">△ unresolved — no Part bound</span></td><td><span class="btn">Resolve…</span></td></tr>
-            <tr><td class="n">C2 · 1µ</td><td>Demo Capacitor</td><td><span class="st warn">△ unresolved — no Part bound</span></td><td><span class="btn">Resolve…</span></td></tr>
-          </table>
-          <div class="note">0 ready / 4 components. Saved in this project: Units and Symbols only. Unresolved is a stated fact about missing library
-          definitions, not a schematic error; wiring and placement stay exactly as authored.</div>
-          <div class="acts"><span class="btn na">Transfer ready components ∅ — none resolved yet</span><span class="btn">Refresh transfer</span><span class="btn">Close review</span></div>
-        </div></div>
-      </div></div>
-    </div>
-    <div class="dock"><span class="dt on">bash</span><span class="dt">+</span><span class="h">Terminal — available, never required for resolution</span></div>
-  </div>
-  <p class="cell-cap"><b>K1 — unresolved transfer rows, normal composition.</b> The same retained transfer review as the initial handoff; each
-  unresolved component carries its own explicit Resolve action, and the transfer action stays unavailable with its exact reason. Resolve on U2 is
-  opened in K3.</p>
-  <div class="grid2" style="margin-top:16px">
-    <div class="card" id="K2">
-      <div class="phd0"><span>Resolve C1 — compatible complete Part found</span><span class="r">existing Assign Part flow</span></div>
-      <div class="it"><span class="ref">C1 · 100n</span><span class="kind">placed Symbol · Demo Capacitor · occurrence / — retained target</span></div>
-      <div class="kv"><span class="k">Part</span><span class="v"><span class="fld f">DEMO-CAP-X7R ▾</span> · 1 eligible complete Part</span></div>
-      <div class="kv"><span class="k">Gate</span><span class="v"><span class="fld">main ▾</span> · 1 of 1</span></div>
-      <div class="kv"><span class="k">Carried by the Part</span><span class="v">Package, default Footprint, default pin-pad map <span class="st ok">✓ complete</span></span></div>
-      <div class="steps"><span class="now">① choose eligible Part</span><span>② preview binding — identity, pins, pose, wires retained</span><span>③ accept proposal / cancel · no change</span></div>
-      <div class="note">The choice offers only eligible complete Parts — those whose Entity gate uses this placed Symbol's exact Unit and Symbol
-      (Demo Capacitor — logic · Demo Capacitor). A same-looking Part built on a different Unit or Symbol is not eligible and is not listed. Assignment is
-      the existing explicit Assign Part flow — a preview, then a proposal a human accepts; nothing is re-placed or redrawn, and nothing transfers
-      automatically. Qualification stays the separate fact (L-F).</div>
-      <div class="acts"><span class="btn">Cancel — no assignment</span><span class="btn">Back to transfer</span><span class="btn pri">Assign DEMO-CAP-X7R…</span></div>
-      <p class="cell-cap"><b>K2 — compatible Part assignment.</b> The existing shared choice form under the existing complete-choice admission: eligibility
-      is the exact existing Unit / Symbol identity, and the ineligible same-looking case is explained rather than listed — no candidate census, no new
-      discovery surface.</p>
-    </div>
-    <div class="card" id="K3">
-      <div class="phd0"><span>Resolve U2 — no compatible Part</span><span class="r">guides existing Library authoring</span></div>
-      <div class="it"><span class="ref">U2 · DEMO-OPA1</span><span class="kind">placed Symbol · Demo Op-Amp — body · occurrence / — retained target</span></div>
-      <div class="kv w"><span class="v"><span class="st na">∅ no compatible Part</span> No Part in the open pools references this placed Symbol's Unit / Symbol
-      identity (Demo Op-Amp — logic · Demo Op-Amp — body). No ready Part catalog or source is configured; none is invented or fetched.</span></div>
-      <table class="t in c" aria-label="Existing and missing definitions for a complete Part">
-        <tr><th>Definition</th><th>State</th><th>Existing action</th></tr>
-        <tr><td class="n">Unit</td><td><span class="st ok">✓ saved — Demo Op-Amp — logic</span></td><td>—</td></tr>
-        <tr><td class="n">Symbol</td><td><span class="st ok">✓ saved — Demo Op-Amp — body</span></td><td>—</td></tr>
-        <tr><td class="n">Entity</td><td><span class="st na">∅ missing</span></td><td><span class="btn">Author Entity from this Unit / Symbol…</span></td></tr>
-        <tr><td class="n">Package</td><td><span class="st na">∅ missing</span></td><td><span class="btn">Author Package…</span></td></tr>
-        <tr><td class="n">Padstack · Footprint</td><td><span class="st na">∅ missing</span></td><td><span class="btn">Author land pattern…</span></td></tr>
-        <tr><td class="n">Part</td><td><span class="st na">∅ missing</span></td><td><span class="btn na">Author Part… ∅ needs Entity, Package, default Footprint</span></td></tr>
-        <tr><td class="n">PinPadMap</td><td><span class="st na">∅ missing</span></td><td><span class="btn na">Author map or declare default… ∅ needs Part and Footprint</span></td></tr>
-      </table>
-      <div class="note">Guidance states order and prerequisites only; it decides no dimension, no pin map and no footprint. Each action opens the ordinary
-      authoring editor with this resolution's target retained (K4); each definition commits through that editor's own review / commit, and a commit made
-      there stays committed however this resolution ends. Nothing binds until the completed Part goes through the explicit assignment of K2.</div>
-      <div class="acts"><span class="btn">Cancel — no assignment</span><span class="btn">Back to transfer</span></div>
-      <p class="cell-cap"><b>K3 — no compatible Part.</b> The explanation and contextual authoring actions — the ordinary editors of L-B3…L-B8 and the
-      supported generation of L-G. Cancelling this resolution makes no new design edit and rewinds none of their commits.</p>
-    </div>
-  </div>
-  <div class="grid2" style="margin-top:16px">
-    <div class="card" id="K4">
-      <div class="phd0"><span>While authoring — retained target, explicit return and retry</span></div>
-      <div class="banner"><span class="bic">✎</span>Resolving U2 · DEMO-OPA1 — authoring Entity “Demo Op-Amp, single”. Still missing for a complete Part: Package, Footprint, Part, pin-pad map.</div>
-      <div class="kv"><span class="k">Target kept</span><span class="v">reference <b>U2</b>, value <b>DEMO-OPA1</b>, its placed Symbol and occurrence — held by name throughout authoring</span></div>
-      <div class="kv"><span class="k">Return</span><span class="v"><span class="btn">Return to assignment</span> reopens Resolve U2 on the exact original placed symbol and schematic occurrence; Library definitions committed meanwhile remain, and a now-eligible Part is offered — never auto-assigned</span></div>
-      <div class="kv"><span class="k">Retry</span><span class="v"><span class="btn">Refresh transfer</span> re-reads readiness; a newly completed compatible Part becomes assignable — never auto-assigned</span></div>
-      <div class="kv"><span class="k">Leaving</span><span class="v">an uncommitted draft or a running authoring step is finished, cancelled or awaited first — nothing is discarded silently</span></div>
-      <div class="note">Authoring itself is the ordinary editors with their own preview / review / commit; this flow adds no new editor, write path or capability.</div>
-      <p class="cell-cap"><b>K4 — retained target while authoring.</b> Return revalidates the unchanged original placed-symbol preimage — same project root,
-      pane / document / occurrence, compatible source definition — internally; committing Library definitions is the expected path and never stales it.</p>
-    </div>
-    <div>
-      <div class="shell narrow" id="K5">
-      <div class="mb"><span class="tl btn">☰ Navigator</span><span class="brand" style="margin-left:6px">Datum<b>·</b>EDA</span><span class="sp"></span><span class="tl btn">Inspector ▸</span></div>
-      <div class="ws" style="height:430px;flex:0 0 430px"><div class="panes"><div class="pane pnl focus">
-        <div class="phd"><span class="pt">Resolve U2 · DEMO-OPA1</span><span class="fdot"><i></i>FOCUS</span></div>
-        <div class="kv w"><span class="v"><span class="st na">∅ no compatible Part</span> for Demo Op-Amp — logic · Demo Op-Amp — body.</span></div>
-        <div class="sh">Missing for a complete Part</div>
-        <div class="kv"><span class="k">Entity</span><span class="v"><span class="btn">Author from this Unit / Symbol…</span></span></div>
-        <div class="kv"><span class="k">Package</span><span class="v"><span class="btn">Author…</span></span></div>
-        <div class="kv"><span class="k">Land pattern</span><span class="v"><span class="btn">Author…</span></span></div>
-        <div class="kv"><span class="k">Part · map</span><span class="v"><span class="btn na">∅ after the rows above</span></span></div>
-        <div class="acts"><span class="btn">Back to transfer</span><span class="btn">Cancel</span></div>
-        <div style="flex:0 0 40px" aria-hidden="true"></div>
-        <div class="fstack" style="max-width:92%"><div class="fstrip"><span class="gl">·</span><span class="tx">resolving <b>U2</b> · target retained</span><span class="hb">▤ history</span></div></div>
-      </div></div></div><div class="dock"><span class="dt on">bash</span></div>
-      </div>
-      <p class="cell-cap"><b>K5 — narrow composition.</b> One column in a fixed 430 px body: the same source-qualified facts, guidance and explicit
-      return; nothing collapses into an identifier or a developer phrase.</p>
-    </div>
-  </div>
-  <div class="grid4" style="margin-top:16px">
-    <div><div class="card"><div class="phd0"><span>Resolve C1</span></div><div class="empty"><span class="st info">⧗ pending</span><b>Reading compatible Parts…</b>No candidate list and no choice until the source-qualified query returns.</div></div>
-      <p class="cell-cap"><b>K6a — pending.</b> No fictitious candidates, nothing pre-chosen.</p></div>
-    <div><div class="card"><div class="banner"><span class="bic">△</span>U2 changed in the schematic while this resolution was open.</div><div class="empty" style="min-height:96px"><b>Resolve U2 restarts from the current schematic.</b>No assignment was made; Library definitions already committed remain. Nothing is bound or retargeted automatically.</div></div>
-      <p class="cell-cap"><b>K6b — genuinely changed target.</b> A changed, missing or rebound placed target, or a switched project or view, refuses and
-      restarts truthfully. Library-only commits are not staleness: the internal guards revalidate the placed-symbol preimage, project root,
-      pane / document / occurrence and source-definition compatibility rather than any revision having moved.</p></div>
-    <div><div class="card"><div class="phd0"><span>Resolve — cancelled</span></div><div class="empty"><span class="st na">∅ cancelled</span><b>No assignment, no new design edit.</b>The placed symbol, its wiring and the transfer review are unchanged; Library definitions already committed remain committed.</div></div>
-      <p class="cell-cap"><b>K6c — cancel.</b> Cancelling ends the resolution only; it never rewinds a separately committed ordinary Library edit.</p></div>
-    <div><div class="card"><div class="banner"><span class="bic">△</span>The Entity draft “Demo Op-Amp, single” is not committed.</div><div class="empty" style="min-height:96px"><b>Finish and commit, cancel the draft, or wait for the running step.</b>Leaving is refused until one is chosen; nothing is discarded silently.</div></div>
-      <p class="cell-cap"><b>K6d — pending draft.</b> An uncommitted Library draft or a running authoring step blocks leaving until it is explicitly finished, cancelled or awaited.</p></div>
-    <div><div class="card"><div class="phd0"><span>Returned after a Library commit</span></div><div class="empty"><span class="st ok">✓ original context restored</span><b>U2 — the exact placed symbol and occurrence.</b>Identity, pins, pose and wires exactly as before resolving; the committed Entity remains, and a now-complete compatible Part is offered for explicit assignment.</div></div>
-      <p class="cell-cap"><b>K6e — legitimate return.</b> Library-only commits made while resolving do not stale the return; the unchanged placed target is revalidated and nothing is assigned automatically.</p></div>
-  </div>
-  <p class="cell-cap" style="margin-top:10px"><b>Reconciles</b> the unresolved Part-binding fact of <code>schematic-surfaces-study.html#S-C</code> and the
-  component-first placement row of L-H: this family adds the missing recovery between them — from an unresolved transfer row to explicit assignment —
-  without a new controller, capability, solver, component definition or import flow.</p>
+<div class="sec-label"><span class="n">L-K</span><span>Component Properties — Reference, Value and Footprint</span><span class="tag tgt">TARGET · corrective workflow</span></div>
+<p class="cap">Double-click an existing component, choose Inspector Properties or context Properties: all open this same form. Existing R1 keeps its identity, wires and position. Choose/Change opens the same real-footprint chooser; accepting returns a pending choice to Properties. Apply explicitly saves the configured component through existing canonical Library/Proposal paths. Cancel before Apply changes no library or instance data. Saved reusable definitions and instance history remain separate, with partial success disclosed on refusal. No ordinary internal graph-authoring sequence.</p>
+<div class="card cw-card" id="K1"><div class="phd0">Component Properties · R1</div><div class="cw-body"><div class="cw-row"><label>Reference</label><div><input aria-label="Reference" value="R1"></div></div><div class="cw-row"><label>Value</label><div><input aria-label="Value" value="10k"></div></div><div class="cw-row"><label>Footprint</label><div><span class="muted">Not chosen</span><button class="btn">Choose…</button></div></div><div class="cw-previews"><svg viewBox="0 0 120 100" aria-label="Device:R electrical preview"><path d="M60 5v20m0 50v20" stroke="var(--tx2)" fill="none"/><rect x="48" y="25" width="24" height="50" fill="none" stroke="var(--tx2)"/><text x="71" y="19" fill="var(--tx2)" font-size="10">1</text><text x="71" y="91" fill="var(--tx2)" font-size="10">2</text></svg><div class="cw-empty">Choose a footprint<br>to see its pads</div></div><p class="cw-note">Pending changes · Apply saves this component; Cancel discards the pending edits.</p></div><div class="acts"><button class="btn">Cancel</button><button class="btn pri" disabled>Apply</button></div></div><div class="card cw-card" id="K2"><div class="phd0">Choose Footprint</div><div class="cw-body"><label>Local footprint library</label><input aria-label="Footprint library" value="/usr/share/kicad/footprints/Resistor_SMD.pretty"><button class="btn">Refresh source</button><label>Search footprints</label><input aria-label="Search footprints" value="R_0805"><div class="res sel" tabindex="0">R_0805_2012Metric</div><div class="cw-previews"><svg viewBox="0 0 120 100" aria-label="Device:R electrical preview"><path d="M60 5v20m0 50v20" stroke="var(--tx2)" fill="none"/><rect x="48" y="25" width="24" height="50" fill="none" stroke="var(--tx2)"/><text x="71" y="19" fill="var(--tx2)" font-size="10">1</text><text x="71" y="91" fill="var(--tx2)" font-size="10">2</text></svg><svg viewBox="-1.8 -1.1 3.6 2.2" aria-label="Installed R_0805_2012Metric footprint preview"><rect x="-1.68" y="-.95" width="3.36" height="1.9" fill="none" stroke="var(--tx3)" stroke-width=".025"/><rect x="-1" y="-.625" width="2" height="1.25" fill="none" stroke="var(--tx2)" stroke-width=".025"/><g fill="var(--pad)"><rect x="-1.425" y="-.7" width="1.025" height="1.4" rx=".25"/><rect x=".4" y="-.7" width="1.025" height="1.4" rx=".25"/></g><g font-size=".3" text-anchor="middle" fill="#141619"><text x="-.9125" y=".1">1</text><text x=".9125" y=".1">2</text></g></svg></div><p class="cw-note">Choose returns this footprint as a pending choice to Properties. It does not import or assign it yet. Double-click accepts the selected preview.</p></div><div class="acts"><button class="btn">Cancel</button><button class="btn pri">Choose Footprint</button></div></div><div class="card cw-card" id="K3"><div class="phd0">Component Properties · R1 · confirm new mapping</div><div class="cw-body"><div class="cw-row"><label>Reference</label><div><input aria-label="Reference" value="R1"></div></div><div class="cw-row"><label>Value</label><div><input aria-label="Value" value="10k"></div></div><div class="cw-row"><label>Footprint</label><div><span>R_0805_2012Metric</span><button class="btn">Change…</button></div></div><div class="cw-previews"><svg viewBox="0 0 120 100" aria-label="Device:R electrical preview"><path d="M60 5v20m0 50v20" stroke="var(--tx2)" fill="none"/><rect x="48" y="25" width="24" height="50" fill="none" stroke="var(--tx2)"/><text x="71" y="19" fill="var(--tx2)" font-size="10">1</text><text x="71" y="91" fill="var(--tx2)" font-size="10">2</text></svg><svg viewBox="-1.8 -1.1 3.6 2.2" aria-label="Installed R_0805_2012Metric footprint preview"><rect x="-1.68" y="-.95" width="3.36" height="1.9" fill="none" stroke="var(--tx3)" stroke-width=".025"/><rect x="-1" y="-.625" width="2" height="1.25" fill="none" stroke="var(--tx2)" stroke-width=".025"/><g fill="var(--pad)"><rect x="-1.425" y="-.7" width="1.025" height="1.4" rx=".25"/><rect x=".4" y="-.7" width="1.025" height="1.4" rx=".25"/></g><g font-size=".3" text-anchor="middle" fill="#141619"><text x="-.9125" y=".1">1</text><text x=".9125" y=".1">2</text></g></svg></div><div class="cw-row"><label>Pin mapping</label><div>Not confirmed · select a pad, then its pin</div></div><div class="cw-map"><button class="btn">Pad 1</button><button class="btn">Pad 2</button><button class="btn">Pin 1</button><button class="btn">Pin 2</button></div><button class="btn">Confirm mapping</button><p class="cw-note">Pending changes · Apply saves this component; Cancel discards the pending edits.</p></div><div class="acts"><button class="btn">Cancel</button><button class="btn pri" disabled>Apply</button></div></div><div class="card cw-card" id="K4"><div class="phd0">Component Properties · R1 · pending changes</div><div class="cw-body"><div class="cw-row"><label>Reference</label><div><input aria-label="Reference" value="R1"></div></div><div class="cw-row"><label>Value</label><div><input aria-label="Value" value="10k"></div></div><div class="cw-row"><label>Footprint</label><div><span>R_0805_2012Metric</span><button class="btn">Change…</button></div></div><div class="cw-previews"><svg viewBox="0 0 120 100" aria-label="Device:R electrical preview"><path d="M60 5v20m0 50v20" stroke="var(--tx2)" fill="none"/><rect x="48" y="25" width="24" height="50" fill="none" stroke="var(--tx2)"/><text x="71" y="19" fill="var(--tx2)" font-size="10">1</text><text x="71" y="91" fill="var(--tx2)" font-size="10">2</text></svg><svg viewBox="-1.8 -1.1 3.6 2.2" aria-label="Installed R_0805_2012Metric footprint preview"><rect x="-1.68" y="-.95" width="3.36" height="1.9" fill="none" stroke="var(--tx3)" stroke-width=".025"/><rect x="-1" y="-.625" width="2" height="1.25" fill="none" stroke="var(--tx2)" stroke-width=".025"/><g fill="var(--pad)"><rect x="-1.425" y="-.7" width="1.025" height="1.4" rx=".25"/><rect x=".4" y="-.7" width="1.025" height="1.4" rx=".25"/></g><g font-size=".3" text-anchor="middle" fill="#141619"><text x="-.9125" y=".1">1</text><text x=".9125" y=".1">2</text></g></svg></div><div class="cw-row"><label>Pin mapping</label><div>Pad 1 → Pin 1 · Pad 2 → Pin 2<br><span class="muted">Confirmed for these exact sources</span></div></div><p class="cw-note">Pending changes · Apply saves this component; Cancel discards the pending edits.</p></div><div class="acts"><button class="btn">Cancel</button><button class="btn pri">Apply</button></div></div><div class="card cw-card cw-narrow" id="K7"><div class="phd0">Component Properties · R1</div><div class="cw-body"><div class="cw-row"><label>Reference</label><div><input aria-label="Reference" value="R1"></div></div><div class="cw-row"><label>Value</label><div><input aria-label="Value" value="10k"></div></div><div class="cw-row"><label>Footprint</label><div><span>R_0805_2012Metric</span><button class="btn">Change…</button></div></div><div class="cw-previews"><svg viewBox="0 0 120 100" aria-label="Device:R electrical preview"><path d="M60 5v20m0 50v20" stroke="var(--tx2)" fill="none"/><rect x="48" y="25" width="24" height="50" fill="none" stroke="var(--tx2)"/><text x="71" y="19" fill="var(--tx2)" font-size="10">1</text><text x="71" y="91" fill="var(--tx2)" font-size="10">2</text></svg><svg viewBox="-1.8 -1.1 3.6 2.2" aria-label="Installed R_0805_2012Metric footprint preview"><rect x="-1.68" y="-.95" width="3.36" height="1.9" fill="none" stroke="var(--tx3)" stroke-width=".025"/><rect x="-1" y="-.625" width="2" height="1.25" fill="none" stroke="var(--tx2)" stroke-width=".025"/><g fill="var(--pad)"><rect x="-1.425" y="-.7" width="1.025" height="1.4" rx=".25"/><rect x=".4" y="-.7" width="1.025" height="1.4" rx=".25"/></g><g font-size=".3" text-anchor="middle" fill="#141619"><text x="-.9125" y=".1">1</text><text x=".9125" y=".1">2</text></g></svg></div><div class="cw-row"><label>Pin mapping</label><div>Pad 1 → Pin 1 · Pad 2 → Pin 2<br><span class="muted">Confirmed for these exact sources</span></div></div><p class="cw-note">Pending changes · Apply saves this component; Cancel discards the pending edits.</p></div><div class="acts"><button class="btn">Cancel</button><button class="btn pri">Apply</button></div></div><div class="card cw-card cw-narrow" id="K8"><div class="phd0">Choose Footprint</div><div class="cw-body"><label>Local footprint library</label><input aria-label="Footprint library" value="/usr/share/kicad/footprints/Resistor_SMD.pretty"><button class="btn">Refresh source</button><label>Search footprints</label><input aria-label="Search footprints" value="R_0805"><div class="res sel" tabindex="0">R_0805_2012Metric</div><div class="cw-previews"><svg viewBox="0 0 120 100" aria-label="Device:R electrical preview"><path d="M60 5v20m0 50v20" stroke="var(--tx2)" fill="none"/><rect x="48" y="25" width="24" height="50" fill="none" stroke="var(--tx2)"/><text x="71" y="19" fill="var(--tx2)" font-size="10">1</text><text x="71" y="91" fill="var(--tx2)" font-size="10">2</text></svg><svg viewBox="-1.8 -1.1 3.6 2.2" aria-label="Installed R_0805_2012Metric footprint preview"><rect x="-1.68" y="-.95" width="3.36" height="1.9" fill="none" stroke="var(--tx3)" stroke-width=".025"/><rect x="-1" y="-.625" width="2" height="1.25" fill="none" stroke="var(--tx2)" stroke-width=".025"/><g fill="var(--pad)"><rect x="-1.425" y="-.7" width="1.025" height="1.4" rx=".25"/><rect x=".4" y="-.7" width="1.025" height="1.4" rx=".25"/></g><g font-size=".3" text-anchor="middle" fill="#141619"><text x="-.9125" y=".1">1</text><text x=".9125" y=".1">2</text></g></svg></div><p class="cw-note">Choose returns this footprint as a pending choice to Properties. It does not import or assign it yet. Double-click accepts the selected preview.</p></div><div class="acts"><button class="btn">Cancel</button><button class="btn pri">Choose Footprint</button></div></div><div class="grid2"><div class="card cw-card" id="K5"><div class="phd0">Stale or unconfirmed action</div><div class="cw-body">The selected schematic/source changed. Reopen Properties. A refusal does not retry a write; any separately saved library definitions are disclosed.</div><div class="acts"><button class="btn">Close</button></div></div><div class="card cw-card" id="K6"><div class="phd0">Existing PCB counterpart</div><div class="cw-body">Reference and Value remain editable. Current Footprint is shown; physical Change is limited to before initial PCB transfer. Routed replacement/ECO is outside this correction.</div><div class="acts"><button class="btn">Cancel</button><button class="btn pri">Apply</button></div></div></div>
+<p class="cell-cap">K1–K4: one Properties flow, chooser, explicit new-map review and pending Apply. K7/K8: the same form and chooser at narrow width. Applying uses existing stale/source/consent guards; transferring the configured component carries its exact physical graph and map to the initial PCB. Preview success, target review and backend compilation do not establish real workflow readiness.</p>
 </section>
 
 <!-- ======================================================== map -->
@@ -681,10 +405,10 @@
     <tr><td class="n">#L-E</td><td>LIBRARY-MANUAL-USE</td><td>Models</td><td>—</td><td>Target</td></tr>
     <tr><td class="n">#L-F</td><td>LIBRARY-VALIDATION · OWNER-RATIFICATION</td><td>Source, basis, process and approval; guarded status in Authoring, readiness and checks</td><td>Warning / block for non-approved or UnknownBasis</td><td>Target</td></tr>
     <tr><td class="n">#L-G</td><td>LIBRARY-MANUAL-USE</td><td>Supported native footprint synthesis paragraph</td><td>Generator family / basis / naming stay with their own authority</td><td>Target</td></tr>
-    <tr><td class="n">#L-H</td><td>LIBRARY-MANUAL-USE</td><td>Ordinary workflow row — place a complete named Part with carried Value / Package / Footprint / map; shipped bundled Symbols place explicitly schematic-only</td><td>Warning / block policy for non-approved or UnknownBasis (S05); result ranking within kinds</td><td>Delivered picker bounded at recorded scope; owner QA failed the source-first normal flow; corrected focused-search picker is target</td></tr>
+<tr><td class="n">#L-H</td><td>LIBRARY-MANUAL-USE</td><td>Configure symbol, explicit value and real footprint before normal placement; qualified mapping and complete identity travel to PCB</td><td>Approval policy remains S05</td><td>Corrective target; runtime verification pending</td></tr>
     <tr><td class="n">#L-I</td><td>LIBRARY-VALIDATION</td><td>Relationships and revisions — update candidate paragraph</td><td>Placed-impact trigger (separate authority)</td><td>Target</td></tr>
     <tr><td class="n">#L-J</td><td>SHARED-MUTATION</td><td>Accessibility and visual frames</td><td>Narrow pool / kind / Navigator / Inspector access; refusal placement</td><td>Target</td></tr>
-    <tr><td class="n">#L-K</td><td>LIBRARY-MANUAL-USE · LIBRARY-VALIDATION</td><td>Ordinary workflow row — resolve an unresolved transfer component to a complete named Part by explicit assignment or existing authoring from its placed Symbol</td><td>—</td><td>Target</td></tr>
+<tr><td class="n">#L-K</td><td>LIBRARY-MANUAL-USE · LIBRARY-VALIDATION</td><td>One Component Properties form and pending footprint chooser; Reference/Value/Footprint, Apply/Cancel, exact identity and history</td><td>Routed-PCB physical replacement outside scope</td><td>Corrective target; runtime verification pending</td></tr>
   </table>
   <p class="cap" style="margin-top:12px"><b>Conflicts shown, not resolved:</b> (1) the Library Authoring contract still lists seven DomainObjects with ModelAttachment
   as a kind and describes its map table as <code>logical_pin → footprint_pad</code>; these frames follow the Product contract — eight Pool kinds, models as

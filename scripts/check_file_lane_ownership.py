@@ -11,7 +11,7 @@ from dataclasses import dataclass
 
 
 VISUAL_TRUTH_MARKER = "DATUM_VISUAL_TRUTH_LANE"
-VISUAL_TRUTH_VALUE = "claude"
+VISUAL_TRUTH_VALUE = "codex"
 VISUAL_TRUTH_PREFIX = b"docs/gui/prototypes/"
 
 
@@ -107,17 +107,17 @@ def check_staged(marker: str | None = None) -> int:
     if active_marker != VISUAL_TRUTH_VALUE:
         print(
             "visual-truth file-lane gate refused this commit.\n"
-            "docs/gui/prototypes/**/*.html is the Claude-owned visual-truth lane.\n"
+            "docs/gui/prototypes/**/*.html is the owner-assigned Codex visual-truth lane.\n"
             f"Protected staged paths:\n{rendered_paths}\n"
-            "Unstage or revert only your own changes and send Claude a bounded "
-            "reconciliation list. Codex and other lanes must not set or forward "
+            "Unstage only your own changes and send the assigned visual owner a bounded "
+            "reconciliation list. Unassigned sessions must not set or forward "
             f"{VISUAL_TRUTH_MARKER}.",
             file=sys.stderr,
         )
         return 1
 
     print(
-        "visual-truth file-lane gate passed for the marked Claude session:\n"
+        "visual-truth file-lane gate passed for the marked Codex session:\n"
         f"{rendered_paths}"
     )
     return 0

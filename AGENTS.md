@@ -130,11 +130,13 @@ of the procedures before unfamiliar mutations.
   Governance/closure commits identify disposition, outcomes and retained boundaries.
 - No AI attribution in commits, PRs, comments or documents.
 - Force-push, history rewrite and `--no-verify` require explicit owner authority.
-- Claude owns all `docs/gui/prototypes/*.html`. Codex never edits, reformats,
-  renames, deletes or regenerates them. Inspect/screenshots are allowed. Send exact
-  bounded reconciliation to Claude; never set/copy/forward or suggest bypassing
-  the lane marker. A tripped gate stays with its responsible lane; do not bless
-  unauthorized output by refreshing digests/parity/goldens.
+- Owner transfer (2026-11-16): Codex now owns the former Claude responsibilities,
+  including `docs/gui/prototypes/*.html`, within existing bounded grants.
+  Preserve historical actors/evidence and shared work. The normal staged gate
+  accepts `DATUM_VISUAL_TRUTH_LANE=codex` only for the authorized visual session;
+  never impersonate the retired Claude lane or bypass hooks. A tripped gate
+  stays with its responsible lane; review affected evidence before reconciling
+  digests/parity/goldens. Independent review remains mandatory.
 
 Before spec/research/visual work, inspect the complete owning evidence route.
 Reuse a verified unchanged baseline and review changed artifacts and affected

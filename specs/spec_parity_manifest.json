@@ -281,6 +281,21 @@
         "NativeSupportFileDispositionRow"
       ],
       "notes": "Pending proposal filename and shape registration only. This inventory does not certify complete file-class coverage, suffix ratification, decoding, associations or migration implementation."
+    },
+    {
+      "id": "shared_library_asset_contract",
+      "kind": "file_glob",
+      "glob": "specs/SHARED_LIBRARY_ASSET_SPEC.md",
+      "owner_spec": "docs/decisions/PRODUCT_MECHANICS_066_SHARED_ENGINEERING_LIBRARY.md",
+      "planned_shapes": [
+        "AssetRevisionRefV1",
+        "AssetRevisionV1",
+        "AssetProvenanceV1",
+        "AssetReviewV1",
+        "LibraryReleaseManifestV1",
+        "ProjectLibraryLockV1"
+      ],
+      "notes": "Specification filename and planned semantic-shape registration only; not implemented Rust/API inventory. SL-016–024 define the target V1 byte and lock profile; support still requires interoperability and version-refusal proof."
     }
   ]
 }

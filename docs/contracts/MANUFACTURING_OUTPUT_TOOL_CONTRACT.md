@@ -567,3 +567,17 @@ artifact or journal mutation; this is not general I/O or concurrency atomicity.
 Unknown standards basis remains separately reported and supplies no fabricated
 standards values or certification. PM058 rational-centre CAM and broader
 manufacturing qualification remain open.
+
+
+## Shared library asset specification target
+
+[PM066](../decisions/PRODUCT_MECHANICS_066_SHARED_ENGINEERING_LIBRARY.md) and
+[SHARED_LIBRARY_ASSET_SPEC](../../specs/SHARED_LIBRARY_ASSET_SPEC.md), SL-020–024
+and SL-040–043, extend the target manufacturing basis with the exact acquired
+library closure and applicable checks/dispositions. CAM publication may not pass
+blocking findings or stale/unsupported process geometry. Preserve existing
+OutputJob/projection authority, PM061 rules and optional formal project release;
+this adds no mandatory Revision UI. Warning/deviation policy is explicit, and
+unknown standards basis alone is not a new universal blocker. Output manifests
+trace the matched design/library/rule/process snapshot; changes invalidate affected
+checks before publication. This target is not current CAM qualification evidence.

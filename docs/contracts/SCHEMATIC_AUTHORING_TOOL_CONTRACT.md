@@ -520,11 +520,25 @@ restated.
 
 ### 1. place-symbol
 
-- **(1) Manual UI:** Normal component placement selects a reusable Part with
-  its declared Value, Package, default Footprint and complete default PinPadMap;
-  then choose the gate, reference and position on the active sheet. Value belongs
-  to the selected component, rather than an independent placement edit. Explicit
-  bare-Symbol placement retains its provisional/specialist scope.
+- **(1) Manual UI:** Normal placement completes one component choice before
+  canvas placement: its electrical representation, value and physical
+  package/footprint, with qualified pin/pad correspondence. Reuse a complete Part
+  or choose its supported value/physical variant within the same selection flow;
+  then choose the reference, applicable gate and position. The same complete
+  component identity and physical choice carry into initial PCB transfer. Normal
+  placement must not fall back to an unbound Symbol or defer package selection
+  until transfer. Explicit bare-Symbol specialist operations retain their own
+  scope and do not satisfy normal component-placement readiness.
+
+  Existing components expose one local **Component Properties** interaction
+  through double-click, Inspector and context Properties: Reference, Value and
+  Footprint Choose/Change. A real footprint choice and required mapping review
+  return a pending choice to Properties for Apply. Cancel leaves pending normal
+  component edits unapplied. Preserve identity, wiring, other instances and normal
+  Undo/Redo; do not silently mutate shared library definitions. Ordinary editing
+  must not expose separate Entity/Part/Map construction. This restores the owner's
+  agreed behavior; the current Reference/Value-only Edit Symbol dialog does not
+  conform. This scope covers initial PCB handoff, not routed-package replacement.
 - **(2) Operation:** `PlaceSymbol{sheet_id, library_ref, position,
   rotation, mirror, component_instance_id}` → one atomic
   `OperationBatch` through `commit()`. Current CLI uses the journaled
@@ -591,9 +605,10 @@ same placement verb with captured complete-component intent. The engine checks
 the declared logical and physical graph and source revisions; an incomplete or
 stale choice refuses without falling back to a bare Symbol. Partial library
 definitions remain editable, but do not qualify for normal complete placement.
-An empty Part pool offers the existing Library acquisition path for a reusable
-native Part; its supported source profile and identity/refusal rules are in the
-Library Authoring Tool Contract. Initial PCB handoff consumes the established
+The existing native-Part acquisition path is a supported library capability;
+its saved-project source profile is not the required ordinary component workflow.
+Its identity/refusal rules are in the Library Authoring Tool Contract.
+Initial PCB handoff consumes the established
 physical choice and checks its authenticated Part-adoption source basis; pose
 changes do not adopt later library definitions. A changed map, footprint or
 padstack requires a reviewed update, including when the caller supplies the same
@@ -615,13 +630,17 @@ QA rejected that ordinary workflow and its readability, withdrawing QA readiness
 The original failed cold capture and its limited interaction-assisted follow-up
 retain their recorded scopes.
 
-The `dat-jmxm` QA008–011 correction follows reviewed L-H target
+The `dat-jmxm` QA008–011 interaction correction follows the recorded L-H target
 `a8a7c8a43469aebabac811856d1af7b34a90d52c8db7d353cdcbbed1e5ba127c`.
 **Place Component** opens focused Search on the captured schematic and occurrence.
 It queries already-qualified project Parts and the shipped Symbol catalog. Part
 metadata search and complete declared Value/Package/Footprint/map authority stay
 qualified; a Symbol remains explicitly **schematic only**, without invented
 physical definitions. Source setup and adoption management remain in Library.
+Those interaction fixes are retained, but the current ordinary Symbol-only path
+lacks placement-time physical choice and does not conform to the governing
+component-centric requirement. Its source-qualified evidence is not unified
+component-workflow acceptance.
 
 Down from Search enters results. Up/Down selects, reveals and previews a result;
 PageUp/PageDown traverses one continuous filtered list, with wheel/native pixel
@@ -672,20 +691,40 @@ accept-key interval is not a latency budget or quantified repeat-event coverage;
 first-time missing-definition acquisition and complete Parts have source-review
 coverage here, not new runtime cases. The unchanged visual baseline and exact
 matching build/source/outcome evidence retain separate bindings in the same task.
-Owner QA012 and the other owner findings remain open for owner recheck.
+The owner subsequently accepted QA008–012 corrections at their interaction
+scopes; that acceptance does not close the physical-choice/assignment failure.
 
-The accepted bounded recovery target `library-surfaces-study.html#L-K`
-(`dat-existing-project-component-resolution-i89r`) connects an unbound transfer
-row to existing Assign Part and Library authoring. A compatible complete Part
-must use the placed Symbol's existing Unit/Symbol identities; drawing similarity
-supplies no binding. The target retains the original Project root, schematic
-occurrence and placed-symbol preimage while Library definitions are authored.
-Library-only commits permit an explicit return; a changed target refuses, and
-a draft must be finished or cancelled, and a running worker awaited, before leaving.
-Cancelling navigation preserves committed Library definitions and makes no
-assignment. No redraw, guessed map/footprint, automatic import or general ECO
-is introduced. This is an accepted visual target with Rust translation in
-progress; ordinary application delivery remains pending.
+The historical L-K graph-authoring recovery target originated with the deferred
+`dat-existing-project-component-resolution-i89r`; its grant is not revived.
+The separately authorized `dat-symbol-physical-assignment-qa013-chxu` implements
+selected-Symbol Assign Part and unresolved transfer-row recovery through existing
+Library authoring and the canonical assignment Proposal. The retained Project
+root, pane, document/occurrence and placed-sheet preimage are checked before
+return. Library-only commits permit return; changed targets refuse. Drafts must
+finish or cancel and pending workers must finish before leaving. Cancelling
+resolution retains committed definitions and makes no assignment. Tab/Shift+Tab
+and Enter traverse eligible recovery actions with visible focus.
+
+That manual library-graph journey is technically reachable but failed owner
+usability QA. It is not the required local Properties/footprint chooser or the
+normal component-first selection flow. Corrected L-H/L-K target SHA-256
+`185d77bb8145ca6133c82eb18393bb852756e4e9d634a07b1cfa741ef25b4267`
+has distinct source and normal/narrow pixel review and bounded PM acceptance
+against this restorative contract. It replaces the rejected ordinary graph
+journey as the translation target; native implementation and ordinary real-data
+workflow verification remain pending. No runtime readiness or owner QA acceptance
+follows from target review.
+
+QA013's ordinary real-design-copy proof uses shipped Device:R and an explicitly
+selected installed `R_0603_1608Metric` footprint, a named user-authored Part with
+unspecified procurement, and reviewed pad 1→Pin 1 / pad 2→Pin 2 mapping. Assignment
+preserves R1's UUID, pose, value, pins, wires and VCC/GND power ports. Separate
+source preparation and transfer produce one R1 package/two pads; canonical
+relationships establish pad 1→VCC and pad 2→GND. Assignment and transfer Undo/Redo
+and acknowledged Save pass at their recorded scopes. Board pixels use ordinary
+public Fit to Board; package-inspection frames do not display individual pad
+nets. No cold reopen, manufacturing, HUMAN, full qualification or owner QA013
+acceptance is claimed. No footprint/map is guessed or starter content adopted.
 
 ### 2. transform-symbol (move / rotate / mirror unified)
 
@@ -1548,3 +1587,16 @@ as complete cross-domain Net selection. Authored identity/binding source is
 distinct from recomputable graph/projection geometry. Canonical writes and replay
 retain all recorded identities. No C04–C07, M1 numerical policy, geometry/CAM
 support, selection mutation or native acceptance is ratified by this amendment.
+
+
+## Shared library asset specification target
+
+[PM066](../decisions/PRODUCT_MECHANICS_066_SHARED_ENGINEERING_LIBRARY.md) and
+[SHARED_LIBRARY_ASSET_SPEC](../../specs/SHARED_LIBRARY_ASSET_SPEC.md), SL-001–023,
+govern the component/library target. Preserve the preceding component-first and
+local Properties Apply/Cancel requirements and all actual QA013 evidence. A placed
+component retains the exact acquired component/dependency revisions through PCB
+implementation, Save/reopen and offline reproduction. Refresh/search/download do
+not change bindings. Adoption of a corrected definition is an explicit reviewed
+update through existing proposal/commit/history guards. Legacy unbound-symbol or
+per-design map construction cannot substitute for ordinary component selection.

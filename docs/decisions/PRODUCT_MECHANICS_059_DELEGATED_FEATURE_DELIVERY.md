@@ -161,7 +161,7 @@ session requires its own verified appointment. Only one standing project manager
 may be active, preventing ambiguous final authority.
 
 <!-- EVIDENCE:PM059:STANDING-PROJECT-MANAGER -->
-{"owner_appointed":true,"session":"01a1af09-2188-7dc0-ada3-f2745ca59ddd","task_keys":["*"],"decision_kinds":["review_provisioning","review_receipt","continuation","objective_acceptance","owner_reserved","decision_classification"]}
+{"owner_appointed":true,"session":"01a1e60c-ff3d-70b2-bae9-c5b4aa5e926c","task_keys":["*"],"decision_kinds":["review_provisioning","review_receipt","continuation","objective_acceptance","owner_reserved","decision_classification"]}
 
 The owner replaced the previous manager in the current session: “you are the new
 PM” and “welcome to your promotion.” This changes the named manager, retaining
@@ -172,6 +172,14 @@ On 2026-11-05 the owner appointed successor session
 wearing both hats.” The existing scope and retained boundaries remain;
 independent review remains a distinct actor. Successor evidence is recorded in
 `dat-cotty-successor-pickup-n52q`.
+On 2026-11-16 the owner explicitly continued Cotty as PM/implementer in
+session `01a1e60c-ff3d-70b2-bae9-c5b4aa5e926c`. The previous session verified
+its workers stopped and released the frozen corrective implementation scope.
+The standing appointment continues at the same boundaries; owner-created Cotty
+V4 session `01a1e613-f258-71a1-b3ae-1e84e7fa2e6e` is the coordinated QA/spec
+collaborator, with no parallel implementation grant. Continuation and transfer
+are recorded in `dat-symbol-physical-assignment-qa013-chxu`.
+
 The owner also directed ongoing waste reduction using Toyota Production System
 thinking. Keep that attention bounded within the existing overhead limit: remove
 repeated reads, waiting, duplicate approvals and rework as they obstruct delivery;
@@ -184,7 +192,7 @@ this appointment supplies no missing product acceptance or denied enactment.
 
 Delegation changes who decides, not what has been demonstrated. Preserve actual
 tests, independent review, source health, canonical mutation, resource discipline
-and the Claude prototype lane. A manager cannot independently review its own
+and the owner-assigned prototype lane. A manager cannot independently review its own
 implementation or materially designed candidate. Covered visual assessment may
 be performed and recorded by an authorized agent assessor, identified honestly;
 it must never be reported as a human-performed test. Requirements that literally
@@ -214,7 +222,7 @@ that implemented or materially designed the candidate cannot be its independent
 reviewer. Corrections inside the reviewed execution grant do not require renewed
 owner authorization; scope-changing remedies need disposition by the authorized
 manager when covered, or by the owner when outside the grant or explicitly retained. Preserve mandatory proof, source
-health, resource discipline, canonical mutation and Claude's prototype file lane.
+health, resource discipline, canonical mutation and the owner-assigned prototype file lane.
 
 Use available authorized session channels for manager/implementer/reviewer
 handoffs. The owner authorizes those development-team handoffs; this is not

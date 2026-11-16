@@ -1,12 +1,13 @@
 # Visual-Truth File-Lane Enforcement Decision Packet
 
-> **Status:** Owner-approved on 2026-08-27; implementation authorized only
-> through `LANE-I01`.
+> **Status:** Original owner approval 2026-08-27 retained below. Producer
+> ownership superseded by the 2026-11-16 owner transfer in section 11.
 >
 > **Tracker:** `dat-visual-truth-file-lane-enforcement-jfl`.
 >
-> **Boundary:** This packet does not edit a prototype, enable the gate, add a
-> dependency, or authorize any agent other than Claude to mutate visual truth.
+> **Boundary:** The original Claude-only disposition below is historical.
+> Section 11 controls current producer ownership; product scope and evidence
+> requirements remain governed by their existing grants.
 
 <!-- REQ:VISUAL-TRUTH-FILE-LANE:LANE-C01 -->
 
@@ -212,3 +213,22 @@ Approval authorizes only `LANE-I01`: implement and test the specified staged
 hook without changing any prototype file.
 
 <!-- EVIDENCE:VISUAL-TRUTH-FILE-LANE:LANE-C01-PACKET -->
+
+
+## 11. Owner-directed responsibility transfer — 2026-11-16
+
+In the resumed Cotty session, the owner directed taking over all Claude
+responsibilities because its credit is exhausted until November 20. This
+supersedes sections 1, 3, 5, 6 and 8 only as to producer identity and handoff:
+Codex owns the visual-truth lane prospectively. The exact normal marker is now
+`DATUM_VISUAL_TRUTH_LANE=codex`; the retired `claude` value is refused.
+The authorized visual session may set its own truthful marker. It must not be
+stored in shared configuration or forwarded to an unassigned session.
+
+Protected paths, staged add/copy/modify/mode/delete/rename coverage, NUL-safe
+parsing, fail-closed behavior, nonmutation and normal hook ordering remain.
+There is no impersonation, hook bypass, new dependency or product scope grant.
+Existing QA013 work continues under its fixed component workflow correction;
+prior artifacts and actual producer/reviewer provenance remain intact.
+Independent visual/source review, affected-route reconciliation and real
+ordinary application proof remain required before readiness or delivery.

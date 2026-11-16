@@ -37,6 +37,27 @@ rule/check authoring (Decision 009). Read access to the pool and the
 session/query/check/proposal/commit/artifact/journal machinery are the
 shared surface and are referenced, not redefined.
 
+## Governing Ordinary Component Workflow
+
+The owner's component-centric requirement in `dat-component-first-capture-3btd`
+remains controlling: normal schematic selection chooses the component's value
+and physical package/footprint together, with a qualified pin/pad map, and carries
+that same component identity into initial PCB implementation. Reuse a complete
+definition or make the supported value/physical choice in that user workflow.
+An empty Part pool must not silently substitute normal unbound-Symbol placement.
+
+Library management retains advanced object authoring, but ordinary selection or
+footprint assignment must not require separate Entity, Part and Map construction.
+The application handles the native relationships through source-qualified
+validation and canonical mutations. Physical choice and any required mapping
+review remain explicit; no package, mapping, procurement or approval is invented.
+This is a restorative requirement, not evidence that the current UI conforms.
+The corrected L-H/L-K target at SHA-256
+`185d77bb8145ca6133c82eb18393bb852756e4e9d634a07b1cfa741ef25b4267`
+has distinct source and normal/narrow pixel review and bounded PM acceptance.
+Native implementation and ordinary real-data workflow verification remain pending;
+target acceptance does not establish runtime readiness or owner QA acceptance.
+
 ## Current Implementation Reality
 
 Initial connected schematic-to-PCB transfer is implemented for supported unique
@@ -48,8 +69,8 @@ values must agree, including explicit empty values. The atomic canonical batch
 records the CI ownership, qualified placed pads, mapped nets and correspondence;
 reference text is display data. Declared counterparts remain unchanged on repeat.
 
-The component-first follow-up (`dat-component-first-capture-3btd`) establishes the
-normal physical choice when selecting the schematic Part. A declared default
+The component-first follow-up (`dat-component-first-capture-3btd`) implements
+reusable complete-Part qualification and established physical choice. A declared default
 Footprint/PinPadMap pair must be complete and compatible; the transfer review
 shows that component choice without per-design map cycling. Initial handoff
 checks the physical source basis at authenticated Part adoption, including after
@@ -60,8 +81,9 @@ editable. The existing explicit-map workflow is retained for genuinely missing
 default pairs, not as a fallback from an invalid declared pair. Source `54b4413b`
 has focused engine and isolated ordinary debug App evidence: 25 stages cover the
 supported synthetic two-component workflow through declared transfer, Save and
-cold reopening. Component-workflow release-GUI execution, physical/HUMAN input
-and full qualification remain separate.
+cold reopening. This proves the recorded prepared-component capability, not
+delivery of the governing ordinary selection workflow. Component-workflow
+release-GUI execution, physical/HUMAN input and full qualification remain separate.
 
 Board source preparation is an explicitly accepted, separately saved transaction;
 closing the review retains that preparation. Preview, Cancel, refusal and repeat
@@ -204,7 +226,7 @@ private accessibility bus stopped with verified runtime removal. This is bounded
 development availability; existing PM062 Circle/Rect proof above remains
 historical and unchanged.
 
-The same component-first task adds a source parameter to existing Library
+The same task's bounded acquisition increment adds a source parameter to Library
 Acquire for one complete native Part from a saved native Datum project folder.
 Preview identifies the Part, Value, Package, all gate Symbols, Footprint and
 explicit pad-to-gate/pin map. Acquisition preserves native UUIDs and raw fields:
@@ -969,7 +991,8 @@ Entity/Package choices and an optional compatible default Footprint. A Package
 change clears an incompatible Footprint selection; no default remains a genuine
 absent link. The shared engine adapter independently checks kinds, references,
 Footprint/Package compatibility and referenced revisions before canonical Create.
-MPN supplies the Part display identity; no separate name field is introduced.
+That earlier increment used MPN for display without a separate name field;
+QA013 extends manual authoring as described below.
 New Parts use the existing `Unknown` lifecycle, displayed read-only, without an
 approval or Active claim. Existing map/model/parametric/packaging/inheritance
 fields retain their schema-supported empty/absent creation representation.
@@ -980,6 +1003,30 @@ proof covers both absent and compatible Footprint choices. That App proof uses
 debug builds, presented controls and logical keys, not physical/HUMAN or release
 qualification. Saved Part Entity/Package relinking, inheritance, placed pin-pad updates,
 placement policy, models, approval and broader library completion remain open.
+
+The bounded QA013 correction (`dat-symbol-physical-assignment-qa013-chxu`, L-K)
+adds explicit authored Part `name` to creation and saved metadata admission.
+When manufacturer or MPN is unspecified, a nonempty name is required; existing
+orderable metadata/captions remain unchanged. UUID remains identity authority,
+and physical eligibility still requires nonempty value, the full compatible
+Entity/Unit/Symbol/Package/Footprint/PinPadMap graph, complete pad/pin coverage
+and current revisions. Unknown procurement is disclosed as unapproved/not
+orderable. This is existing user-authored Part metadata, not a new Part kind or
+approval of the unanswered first-party starter bundle/provider question.
+
+The ordinary real-library case selects the installed
+`Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod` through the existing reader,
+retains its source hash/notices, authors an Entity from the captured Device:R
+Unit/Symbol, then creates the named Part and explicit 1→Pin 1 / 2→Pin 2 map.
+Symbol anchor numbers improve mapping captions only when uniquely qualified;
+absent/ambiguous anchors retain existing Unit pin captions and identities.
+Library commits remain independent from subsequent assignment/PCB transfer;
+resolution Cancel preserves them and the original circuit. The real case proves
+creation, mapping, assignment and two-pad/net transfer with history and Save;
+it does not claim generic saved-metadata editing runtime coverage, manufacture
+approval, cold reopen, HUMAN/full qualification or owner QA013 closure. No
+external content is fetched, bundled or newly adopted by this correction.
+
 Generic raw Part/Footprint pair validation is separate intake
 `dat-part-raw-footprint-pair-yjc4`; this increment supplies no universal raw-write
 integrity claim.
@@ -1982,3 +2029,17 @@ engine diagnostics through `project validate`.
    contract recommends continuing the migration: CLI and MCP should call the
    engine graph, and resolver/commit-time validation should share that same
    semantic policy rather than duplicate it.
+
+
+## Shared library asset specification target
+
+PM066 and [SHARED_LIBRARY_ASSET_SPEC](../../specs/SHARED_LIBRARY_ASSET_SPEC.md)
+govern the shared-library target and supersede conflicting target interpretations
+here. Preserve all preceding current-implementation evidence and QA013 requirements.
+Normal component selection joins value, physical choice and qualified mapping;
+independent symbol/footprint assignment remains advanced/compatibility behavior,
+not the ordinary workflow. SL-010–023 govern portable identities, provenance,
+exact dependency closure and deliberate update adoption; SL-030–034 govern editor
+and contribution behavior. Existing local technical counters and optional symbol
+provenance are partial implementation, not completion of that common record.
+No existing tool surface gains a private Git/raw-file writer or automatic approval.

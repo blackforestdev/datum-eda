@@ -510,3 +510,17 @@ First-slice proof (per 009):
    be replaced by an explicit `CheckProfile` parameter BEFORE any further
    check tools land, to avoid baking a fixed rule list into the daemon
    contract?
+
+
+## Shared library asset specification target
+
+[PM066](../decisions/PRODUCT_MECHANICS_066_SHARED_ENGINEERING_LIBRARY.md) and
+[SHARED_LIBRARY_ASSET_SPEC](../../specs/SHARED_LIBRARY_ASSET_SPEC.md), SL-040–043,
+extend the target check basis with exact asset/dependency revisions. Reuse existing
+CheckRun/CheckFinding/severity/deviation primitives. Library definition checks and
+design-context ERC/DRC remain distinct, linked evaluations; published/reviewed
+status is not check success. Findings navigate to the owning asset feature and
+identify rule/profile/source basis. Correcting then adopting a revision requires
+affected revalidation. Preserve PM061's unknown-basis disclosure versus unresolved
+geometry block and zero-offset/tented distinctions; no new numerical standard,
+automatic approval, blanket warning escalation or waiver mechanism is implied.

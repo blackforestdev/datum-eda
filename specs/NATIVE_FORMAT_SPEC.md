@@ -1159,3 +1159,18 @@ E2–E4 nominal execution and focused independent review are owner-authorized.
 C07/M1 manufacturing policy and mandatory rational-center CAM/T04 remain deferred
 and unpassed. This amendment supplies no approximation allowance, general CAM
 claim, full foundation/S5A acceptance or selection-triggered design mutation.
+
+
+## Shared library asset specification target
+
+[PM066](../docs/decisions/PRODUCT_MECHANICS_066_SHARED_ENGINEERING_LIBRARY.md) and
+[SHARED_LIBRARY_ASSET_SPEC](SHARED_LIBRARY_ASSET_SPEC.md), SL-010–024 and SL-050–062,
+extend the native target. They fix the common record shapes, SHA-256-qualified
+portable refs, V1 canonical metadata/exact payload byte profile, immutable exchange
+paths and manifest-v2/library-lock adoption barrier. Existing native v1 pool
+shards remain current compatibility/materialization; merely opening/saving them
+must not opt into the new profile. `object_revision` remains a technical guard,
+not portable revision identity. Pool priority cannot override a pinned ref.
+Writers require version refusal, dependency closure, atomic lock/materialization,
+recovery, Undo/Redo and unknown-field preservation proof before support claims.
+This target does not authorize migration or reclassify historical native evidence.

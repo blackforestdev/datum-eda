@@ -503,3 +503,14 @@ The first proof slice should implement a minimal native part flow:
 - How strict should unknown-basis imported library data be in default checks?
 - What part qualification and environmental metadata must be visible in v1 BOM
   workflows?
+
+
+## Shared library asset specification target
+
+The owner-directed [PM066](PRODUCT_MECHANICS_066_SHARED_ENGINEERING_LIBRARY.md)
+amends this decision's target provenance/revision/binding semantics.
+[SHARED_LIBRARY_ASSET_SPEC](../../specs/SHARED_LIBRARY_ASSET_SPEC.md) is the
+implementation target for common asset records, portable revision references,
+exact dependency closure and shared contributions. Existing local counters,
+legacy mapping fallbacks and pool layout are not portable revision identity.
+Retain the reusable object model, Import Map identity and no-silent-update rule.

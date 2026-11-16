@@ -1,0 +1,78 @@
+# Product Mechanics 066: Shared engineering library
+
+Status: owner-directed specification amendment, 2026-11-16; implementation pending.
+Task: `dat-shared-library-spec-vvtz`.
+
+## Disposition
+
+The owner directs a unified, editable engineering library with standardized asset
+provenance, reusable component definitions, exact revisions, open contributions,
+evidence-based review, and validation connected to ERC/DRC and manufacturing.
+GitHub is the initial proposed collaboration host. Specification completion and
+independent review precede application integration and asset migration.
+
+The normative target contract is
+[Shared Library Asset Specification](../../specs/SHARED_LIBRARY_ASSET_SPEC.md).
+This is a specification amendment, not proof that the application implements it.
+It grants no source-content redistribution, dependency, publication or migration
+authority. Repository stewardship and public publishing policy remain decisions
+to settle before enabling public publishing, without blocking local foundations.
+
+## Supersession and retained foundation
+
+This amendment supplements PM008/008A and supersedes conflicting *target*
+interpretations of their library provenance, revision and binding clauses:
+
+- A library is a unified engineering graph, not independently assigned symbol
+  and footprint catalogs as the ordinary design workflow.
+- A reusable component binds electrical definition, symbol, physical choice and
+  gate-aware pin/pad mapping by exact asset revision. Definitions and geometry
+  remain separately reusable; a monolithic duplicated component file is not the
+  target.
+- An asset UUID, mutable pool path, local `object_revision`, Git commit or MPN
+  alone is insufficient portable revision identity. The portable reference and
+  dependency-closure contract in the specification governs exchange.
+- Provenance is a common record for all asset kinds, not optional symbol-only
+  fields. Unknown imported history remains honestly unknown.
+- Direct raw-file/Git merging into a live project, automatic latest-wins updates,
+  automatic approval from popularity or a vendor badge, and silent fallback from
+  an invalid declared mapping are forbidden target behavior.
+- Existing compatibility layouts and fallback mappings remain explicitly labeled
+  migration inputs, not authority for new shared-library definitions. Their
+  removal requires a separately scoped compatibility decision and proof.
+
+Preserve PM001's single mutation path, one resolver-owned `DesignModel`, PM008's
+object separation and Import Map identity, PM009's checks, PM010's evidence-based
+standards posture, and PM061's effective process geometry. PM034 keeps Git an
+optional transport; PM038 keeps formal project document control opt-in. Technical
+asset history must not impose a governed-project workflow on ordinary designers.
+PM062's deferred pool priority, placement gating and ranking choices are not
+silently settled here. Existing review/AI approval guardrails remain controlling.
+
+## Required product behavior
+
+The Library Editor lets a user create, inspect, edit, derive, compare and validate
+symbols, footprints, components and mappings together. Normal component search
+selects engineering properties and an explicit supported physical implementation;
+the user does not assemble Entity/Part/Map records manually. The same selected
+component identity continues into PCB implementation. Manual and AI actions use
+the same engine operations, review boundaries and journal.
+
+History records engineering accountability, not personal search or usage habits.
+Working asset content remains lean; supporting history/evidence is linked and
+loaded when needed. Library checks feed revision-qualified design checks; blocked
+manufacturing findings prevent CAM publication under the applicable existing
+release policy. Standards basis, unknowns and legitimate deviations stay visible.
+
+## Delivery and prevention of regression
+
+Implementation tasks cite this decision and the specification, identify applicable
+requirement IDs, and state which target behavior they deliver. Historical slices
+keep their original scope and proof. Review rejects reintroduction of superseded
+target behavior even if older code or examples still use it. Acquisition,
+conversion and revision-aware bindings are proven before bulk migration.
+
+The first delivery scope and done statement require owner/authorized-PM scheduling
+under PM059. This specification is not a successor selection or product PASS.
+No new cryptographic provider, third-party code, standards content or signature
+service is adopted by this decision.

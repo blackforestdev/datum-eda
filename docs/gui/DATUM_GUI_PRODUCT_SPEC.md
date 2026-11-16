@@ -610,10 +610,24 @@ Part–Package–Footprint–pin-pad mapping. Existing references and unavailabl
 metadata are shown honestly; browsing or inspection does not repair, rebind,
 approve or adopt source. The full library browser remains SURFACE-S03.
 
-Normal component placement selects a reusable Part with visible Value and
-Package, its default Footprint and complete default pin/pad map. Its Value comes
-from that selected definition; references and placement geometry remain local.
-An empty Part pool can enter existing Library Acquire and select a complete
+Normal component placement must complete one unified choice of electrical
+representation, value and physical package/footprint, with qualified pin mapping,
+before canvas placement. Reuse a complete component or choose its supported
+value/physical variant in the same workflow. The same complete component identity
+and physical choice carry into initial PCB transfer. An empty Part pool must not
+silently turn that operation into unbound-Symbol placement followed by manual
+relationship construction at PCB handoff.
+
+Double-click, Inspector and context Properties expose the same local **Component
+Properties**: Reference, Value and Footprint Choose/Change. The real-footprint
+chooser accepts a selection and returns it to Properties for Apply, with any
+required mapping review. Cancel leaves pending component edits unapplied;
+canonical identity, wiring, other instances and normal Undo/Redo are preserved.
+Ordinary editing does not require separate Entity/Part/Map authoring. Expert
+library editors remain available for their explicit purpose. Existing routed
+counterpart changes retain their separate governed update/ECO scope.
+
+The bounded native acquisition capability can select a complete
 native Part from a saved native project, previewing gate Symbols, physical
 geometry and actual pad-to-pin correspondences before one explicit acquisition.
 Identity conflicts or unsupported dependency resources refuse rather than
@@ -636,11 +650,15 @@ The historical `dat-single-component-picker-b5xf` source-first picker
 bounded synthetic-source prefix, failed cold capture and later targeted checks
 remain historical evidence, not renewed QA readiness.
 
-The `dat-jmxm` QA008–011 correction translates reviewed L-H target
+The `dat-jmxm` QA008–011 interaction correction translates the recorded L-H target
 `a8a7c8a43469aebabac811856d1af7b34a90d52c8db7d353cdcbbed1e5ba127c`
 into focused **Place Component** Search on the captured schematic. Search combines
 qualified project Parts with shipped Symbols, preserving complete Part authority
 and explicit **schematic-only** Symbol intent. Library management stays separate.
+Its ordinary Symbol-only route does not fulfill the governing placement-time
+physical choice. Preserve its accepted interaction fixes while correcting that
+remaining user-workflow gap; a readable searchable Symbol is not complete
+component-selection readiness.
 Down enters the results; arrows select/reveal/update preview, PageUp/PageDown and
 wheel/native pixel input navigate one continuous list, and Tab visits major
 controls. Normal placement has no four-row Previous/Next pages.
@@ -687,18 +705,38 @@ definition acquisition and complete-Part cases are not new runtime proof. The
 same task binds independent source/outcome reviews; owner findings remain open.
 
 Existing Symbol-only projects need explicit component definitions for PCB
-transfer. The accepted L-K target in `library-surfaces-study.html` gives an
-unbound row a Resolve action into existing compatible-Part assignment or
-contextual Library authoring, retaining the selected reference and original
-schematic occurrence. Authoring uses that Symbol's saved Unit/Symbol identities;
-a same-looking external Part supplies no compatible binding. Return and transfer
-retry remain explicit. Library-only commits preserve the return target;
-changed targets refuse, pending drafts/workers block leaving, and cancellation
-retains separately committed definitions. Existing Proposal acceptance, map
-choice and source-preparation rules remain in force. No component, footprint or
-pin map is guessed. This bounded `i89r` target is accepted; its Rust translation
-and ordinary runtime proof are pending. Existing qualification/S05 decisions and
-general ECO scope are unchanged.
+transfer. L-K originated as the deferred `i89r` target; the separately authorized
+QA013 correction implements its bounded recovery through selected-Symbol Assign
+Part or an unresolved transfer row. Existing Library authoring retains the exact
+saved Unit/Symbol and original Project/pane/document/occurrence/sheet preimage.
+Explicit return requalifies current definitions; changed contexts refuse before
+restoring focus. Cancelling navigation preserves committed definitions and makes
+no assignment. Pending drafts/workers block leaving. Eligible recovery controls
+share pointer and Tab/Shift+Tab/Enter behavior with visible focus.
+
+This describes technical capability, not an accepted ordinary assignment UX.
+Owner recheck rejected the manual Entity/Part/Map journey and the Reference/Value
+dialog with no footprint control. Local Component Properties and normal unified
+selection remain required. Corrected L-H/L-K target SHA-256
+`185d77bb8145ca6133c82eb18393bb852756e4e9d634a07b1cfa741ef25b4267`
+has distinct source and normal/narrow pixel review and bounded PM acceptance
+against that requirement. The earlier graph-oriented recovery presentation
+retains its historical scope. Native implementation and ordinary real-data
+workflow verification remain pending; target acceptance establishes no runtime
+readiness or owner QA acceptance.
+
+The real GUI case explicitly chooses the installed `R_0603_1608Metric` source,
+authors a named Part with empty manufacturer/MPN and nonempty value, and confirms
+both numbered pin/pad mappings and the Part default. Existing orderable metadata
+and physical graph/revision guards remain. Separate Library commits, assignment
+Proposal, source preparation and transfer create one R1 package/two real pads
+with canonical pad 1→VCC / pad 2→GND relationships. Assignment preserves the old
+R1 pins/pose/wiring; both assignment and transfer Undo/Redo and Save ACK pass.
+The board capture follows public Fit to Board. Package-inspection captures are
+not visual pad-net proof; the net correspondence is canonical model evidence.
+No cold reopen, starter bundle/provider approval, manufacturing, HUMAN, full
+qualification or owner QA013 closure is claimed. Existing S05/general ECO and
+unanswered first-party starter-content boundaries remain unchanged.
 
 The subsequent bounded Reference/display Value revision implementation
 (`dat-schematic-pcb-revision-loop-cf5t`, study S-P) is separate from initial
@@ -942,3 +980,16 @@ Implementation that changes GUI product shape must update this spec and
 `specs/PROGRESS.md` in the same change. Implementation that changes code
 surface shape may also require a spec parity inventory, but this planning spec
 does not add one by itself.
+
+
+## Shared library asset specification target
+
+[PM066](../decisions/PRODUCT_MECHANICS_066_SHARED_ENGINEERING_LIBRARY.md) and
+[SHARED_LIBRARY_ASSET_SPEC](../../specs/SHARED_LIBRARY_ASSET_SPEC.md), SL-002,
+SL-023 and SL-030–034, govern the shared Library Editor workflow target. Preserve
+preceding component-first selection, local Properties, pending Apply/Cancel and
+QA013 target/current distinctions. Library history, provenance and semantic diffs
+are inspectable when needed; ordinary placement does not require governance
+ceremony. Personal usage/search telemetry is outside the asset model. New history
+or contribution layouts still require independently reviewed visual authority;
+this amendment changes no existing prototype, pixel acceptance or runtime claim.

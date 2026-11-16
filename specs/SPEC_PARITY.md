@@ -59,3 +59,5 @@ These names and counts do not establish readiness, enrollment, proof or activati
 | `electrical_source_shard_taxa` | `specs/NATIVE_FORMAT_SPEC.md` | 23 | `1ff1a8ca056dd0775614cf993bda5db903ebe046397c86f3a9d07995085eee27` |
 | `canonical_operation_kinds` | `specs/NATIVE_FORMAT_SPEC.md` | 146 | `fb74a5f2cee4bccf09d42569e5805963c51b20a6c943b0ef85b49ee46dae9def` |
 | `electrical_identity_source_schema` | `specs/NATIVE_FORMAT_SPEC.md` | 1 | `c60c0a32a9e73c4947f5b3dbff1f178c5dc9f1c81a1a8f5ac45a42aea666a1a9` |
+
+| `shared_library_asset_contract` | `docs/decisions/PRODUCT_MECHANICS_066_SHARED_ENGINEERING_LIBRARY.md` | 1 | `29742f26cf94045aaaec39f02993d07e27082a821f5c5dfd2590361a383246b4` |

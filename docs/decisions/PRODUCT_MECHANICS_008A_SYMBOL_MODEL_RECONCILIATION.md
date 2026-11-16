@@ -100,3 +100,13 @@ behavior (a model flag + a connectivity rule).
 - Whether decision-008 §Symbol `pins[]` should name active-low separately from
   the current `inverted` decoration (D2).
 - Gate-swap representation (pin swap via `swap_group` is present).
+
+
+## Shared library asset specification target
+
+[PM066](PRODUCT_MECHANICS_066_SHARED_ENGINEERING_LIBRARY.md) and
+[SHARED_LIBRARY_ASSET_SPEC](../../specs/SHARED_LIBRARY_ASSET_SPEC.md), SL-010–023,
+extend the target with common provenance and portable immutable asset revisions.
+Technical object/model counters remain local edit guards, not a substitute for
+portable content-qualified references. This does not change Symbol/Unit/Entity
+ownership or silently rebind existing component instances.

@@ -75,7 +75,7 @@ class FileLaneOwnershipTests(unittest.TestCase):
     def assert_refused(self, marker: str | None = None) -> None:
         result = self.repo.run_gate(marker)
         self.assertEqual(result.returncode, 1, result.stderr.decode())
-        self.assertIn(b"Claude-owned visual-truth lane", result.stderr)
+        self.assertIn(b"owner-assigned Codex visual-truth lane", result.stderr)
 
     def prepare_protected_operation(self, operation: str) -> None:
         protected = "docs/gui/prototypes/study.html"
@@ -129,12 +129,12 @@ class FileLaneOwnershipTests(unittest.TestCase):
 
     def test_only_exact_marker_value_permits_protected_path(self) -> None:
         self.stage("docs/gui/prototypes/study.html")
-        for marker in (None, "", "Claude", "CLAUDE", "codex", "claude "):
+        for marker in (None, "", "Codex", "CODEX", "claude", "codex "):
             with self.subTest(marker=marker):
                 self.assert_refused(marker)
-        accepted = self.repo.run_gate("claude")
+        accepted = self.repo.run_gate("codex")
         self.assertEqual(accepted.returncode, 0, accepted.stderr.decode())
-        self.assertIn(b"marked Claude session", accepted.stdout)
+        self.assertIn(b"marked Codex session", accepted.stdout)
 
     def test_exact_marker_permits_every_protected_operation(self) -> None:
         operations = ("add", "copy", "modify", "mode", "delete")
@@ -143,7 +143,7 @@ class FileLaneOwnershipTests(unittest.TestCase):
                 self.repo.close()
                 self.repo = Repository()
                 self.prepare_protected_operation(operation)
-                accepted = self.repo.run_gate("claude")
+                accepted = self.repo.run_gate("codex")
                 self.assertEqual(accepted.returncode, 0, accepted.stderr.decode())
 
         renames = (
@@ -158,7 +158,7 @@ class FileLaneOwnershipTests(unittest.TestCase):
                 self.repo.commit_all()
                 (self.repo.root / destination).parent.mkdir(parents=True, exist_ok=True)
                 self.repo.git("mv", source, destination)
-                accepted = self.repo.run_gate("claude")
+                accepted = self.repo.run_gate("codex")
                 self.assertEqual(accepted.returncode, 0, accepted.stderr.decode())
 
     def test_nested_spaces_and_unicode_paths_are_unambiguous(self) -> None:

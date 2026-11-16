@@ -182,10 +182,15 @@ or a change alters the route-wide meaning. A digest is no substitute for review.
 new mechanisms require a numbered decision. Follow the detailed same-change
 checklist in the operational procedures; no orphan specifications.
 
-Claude exclusively owns every `docs/gui/prototypes/*.html` file. Codex may inspect
-and screenshot, never modify, format, rename, delete or regenerate them. Return
-bounded changes to Claude. Never set/copy/forward the lane marker or refresh
-digests/goldens to launder an out-of-lane change. For native translation inspect
+Owner transfer (2026-11-16): Codex takes over Claude's responsibilities,
+including every `docs/gui/prototypes/*.html` file, under the existing bounded
+product grants. This supersedes exclusive Claude ownership prospectively;
+historical producer and review evidence retain their actual actors. The normal
+staged lane gate requires `DATUM_VISUAL_TRUTH_LANE=codex` in the authorized
+visual session only. Never impersonate the retired Claude lane, bypass hooks,
+or refresh digests/goldens without reviewing the affected evidence route.
+Independent visual and product review remains required.
+For native translation inspect
 prototype DOM/CSS as well as screenshots; verify matching relevant states.
 Capture and inspect visual changes before presenting them.
 

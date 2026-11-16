@@ -580,15 +580,37 @@ hierarchy coverage. HUMAN, release-GUI workflow, full qualification, global
 clean DRC and manufacturing readiness are not established; no Frontier
 successor or transition is selected.
 
-*Existing-project component resolution — accepted target, runtime pending:*
-`dat-existing-project-component-resolution-i89r` adds the bounded L-K target for
-an unbound transfer row to reach existing Library/Assign Part and return to its
-original placed symbol without redrawing. Source and normal/narrow visual
-reviews passed; Library commits remain committed on cancellation, intentional
-Library-only changes permit return, and stale targets/pending drafts refuse
-truthfully. Rust translation is in progress; no ordinary runtime delivery is
-claimed yet. This repair leaves the accepted 3qbp objective, broader cf5t and
-separate qualification boundaries at their recorded scopes.
+*QA013 — original component-centric requirement; owner usability FAIL:*
+`dat-component-first-capture-3btd` requires value and physical package/footprint
+choice at normal component selection, carried with the same qualified identity
+and map into initial PCB. Existing R1 must expose local Component Properties
+through double-click/Inspector/context, including Footprint Choose/Change and
+predictable Apply/Cancel. The current ordinary Symbol-only path and manual
+Entity/Part/Map journey do not conform. The four consumer specifications restore
+that requirement. Corrected L-H/L-K target SHA-256
+`185d77bb8145ca6133c82eb18393bb852756e4e9d634a07b1cfa741ef25b4267`
+has distinct source and normal/narrow pixel review and bounded PM acceptance;
+native implementation and ordinary real-data workflow verification remain pending.
+Target review establishes no runtime readiness or owner QA acceptance.
+Accepted QA008–012 interaction fixes
+and other scoped schematic-editing work must be preserved; regression blocks
+readiness. This changes no generated Frontier selection or execution authority.
+
+*QA013 retained physical-assignment technical capability:*
+`dat-symbol-physical-assignment-qa013-chxu` independently implements the current
+L-K correction; deferred `i89r` is not revived. On a provenance-verified copy of
+an ordinary GUI-created Device:R design, public controls draw VCC–R1–GND, retain
+its exact Unit/Symbol, choose the installed real 0603 footprint, author an
+explicitly named Part with empty procurement metadata, and confirm both pad/pin
+mappings and the default. Canonical assignment preserves R1's UUID/value/pose,
+pins, wires and power ports. Transfer produces one R1 package/two real pads;
+canonical relationships establish pad 1→VCC / pad 2→GND. Separate Library commits
+survive resolution Cancel; assignment/transfer Undo/Redo and Save ACK are
+verified. Actual source and outcome reviews pass within those scopes. Board
+pixels follow public Fit to Board; package inspection does not show individual
+pad nets. No cold reopen, starter-bundle approval, manufacturing/HUMAN/full
+qualification or owner QA013 acceptance is claimed. Subsequent owner recheck
+failed discoverability and footprint-choice completion; QA013 remains open.
 
 *Earlier bounded PCB target checkpoint (historical):* the owner-goal `dat-practical-pcb-design-3qbp`
 has delivered the native Route/Zone GUI controls (source `711e0fc1`,
@@ -606,7 +628,7 @@ refreshed for component source `54b4413b`. Earlier runtime receipts retain their
 original scopes.
 
 *Bounded component-first development:* direct-owner
-`dat-component-first-capture-3btd` delivers normal complete-Part selection,
+`dat-component-first-capture-3btd` implemented complete-Part selection capability,
 reusable native Part acquisition, reviewed provisional-Symbol completion and
 established-choice PCB handoff under existing PM003/PM008. Source `54b4413b`,
 43 passing focused engine checks and the isolated ordinary debug App's 25-stage
@@ -1911,3 +1933,19 @@ Task-scoped reading uses CLAUDE.md and applicable operational procedures; it doe
 ## USER-EDIT-DELIVERY bounded writer prerequisite
 
 Bounded writer prerequisite history is retained; live selection and execution authority come from the Active Frontier. [Detailed evidence](progress/gui_delivery_details.md#user-edit-delivery-bounded-writer-prerequisite).
+
+
+## Shared library asset specification target
+
+- [x] **Shared engineering library specification** — `dat-shared-library-spec-vvtz`,
+  owner-directed specification work under PM066 and
+  [SHARED_LIBRARY_ASSET_SPEC](SHARED_LIBRARY_ASSET_SPEC.md). Current: existing
+  reusable objects, journal and component work are partial foundations; the
+  shared provenance/revision/contribution contract is an independently reviewed,
+  PM-accepted target specification; specification-only landing is pending the PM
+  commit. Runtime implementation remains pending and requires separate scope and
+  authorization; validated first-slice acquisition/adoption precedes bulk asset
+  conversion.
+  No successor milestone, migration, publication, standards compliance or product
+  acceptance is selected by this entry. Existing generated Frontier, QA013 scope,
+  component-first/Properties requirements and historical evidence remain intact.
