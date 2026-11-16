@@ -1942,8 +1942,8 @@ Bounded writer prerequisite history is retained; live selection and execution au
   [SHARED_LIBRARY_ASSET_SPEC](SHARED_LIBRARY_ASSET_SPEC.md). Current: existing
   reusable objects, journal and component work are partial foundations; the
   shared provenance/revision/contribution contract is an independently reviewed,
-  PM-accepted target specification; specification-only landing is pending the PM
-  commit. Runtime implementation remains pending and requires separate scope and
+  PM-accepted target specification, landed in `b8dc0e11`. Runtime implementation
+  remains pending and requires separate scope and
   authorization; validated first-slice acquisition/adoption precedes bulk asset
   conversion.
   No successor milestone, migration, publication, standards compliance or product
