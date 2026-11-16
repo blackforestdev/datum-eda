@@ -21,6 +21,16 @@ instructions must not redefine its capabilities, gates or mutation semantics.
 - **Optional first-class AI.** AI is a collaborator that operates through the
   same deterministic primitives a user does — stable IDs, queries, typed
   operations, proposals, checks, diffs, provenance — never private edit powers.
+- **Usability and simplicity.** Familiar, consistent interaction and discoverable
+  workflows are governing product requirements. Make ordinary design tasks
+  straightforward and complex capabilities coherent; keep internal model
+  assembly behind the task instead of making it the user's workflow. Preserve
+  advanced controls and explicit safety decisions. Design and review must assess
+  the ordinary user task; implemented-feature readiness requires appropriate
+  real-data interface proof. Technical reachability alone does not establish
+  usability. Existing proportionate verification and reuse of adequate evidence
+  still apply.
+  Apply the controlling [usability doctrine](docs/DATUM_PRODUCT_MECHANICS.md#usability-and-simplification).
 - **One canonical `DesignModel`.** Schematic, PCB, library, rules,
   manufacturing, and analysis are projections over one model assembled by an
   engine-owned resolver — not separate authorities. Files are persistence

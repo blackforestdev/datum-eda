@@ -2,6 +2,7 @@
 
 Status: controlling product doctrine (ratified).
 Last reconciled: 2026-10-15 (terminal mechanism only; PM029/030 already ratified)
+Usability and simplification amendment: owner-directed, 2026-11-15 (`dat-3vfi`).
 
 Companion review agenda:
 - `docs/audits/scope-integration/DATUM_PRODUCT_MECHANICS_REVIEW_AGENDA.md` breaks unresolved mechanics
@@ -76,6 +77,40 @@ Required rule:
 
 > If a user cannot perform a core workflow manually, the workflow is not
 > complete, even if an AI agent can perform or fake it.
+
+## Usability And Simplification
+
+Ease of use, discoverability and predictable interaction are governing product
+requirements. Datum must simplify the designer's task while supporting complex
+engineering through deliberate, coherent design.
+
+- Use familiar software and EDA conventions for ordinary interactions. Shared
+  properties, dialogs, focus, keyboard navigation, Apply, Cancel and Undo must
+  behave consistently across their applicable surfaces.
+- Organize an interface around the user's task. Present the relevant editable
+  properties, choices, previews and completion action together. Do not require
+  users to discover or assemble internal model relationships merely to perform
+  an ordinary design action, such as assigning a component footprint.
+- Keep common operations direct and readable. Reveal advanced controls and
+  detailed diagnostics when relevant, with clear hierarchy and actionable
+  feedback. Preserve expert capability and explicit safety decisions without
+  making internal identifiers, file structure or raw data the ordinary workflow.
+- Reuse established research and shared interaction primitives. Evaluate the
+  complete user journey before patching individual controls; correct a flawed
+  target or workflow instead of treating implementation fidelity as usability.
+- Design and review must assess whether a designer can find, understand and
+  complete the ordinary task. Implemented-feature readiness must demonstrate
+  that task through the actual interface with real library/design data. Evidence
+  remains appropriate to the phase; target review does not establish runtime
+  delivery, and adequate existing proof may be reused under existing proportionate
+  verification. A technically reachable operation, successful CLI call or list of
+  internal authoring steps alone does not establish usable feature delivery.
+
+This amendment governs product choices and acceptance reasoning under existing
+delivery authority. It does not claim that current interfaces comply, authorize
+a global rewrite, remove advanced controls, weaken canonical mutation or
+validation, or add a new per-change owner/HUMAN approval requirement. PM059
+delegation, independent review and separately scoped qualification remain.
 
 ## Optional AI Collaboration
 

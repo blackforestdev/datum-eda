@@ -1887,6 +1887,15 @@ Checkpoint evidence and retained boundaries remain in the linked detail; current
 
 ## DELIVERY-MANAGEMENT — owner-directed workflow correction
 
+**Current doctrine — usability and simplification (`dat-3vfi`):** the owner
+requires familiar, consistent, discoverable interaction and coherent design for
+complex capabilities. [Controlling product doctrine](../docs/DATUM_PRODUCT_MECHANICS.md#usability-and-simplification)
+and the CLAUDE.md Ethos govern design, implementation, independent review and
+readiness reasoning. Ordinary real-data user tasks must be understandable and
+completable; technical reachability does not establish usability. This is a
+current principle amendment, not a runtime PASS, global rewrite, new approval
+scheme or successor selection. Existing QA failures and execution holds remain.
+
 Owner-appointed management applies PM059 delegation; product rules, waivers and reserved HUMAN decisions remain owner-only. [Detailed evidence](progress/gui_delivery_details.md#delivery-management--owner-directed-workflow-correction).
 
 PM065 and the bounded feature-admission correction remove unrelated decomposition
