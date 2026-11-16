@@ -398,5 +398,73 @@ class GuiCompanionTests(unittest.TestCase):
         subprocess.run([str(self.paths[1]), '-c', 'pass'], check=True)
 
 
+class WireCompanionTests(CompanionTests):
+    """Apply the same kernel/race/refusal controls to the exact scratch lane."""
+
+    def write_manifest(self, change=None):
+        def scoped(value):
+            value["runtime_safety"] = qa.WIRE_RUNTIME_PROOF
+            if change:
+                change(value)
+        super().write_manifest(scoped)
+
+    def run_dedup(self, *, apply=False, active=None):
+        check = lambda **_: active() if active else []
+        return qa.deduplicate(self.root, self.manifest, self.sha, self.lock,
+                              check, apply=apply)
+
+    def setUp(self):
+        super().setUp()
+        self.paths = []
+        for candidate in ("a", "d", "e"):
+            directory = self.root / (
+                ".datum/scratch/schematic-interaction-qa/"
+                f"wire-candidate-release-20261107-{candidate}"
+            )
+            directory.mkdir(parents=True)
+            path = directory / "datum-eda"
+            shutil.copy2(sys.executable, path)
+            self.paths.append(path)
+            (directory / "datum-gui").write_bytes(b"retained GUI evidence")
+            (directory / "result.log").write_text("retained proof")
+        self.write_manifest()
+
+    def test_wire_admission_is_exact_and_excludes_gui_and_neighbors(self):
+        self.assertEqual(len(qa.WIRE_COMPANIONS), 8)
+        for path in qa.WIRE_COMPANIONS:
+            self.assertEqual(qa.role(path), Path(path).parts)
+        base = ".datum/scratch/schematic-interaction-qa/wire-candidate-release-20261107-"
+        for path in (base + "a/datum-gui", base + "b/datum-eda",
+                     base + "e/eda-engine-daemon", base + "a/../a/datum-eda"):
+            with self.subTest(path=path), self.assertRaises(guard.ResourcePolicyError):
+                qa.role(path)
+
+    def test_held_wire_mode_ignores_peers_but_refuses_compilers(self):
+        calls = []
+        def peers(*, builds_only=False):
+            calls.append(builds_only)
+            return [] if builds_only else ["unrelated daemon"]
+        receipt = qa.deduplicate(self.root, self.manifest, self.sha, self.lock,
+                                 peers, apply=True)
+        self.assertEqual(receipt["status"], "complete_all_paths_and_bytes_retained")
+        self.assertTrue(calls)
+        self.assertTrue(all(calls))
+        self.assert_intact()
+
+    def test_held_wire_mode_cannot_select_legacy_paths(self):
+        legacy = self.root / "target/qa" / self.cohorts[0] / "debug/datum-eda"
+        self.write_manifest(lambda data: data["groups"][0].update(anchor=self.entry(legacy)))
+        with self.assertRaises(guard.ResourcePolicyError):
+            self.run_dedup(apply=True)
+        self.assert_intact()
+
+    def test_no_runtime_marker_retains_legacy_idle_guard(self):
+        self.write_manifest(lambda data: data.pop("runtime_safety"))
+        with self.assertRaises(guard.ResourcePolicyError):
+            qa.deduplicate(self.root, self.manifest, self.sha, self.lock,
+                           lambda: ["unrelated daemon"], apply=True)
+        self.assert_intact()
+
+
 if __name__ == "__main__":
     unittest.main()

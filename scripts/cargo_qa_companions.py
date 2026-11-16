@@ -37,6 +37,15 @@ GUI_COHORTS = {
     "browse-affordance-b0158987", "browse-affordance-7b3455dd",
 }
 GUI_RUNTIME_PROOF = "held_elf_write_descriptors"
+WIRE_RUNTIME_PROOF = "held_wire_elf_write_descriptors"
+# Exact byte/metadata-matched companion copies; no GUI or candidate-tree retirement.
+WIRE_COMPANIONS = {
+    f".datum/scratch/schematic-interaction-qa/wire-candidate-release-20261107-{candidate}/datum-eda"
+    for candidate in ("a", "d", "e", "g", "h", "i")
+} | {
+    f".datum/scratch/schematic-interaction-qa/wire-candidate-release-20261107-{candidate}/eda-engine-daemon"
+    for candidate in ("a", "d")
+}
 READ = os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC | os.O_NONBLOCK
 WRITE = os.O_RDWR | os.O_NOFOLLOW | os.O_CLOEXEC | os.O_NONBLOCK
 FIELDS = ("device", "inode", "nlink", "size", "uid", "gid", "mode", "mtime_ns", "ctime_ns")
@@ -82,6 +91,8 @@ def snapshot(descriptor):
 
 def role(path):
     parts = PurePosixPath(path).parts
+    if path in WIRE_COMPANIONS:
+        return parts
     if (len(parts) != 5 or parts[:2] != ("target", "qa")
             or parts[3] != "debug"
             or str(PurePosixPath(path)) != path):
@@ -100,7 +111,7 @@ def load_manifest(path, expected_sha):
     if value.get("schema_version") != 1 or value.get("operation") != "deduplicate_immutable_qa_binaries":
         refuse("unknown manifest operation")
     runtime_proof = value.get("runtime_safety")
-    if runtime_proof not in (None, GUI_RUNTIME_PROOF):
+    if runtime_proof not in (None, GUI_RUNTIME_PROOF, WIRE_RUNTIME_PROOF):
         refuse("unknown runtime safety proof")
     gui_mode = runtime_proof == GUI_RUNTIME_PROOF
     groups = value.get("groups")
@@ -118,6 +129,8 @@ def load_manifest(path, expected_sha):
             refuse("duplicate companion group")
         roles.add(name)
         for entry in [anchor, *duplicates]:
+            if runtime_proof == WIRE_RUNTIME_PROOF and entry["path"] not in WIRE_COMPANIONS:
+                refuse("held wire runtime proof requires an exact admitted wire companion")
             if role(entry["path"])[-1] != name or entry["path"] in paths:
                 refuse("mixed roles or repeated selected paths")
             paths.add(entry["path"])
@@ -126,7 +139,7 @@ def load_manifest(path, expected_sha):
             if any(entry[key] != anchor[key] for key in
                     ("device", "size", "uid", "gid", "mode", "mtime_ns", "sha256", "xattrs_sha256")):
                 refuse("group bytes, filesystem, timestamps or security metadata differ")
-    return groups, paths, gui_mode
+    return groups, paths, runtime_proof
 
 
 def directory(root, parts, stack):
@@ -192,7 +205,7 @@ class Bound:
         self.verify(named=False)
 
 
-def nonselected_inventory(root, cohorts, excluded):
+def nonselected_inventory(root, roots, excluded):
     result = {}
 
     def walk(descriptor, prefix):
@@ -221,8 +234,7 @@ def nonselected_inventory(root, cohorts, excluded):
                 refuse("unknown nonselected QA file type")
 
     with ExitStack() as stack:
-        for cohort in sorted(cohorts):
-            parts = ("target", "qa", cohort)
+        for parts in sorted(roots):
             descriptor, _ = directory(root, parts, stack)
             walk(descriptor, "/".join(parts))
     return result
@@ -234,24 +246,25 @@ def inventory_sha(value):
 
 def deduplicate(root, manifest, manifest_sha, lock_path, active_check, *, apply=False):
     try:
-        groups, selected, gui_mode = load_manifest(manifest, manifest_sha)
+        groups, selected, runtime_proof = load_manifest(manifest, manifest_sha)
     except (ValueError, KeyError, TypeError) as error:
         refuse(f"malformed manifest: {error}")
     root = Path(root).resolve()
-    cohorts = {role(path)[2] for path in selected}
+    parts = [role(path) for path in selected]
+    roots = {value[:3] if value[:2] == ("target", "qa") else value[:-1] for value in parts}
     receipt = {"manifest_sha256": manifest_sha, "apply": apply, "completed": [],
                "status": "preflight", "kernel_proof": "selected ELF write descriptors; no process-idle assertion"}
-    receipt["runtime_guard"] = GUI_RUNTIME_PROOF if gui_mode else "all_recognized_builds_and_apps_idle"
+    receipt["runtime_guard"] = runtime_proof or "all_recognized_builds_and_apps_idle"
     bound = {}
     with guard.acquire_lock(lock_path, 0), ExitStack() as stack:
         temporary = []
         try:
             def idle():
-                # GUI mode never assumes unrelated apps are idle. Every selected
+                # Explicit held-ELF modes never assume unrelated apps are idle. Every selected
                 # executable must pass Bound's kernel write-open admission and
                 # stay held through all swaps and postverification. Compilers
                 # remain excluded under the same shared build lock.
-                active = active_check(builds_only=True) if gui_mode else active_check()
+                active = active_check(builds_only=True) if runtime_proof else active_check()
                 if active:
                     refuse("active Cargo/Datum process: " + ", ".join(active))
 
@@ -266,7 +279,7 @@ def deduplicate(root, manifest, manifest_sha, lock_path, active_check, *, apply=
             if len({(item.expected["device"], item.expected["inode"]) for item in bound.values()}) != len(bound):
                 refuse("manifest must select distinct pre-deduplication inodes")
             receipt["before"] = {path: item.verify() for path, item in bound.items()}
-            before = nonselected_inventory(root, cohorts, selected)
+            before = nonselected_inventory(root, roots, selected)
             receipt["nonselected_before_sha256"] = inventory_sha(before)
             receipt["nonselected_entries"] = len(before)
             idle()
@@ -320,7 +333,7 @@ def deduplicate(root, manifest, manifest_sha, lock_path, active_check, *, apply=
                         refuse("postverification differs from exact held inode/bytes")
                     after[entry["path"]] = actual
             receipt["after"] = after
-            unchanged = nonselected_inventory(root, cohorts, selected)
+            unchanged = nonselected_inventory(root, roots, selected)
             receipt["nonselected_after_sha256"] = inventory_sha(unchanged)
             if unchanged != before:
                 refuse("nonselected QA inventory changed")
