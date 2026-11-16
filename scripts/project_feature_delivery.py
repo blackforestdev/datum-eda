@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import json
 import re
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
@@ -26,15 +27,17 @@ def _strings(value: Any, *, required: bool = False) -> bool:
     )
 
 
-def _ordinary_record(root: Path, path: str, contract: dict) -> list[str]:
+def _ordinary_record(root: Path, path: str, contract: dict,
+                     read_evidence: Callable[[str], str] | None = None) -> list[str]:
     rel = Path(path)
     if rel.is_absolute() or ".." in rel.parts:
         return ["ordinary evidence must be a repository-relative path"]
-    resolved = (root / rel).resolve()
-    if not resolved.is_relative_to(root.resolve()):
-        return ["ordinary evidence cannot escape the repository through a symlink"]
+    if read_evidence is None:
+        resolved = (root / rel).resolve()
+        if not resolved.is_relative_to(root.resolve()):
+            return ["ordinary evidence cannot escape the repository through a symlink"]
     try:
-        record = json.loads(resolved.read_text())
+        record = json.loads(read_evidence(path) if read_evidence else resolved.read_text())
     except (OSError, ValueError):
         return [f"ordinary evidence is missing or invalid JSON: {path}"]
     if not isinstance(record, dict) or record.get("kind") != "ordinary_application":
@@ -55,7 +58,8 @@ def _ordinary_record(root: Path, path: str, contract: dict) -> list[str]:
     return failures
 
 
-def validate_feature_delivery(root: Path, item: dict, issue: dict) -> list[str]:
+def validate_feature_delivery(root: Path, item: dict, issue: dict, *,
+                              read_evidence: Callable[[str], str] | None = None) -> list[str]:
     contract = item.get("feature_delivery")
     purpose_record = item.get("work_purpose")
     purpose = purpose_record.get("kind") if isinstance(purpose_record, dict) else None
@@ -103,7 +107,8 @@ def validate_feature_delivery(root: Path, item: dict, issue: dict) -> list[str]:
             failures.append(f"{label}: development-ready needs ordinary application evidence")
         elif not failures:
             for path in contract["ordinary_evidence"]:
-                failures.extend(f"{label}: {failure}" for failure in _ordinary_record(root, path, contract))
+                failures.extend(f"{label}: {failure}" for failure in
+                                _ordinary_record(root, path, contract, read_evidence))
     return failures
 
 

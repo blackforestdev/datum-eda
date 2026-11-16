@@ -160,7 +160,87 @@ class StagedDeliveryTests(DeliveryGapTests):
         self.stage()
         self.assertIn("mismatch", " ".join(staged.check(self.root, "HEAD", ":")))
 
-    def test_real_precommit_rejects_bad_closure_and_preserves_head(self):
+    def ready_evidence(self):
+        self.gap.update(status="closed", acceptance_criteria="- [x] Exact output regression",
+                        close_reason="Reviewed repair landed.")
+        self.item["feature_delivery"] = {
+            "ordinary_workflow": ["Assign footprint"],
+            "safety_requirements": ["Undo restores design"],
+            "qualification_followups": [],
+            "prerequisite_reasons": {"issue:fix": "Correct emitted geometry"},
+            "development_ready": True,
+            "ordinary_evidence": ["ordinary.json"],
+        }
+        return {"kind": "ordinary_application", "source_commit": self.git("rev-parse", "HEAD").strip(),
+                "launch_command": "datum-gui --project-root owned-copy",
+                "workflow_results": {"Assign footprint": True},
+                "safety_results": {"Undo restores design": True}}
+
+    def stage_evidence(self, record):
+        (self.root / "ordinary.json").write_text(json.dumps(record))
+        self.git("add", "ordinary.json")
+        self.stage()
+
+    def test_ready_requires_evidence_in_candidate(self):
+        record = self.ready_evidence()
+        self.stage()
+        # Even a passing worktree-only file is not evidence for this commit.
+        (self.root / "ordinary.json").write_text(json.dumps(record))
+        self.assertIn("missing or invalid", " ".join(staged.check(self.root, "HEAD", ":")))
+
+    def test_staged_failed_or_missing_results_cannot_be_blessed_by_worktree(self):
+        record = self.ready_evidence()
+        for field in ["workflow_results", "safety_results"]:
+            for results in [{key: False for key in record[field]}, {}]:
+                with self.subTest(field=field, results=results):
+                    failed = copy.deepcopy(record)
+                    failed[field] = results
+                    self.stage_evidence(failed)
+                    (self.root / "ordinary.json").write_text(json.dumps(record))
+                    self.assertIn("passing " + field, " ".join(staged.check(self.root, "HEAD", ":")))
+
+    def test_valid_staged_and_committed_evidence_ignore_worktree_failure(self):
+        self.stage_evidence(self.ready_evidence())
+        (self.root / "ordinary.json").write_text("invalid worktree JSON")
+        self.assertEqual([], staged.check(self.root, "HEAD", ":"))
+        self.git("commit", "-qm", "ready candidate")
+        self.assertEqual([], staged.check(self.root, "HEAD^", "HEAD"))
+
+    def test_evidence_only_change_runs_staged_gate(self):
+        record = self.ready_evidence()
+        self.stage_evidence(record)
+        self.git("commit", "-qm", "ready candidate")
+        record["workflow_results"]["Assign footprint"] = False
+        (self.root / "ordinary.json").write_text(json.dumps(record))
+        self.git("add", "ordinary.json")
+        self.assertEqual(1, staged.main(["--root", str(self.root), "--staged"]))
+
+    def test_staged_evidence_symlink_cannot_read_worktree_target(self):
+        record = self.ready_evidence()
+        (self.root / "passing.json").write_text(json.dumps(record))
+        (self.root / "ordinary.json").symlink_to("passing.json")
+        self.git("add", "ordinary.json")
+        self.stage()
+        self.assertIn("missing or invalid", " ".join(staged.check(self.root, "HEAD", ":")))
+
+    def test_evidence_only_trigger_handles_relative_alias_and_quoted_names(self):
+        for path in ["./ordinary.json", "ordinary-é.json", "ordinary\tresult.json"]:
+            with self.subTest(path=path):
+                record = self.ready_evidence()
+                self.item["feature_delivery"]["ordinary_evidence"] = [path]
+                target = self.root / path
+                target.write_text(json.dumps(record))
+                self.git("add", path)
+                self.stage()
+                self.assertEqual([], staged.check(self.root, "HEAD", ":"))
+                self.git("commit", "-qm", "ready candidate")
+                record["workflow_results"]["Assign footprint"] = False
+                target.write_text(json.dumps(record))
+                self.git("add", path)
+                self.assertEqual(1, staged.main(["--root", str(self.root), "--staged"]))
+                self.git("restore", "--source=HEAD", "--staged", "--worktree", "--", path)
+
+    def install_delivery_hook(self):
         hook_dir = self.root / "hooks"
         hook_dir.mkdir()
         hook = hook_dir / "pre-commit"
@@ -169,6 +249,20 @@ class StagedDeliveryTests(DeliveryGapTests):
                         + shlex.quote(str(self.root)) + " --staged\n")
         hook.chmod(0o755)
         self.git("config", "core.hooksPath", str(hook_dir))
+
+    def test_real_precommit_rejects_ready_without_evidence(self):
+        self.install_delivery_hook()
+        before = self.git("rev-parse", "HEAD")
+        self.ready_evidence()
+        self.stage()
+        result = subprocess.run(["git", "commit", "-qm", "unsupported readiness"],
+                                cwd=self.root, text=True, capture_output=True)
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("ordinary evidence is missing", result.stdout + result.stderr)
+        self.assertEqual(before, self.git("rev-parse", "HEAD"))
+
+    def test_real_precommit_rejects_bad_closure_and_preserves_head(self):
+        self.install_delivery_hook()
         before = self.git("rev-parse", "HEAD")
         self.gap.update(status="closed", close_reason="Forced premature close")
         self.stage()
