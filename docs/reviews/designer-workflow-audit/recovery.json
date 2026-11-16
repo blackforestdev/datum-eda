@@ -1,0 +1,23 @@
+{
+  "task": "dat-designer-workflow-audit-go4n",
+  "state": "independently_reviewed_diagnostic_complete",
+  "product_head": "f2c5f1af77ad0e4773f70e620e300ee50a074606",
+  "report": "docs/reviews/designer-workflow-audit/2026-11-15-audit.md",
+  "report_sha256": "19bb0364ab7e05fdd3e93e56e0e55ff5c3e3318fab0566a72f1f17cd1f9f0668",
+  "verification": {
+    "qa013_source_pins_checked": 26,
+    "qa013_source_mismatches": 0,
+    "release_binary_hashes_match_final_qa013": true,
+    "report_local_links_valid": true,
+    "new_runtime_execution": false
+  },
+  "retained_boundaries": "Read-only product audit; no acceptance, new prototype authority, PM appointment, execution successor or QA013 hold change. Existing dirty files preserved.",
+  "next_action": "Audit lane complete and clear-safe. Standing PM reads the audit repair-order section and existing QA013/015 record for the held assignment-design disposition and complete 0805 refusal diagnosis. No new implementation or milestone selected.",
+  "review": {
+    "verdict": "PASS diagnostic report only; no blocking findings",
+    "reviewer_thread": "01a1e2ca-240b-7272-820a-dc1abd2d9660",
+    "report_sha256": "19bb0364ab7e05fdd3e93e56e0e55ff5c3e3318fab0566a72f1f17cd1f9f0668",
+    "runtime_or_product_acceptance": false
+  },
+  "next_command": "br show dat-symbol-physical-assignment-qa013-chxu --json | jq '.[0] | {id,title,status,assignee,description,notes}'"
+}
