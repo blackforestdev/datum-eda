@@ -44,7 +44,13 @@ WIRE_COMPANIONS = {
     for candidate in ("a", "d", "e", "g", "h", "i")
 } | {
     f".datum/scratch/schematic-interaction-qa/wire-candidate-release-20261107-{candidate}/eda-engine-daemon"
-    for candidate in ("a", "d")
+    for candidate in ("a", "d", "e", "g", "h", "i")
+} | {
+    f".datum/scratch/schematic-interaction-qa/wire-precision-release-20261107-{candidate}/{name}"
+    for candidate in ("a", "c") for name in ("datum-eda", "eda-engine-daemon")
+} | {
+    f".datum/scratch/schematic-interaction-qa/wire-candidate-release-20261107-k/{name}"
+    for name in ("datum-eda", "eda-engine-daemon")
 }
 READ = os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC | os.O_NONBLOCK
 WRITE = os.O_RDWR | os.O_NOFOLLOW | os.O_CLOEXEC | os.O_NONBLOCK

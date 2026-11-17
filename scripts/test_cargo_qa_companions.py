@@ -430,12 +430,13 @@ class WireCompanionTests(CompanionTests):
         self.write_manifest()
 
     def test_wire_admission_is_exact_and_excludes_gui_and_neighbors(self):
-        self.assertEqual(len(qa.WIRE_COMPANIONS), 8)
+        self.assertEqual(len(qa.WIRE_COMPANIONS), 18)
         for path in qa.WIRE_COMPANIONS:
             self.assertEqual(qa.role(path), Path(path).parts)
         base = ".datum/scratch/schematic-interaction-qa/wire-candidate-release-20261107-"
         for path in (base + "a/datum-gui", base + "b/datum-eda",
-                     base + "e/eda-engine-daemon", base + "a/../a/datum-eda"):
+                     base + "f/eda-engine-daemon", base + "a/../a/datum-eda",
+                     ".datum/scratch/schematic-interaction-qa/wire-precision-release-20261107-b/datum-eda"):
             with self.subTest(path=path), self.assertRaises(guard.ResourcePolicyError):
                 qa.role(path)
 
