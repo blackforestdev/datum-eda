@@ -1,4 +1,5 @@
 use super::component_instance::metadata_history::CanonicalMetadataPreview;
+use super::library_asset_journal_ops::admission::LibraryEvaluationPermit;
 use super::{
     CommitDiff, DesignModel, EngineError, Operation, operation_application::apply_operation,
     variant::propagate_variant_population_to_component_instances,
@@ -11,7 +12,7 @@ pub(super) fn apply_metadata_preview(
     diff: &mut CommitDiff,
     proof: &CanonicalMetadataPreview<'_>,
 ) -> Result<(), EngineError> {
-    apply_with_preview(model, operations, diff, Some(proof))
+    apply_with_preview(model, operations, diff, Some(proof), None)
 }
 
 pub(super) fn apply_operations(
@@ -19,7 +20,19 @@ pub(super) fn apply_operations(
     operations: &[Operation],
     diff: &mut CommitDiff,
 ) -> Result<(), EngineError> {
-    apply_with_preview(model, operations, diff, None)
+    apply_with_preview(model, operations, diff, None, None)
+}
+
+/// Provisional state is confined to the journal owner until its certified
+/// postimages pass final electrical and library validation.
+pub(super) fn apply_library_candidate(
+    model: &mut DesignModel,
+    operations: &[Operation],
+    diff: &mut CommitDiff,
+    permit: &LibraryEvaluationPermit<'_>,
+) -> Result<(), EngineError> {
+    permit.validate_operations(operations)?;
+    apply_with_preview(model, operations, diff, None, Some(permit))
 }
 
 fn apply_with_preview(
@@ -27,6 +40,7 @@ fn apply_with_preview(
     operations: &[Operation],
     diff: &mut CommitDiff,
     preview: Option<&CanonicalMetadataPreview<'_>>,
+    library: Option<&LibraryEvaluationPermit<'_>>,
 ) -> Result<(), EngineError> {
     let retained_source_change = operations.iter().any(|op| {
         super::component_instance::pool_history::package_revision_target(model, op).is_some()
@@ -57,14 +71,18 @@ fn apply_with_preview(
             applied_operations: operations,
         }
         .preserve_retained_revisions(&candidate)?;
-        if let Some(proof) = preview {
-            super::electrical_identity_validation::validate_metadata_preview(
-                &candidate, operations, model, proof,
-            )?;
-        } else {
-            super::electrical_identity_validation::validate_operations_with_package_basis(
-                &candidate, operations, model,
-            )?;
+        // Only the sealed library permit defers final source validation.
+        // Prefix/history checks above and variant propagation below still run.
+        if library.is_none() {
+            if let Some(proof) = preview {
+                super::electrical_identity_validation::validate_metadata_preview(
+                    &candidate, operations, model, proof,
+                )?;
+            } else {
+                super::electrical_identity_validation::validate_operations_with_package_basis(
+                    &candidate, operations, model,
+                )?;
+            }
         }
         *model = candidate;
     } else {

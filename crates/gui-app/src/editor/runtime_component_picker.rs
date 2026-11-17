@@ -6,6 +6,139 @@ use datum_gui_protocol::library_browser::acquisition::{
 };
 
 impl Runtime {
+    pub(crate) fn verify_component_configuration_context(&self) -> Result<(), String> {
+        let configuration = self
+            .workspace()
+            .library
+            .configuration
+            .as_ref()
+            .ok_or("Component configuration unavailable")?;
+        configuration.verify_sources(&self.workspace().library)?;
+        if let Some(target) = &configuration.target {
+            return target.verify(self.workspace());
+        }
+        let picker = configuration
+            .picker
+            .as_ref()
+            .ok_or("Captured component picker unavailable")?;
+        let current = self
+            .workspace()
+            .library
+            .acquisition
+            .as_ref()
+            .ok_or("Captured component picker closed")?;
+        let origin = self
+            .acquisition_placement_origin()
+            .ok_or("Captured schematic unavailable")?;
+        if !origin_is_current(self.workspace(), &origin)
+            || self
+                .workspace()
+                .backing
+                .as_ref()
+                .map(|b| &b.request.project_root)
+                != configuration.placement_root.as_ref()
+            || self.workspace().ui.layout.focused != origin.pane
+            || current.session != picker.session
+            || current.loading
+            || current.preview.as_ref() != Some(&configuration.symbol_preview)
+        {
+            return Err(
+                "Component selection or schematic changed; choose the current component again"
+                    .into(),
+            );
+        }
+        current.request()?;
+        Ok(())
+    }
+
+    pub(crate) fn sync_component_configuration(&mut self) {
+        use datum_gui_protocol::library_browser::component_resolution::configuration::ComponentConfiguration;
+        let Some(a) = self
+            .workspace()
+            .library
+            .acquisition
+            .as_ref()
+            .filter(|a| a.component_picker && !a.loading)
+        else {
+            return;
+        };
+        let Some(preview) = a.preview.as_ref() else {
+            return;
+        };
+        if self
+            .workspace()
+            .library
+            .configuration
+            .as_ref()
+            .is_some_and(|c| {
+                c.target.is_none()
+                    && c.picker.as_ref().is_some_and(|p| p.session == a.session)
+                    && c.symbol_preview == *preview
+            })
+        {
+            return;
+        }
+        let result = (|| -> Result<ComponentConfiguration, String> {
+            let request = a.request()?;
+            let native = preview.native_part.as_ref();
+            if native.is_some_and(|part| !part.in_project(&self.workspace().library)) {
+                return Err("The complete Part source differs from this Project; review acquisition in Library before placing it".into());
+            }
+            let value = native
+                .and_then(|p| p.part.get("value"))
+                .and_then(serde_json::Value::as_str)
+                .unwrap_or("")
+                .to_owned();
+            let mut configuration = ComponentConfiguration::begin(
+                preview.clone(),
+                native.is_none().then_some(request.source_format),
+                String::new(),
+                value,
+            )?;
+            configuration.picker = Some(a.clone());
+            configuration.placement_root = self
+                .workspace()
+                .backing
+                .as_ref()
+                .map(|b| b.request.project_root.clone());
+            if let Some(part) = a.selected_native_part() {
+                let model = self
+                    .workspace()
+                    .library
+                    .basis
+                    .as_ref()
+                    .ok_or("Current library unavailable")?;
+                let symbol = configuration.symbol()?.uuid;
+                let entity: eda_engine::pool::Entity =
+                    serde_json::from_value(native.unwrap().entity.clone())
+                        .map_err(|e| e.to_string())?;
+                let gate = entity
+                    .gates
+                    .values()
+                    .find(|gate| gate.symbol == symbol)
+                    .ok_or("Selected project component gate unavailable")?;
+                let component = eda_engine::api::native_write::schematic_library::part_placement::CompletePartSelection::capture(model, part, gate.uuid, symbol)
+                    .map_err(|e| e.to_string())?;
+                configuration.use_component(&self.workspace().library, component)?;
+            }
+            Ok(configuration)
+        })();
+        match result {
+            Ok(configuration) => {
+                self.session.workspace_mut().library.configuration = Some(configuration)
+            }
+            Err(reason) => {
+                self.session
+                    .workspace_mut()
+                    .library
+                    .acquisition
+                    .as_mut()
+                    .unwrap()
+                    .refusal = Some(reason)
+            }
+        }
+    }
+
     pub(crate) fn handle_component_picker_navigation(&mut self, key: &Key) -> bool {
         if !matches!(
             key,
@@ -66,6 +199,19 @@ impl Runtime {
             }
             if a.unavailable_count() > 0 {
                 controls.push(C::AcquireShowUnavailable);
+            }
+            if let Some(configuration) = &library.configuration {
+                use datum_gui_protocol::library_browser::component_resolution::configuration::ConfigurationControl as F;
+                controls.extend(
+                    configuration
+                        .controls()
+                        .into_iter()
+                        .filter_map(|c| match c {
+                            F::Value => Some(C::Field(1)),
+                            F::Apply | F::Cancel | F::Reference => None,
+                            other => Some(C::Configure(other)),
+                        }),
+                );
             }
             if a.picker_can_place(library) {
                 controls.push(C::AcquireImport);

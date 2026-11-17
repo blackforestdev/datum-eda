@@ -4,6 +4,10 @@ pub(super) fn apply_project_manifest_operation(
     manifest_value: &mut serde_json::Value,
     operation: &Operation,
 ) -> Result<Option<bool>, EngineError> {
+    if let Operation::LibraryAssets { operation } = operation {
+        return super::library_asset_operations::apply_manifest(manifest_value, operation)
+            .map(Some);
+    }
     if let Some(applied) = super::process_operations::apply_project(manifest_value, operation)? {
         return Ok(Some(applied));
     }
@@ -60,6 +64,12 @@ pub(super) fn inverse_project_manifest_operation(
     operation: &Operation,
     inverse_operations: &mut Vec<Operation>,
 ) -> Result<bool, EngineError> {
+    // The non-core hook records the inverse once. Advance only the manifest
+    // preimage here so later operations see the same forward postimage.
+    if let Operation::LibraryAssets { operation } = operation {
+        super::library_asset_operations::apply_manifest(manifest_value, operation)?;
+        return Ok(true);
+    }
     if super::process_operations::inverse(manifest_value, operation, inverse_operations, false)? {
         return Ok(true);
     }

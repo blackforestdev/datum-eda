@@ -2043,3 +2043,44 @@ exact dependency closure and deliberate update adoption; SL-030–034 govern edi
 and contribution behavior. Existing local technical counters and optional symbol
 provenance are partial implementation, not completion of that common record.
 No existing tool surface gains a private Git/raw-file writer or automatic approval.
+
+
+The bounded local integration uses
+[Library study L-L](../gui/prototypes/library-surfaces-study.html#L-L): separately
+accept an empty forward-only format baseline, record/save an exact local candidate
+with honest provenance and stable change purpose, then review and deliberately
+adopt into the Project. Saving does not update active users. Cancelling a later
+review preserves a separately saved candidate and current bindings. Apply guards
+the reviewed revision and captured Project/catalog basis; refusal changes none of
+that operation's authored state. Undo/Redo retain coherent lock, native content
+and bindings; missing historical content/impact is explicit unavailable data.
+The full asset/revision identities and provenance remain inspectable in existing
+Library details, including narrow layouts.
+
+Current scoped implementation (`dat-library-local-revision-adoption-v6ya`)
+provides these local controls through the native Library service and canonical
+operations. Source review and focused engine/daemon controls cover exact local
+revision capture, readable change review, guarded adoption and refusal, and
+coherent history. Real-data native GUI proof covers deliberate Footprint pad
+position and Padstack width adoption into both existing physical users while
+retaining pad identities, package poses, copper and electrical meanings. Settled
+Undo/Redo, explicit Save and cold reopen preserve the adopted state. A separate
+network-isolated cold run retains both users as Current, persists a CheckRun and
+opens the next Padstack preview without reopening the Project; cancelling that
+draft makes no further canonical change. The CheckRun has three findings, not a
+clean-DRC result. These are bounded implemented paths, not full qualification.
+
+Current QA013 real-data corrective proof separately covers R1 Component
+Properties with explicit 10k, the installed standard 0805 Footprint and confirmed
+pin/pad mapping, initial PCB transfer with both net-bound pads, whole-transfer
+Undo/Redo, explicit Save and exact cold persistence. Footprint-row double-click
+returns the pending choice to the same Properties form; Cancel preserves the
+unchanged project. Retained component-first Place and accepted picker/wire proof
+keep their original candidate scopes. Historical manual graph-authoring evidence
+above remains capability-only and does not replace this ordinary workflow.
+
+Full library qualification and owner QA013 acceptance remain open. This increment
+does not establish general routed-board replacement/ECO, automatic synchronization
+of placed users, manufacturing approval, or a formal document-control requirement.
+Public contribution/publishing, publisher/source-rights decisions and migration
+remain unfinished; local recording and adoption confer none of those authorities.

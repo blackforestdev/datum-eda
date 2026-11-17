@@ -419,6 +419,10 @@ impl App {
                 if let Some(runtime) = &mut self.runtime {
                     mark(&mut self.input_observation, "primary_release");
                     runtime.native_content_primary(false);
+                    if runtime.finish_component_configuration_press() {
+                        self.request_redraw_if_needed();
+                        return;
+                    }
                     if let Some(icon) = runtime.finish_dock_resize_drag() {
                         self.apply_cursor_icon(icon);
                         self.request_workspace_redraw();
@@ -462,6 +466,9 @@ impl App {
                     if runtime.finish_native_selection_press().is_some() {
                         self.refresh_editor_cursor();
                         self.request_workspace_redraw();
+                        return;
+                    }
+                    if runtime.component_configuration_hit().is_some() {
                         return;
                     }
                     let handled = runtime.handle_primary_click();

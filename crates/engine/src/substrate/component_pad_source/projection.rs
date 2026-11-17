@@ -58,7 +58,7 @@ pub(crate) fn projection_with_operations(
     board: &Value,
     pending: &[Operation],
 ) -> Result<ComponentPadProjection, EngineError> {
-    project_with_part_basis(model, model, None, board, pending, None)
+    project_with_part_basis(model, model, None, board, pending, None, None)
 }
 
 /// Compensation stages no pool edits. Its accepted Part basis stays immutable
@@ -72,7 +72,15 @@ pub(crate) fn projection_with_part_basis(
     validate_library_basis(model, part_basis, pending)?;
     // The compensation gate proves there are no pool edits. Package roots
     // therefore use that same accepted journal while leaves stay on candidate.
-    project_with_part_basis(model, part_basis, Some(part_basis), board, pending, None)
+    project_with_part_basis(
+        model,
+        part_basis,
+        Some(part_basis),
+        board,
+        pending,
+        None,
+        None,
+    )
 }
 /// Precommit descriptive Package edits retain their accepted root payloads.
 /// The strict Part compensation basis above remains a separate unchanged gate.
@@ -90,7 +98,7 @@ pub(crate) fn projection_with_package_basis(
     if !history.package_metadata_frame_matches(model)? {
         return Err(invalid("unqualified Package metadata source basis"));
     }
-    project_with_part_basis(model, model, Some(accepted), board, pending, None)
+    project_with_part_basis(model, model, Some(accepted), board, pending, None, None)
 }
 
 /// The already-applied metadata frame is authenticated independently of the
@@ -111,7 +119,7 @@ pub(in crate::substrate) fn projection_with_metadata_basis(
             "prospective Board source differs from the accepted metadata frame",
         ));
     }
-    project_with_part_basis(model, model, None, board, pending, Some(frame))
+    project_with_part_basis(model, model, None, board, pending, Some(frame), None)
 }
 
 pub(crate) fn validate_library_basis(
@@ -172,13 +180,14 @@ pub(crate) fn validate_library_basis(
     Ok(())
 }
 
-fn project_with_part_basis(
+pub(super) fn project_with_part_basis(
     model: &DesignModel,
     part_basis: &DesignModel,
     package_basis: Option<&DesignModel>,
     board: &Value,
     pending: &[Operation],
     metadata: Option<&MetadataFrame<'_>>,
+    frame: Option<&crate::substrate::journal_source_frame::VerifiedPendingSourceFrame>,
 ) -> Result<ComponentPadProjection, EngineError> {
     let board_id: Uuid = serde_json::from_value(board["uuid"].clone())?;
     let mut result = ComponentPadProjection::default();
@@ -233,13 +242,18 @@ fn project_with_part_basis(
                 }) {
                     return Err(invalid("missing placed Pad source registration"));
                 }
-                let status = pad.materialization_status_with_library_basis(
-                    model,
-                    part_basis,
-                    package_basis,
-                    package.part,
-                    package.package,
-                );
+                let status = match frame {
+                    Some(frame) => {
+                        super::pending::status(frame, &pad, package.part, package.package)
+                    }
+                    None => pad.materialization_status_with_library_basis(
+                        model,
+                        part_basis,
+                        package_basis,
+                        package.part,
+                        package.package,
+                    ),
+                };
                 result.statuses.insert(pad.uuid, status);
                 project_pad(&pad, &package, &stackup)
             })();
@@ -260,6 +274,7 @@ fn project_with_part_basis(
                             physical.terminal(),
                             b,
                             metadata,
+                            frame,
                             &mut references,
                         );
                     }
@@ -441,6 +456,7 @@ fn authoritative_net(
     pad: &PlacedPad,
     b: &ComponentPadSourceBinding,
     metadata: Option<&MetadataFrame<'_>>,
+    frame: Option<&crate::substrate::journal_source_frame::VerifiedPendingSourceFrame>,
     references: &mut BTreeMap<(Uuid, u64), Option<RevisionedRef>>,
 ) -> Option<Uuid> {
     let recorded = b.component_instance.as_ref()?;
@@ -451,9 +467,10 @@ fn authoritative_net(
         references
             .entry((recorded.object_id, recorded.object_revision.0))
             .or_insert_with(|| {
-                match metadata {
-                    Some(frame) => frame.reference(recorded),
-                    None => model.metadata_component_reference(recorded),
+                match (frame, metadata) {
+                    (Some(frame), _) => frame.component_reference(recorded),
+                    (_, Some(frame)) => frame.reference(recorded),
+                    _ => model.metadata_component_reference(recorded),
                 }
                 .ok()
             })
@@ -468,7 +485,12 @@ fn authoritative_net(
                 || c.part_ref != Some(b.part.object_id)
                 || !c.placed_package_refs.contains(&pad.package)
         })
-        || check_pin(library_basis, map).is_err()
+        || match frame {
+            Some(frame) => {
+                super::pins::check_pin_in(&super::pins::PinFrame::Pending(frame), map).is_err()
+            }
+            None => check_pin(library_basis, map).is_err(),
+        }
     {
         return None;
     }

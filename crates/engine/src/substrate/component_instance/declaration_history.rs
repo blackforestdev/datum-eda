@@ -126,6 +126,19 @@ pub(in crate::substrate) fn assignment_receipt(
             )
         })
         .collect();
+    let derived =
+        super::super::library_asset_journal_ops::binding_history::assignment_operation(tx);
+    if let Some(Operation::LibraryAssets { operation }) = derived
+        && operation.owner_id() != proposal.project_id
+    {
+        return Err(invalid(
+            "derived assignment binding belongs to another Project",
+        ));
+    }
+    let design: Vec<_> = design
+        .into_iter()
+        .filter(|op| Some(*op) != derived)
+        .collect();
     let recorded: Vec<_> = proposal
         .batch
         .operations

@@ -106,6 +106,11 @@ impl Probe {
         }
         #[cfg(feature = "visual")]
         {
+            let manual = match std::env::var("DATUM_NATIVE_CONTENT_PROBE_MODE").as_deref() {
+                Err(std::env::VarError::NotPresent) | Ok("selection") => false,
+                Ok("manual") => true,
+                _ => anyhow::bail!("invalid native content probe mode"),
+            };
             gui_runtime_support::admit_main_content_readback(caps, config)?;
             let root = PathBuf::from(path);
             anyhow::ensure!(
@@ -117,6 +122,7 @@ impl Probe {
                 state: Some(State {
                     root,
                     phase: Phase::Zoom(0),
+                    manual,
                     held: false,
                     extent: [config.width, config.height],
                     format: config.format,
@@ -131,6 +137,9 @@ impl Probe {
     pub(super) fn wheel(&mut self, prescribed: bool, main_board: bool) {
         #[cfg(feature = "visual")]
         if let Some(state) = &mut self.state {
+            if state.manual {
+                return;
+            }
             if matches!(state.phase, Phase::Done | Phase::Failed) {
                 return;
             }
@@ -149,6 +158,9 @@ impl Probe {
     pub(super) fn primary(&mut self, pressed: bool, shift: bool, main_board: bool) {
         #[cfg(feature = "visual")]
         if let Some(state) = &mut self.state {
+            if state.manual {
+                return;
+            }
             if matches!(state.phase, Phase::Done | Phase::Failed) {
                 return;
             }
@@ -164,6 +176,22 @@ impl Probe {
         #[cfg(not(feature = "visual"))]
         let _ = (pressed, shift, main_board);
     }
+    /// One explicit file request observes the next ordinary encoded native frame.
+    #[cfg(feature = "visual")]
+    pub(super) fn arm_requested(&mut self) {
+        let Some(state) = &mut self.state else {
+            return;
+        };
+        if !state.manual || state.phase != Phase::Zoom(0) {
+            return;
+        }
+        match fs::remove_file(state.root.join("request")) {
+            Ok(()) => state.phase = Phase::BaselineArmed,
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+            Err(error) => state.fail(format!("native content request: {error}")),
+        }
+    }
+
     #[cfg(feature = "visual")]
     pub(super) fn request(
         &mut self,
@@ -298,6 +326,7 @@ impl Drop for Pending {
 struct State {
     root: PathBuf,
     phase: Phase,
+    manual: bool,
     held: bool,
     extent: [u32; 2],
     format: wgpu::TextureFormat,
@@ -402,7 +431,7 @@ impl State {
             if let Err(error) = self.deliver(&pending) {
                 self.fail(error.to_string());
             } else {
-                self.phase = if pending.work.arm.phase == "baseline" {
+                self.phase = if !self.manual && pending.work.arm.phase == "baseline" {
                     Phase::ReleasedReady
                 } else {
                     Phase::Done

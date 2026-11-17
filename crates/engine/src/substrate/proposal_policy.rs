@@ -123,6 +123,7 @@ fn proposal_required_cross_domain_identity_operation_family(
 
 fn proposal_required_library_operation_family(operation: &Operation) -> Option<&'static str> {
     match operation {
+        Operation::LibraryAssets { .. } => Some("library_assets"),
         Operation::CreatePoolPackage { .. } | Operation::DeletePoolPackage { .. } => {
             Some("pool_package")
         }

@@ -17,6 +17,9 @@ pub mod board_delete;
 #[path = "native_board_rule.rs"]
 pub mod board_rule;
 
+#[path = "native_library_client.rs"]
+mod library;
+pub use library::NativeLibraryEdit;
 #[path = "native_proposal_client.rs"]
 mod proposal;
 
@@ -136,10 +139,7 @@ pub struct NativeEditIntent {
     pub symbol_alignment:
         Option<eda_engine::api::native_write::schematic_alignment::SymbolAlignmentRequest>,
     pub schematic: Option<crate::schematic_authoring::SchematicEditRequest>,
-    pub library: Option<(
-        bool,
-        eda_engine::api::native_write::library_gui::LibraryDefinitionRequest,
-    )>,
+    pub library: Option<NativeLibraryEdit>,
     pub board_transfer:
         Option<eda_engine::api::native_write::schematic_board_transfer::TransferRequest>,
     pub board_route: Option<eda_engine::api::native_write::board_routing::route::RouteRequest>,
@@ -444,20 +444,11 @@ impl NativeProjectClient {
                 .as_ref()
                 .context("Schematic edit payload missing")?
                 .verb_params(),
-            NativeEditAction::Library => {
-                let (create, request) = intent
-                    .library
-                    .as_ref()
-                    .context("Library edit payload missing")?;
-                (
-                    if *create {
-                        "datum.library.create"
-                    } else {
-                        "datum.library.edit"
-                    },
-                    serde_json::to_value(request)?,
-                )
-            }
+            NativeEditAction::Library => intent
+                .library
+                .as_ref()
+                .context("Library edit payload missing")?
+                .verb_params()?,
             NativeEditAction::BoardTransfer => (
                 "datum.schematic.transfer_to_pcb",
                 serde_json::to_value(
@@ -581,7 +572,23 @@ impl NativeProjectClient {
             ),
             NativeEditAction::Save | NativeEditAction::Proposal => unreachable!(),
         };
-        let reason = format!("GUI {verb}; request {}", intent.request_id);
+        let revision_reason = matches!(intent.action, NativeEditAction::Library)
+            .then(|| {
+                intent
+                    .library
+                    .as_ref()
+                    .and_then(NativeLibraryEdit::revision_reason)
+            })
+            .flatten();
+        if let Some(reason) = revision_reason {
+            anyhow::ensure!(
+                !reason.is_empty(),
+                "Record the purpose of the library revision"
+            );
+        }
+        let reason = revision_reason
+            .map(str::to_owned)
+            .unwrap_or_else(|| format!("GUI {verb}; request {}", intent.request_id));
         // Empty-native bootstrap allocates once from this captured gesture seed.
         // The canonical builder and final write envelope must keep that batch ID.
         let batch_id = intent.board_transfer.as_ref().map(|r| r.edit_seed).unwrap_or_else(|| match &intent.schematic {
@@ -604,8 +611,11 @@ impl NativeProjectClient {
             .get("transactions")
             .and_then(Value::as_array)
             .is_some_and(|ts| {
-                ts.iter()
-                    .any(|t| t.get("reason").and_then(Value::as_str) == Some(reason.as_str()))
+                ts.iter().any(|t| {
+                    t.get("reason").and_then(Value::as_str) == Some(reason.as_str())
+                        && (revision_reason.is_none()
+                            || t.get("batch_id") == Some(&json!(batch_id)))
+                })
             });
         match result {
             Ok(_) if found => Ok(NativeEditReceipt {

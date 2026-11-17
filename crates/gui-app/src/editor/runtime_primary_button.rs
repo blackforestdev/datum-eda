@@ -8,7 +8,11 @@ impl App {
         let Some(runtime) = &mut self.runtime else {
             return;
         };
+        runtime.component_pointer_press = None;
         runtime.selection_release_suppressed = false;
+        if runtime.begin_component_configuration_press() {
+            return;
+        }
         if runtime.last_cursor_pos.is_some_and(|(x, y)| {
             matches!(
                 runtime.presented_hits.hit_test(x, y),

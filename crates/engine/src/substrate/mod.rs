@@ -45,6 +45,10 @@ mod journal;
 mod journal_history;
 pub(crate) mod journal_io;
 mod journal_operation_hooks;
+pub(in crate::substrate) mod journal_source_frame;
+pub(crate) mod library_asset_journal_ops;
+pub mod library_asset_operations;
+pub mod library_asset_resolver;
 mod operation;
 mod operation_application;
 mod operation_application_batch;
@@ -164,92 +168,9 @@ pub struct ObjectRevision(pub u64);
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub struct ModelRevision(pub String);
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum SourceShardKind {
-    ProjectManifest,
-    SchematicRoot,
-    BoardRoot,
-    RulesRoot,
-    SchematicSheet,
-    SchematicDefinition,
-    Pool,
-    Relationship,
-    ComponentInstance,
-    ElectricalIdentity,
-    VariantOverlay,
-    ImportMap,
-    ManufacturingPlan,
-    PanelProjection,
-    OutputJob,
-    OutputJobRun,
-    ArtifactRun,
-    CheckRun,
-    ZoneFill,
-    ArtifactMetadata,
-    ProposalMetadata,
-    ForwardAnnotationReview,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum SourceShardAuthority {
-    AuthoredDesign,
-    ImportedDesign,
-    SidecarMetadata,
-    GeneratedEvidence,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum SourceShardDirtyState {
-    Clean,
-    Dirty,
-    Missing,
-    Unknown,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum SourceShardTaxon {
-    ComponentInstance,
-    ElectricalIdentity,
-    Relationship,
-    VariantOverlay,
-    PoolUnit,
-    PoolSymbol,
-    PoolEntity,
-    PoolPart,
-    PoolPackage,
-    PoolFootprint,
-    PoolPadstack,
-    PoolPinPadMap,
-    ManufacturingPlan,
-    PanelProjection,
-    OutputJob,
-    ImportMap,
-    ProposalMetadata,
-    ForwardAnnotationReview,
-    OutputJobRun,
-    ArtifactRun,
-    CheckRun,
-    ZoneFill,
-    ArtifactMetadata,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct SourceShardRef {
-    pub shard_id: Uuid,
-    pub kind: SourceShardKind,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub taxon: Option<SourceShardTaxon>,
-    pub path: PathBuf,
-    pub relative_path: String,
-    pub authority: SourceShardAuthority,
-    pub dirty_state: SourceShardDirtyState,
-    pub schema_version: Option<u64>,
-    pub content_hash: String,
-}
+pub use source_shard::{
+    SourceShardAuthority, SourceShardDirtyState, SourceShardKind, SourceShardRef, SourceShardTaxon,
+};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct DomainObject {
@@ -629,6 +550,9 @@ pub(super) fn domain_for_shard_kind(kind: &SourceShardKind) -> &'static str {
         SourceShardKind::BoardRoot => "board",
         SourceShardKind::RulesRoot => "rules",
         SourceShardKind::Pool => "pool",
+        SourceShardKind::LibraryLock
+        | SourceShardKind::LibraryCatalog
+        | SourceShardKind::LibraryContent => "library",
         SourceShardKind::Relationship => "relationship",
         SourceShardKind::ElectricalIdentity => "electrical_identity",
         SourceShardKind::ComponentInstance => "component_instance",
@@ -663,6 +587,9 @@ pub(super) fn source_shard_authority_for_kind(kind: &SourceShardKind) -> SourceS
         | SourceShardKind::PanelProjection
         | SourceShardKind::OutputJob => SourceShardAuthority::AuthoredDesign,
         SourceShardKind::ImportMap
+        | SourceShardKind::LibraryLock
+        | SourceShardKind::LibraryCatalog
+        | SourceShardKind::LibraryContent
         | SourceShardKind::ProposalMetadata
         | SourceShardKind::ForwardAnnotationReview => SourceShardAuthority::SidecarMetadata,
         SourceShardKind::OutputJobRun

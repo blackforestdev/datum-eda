@@ -55,6 +55,15 @@ fn validate_frame(
         super::electrical_basis::ElectricalBasis::new(model, operations)?
     };
     let membership = super::electrical_net_membership::index(model, operations)?;
+    validate_basis(model, &basis, &membership)
+}
+
+/// The identity rules are identical for accepted and certified final sources.
+pub(super) fn validate_basis(
+    model: &DesignModel,
+    basis: &super::electrical_basis::ElectricalBasis<'_>,
+    membership: &BTreeMap<Uuid, std::collections::BTreeSet<ElectricalOccurrence>>,
+) -> Result<(), EngineError> {
     let mut owners = BTreeMap::new();
     let mut net_anchors = BTreeMap::new();
     for record in model.electrical_identities.values() {

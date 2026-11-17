@@ -97,6 +97,8 @@ impl Runtime {
             self.config.height,
         )?;
         #[cfg(feature = "visual")]
+        self.native_content.arm_requested();
+        #[cfg(feature = "visual")]
         let content_arm = self
             .native_content
             .observe_armed(|| self.native_content_subject())
@@ -185,6 +187,7 @@ impl Runtime {
         let probe = gui_runtime_support::phase_probe::Probe::start("present");
         let started = std::time::Instant::now();
         append_gui_verbose_diagnostic_line(|| "frame present begin");
+        submitted.trace_overlay_content();
         #[cfg(feature = "visual")]
         append_gui_verbose_diagnostic_line(|| {
             let text: Vec<_> = submitted

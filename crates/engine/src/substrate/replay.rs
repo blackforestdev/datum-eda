@@ -189,6 +189,11 @@ fn validate_promoted_journal_tip(
         replay_proposal_shards(project_root, &mut adjusted_shards, journal)?;
         replay_generated_evidence_shards(project_root, &mut adjusted_shards, journal)?;
         replay_pool_shards(project_root, &mut adjusted_shards, journal)?;
+        super::library_asset_journal_ops::replay_metadata_sources(
+            project_root,
+            &mut adjusted_shards,
+            journal,
+        )?;
         let adjusted_revision =
             compute_model_revision(project_id, &adjusted_shards, &adjusted_objects);
         if tip.after_model_revision == adjusted_revision {
@@ -355,6 +360,7 @@ fn install_promoted_journal_state(
     add_missing_journal_schematic_sheet_shards(project_root, shards, journal)?;
     replay_generated_evidence_shards(project_root, shards, journal)?;
     replay_pool_shards(project_root, shards, journal)?;
+    super::library_asset_journal_ops::replay_metadata_sources(project_root, shards, journal)?;
     refresh_materialized_shard_objects(project_root, shards, objects)
 }
 
@@ -477,6 +483,11 @@ fn apply_transaction_operations_to_objects(
         },
         diagnostics: Vec::new(),
     };
+    model.project.schema_version = super::library_asset_operations::replay_profile_before(
+        *project_id,
+        transaction,
+        journal_prefix,
+    )?;
     for prior in journal_prefix {
         for op in &prior.operations {
             if let Some((id, record, delete)) = super::electrical_identity_store::write(op) {
@@ -530,8 +541,15 @@ pub(super) fn replay_journal_prefix_to_source_shards(
                 &content_hash,
             );
             shard.content_hash = content_hash;
+            if shard.kind == SourceShardKind::ProjectManifest {
+                super::library_asset_resolver::validate_profile_header(&value)?;
+                shard.schema_version = value
+                    .get("schema_version")
+                    .and_then(serde_json::Value::as_u64);
+            }
         }
     }
+    super::library_asset_journal_ops::replay_metadata_sources(project_root, shards, journal)?;
     replay_production_shards(project_root, shards, journal)?;
     replay_schematic_shards(project_root, shards, journal)?;
     replay_generated_evidence_shards(project_root, shards, journal)?;

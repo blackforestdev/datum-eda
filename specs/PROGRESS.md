@@ -1943,9 +1943,33 @@ Bounded writer prerequisite history is retained; live selection and execution au
   reusable objects, journal and component work are partial foundations; the
   shared provenance/revision/contribution contract is an independently reviewed,
   PM-accepted target specification, landed in `b8dc0e11`. Runtime implementation
-  remains pending and requires separate scope and
-  authorization; validated first-slice acquisition/adoption precedes bulk asset
-  conversion.
+  now has separately authorized bounded local implementation and proof below;
+  the complete shared-library product remains unfinished. Validated first-slice
+  acquisition/adoption precedes bulk asset conversion.
   No successor milestone, migration, publication, standards compliance or product
   acceptance is selected by this entry. Existing generated Frontier, QA013 scope,
   component-first/Properties requirements and historical evidence remain intact.
+
+- [~] **Local library revision/adoption integration** — separately owner-authorized
+  routine `dat-library-local-revision-adoption-v6ya`, coordinated under PM059.
+  Current: implemented native local revision/provenance, candidate recording,
+  readable review, guarded adoption/refusal and canonical history controls.
+  Independent source review, focused engine/daemon controls and real-data GUI
+  proof cover Footprint pad-position and Padstack width adoption into both users,
+  stable identities/poses/copper/net meanings, settled Undo/Redo, explicit Save
+  and exact cold persistence. Network-isolated cold proof retains both users as
+  Current and opens the next Padstack preview after CheckRun without reopening;
+  Cancel adds no authored change. The CheckRun reports three findings, not clean
+  DRC. Existing Library study L-L has independent visual/semantic target review.
+  Physical history corrections are verified in these bounded paths; full
+  qualification, general ECO, contribution/publishing and migration remain open.
+  Current QA013 corrective proof separately covers R1 Properties/10k/standard
+  0805/confirmed mapping, initial PCB/two bound pads, whole-transfer Undo/Redo,
+  Save/cold and footprint-row double-click return/Cancel. Retained Place and
+  picker/wire proofs keep their own candidate scopes; historical owner failures
+  remain recorded. QA013 is not ready; PM integration/landing and readiness
+  disposition remain. No owner/HUMAN or broader-goal acceptance is claimed.
+  Dependency/order: scoped proof supports owned integration and required landing
+  checks; no repeated campaign is introduced for covered paths. No successor
+  milestone or change to the generated Frontier, QA013 bar, publication/rights
+  authority or retained catalog budgets is inferred.

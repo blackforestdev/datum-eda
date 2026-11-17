@@ -53,7 +53,10 @@ fn source_payload(value: &Value) -> Option<Value> {
     value.as_object_mut()?.remove("pad_source_transition");
     Some(value)
 }
-fn latest_package(prior: &[TransactionRecord], id: Uuid) -> Option<(Uuid, Value)> {
+pub(in crate::substrate) fn latest_package(
+    prior: &[TransactionRecord],
+    id: Uuid,
+) -> Option<(Uuid, Value)> {
     let mut result = None;
     for op in prior.iter().flat_map(|t| &t.operations) {
         match op {
@@ -102,7 +105,7 @@ fn net_semantics(record: &ElectricalIdentityRecord, ci: Uuid) -> Option<Value> {
     }
     Some(value)
 }
-fn package_epoch(prior: &[TransactionRecord], id: Uuid) -> Option<u64> {
+pub(in crate::substrate) fn package_epoch(prior: &[TransactionRecord], id: Uuid) -> Option<u64> {
     let mut epoch = None;
     let mut born = false;
     for tx in prior {
@@ -165,7 +168,10 @@ fn package_epoch(prior: &[TransactionRecord], id: Uuid) -> Option<u64> {
 }
 // Independently derive Pad registration epochs from recorded typed producers.
 // The candidate cannot invent a birth or count by changing its diff metadata.
-fn pad_epochs(prior: &[TransactionRecord], needed: &BTreeSet<Uuid>) -> Option<BTreeMap<Uuid, u64>> {
+pub(in crate::substrate) fn pad_epochs(
+    prior: &[TransactionRecord],
+    needed: &BTreeSet<Uuid>,
+) -> Option<BTreeMap<Uuid, u64>> {
     let mut epochs = BTreeMap::new();
     let mut born = BTreeSet::new();
     for tx in prior {

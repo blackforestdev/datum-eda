@@ -1,6 +1,8 @@
 //! One ordinary native DRC report/rerun workflow. Public API circuit/transfer
 //! preparation is fixture setup, not claimed as GUI schematic or PCB editing.
 use super::*;
+#[path = "pcb_drc/library_inspection.rs"]
+mod library_inspection;
 #[path = "pcb_drc/physical.rs"]
 mod physical;
 use datum_gui_protocol::CheckProducerProfile;
@@ -268,6 +270,7 @@ impl Workflow {
     fn current_report(&self) {
         let model = self.model();
         let checks = &self.host.app.runtime.as_ref().unwrap().workspace().checks;
+        library_inspection::assert_current(self);
         assert!(checks.persisted);
         assert_eq!(checks.profile_id.as_deref(), Some("drc"));
         assert_eq!(
@@ -306,6 +309,7 @@ impl Workflow {
         };
         if r.native_edit.pending()
             || r.check_work.pending()
+            || r.workspace().library.revision_inspection.is_none()
             || !r.surface_transaction.has_presented()
             || r.renderer.render_session().has_pending_frame()
             || self.host.since.elapsed() < Duration::from_millis(30)
@@ -326,6 +330,7 @@ impl Workflow {
                 self.menu("Checks", "Run DRC");
             }
             1 => {
+                library_inspection::assert_evidence_refresh(self);
                 let checks = &r.workspace().checks;
                 assert_eq!(checks.profile_id.as_deref(), Some("drc"));
                 self.run = checks.check_run_id.clone().unwrap();

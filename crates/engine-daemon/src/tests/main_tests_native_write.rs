@@ -4,6 +4,8 @@
 
 use super::*;
 
+#[path = "main_tests_native_write/library_inspection_controls.rs"]
+mod library_inspection_controls;
 #[path = "main_tests_native_create_sheet.rs"]
 mod native_create_sheet_tests;
 

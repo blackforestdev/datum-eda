@@ -3,19 +3,46 @@ use super::editor::{Snapshot, Target};
 use super::*;
 use datum_gui_protocol::library_browser::LibraryControl as C;
 
+pub(super) fn pointer_target(runtime: &Runtime, control: &C) -> Option<Target> {
+    match control {
+        C::AcquirePath => Some(Target::LibraryPath),
+        C::AcquireSearch => Some(Target::LibrarySearch),
+        C::Field(index) => field_target(runtime, *index),
+        C::Revision(
+            datum_gui_protocol::library_browser::revision_workflow::RevisionControl::Purpose(_),
+        ) => target(runtime),
+        _ => None,
+    }
+}
+
 pub(super) fn target(runtime: &Runtime) -> Option<Target> {
     let state = runtime.workspace();
     if state.ui.active_menu.is_some()
         || state.ui.new_project.open
         || state.ui.project_open.open
         || (state.ui.layout.focused_content() != PaneContent::Library
-            && !runtime.component_picker_open())
+            && !runtime.component_picker_open()
+            && state.library.configuration.is_none())
         || runtime.application_focus()
             != datum_gui_protocol::ApplicationFocus::Editor(state.ui.layout.focused)
     {
         return None;
     }
-    if state.library.acquisition.is_some() {
+    if let Some(C::Revision(
+        datum_gui_protocol::library_browser::revision_workflow::RevisionControl::Purpose(session),
+    )) = state.library.focus
+    {
+        let review = state.library.revision_workflow.as_ref()?;
+        if review.session_id() != session {
+            return None;
+        }
+        return Some(Target::LibraryField(
+            review.session_id(),
+            0,
+            "library_revision_purpose",
+        ));
+    }
+    if state.library.acquisition.is_some() && !matches!(state.library.focus, Some(C::Field(_))) {
         return match state.library.focus {
             Some(C::AcquirePath) => Some(Target::LibraryPath),
             Some(C::AcquireSearch) => Some(Target::LibrarySearch),
@@ -30,12 +57,30 @@ pub(super) fn target(runtime: &Runtime) -> Option<Target> {
 }
 
 pub(super) fn field_target(runtime: &Runtime, index: usize) -> Option<Target> {
+    if let Some(configuration) = &runtime.workspace().library.configuration
+        && configuration.footprint_chooser.is_none()
+    {
+        return match index {
+            0 => Some(Target::LibraryField(
+                configuration.session,
+                0,
+                "component_reference",
+            )),
+            1 => Some(Target::LibraryField(
+                configuration.session,
+                1,
+                "component_value",
+            )),
+            _ => None,
+        };
+    }
     let draft = runtime.workspace().library.draft.as_ref()?;
     let field = draft.fields.get(index)?;
     (!field.selector).then_some(Target::LibraryField(draft.id, index, field.key))
 }
 
 pub(super) fn snapshot(runtime: &Runtime, target: Target) -> Option<Snapshot> {
+    runtime.trace_component_editor(&format!("snapshot {target:?}"));
     let browser = &runtime.workspace().library;
     let (text, editor) = match target {
         Target::LibraryPath | Target::LibrarySearch => {
@@ -47,6 +92,34 @@ pub(super) fn snapshot(runtime: &Runtime, target: Target) -> Option<Snapshot> {
             }
         }
         Target::LibraryField(id, index, key) => {
+            if key == "library_revision_purpose" {
+                let review = browser
+                    .revision_workflow
+                    .as_ref()
+                    .filter(|review| review.session_id() == id)?;
+                return Some(Snapshot {
+                    text: review.purpose().into(),
+                    editor: review.purpose_editor(),
+                    editable: !review.is_submitted() && !runtime.native_edit.pending(),
+                });
+            }
+            if let Some(configuration) = &browser.configuration
+                && configuration.session == id
+                && browser.focus == Some(C::Field(index))
+            {
+                let (text, editor) = match (index, key) {
+                    (0, "component_reference") => {
+                        (&configuration.reference, configuration.reference_editor)
+                    }
+                    (1, "component_value") => (&configuration.value, configuration.value_editor),
+                    _ => return None,
+                };
+                return Some(Snapshot {
+                    text: text.clone(),
+                    editor,
+                    editable: !configuration.pending() && !runtime.native_edit.pending(),
+                });
+            }
             let draft = browser.draft.as_ref()?;
             let field = draft.fields.get(index)?;
             if draft.id != id
@@ -86,12 +159,49 @@ pub(super) fn store(runtime: &mut Runtime, target: Target, snapshot: Snapshot, c
                         a.search_changed();
                         if a.component_picker {
                             browser.scroll_offset = 0;
+                            browser.configuration = None;
                         }
                     }
                 }
             }
         }
         Target::LibraryField(id, index, key) => {
+            if key == "library_revision_purpose" {
+                if let Some(review) = browser
+                    .revision_workflow
+                    .as_mut()
+                    .filter(|review| review.session_id() == id)
+                {
+                    if changed && let Err(error) = review.set_purpose(snapshot.text) {
+                        browser.refusal = Some(error);
+                        return;
+                    }
+                    review.set_purpose_editor(snapshot.editor);
+                }
+                runtime.invalidate_frame();
+                return;
+            }
+            if let Some(configuration) = &mut browser.configuration
+                && configuration.session == id
+                && browser.focus == Some(C::Field(index))
+            {
+                match (index, key) {
+                    (0, "component_reference") => {
+                        configuration.reference = snapshot.text;
+                        configuration.reference_editor = snapshot.editor;
+                    }
+                    (1, "component_value") => {
+                        configuration.value = snapshot.text;
+                        configuration.value_editor = snapshot.editor;
+                    }
+                    _ => return,
+                };
+                if changed {
+                    configuration.refusal = None;
+                }
+                runtime.invalidate_frame();
+                return;
+            }
             if let Some(draft) = &mut browser.draft
                 && draft.id == id
                 && draft.focused == index

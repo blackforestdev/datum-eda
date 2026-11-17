@@ -142,6 +142,10 @@ struct NativeDescribeParams {
     confirm_durable: bool,
     #[serde(default)]
     include_model: bool,
+    #[serde(default)]
+    include_library: bool,
+    #[serde(default)]
+    library_geometry_selection: Option<Value>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -231,6 +235,12 @@ fn serialized_success_response<T: Serialize>(id: Value, payload: T) -> JsonRpcRe
 }
 
 fn main() {
+    if let Err(err) =
+        eda_engine::api::native_write::library_assets::initialize_library_service_from_environment()
+    {
+        eprintln!("eda-engine-daemon: library host policy: {err}");
+        std::process::exit(1);
+    }
     match parse_socket_arg() {
         Some(path) => {
             let owned_companion =
@@ -288,7 +298,21 @@ fn serve_socket(path: &Path, owned_companion: bool) -> Result<()> {
                 break;
             }
         }
-        result?;
+        if let Err(error) = result {
+            // A caller may abandon a response after its operation committed.
+            // Keep the companion available without replaying that operation.
+            let disconnected = error.downcast_ref::<std::io::Error>().is_some_and(|error| {
+                matches!(
+                    error.kind(),
+                    std::io::ErrorKind::BrokenPipe
+                        | std::io::ErrorKind::ConnectionReset
+                        | std::io::ErrorKind::ConnectionAborted
+                )
+            });
+            if !disconnected {
+                return Err(error);
+            }
+        }
     }
 
     Ok(())

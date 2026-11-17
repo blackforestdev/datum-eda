@@ -3,6 +3,8 @@ use crate::schematic_authoring::assignment::AssignmentEvidence;
 use crate::{AuthoredSelectionIdentity, AuthoringViewBasis, ReviewWorkspaceState};
 use serde_json::Value;
 use uuid::Uuid;
+#[path = "component_configuration.rs"]
+pub mod configuration;
 #[cfg(test)]
 #[path = "component_resolution_tests.rs"]
 mod tests;

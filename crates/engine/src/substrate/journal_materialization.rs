@@ -2,6 +2,37 @@
 use super::*;
 
 impl DesignModel {
+    /// Bounded capture for callers with an explicit source-input policy. The
+    /// returned count is observed raw bytes, not a heap or latency estimate.
+    pub(crate) fn capture_source_shard_value_bounded(
+        &self,
+        root: &std::path::Path,
+        shard_id: uuid::Uuid,
+        limit: usize,
+    ) -> Result<(serde_json::Value, usize), EngineError> {
+        let shard = self
+            .source_shards
+            .iter()
+            .find(|s| s.shard_id == shard_id)
+            .ok_or_else(|| {
+                EngineError::Validation(format!("model missing source shard {shard_id}"))
+            })?;
+        if shard.path != root.join(&shard.relative_path) {
+            return Err(EngineError::Validation(
+                "captured source belongs to a different root".into(),
+            ));
+        }
+        let bytes = crate::substrate::source_shard::io::read_regular_file(
+            root,
+            &shard.relative_path,
+            limit,
+        )?;
+        Ok((
+            capture_shard_value_from_bytes(self, shard, &bytes)?,
+            bytes.len(),
+        ))
+    }
+
     /// Capture one model-owned shard using the existing certified read/replay owner.
     pub fn capture_source_shard_value(
         &self,
@@ -75,6 +106,15 @@ pub(in crate::substrate) fn capture_shard_value(
     shard: &SourceShardRef,
 ) -> Result<serde_json::Value, EngineError> {
     let bytes = std::fs::read(&shard.path)?;
+    capture_shard_value_from_bytes(model, shard, &bytes)
+}
+
+/// The same certified capture, supplied with bytes read under an explicit cap.
+pub(in crate::substrate) fn capture_shard_value_from_bytes(
+    model: &DesignModel,
+    shard: &SourceShardRef,
+    bytes: &[u8],
+) -> Result<serde_json::Value, EngineError> {
     let mut value: serde_json::Value = serde_json::from_slice(&bytes)?;
     if sha256_hex(&bytes) == shard.content_hash {
         return Ok(value);

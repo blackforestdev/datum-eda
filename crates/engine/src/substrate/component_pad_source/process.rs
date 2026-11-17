@@ -292,6 +292,29 @@ pub(crate) fn capture(
     pad: &ComponentPadSource,
     placement: &PlacedPackage,
 ) -> Result<Option<FrozenProcessSnapshot>, EngineError> {
+    capture_with_sources(model, board, pad, placement, &|pin| {
+        source_value(model, pin)
+    })
+}
+
+pub(crate) fn capture_planned(
+    target: &super::PlannedPadSources<'_>,
+    board: &Value,
+    pad: &ComponentPadSource,
+    placement: &PlacedPackage,
+) -> Result<Option<FrozenProcessSnapshot>, EngineError> {
+    capture_with_sources(target.accepted(), board, pad, placement, &|pin| {
+        target.source_value(pin)
+    })
+}
+
+fn capture_with_sources(
+    model: &DesignModel,
+    board: &Value,
+    pad: &ComponentPadSource,
+    placement: &PlacedPackage,
+    read: &impl Fn(&super::PinnedPadLibrarySource) -> Result<Value, EngineError>,
+) -> Result<Option<FrozenProcessSnapshot>, EngineError> {
     let Some(capability) = capability_from_board(board)? else {
         return Ok(None);
     };
@@ -299,8 +322,8 @@ pub(crate) fn capture(
         .source_binding
         .as_ref()
         .ok_or_else(|| invalid("missing source binding for process materialization"))?;
-    let raw_padstack = source_value(model, &binding.padstack)?;
-    let raw_footprint = source_value(model, &binding.land_pattern)?;
+    let raw_padstack = read(&binding.padstack)?;
+    let raw_footprint = read(&binding.land_pattern)?;
     let selector: Option<ProcessBasisSelector> = raw_footprint
         .get("process_basis")
         .map(|v| serde_json::from_value(v.clone()))
@@ -411,6 +434,42 @@ impl FrozenProcessSnapshot {
 
     pub fn check_current(&self, model: &DesignModel) -> Result<(), EngineError> {
         let board = model.materialized_source_shard_value(SourceShardKind::BoardRoot)?;
+        self.check_current_values(model, &board, &|| {
+            crate::api::native_write::process::profiles(model)
+        })
+    }
+    pub(super) fn check_current_in_frame(
+        &self,
+        frame: &crate::substrate::journal_source_frame::VerifiedPendingSourceFrame,
+    ) -> Result<(), EngineError> {
+        let model = frame.candidate();
+        let board = model
+            .source_shards
+            .iter()
+            .find(|s| s.kind == SourceShardKind::BoardRoot)
+            .ok_or_else(|| invalid("pending Board source missing"))?;
+        self.check_current_values(model, &frame.value(board)?, &|| {
+            let project = model
+                .source_shards
+                .iter()
+                .find(|s| s.kind == SourceShardKind::ProjectManifest)
+                .ok_or_else(|| invalid("pending Project source missing"))?;
+            frame
+                .value(project)?
+                .get("process_profiles")
+                .map(|v| serde_json::from_value(v.clone()).map_err(EngineError::from))
+                .transpose()
+        })
+    }
+    fn check_current_values(
+        &self,
+        model: &DesignModel,
+        board: &Value,
+        profiles: &impl Fn() -> Result<
+            Option<std::collections::BTreeMap<Uuid, ProcessProfile>>,
+            EngineError,
+        >,
+    ) -> Result<(), EngineError> {
         let capability = capability_from_board(&board)?
             .ok_or_else(|| invalid("current process capability is absent"))?;
         let stackup: Stackup = serde_json::from_value(board["stackup"].clone())?;
@@ -418,8 +477,8 @@ impl FrozenProcessSnapshot {
             return Err(invalid("frozen process stackup/association pin is stale"));
         }
         if let Some(pin) = &self.profile {
-            let profiles = crate::api::native_write::process::profiles(model)?
-                .ok_or_else(|| invalid("frozen process profile is absent"))?;
+            let profiles =
+                profiles()?.ok_or_else(|| invalid("frozen process profile is absent"))?;
             let current = profiles
                 .get(&pin.profile.uuid)
                 .ok_or_else(|| invalid("frozen process profile is deleted"))?;

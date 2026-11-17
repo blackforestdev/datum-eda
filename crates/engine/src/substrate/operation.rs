@@ -5,6 +5,9 @@ use super::{ObjectId, ObjectRevision, SchematicMarkerKind};
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum Operation {
+    LibraryAssets {
+        operation: super::library_asset_operations::LibraryAssetOperation,
+    },
     Process {
         operation: super::process_operations::ProcessOperation,
     },

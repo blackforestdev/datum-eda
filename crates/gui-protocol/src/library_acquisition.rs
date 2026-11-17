@@ -129,6 +129,15 @@ impl LibraryAcquisition {
     }
 
     pub fn picker_can_place(&self, library: &crate::library_browser::LibraryBrowser) -> bool {
+        if self.component_picker {
+            return !self.loading
+                && self.request().is_ok()
+                && library.configuration.as_ref().is_some_and(|c| {
+                    c.target.is_none()
+                        && c.symbol_preview == *self.preview.as_ref().unwrap()
+                        && c.can_apply()
+                });
+        }
         !self.loading
             && self.request().is_ok()
             && self.preview.as_ref().is_some_and(|preview| {

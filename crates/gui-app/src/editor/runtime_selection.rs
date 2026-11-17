@@ -317,6 +317,16 @@ impl Runtime {
                 native.last_click = None;
                 return Some(self.descend_schematic_instance(&id));
             }
+            if depth == 2 && id.class == datum_gui_protocol::AuthoredSelectionClass::Symbol {
+                native.last_click = None;
+                self.publish_native_acquisition(
+                    [id].into_iter().collect(),
+                    mode,
+                    AcquisitionEntry::Individual,
+                    None,
+                );
+                return Some(self.begin_component_properties());
+            }
             if depth >= 2 && id.can_originate_run() {
                 let request = crate::runtime_selection_run::Request {
                     model: native.model.clone(),

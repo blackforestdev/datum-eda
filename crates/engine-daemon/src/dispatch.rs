@@ -412,6 +412,8 @@ fn dispatch_request_inner(
                 &params.project_root,
                 params.confirm_durable,
                 params.include_model,
+                params.include_library,
+                params.library_geometry_selection,
             ),
             Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
         },
@@ -505,6 +507,8 @@ fn native_describe_response(
     project_root: &Path,
     confirm_durable: bool,
     include_model: bool,
+    include_library: bool,
+    library_geometry_selection: Option<Value>,
 ) -> JsonRpcResponse {
     let resolved = if confirm_durable {
         engine.confirm_native_project_durable(project_root)
@@ -545,6 +549,36 @@ fn native_describe_response(
                     Err(error) => return error_response(request_id, -32060, &error.to_string()),
                 };
                 description["model"] = snapshot;
+            }
+            if include_library {
+                let context = eda_engine::api::native_write::registry::NativeWriteContext {
+                    model: &model,
+                    project_root,
+                };
+                description["library"] =
+                    match eda_engine::api::native_write::library_assets::inspect_local_library(
+                        &context,
+                    ) {
+                        Ok(snapshot) => snapshot,
+                        Err(error) => {
+                            return error_response(request_id, -32060, &error.to_string());
+                        }
+                    };
+            }
+            if let Some(selection) = library_geometry_selection {
+                let context = eda_engine::api::native_write::registry::NativeWriteContext {
+                    model: &model,
+                    project_root,
+                };
+                description["library_geometry_selection"] =
+                    match eda_engine::api::native_write::library_assets::inspect_geometry_selection(
+                        &context, selection,
+                    ) {
+                        Ok(geometry) => geometry,
+                        Err(error) => {
+                            return error_response(request_id, -32060, &error.to_string());
+                        }
+                    };
             }
             success_response(request_id, description)
         }

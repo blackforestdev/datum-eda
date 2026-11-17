@@ -1,7 +1,7 @@
 use std::collections::BTreeSet;
 
 use super::{TransactionKind, TransactionRecord};
-mod component_binding;
+pub(in crate::substrate) mod component_binding;
 pub(super) use component_binding::rebase_preimages as rebase_component_preimages;
 
 pub(super) fn validate_transaction_links(
@@ -50,6 +50,24 @@ fn validate_compensating_payload(
     prior: &[TransactionRecord],
     label: &str,
 ) -> Result<(), String> {
+    if super::library_asset_journal_ops::binding_history::assignment_family(target) {
+        return if super::schematic_assignment_history::matches(transaction, target, prior) {
+            Ok(())
+        } else {
+            Err(format!(
+                "{label} derived library binding requires the qualified assignment inverse"
+            ))
+        };
+    }
+    if super::library_asset_journal_ops::history::requires_owned_compensation(target, prior) {
+        return if super::library_asset_journal_ops::history::matches(transaction, target, prior) {
+            Ok(())
+        } else {
+            Err(format!(
+                "{label} library operations differ from the qualified current-epoch inverse"
+            ))
+        };
+    }
     if super::schematic_assignment_history::matches(transaction, target, prior)
         || component_binding::matches(transaction, target, prior)
     {

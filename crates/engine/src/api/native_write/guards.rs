@@ -99,6 +99,9 @@ fn object_revision_guard_with_revision(
 }
 
 fn existing_object_guard_target(operation: &Operation) -> Option<ObjectId> {
+    if let Operation::LibraryAssets { operation } = operation {
+        return Some(operation.owner_id());
+    }
     if let Operation::Process { operation } = operation {
         return Some(operation.owner_id());
     }

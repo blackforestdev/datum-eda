@@ -94,6 +94,16 @@ impl DesignModel {
         if births != 1 {
             return Err(invalid("component birth epoch is missing or ambiguous"));
         }
+        if let Some(adoption) =
+            crate::substrate::library_asset_journal_ops::history::component_adoption(
+                self,
+                component,
+                part,
+                current.as_ref().unwrap(),
+            )?
+        {
+            return Ok(adoption);
+        }
         for tx in self.journal.iter().rev() {
             let changes: Vec<_> = tx
                 .operations

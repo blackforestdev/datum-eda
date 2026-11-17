@@ -103,7 +103,7 @@ impl Runtime {
         {
             return Some(Target::SchematicName);
         }
-        if self.component_picker_open() {
+        if self.component_picker_open() || self.workspace().library.configuration.is_some() {
             return super::library_text_editor::target(self);
         }
         if !ui.new_project.open
@@ -551,16 +551,8 @@ impl Runtime {
             HitTarget::CoordinateEntry(datum_gui_protocol::CoordinateEntryControl::Y) => {
                 Target::CoordinateY
             }
-            HitTarget::Library(
-                datum_gui_protocol::library_browser::LibraryControl::AcquirePath,
-            ) => Target::LibraryPath,
-            HitTarget::Library(
-                datum_gui_protocol::library_browser::LibraryControl::AcquireSearch,
-            ) => Target::LibrarySearch,
-            HitTarget::Library(datum_gui_protocol::library_browser::LibraryControl::Field(
-                index,
-            )) => {
-                let Some(target) = super::library_text_editor::field_target(self, index) else {
+            HitTarget::Library(ref control) => {
+                let Some(target) = super::library_text_editor::pointer_target(self, control) else {
                     return false;
                 };
                 target

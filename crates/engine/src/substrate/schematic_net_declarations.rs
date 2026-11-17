@@ -152,6 +152,14 @@ pub(super) fn validate(
         return Ok(());
     }
     let source = super::electrical_topology_source::schematic(model, operations)?;
+    validate_source(model, &source)
+}
+
+/// Validate captured final schematic data without rereading live source files.
+pub(super) fn validate_source(
+    model: &super::DesignModel,
+    source: &crate::schematic::Schematic,
+) -> Result<(), EngineError> {
     // The partition owner checks source keys/names/context and explicit contacts.
     if source.sheets.values().all(|s| {
         s.net_declarations.is_empty()

@@ -39,6 +39,7 @@ pub(super) fn apply_operation(
         return Ok(());
     }
     match operation {
+        Operation::LibraryAssets { .. } => unreachable!("handled before match"),
         Operation::SetProjectName { .. }
         | Operation::InitializeProjectDisplayUnits { .. }
         | Operation::SetProjectDisplayUnits { .. }

@@ -67,6 +67,19 @@ impl DesignModel {
         transaction_kind: TransactionKind,
         provenance: CommitProvenance,
     ) -> Result<CommitReport, EngineError> {
+        if target.operations.iter().any(|op| {
+            matches!(
+                op,
+                Operation::LibraryAssets {
+                    operation:
+                        super::library_asset_operations::LibraryAssetOperation::AdoptProfile { .. }
+                }
+            )
+        }) {
+            return Err(super::library_asset_operations::refusal(
+                "profile adoption is forward-only; the managed baseline is retained",
+            ));
+        }
         if self.journal_cursor.applied_transaction_count != self.journal.len() {
             return Err(EngineError::Operation(
                 "journal cursor mismatch before compensation".into(),
@@ -108,7 +121,8 @@ impl DesignModel {
         };
         super::board_batch_basis::bind_imported_fill_history(self, &mut batch)?;
         let current_component_history =
-            super::schematic_assignment_history::prepare(self, target, &mut batch)?
+            super::library_asset_journal_ops::history::prepare(self, target, &mut batch)?
+                || super::schematic_assignment_history::prepare(self, target, &mut batch)?
                 || component_binding::prepare(self, project_root, target, &mut batch)?;
         let (undo_of, redo_of) = match transaction_kind {
             TransactionKind::Undo => (Some(target.transaction_id), None),

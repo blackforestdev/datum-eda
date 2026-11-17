@@ -1,6 +1,6 @@
 //! Linear immutable frame snapshots and exact rendered-snapshot publication.
 use super::*;
-use crate::{PreparedScene, Renderer};
+use crate::{PreparedScene, Renderer, TextOrigin, TextRun};
 
 /// One immutable revision/target snapshot. No editor can mutate its scene or
 /// replace a retained source between planning and encoding. Dropping fails closed.
@@ -18,6 +18,36 @@ pub struct FramePlan {
 
 /// Only a successful full-frame encoder produces this presentation capability.
 pub struct SubmittedFrame(FramePlan);
+
+impl SubmittedFrame {
+    /// Opt-in observation of the encoded CPU snapshot, not visible-output proof.
+    pub fn trace_overlay_content(&self) {
+        if std::env::var_os("DATUM_TRACE_CLICKS").is_none() {
+            return;
+        }
+        let describe =
+            |run: &TextRun| (run.text.clone(), [run.x, run.y], run.size, run.clip_bounds);
+        eprintln!(
+            "[datum-submitted-overlay] {:?} revision={} target={:?} menu={:?} host={:?}",
+            std::time::SystemTime::now(),
+            self.0.receipt.revision(),
+            self.0.receipt.target(),
+            self.0
+                .scene
+                .menu_overlay_text_runs()
+                .iter()
+                .map(describe)
+                .collect::<Vec<_>>(),
+            self.0
+                .scene
+                .text_runs
+                .iter()
+                .filter(|run| run.origin == TextOrigin::Host)
+                .map(describe)
+                .collect::<Vec<_>>()
+        );
+    }
+}
 
 #[cfg(feature = "visual")]
 impl SubmittedFrame {

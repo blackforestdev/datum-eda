@@ -2,6 +2,9 @@
 //! This does not repin component sources or manufacture a history epoch.
 use super::pool_history::PoolHistory;
 use super::{DomainObject, EngineError, ObjectRevision, RevisionedRef, SourceShardKind};
+use crate::substrate::library_asset_journal_ops::history::{
+    Proof, qualified_package_transaction_with_proof,
+};
 use crate::substrate::{Operation, TransactionKind, TransactionRecord};
 use serde_json::Value;
 use uuid::Uuid;
@@ -30,7 +33,13 @@ fn target(operation: &Operation, id: Uuid) -> Option<bool> {
     (target == id).then_some(pose)
 }
 
-fn compensation(tx: &TransactionRecord, prior: &[TransactionRecord], pose_only: bool) -> bool {
+fn compensation(
+    tx: &TransactionRecord,
+    prior: &[TransactionRecord],
+    pose_only: bool,
+    package: Uuid,
+    proof: &mut Proof<'_>,
+) -> bool {
     if tx.transaction_kind == TransactionKind::Normal {
         return tx.undo_of.is_none() && tx.redo_of.is_none();
     }
@@ -47,7 +56,10 @@ fn compensation(tx: &TransactionRecord, prior: &[TransactionRecord], pose_only: 
                     || (!pose_only
                         && crate::substrate::schematic_assignment_history::matches(
                             tx, selected, prior,
-                        )))
+                        ))
+                    || (!pose_only
+                        && qualified_package_transaction_with_proof(tx, prior, package, proof)
+                            .unwrap_or(false)))
         })
 }
 
@@ -75,9 +87,17 @@ fn qualifies(
 
 /// Package-only projection of real creation, edits and inverse preimages in an
 /// accepted prefix. No DesignModel, source baseline or journal entry is invented.
-pub(super) fn recorded_package(
+pub(in crate::substrate) fn recorded_package(
     journal: &[TransactionRecord],
     reference: &RevisionedRef,
+) -> Result<(Value, ObjectRevision), EngineError> {
+    Proof::new(journal).package(journal, reference)
+}
+
+pub(in crate::substrate) fn recorded_package_with_proof(
+    journal: &[TransactionRecord],
+    reference: &RevisionedRef,
+    proof: &mut Proof<'_>,
 ) -> Result<(Value, ObjectRevision), EngineError> {
     crate::substrate::journal_history::targets(journal).map_err(EngineError::Operation)?;
     let id = reference.object_id;
@@ -176,7 +196,15 @@ pub(super) fn recorded_package(
                                 )?;
                                 metadata_checked = true;
                             }
-                        } else if target(op, id) != Some(true) {
+                        } else if target(op, id) != Some(true)
+                            && !(matches!(op, Operation::SetBoardPackagePackage { .. })
+                                && qualified_package_transaction_with_proof(
+                                    tx,
+                                    &journal[..index],
+                                    id,
+                                    proof,
+                                )?)
+                        {
                             return Err(invalid(
                                 "non-metadata mutation precedes the declared anchor",
                             ));
@@ -195,7 +223,7 @@ pub(super) fn recorded_package(
                 }
             }
         }
-        if !compensation(tx, &journal[..index], bridged) {
+        if !compensation(tx, &journal[..index], bridged, id, proof) {
             return Err(invalid(
                 "package compensation has no exact canonical origin",
             ));
@@ -234,7 +262,7 @@ pub(super) fn recorded_package(
     ))
 }
 
-pub(super) fn matches(
+pub(in crate::substrate) fn matches(
     history: &PoolHistory<'_>,
     object: &DomainObject,
     reference: &RevisionedRef,

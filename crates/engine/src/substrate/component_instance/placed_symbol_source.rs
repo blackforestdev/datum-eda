@@ -16,97 +16,11 @@ impl DesignModel {
         placed: ObjectId,
         library_symbol: ObjectId,
     ) -> Result<Option<Value>, EngineError> {
-        if self.journal_cursor.applied_transaction_count != self.journal.len() {
-            return Err(invalid("journal tip is not the resolved source basis"));
+        let placement = super::managed_placed_source::qualify(self, placed, library_symbol)?;
+        if let Some(definitions) = super::managed_placed_source::definitions(self, &placement)? {
+            return Ok(Some(definitions.symbol));
         }
-        let object = self
-            .objects
-            .get(&placed)
-            .filter(|o| o.domain == "schematic")
-            .ok_or_else(|| invalid("placed object is missing or foreign"))?;
-        let shard = self
-            .source_shards
-            .iter()
-            .find(|s| s.shard_id == object.source_shard_id)
-            .ok_or_else(|| invalid("placed source shard is unavailable"))?;
-        let sheet = self.materialized_source_shard_value_by_relative_path(&shard.relative_path)?;
-        if !matches!(
-            shard.kind,
-            SourceShardKind::SchematicSheet
-                | SourceShardKind::SchematicRoot
-                | SourceShardKind::SchematicDefinition
-        ) {
-            return Err(invalid("placed source is not a schematic partition"));
-        }
-        // Registry kinds for UUID-keyed maps are their key, not "symbols".
-        // Authenticate the typed source membership and embedded identity instead.
-        let key = placed.to_string();
-        let mut rows = Vec::new();
-        if let Some(row) = sheet.get("symbols").and_then(|s| s.get(&key)) {
-            rows.push(row);
-        }
-        if let Some(sheets) = sheet.get("sheets").and_then(Value::as_object) {
-            rows.extend(
-                sheets
-                    .values()
-                    .filter_map(|s| s.get("symbols").and_then(|s| s.get(&key))),
-            );
-        }
-        if rows.len() != 1 {
-            return Err(invalid(
-                "placed Symbol source membership is unavailable or ambiguous",
-            ));
-        }
-        let raw = rows[0];
-        if raw
-            .get("uuid")
-            .and_then(Value::as_str)
-            .and_then(|id| Uuid::parse_str(id).ok())
-            != Some(placed)
-        {
-            return Err(invalid(
-                "placed source identity differs from its membership",
-            ));
-        }
-        if raw
-            .get("lib_id")
-            .and_then(Value::as_str)
-            .and_then(|id| Uuid::parse_str(id).ok())
-            != Some(library_symbol)
-        {
-            return Err(invalid("library identity does not match the placed source"));
-        }
-        let owners: Vec<_> = self
-            .component_instances
-            .values()
-            .filter(|ci| {
-                ci.authority == ComponentInstanceAuthority::Authored
-                    && ci.placed_symbol_refs.contains(&placed)
-            })
-            .collect();
-        for shard in self
-            .source_shards
-            .iter()
-            .filter(|s| s.kind == SourceShardKind::ComponentInstance)
-        {
-            let raw =
-                self.materialized_source_shard_value_by_relative_path(&shard.relative_path)?;
-            let persisted: super::ComponentInstanceShard = serde_json::from_value(raw)?;
-            let input = persisted.component_instance;
-            if input
-                .placed_symbol_refs
-                .iter()
-                .any(|r| r.object_id == placed)
-                && !owners.iter().any(|owner| owner.id == input.uuid)
-            {
-                return Err(invalid(
-                    "declared placed ownership failed canonical binding resolution",
-                ));
-            }
-        }
-        if owners.len() > 1 {
-            return Err(invalid("placed binding ownership is ambiguous"));
-        }
+        let owners = &placement.owners;
         if let Some(owner) = owners.first() {
             let bindings: Vec<_> = owner
                 .library_bindings

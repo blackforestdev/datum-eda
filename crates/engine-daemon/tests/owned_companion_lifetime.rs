@@ -190,3 +190,25 @@ fn standalone_daemon_remains_usable_with_closed_stdin() {
     query(&mut stream);
     assert!(daemon.child.try_wait().unwrap().is_none());
 }
+
+#[test]
+fn abandoned_response_keeps_companion_available_until_owner_closes() {
+    let mut daemon = Daemon::spawn(true, true);
+    let mut abandoned = daemon.connect();
+    // The server must receive the full request but cannot return a response.
+    // Shutdown before submission makes EPIPE deterministic, without a timeout
+    // or a race against the response size.
+    abandoned.shutdown(std::net::Shutdown::Read).unwrap();
+    abandoned
+        .write_all(b"{\"jsonrpc\":\"2.0\",\"id\":\"abandoned\",\"method\":\"close_project\",\"params\":{}}\n")
+        .unwrap();
+    abandoned.shutdown(std::net::Shutdown::Write).unwrap();
+    let mut next = daemon.connect();
+    query(&mut next);
+    query(&mut next);
+    assert!(daemon.child.try_wait().unwrap().is_none());
+    drop(abandoned);
+    drop(next);
+    drop(daemon.child.stdin.take());
+    assert!(daemon.exited().success());
+}

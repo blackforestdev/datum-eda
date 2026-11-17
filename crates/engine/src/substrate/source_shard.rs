@@ -1,14 +1,104 @@
+use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use std::io::ErrorKind;
-use std::path::{Component, Path};
+use std::path::{Component, Path, PathBuf};
 
 use uuid::Uuid;
 
 use super::{
     DomainObject, EngineError, ImportKey, ImportMapEntry, ObjectId, ResolveDiagnostic,
-    SourceShardDirtyState, SourceShardKind, SourceShardRef, SourceShardTaxon, collect_uuid_objects,
-    domain_for_shard_kind, sha256_hex, source_shard_authority_for_kind,
+    collect_uuid_objects, domain_for_shard_kind, sha256_hex, source_shard_authority_for_kind,
 };
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum SourceShardKind {
+    ProjectManifest,
+    SchematicRoot,
+    BoardRoot,
+    RulesRoot,
+    SchematicSheet,
+    SchematicDefinition,
+    Pool,
+    Relationship,
+    ComponentInstance,
+    ElectricalIdentity,
+    VariantOverlay,
+    ImportMap,
+    ManufacturingPlan,
+    PanelProjection,
+    OutputJob,
+    OutputJobRun,
+    ArtifactRun,
+    CheckRun,
+    ZoneFill,
+    ArtifactMetadata,
+    ProposalMetadata,
+    ForwardAnnotationReview,
+    LibraryLock,
+    LibraryCatalog,
+    LibraryContent,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum SourceShardAuthority {
+    AuthoredDesign,
+    ImportedDesign,
+    SidecarMetadata,
+    GeneratedEvidence,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum SourceShardDirtyState {
+    Clean,
+    Dirty,
+    Missing,
+    Unknown,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum SourceShardTaxon {
+    ComponentInstance,
+    ElectricalIdentity,
+    Relationship,
+    VariantOverlay,
+    PoolUnit,
+    PoolSymbol,
+    PoolEntity,
+    PoolPart,
+    PoolPackage,
+    PoolFootprint,
+    PoolPadstack,
+    PoolPinPadMap,
+    ManufacturingPlan,
+    PanelProjection,
+    OutputJob,
+    ImportMap,
+    ProposalMetadata,
+    ForwardAnnotationReview,
+    OutputJobRun,
+    ArtifactRun,
+    CheckRun,
+    ZoneFill,
+    ArtifactMetadata,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct SourceShardRef {
+    pub shard_id: Uuid,
+    pub kind: SourceShardKind,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub taxon: Option<SourceShardTaxon>,
+    pub path: PathBuf,
+    pub relative_path: String,
+    pub authority: SourceShardAuthority,
+    pub dirty_state: SourceShardDirtyState,
+    pub schema_version: Option<u64>,
+    pub content_hash: String,
+}
 
 pub(super) fn read_source_shard(
     project_root: &Path,
@@ -57,6 +147,9 @@ fn source_shard_from_bytes(
         .get("schema_version")
         .and_then(serde_json::Value::as_u64);
     validate_source_shard_schema_version(&kind, relative_path, schema_version)?;
+    if kind == SourceShardKind::ProjectManifest {
+        super::library_asset_resolver::validate_profile_header(value)?;
+    }
     if kind == SourceShardKind::BoardRoot {
         super::board_source_profile::validate_native(value)?;
         super::board_journal_ops::board_track_source::validate_native(value)?;
@@ -285,6 +378,19 @@ pub(super) fn validate_source_shard_ownership_path(
     }
     let valid = match kind {
         SourceShardKind::ProjectManifest => relative_path == "project.json",
+        SourceShardKind::LibraryLock => relative_path == "library/lock.json",
+        SourceShardKind::LibraryCatalog => relative_path == "library/library.json",
+        SourceShardKind::LibraryContent => {
+            let name = relative_path
+                .strip_prefix("library/objects/sha256/")
+                .and_then(|s| s.strip_suffix(".json"))
+                .or_else(|| relative_path.strip_prefix("library/blobs/sha256/"));
+            name.is_some_and(|s| {
+                s.len() == 64
+                    && s.bytes()
+                        .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
+            })
+        }
         SourceShardKind::SchematicRoot => relative_path == "schematic/schematic.json",
         SourceShardKind::SchematicSheet | SourceShardKind::SchematicDefinition => {
             relative_path.starts_with("schematic/") && relative_path.ends_with(".json")
@@ -393,6 +499,8 @@ pub(super) fn validate_source_shard_schema_version(
         super::zone_fill::ZONE_FILL_SCHEMA_VERSION
     } else if *kind == SourceShardKind::BoardRoot {
         super::board_source_profile::BOARD_SOURCE_PROFILE
+    } else if *kind == SourceShardKind::ProjectManifest {
+        2
     } else {
         1
     };
@@ -405,3 +513,4 @@ pub(super) fn validate_source_shard_schema_version(
     }
     Ok(())
 }
+pub(in crate::substrate) mod io;

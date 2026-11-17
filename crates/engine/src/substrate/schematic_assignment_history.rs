@@ -335,6 +335,16 @@ fn inverse(ops: &[Operation], target: &TransactionRecord) -> Option<Vec<Operatio
                 previous_proposal: proposal.clone(),
                 proposal: previous_proposal.clone(),
             },
+            Operation::LibraryAssets { .. }
+                if super::library_asset_journal_ops::binding_history::assignment_family(target) =>
+            {
+                let mut owned = Vec::new();
+                super::journal_operation_hooks::inverse_non_core_operation(op, &mut owned).ok()?;
+                if owned.len() != 1 {
+                    return None;
+                }
+                owned.pop()?
+            }
             _ => return None,
         });
     }

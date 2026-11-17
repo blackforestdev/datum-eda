@@ -8,6 +8,7 @@ use std::{
     path::Path,
 };
 mod component_binding;
+mod target;
 pub(crate) fn validate_native(board: &Value) -> Result<(), EngineError> {
     let mut ids = BTreeSet::new();
     if let Some(map) = board.get("component_pads").and_then(Value::as_object) {
@@ -135,6 +136,11 @@ pub(crate) fn validate_batch(
 ) -> Result<(), EngineError> {
     if !touches_batch(model, batch)? {
         return Ok(());
+    }
+    if kind==TransactionKind::Normal && batch.operations.iter().any(|op|matches!(op,
+        Operation::LibraryAssets {operation:crate::substrate::library_asset_operations::LibraryAssetOperation::SetState {..}}))
+        && batch.operations.iter().any(|op|matches!(op,Operation::SetBoardPackagePackage {..})) {
+        return target::validate(model,root,batch);
     }
     let shard = model
         .source_shards

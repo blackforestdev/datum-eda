@@ -173,6 +173,11 @@ impl ProjectResolver {
             &mut import_map,
         );
         shards.push(manifest_shard);
+        let library_profile = super::library_asset_resolver::discover_profile(
+            &self.project_root,
+            &manifest_value,
+            &mut shards,
+        )?;
         // The current lease excludes canonical writers. Complete/empty integrity
         // inspection did not recover anything, so replay can consume the same
         // freshly parsed journal that the integrity check qualified. Retain a
@@ -186,6 +191,19 @@ impl ProjectResolver {
             read_transaction_journal(&self.project_root)
         };
         diagnostics.extend(journal_diagnostics);
+        // Integrity recovery has already restored every genuine published
+        // transition. A technical journal alone cannot upgrade a raw v1 header
+        // while leaving managed discovery and the model summary on v1.
+        if manifest.schema_version != Some(2)
+            && journal_records
+                .iter()
+                .flat_map(|record| &record.operations)
+                .any(|op| matches!(op, super::Operation::LibraryAssets { .. }))
+        {
+            return Err(super::library_asset_operations::refusal(
+                "unrecovered library transition: recorded managed history requires its recovered version2 project header",
+            ));
+        }
 
         let shard_specs = [
             (SourceShardKind::SchematicRoot, manifest.schematic.as_str()),
@@ -522,6 +540,14 @@ impl ProjectResolver {
         }
         model.zone_fills = super::derive_model_zone_fills(&model, persisted_zone_fills)?;
         super::electrical_identity_validation::validate(&model)?;
+        if let Some(snapshot) = &library_profile {
+            super::library_asset_resolver::validate_profile_model(
+                &self.project_root,
+                lease,
+                &model,
+                snapshot,
+            )?;
+        }
         validate_run_evidence_links(&mut model);
         if trace {
             eprintln!(

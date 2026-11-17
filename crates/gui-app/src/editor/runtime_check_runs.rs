@@ -199,6 +199,16 @@ impl Runtime {
                                     .complete(&request, &answer.run)
                                 {
                                     self.session.workspace_mut().check_producer.refuse("Check completion no longer matches its admitted source basis".into());
+                                } else if let Some(backing) = self.workspace().backing.as_ref() {
+                                    // Check evidence advances the journal tip even when
+                                    // authored geometry is unchanged. Read a fresh common
+                                    // Library inspection through the existing companion;
+                                    // publication retains its project/session/basis guards.
+                                    self.native_edit.prepare_read(
+                                        backing.request.project_root.clone(),
+                                        self.workspace().scene.project_uuid.clone(),
+                                        self.project_open.session_generation,
+                                    );
                                 }
                             }
                         }

@@ -97,6 +97,7 @@ fn refresh_workspace_after_terminal_output(
     let mut library = next.library;
     library.kind = workspace.library.kind;
     library.resolution = workspace.library.resolution.clone();
+    library.configuration = workspace.library.configuration.clone();
     library.search = workspace.library.search.clone();
     library.result_offset = workspace.library.result_offset;
     workspace.library = library;

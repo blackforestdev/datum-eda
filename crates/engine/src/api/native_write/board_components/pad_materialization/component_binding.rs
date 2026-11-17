@@ -13,11 +13,12 @@ fn next(value: ObjectRevision) -> Result<ObjectRevision, EngineError> {
         .ok_or_else(|| invalid("binding revision overflow"))
 }
 
-pub(super) fn refresh(
+pub(super) fn refresh_with_sources(
     model: &DesignModel,
     request: &ComponentPadMaterializationRequest,
     board: &serde_json::Value,
     pads: &mut [ComponentPadSource],
+    target: Option<&source::PlannedPadSources<'_>>,
 ) -> Result<Vec<Operation>, EngineError> {
     let Some(id) = request.component_instance else {
         return Ok(vec![]);
@@ -54,6 +55,22 @@ pub(super) fn refresh(
             .get(&reference.object_id)
             .is_some_and(|o| o.object_revision == reference.object_revision)
     };
+    let package_current = |reference: &RevisionedRef| {
+        current(reference)
+            || target.is_some_and(|target| {
+                target
+                    .recorded_package(reference)
+                    .is_ok_and(|(raw, epoch)| {
+                        model
+                            .objects
+                            .get(&reference.object_id)
+                            .is_some_and(|object| {
+                                object.domain == "board" && object.object_revision == epoch
+                            })
+                            && raw == board["packages"][reference.object_id.to_string()]
+                    })
+            })
+    };
     if parsed.schema_version != crate::substrate::COMPONENT_INSTANCE_SHARD_SCHEMA_VERSION
         || ci.uuid != id
         || ci.object_revision != object.object_revision
@@ -61,7 +78,7 @@ pub(super) fn refresh(
         || ci.placed_package_refs.len() != 1
         || ci.placed_package_refs[0].object_id != request.placement.uuid
         || !ci.placed_symbol_refs.iter().all(current)
-        || !ci.placed_package_refs.iter().all(current)
+        || !ci.placed_package_refs.iter().all(package_current)
         || !ci.part_ref.as_ref().is_none_or(|r| {
             model
                 .materialized_pool_object_revision(r.object_id, "parts", r.object_revision)
@@ -117,7 +134,33 @@ pub(super) fn refresh(
         object_revision: next(ci.object_revision)?,
     };
     let previous = source["component_instance"].clone();
-    let mut updated = previous.clone();
+    let mut updated = if let Some(proposed) = target.and_then(|target| target.component(id)) {
+        let mut expected = previous.clone();
+        expected["object_revision"] = serde_json::to_value(post_ci.object_revision)?;
+        if let Some(bindings) = expected["library_bindings"].as_object_mut() {
+            for binding in bindings.values_mut() {
+                let id: Uuid = serde_json::from_value(binding["target_object_id"].clone())?;
+                let actual = target.unwrap().object_revision(id)?;
+                if actual
+                    != model
+                        .objects
+                        .get(&id)
+                        .ok_or_else(|| invalid("old binding source absent"))?
+                        .object_revision
+                {
+                    binding["pinned_object_revision"] = serde_json::to_value(actual)?;
+                }
+            }
+        }
+        if proposed != &expected {
+            return Err(invalid(
+                "planned component changes more than exact library source pins",
+            ));
+        }
+        proposed.clone()
+    } else {
+        previous.clone()
+    };
     updated["object_revision"] = serde_json::to_value(post_ci.object_revision)?;
     let package_revision = next(model.objects[&request.placement.uuid].object_revision)?;
     for reference in updated["placed_package_refs"]
@@ -192,10 +235,12 @@ pub(super) fn refresh(
             let binding = pad.source_binding.as_ref().unwrap();
             if evidence.library_pad.as_ref().is_none_or(|r| {
                 r.object_id != binding.library_pad.object_id
-                    || r.object_revision != binding.library_pad.object_revision
+                    || (target.is_none()
+                        && r.object_revision != binding.library_pad.object_revision)
             }) || binding.pin_pad_map.as_ref().is_none_or(|p| {
                 p.object_id != evidence.pin_pad_map.object_id
-                    || p.object_revision != evidence.pin_pad_map.object_revision
+                    || (target.is_none()
+                        && p.object_revision != evidence.pin_pad_map.object_revision)
             }) {
                 return Err(invalid(
                     "reference refresh changes electrical mapping semantics",
@@ -203,6 +248,17 @@ pub(super) fn refresh(
             }
             evidence.component_instance = post_ci.clone();
             evidence.board_pad.object_revision = next(evidence.board_pad.object_revision)?;
+            if target.is_some() {
+                evidence.library_pad = Some(RevisionedRef {
+                    object_id: binding.library_pad.object_id,
+                    object_revision: binding.library_pad.object_revision,
+                });
+                let map = binding.pin_pad_map.as_ref().unwrap();
+                evidence.pin_pad_map = RevisionedRef {
+                    object_id: map.object_id,
+                    object_revision: map.object_revision,
+                };
+            }
         }
         operations.push(Operation::SetElectricalIdentity {
             previous: Box::new(record.clone()),

@@ -121,7 +121,7 @@ fn render_impl(
     let assignment_action = context.and_then(|(context, state)| {
         let (_, target) = datum_gui_protocol::schematic_authoring::selected::target(state).ok()?;
         if target.class != Class::Symbol { return None; }
-        Some(datum_gui_protocol::schematic_authoring::assignment::AssignmentEvidence::admit_selected(state).ok().map(|_| {
+        Some(datum_gui_protocol::library_browser::component_resolution::configuration::ConfigurationTarget::capture(state).ok().map(|_| {
             HitTarget::InspectorAssignPart(datum_gui_protocol::inspector_context::InspectorNavigationBasis::for_context(
                 state, context, Some(datum_gui_protocol::selection_view::inspector_state::InspectorPresentationBasis::capture(view, navigation))))
         }))
@@ -309,9 +309,9 @@ fn render_impl(
     if let Some(action) = assignment_action {
         row(
             if action.is_some() {
-                "Assign Part…"
+                "Component Properties…"
             } else {
-                "Assign Part: unavailable"
+                "Component Properties: unavailable"
             },
             action,
             false,

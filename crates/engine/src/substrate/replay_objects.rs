@@ -18,7 +18,13 @@ pub(super) fn refresh_materialized_shard_objects(
     for shard in shards {
         // Proposal payloads contain hypothetical source UUIDs. Their metadata is
         // not an object producer; registering it changes the guarded design basis.
-        if shard.kind == SourceShardKind::ProposalMetadata {
+        if matches!(
+            shard.kind,
+            SourceShardKind::ProposalMetadata
+                | SourceShardKind::LibraryLock
+                | SourceShardKind::LibraryCatalog
+                | SourceShardKind::LibraryContent
+        ) {
             continue;
         }
         let path = if shard.path.is_absolute() {

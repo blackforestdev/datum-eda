@@ -40,15 +40,14 @@ pub(super) fn render(
         return label::render(state, layout, quads, text, hits);
     }
     let authoring = &state.schematic_authoring;
-    if state
-        .library
-        .acquisition
-        .as_ref()
-        .is_some_and(|a| a.component_picker)
+    if state.library.configuration.is_some()
+        || state
+            .library
+            .acquisition
+            .as_ref()
+            .is_some_and(|a| a.component_picker)
     {
-        crate::side_panels::library_surface::render_component_picker(
-            state, layout, quads, text, hits,
-        );
+        // The shared late overlay pass paints the component picker above all panes.
         return Ok(());
     }
     if authoring.picker {

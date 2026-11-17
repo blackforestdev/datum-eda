@@ -92,7 +92,7 @@ impl Runtime {
     }
 
     pub(crate) fn begin_selected_symbol_edit(&mut self) -> bool {
-        self.begin_selected_fields_edit(false)
+        self.begin_component_properties()
     }
     pub(crate) fn begin_selected_bus_edit(&mut self) -> bool {
         self.begin_selected_fields_edit(true)

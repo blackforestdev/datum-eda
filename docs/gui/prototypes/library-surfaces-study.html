@@ -67,6 +67,7 @@
     <a href="library-surfaces-study.html#L-I">L-I Placed update</a>
     <a href="library-layout-accessibility-study.html#L-J">L-J Layout and accessibility</a>
     <a href="library-surfaces-study.html#L-K">L-K Component Properties</a>
+    <a href="library-surfaces-study.html#L-L">L-L Local revisions and deliberate updates</a>
     <a href="library-surfaces-study.html#L-MAP">Frame → clause map</a>
   </nav>
 </header>
@@ -391,6 +392,67 @@
 <p class="cell-cap">K1–K4: one Properties flow, chooser, explicit new-map review and pending Apply. K7/K8: the same form and chooser at narrow width. Applying uses existing stale/source/consent guards; transferring the configured component carries its exact physical graph and map to the initial PCB. Preview success, target review and backend compilation do not establish real workflow readiness.</p>
 </section>
 
+<!-- ======================================================== L-L -->
+<section class="fr" id="L-L">
+  <div class="sec-label"><span class="n">L-L</span><span>Local revisions · save a candidate · review a Project update</span><span class="rule"></span>
+    <span class="tag tgt">TARGET · runtime not delivered</span><span class="tag syn">SYNTHETIC · illustrative records</span></div>
+  <p class="cap">PM066 / SL-023–024: local technical history uses the existing Library Editor and details. It does not require formal document control, an issued revision, public publishing or approval. These frames add ordinary local controls; L-H/L-K remain the component-first workflow and L-I retains its broader placed-physical-update target. All identities, shortened digests, counts and results here are illustrative, never native proof.</p>
+  <div class="grid2">
+    <div class="card" id="L-L1"><div class="phd0"><span>Enable local library revisions?</span><span class="r">explicit format change</span></div>
+      <div class="kv w"><span class="v">This Project will use native format 2 and an empty library revision baseline. Existing definitions and placed components stay in place.</span></div>
+      <div class="kv w"><span class="v">Earlier common revision/provenance records are unavailable. Enabling the format does not reconstruct or approve them.</span></div>
+      <div class="note">This format step is forward-only. Undo cannot return the Project to format 1. Subsequent local candidate saves and Project updates retain normal Undo/Redo.</div>
+      <div class="acts"><button class="btn">Cancel</button><button class="btn pri">Enable local revisions</button></div>
+    </div>
+    <div class="card" id="L-L2"><div class="phd0"><span>Record a local source baseline</span><span class="r">existing selected component</span></div>
+      <div class="kv"><span class="k">Component</span><span class="v">Demo local resistor · current Project definition</span></div>
+      <div class="kv"><span class="k">Common history</span><span class="v">Not recorded for this definition</span></div>
+      <div class="kv"><span class="k">Original author</span><span class="v">Unknown · not inferred from the person recording this baseline</span></div>
+      <div class="kv"><span class="k">Source / rights</span><span class="v">Retained source evidence; unavailable facts remain unknown</span></div>
+      <div class="kv"><label class="k" for="local-baseline-purpose">Change summary</label><input id="local-baseline-purpose" class="fld" value="Record the current local source baseline"></div>
+      <div class="note">Records an exact local candidate and its dependency closure. The Project keeps its current definitions and bindings until you review and apply an update. Cancel before recording changes nothing.</div>
+      <div class="acts"><button class="btn">Cancel</button><button class="btn pri">Record local baseline</button></div>
+    </div>
+    <div class="card" id="L-L3"><div class="phd0"><span>Edit local component revision</span><span class="r">existing per-kind editor</span></div>
+      <div class="kv"><span class="k">Active revision</span><span class="v m">sha256:aaaa… · illustrative shortened digest</span></div>
+      <div class="kv"><span class="k">Description</span><input class="fld" aria-label="Component description" value="Reviewed local resistor definition"></div>
+      <div class="kv"><label class="k" for="local-revision-purpose">Change summary</label><input id="local-revision-purpose" class="fld" value="Clarify the engineering description after review"></div>
+      <div class="kv w"><span class="v">Preview: description changes; current physical choice and mapping retained. No Project update has been applied.</span></div>
+      <div class="note">The editor preserves the exact base revision and unedited content. Preview validates the authored snapshot. Save local revision records a candidate; it does not silently update placed users or declare approval. Cancel discards this unsaved draft.</div>
+      <div class="acts"><button class="btn">Cancel</button><button class="btn">Preview</button><button class="btn pri">Save local revision</button></div>
+    </div>
+    <div class="card" id="L-L4"><div class="phd0"><span>Review Project library update</span><span class="r">selected exact local candidate</span></div>
+      <div class="kv"><span class="k">Active</span><span class="v m">sha256:aaaa… · illustrative shortened digest</span></div>
+      <div class="kv"><span class="k">Selected candidate</span><span class="v m">sha256:bbbb… · saved locally; not yet applied</span></div>
+      <div class="kv"><span class="k">Changes</span><span class="v">Description: “Local resistor” → “Reviewed local resistor definition”</span></div>
+      <div class="kv"><span class="k">Affected users</span><span class="v">1 component · R1 · schematic / · physical choice and mapping unchanged</span></div>
+      <div class="kv"><span class="k">Checks</span><span class="v">Integrity and binding validation required by Apply; standards/production qualification not inferred</span></div>
+      <div class="kv w"><span class="v">Revision details show complete asset/revision identities, parent revisions, exact dependencies, provenance and unavailable facts. Long identities wrap in the existing scrollable details; no clipped digest is an exact-identity inspection.</span></div>
+      <div class="note">Apply uses this reviewed candidate and captured Project/catalog basis through the canonical writer. Undo/Redo restore coherent revision lock, materialization and bindings. Cancel keeps the separately saved candidate and leaves the Project's active bindings unchanged.</div>
+      <div class="acts"><button class="btn">Cancel</button><button class="btn">Revision details</button><button class="btn pri">Apply update</button></div>
+    </div>
+    <div class="card" id="L-L5"><div class="phd0"><span>Update unavailable</span><span class="r">refusal; no retry</span></div>
+      <div class="kv w"><span class="v"><span class="st err">Project changed while this update was being reviewed.</span> Nothing applied. Reopen the review before applying.</span></div>
+      <div class="kv w"><span class="v">A missing old revision, incomplete affected-user query, unsupported physical impact or unavailable service also refuses with its actual reason. Missing impact is unknown, never zero. Previously saved candidates remain separately recorded.</span></div>
+      <div class="note">This is a confirmed pre-write refusal. An uncertain transport outcome is reported as unconfirmed and reconciled through the canonical journal; it is never labelled guaranteed unchanged or retried silently.</div>
+      <div class="acts"><button class="btn">Close</button><button class="btn na" disabled>Apply update — unavailable</button></div>
+    </div>
+    <div class="card" id="L-L6"><div class="phd0"><span>Revision details</span><span class="r">illustrative exact-identity shape</span></div>
+      <div class="kv"><span class="k">Asset identity</span><span class="v m">00000000-0000-0000-0000-000000000001</span></div>
+      <div class="kv"><span class="k">Active revision</span><span class="v m">sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</span></div>
+      <div class="kv"><span class="k">Local candidate</span><span class="v m">sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb</span></div>
+      <div class="kv"><span class="k">Parent</span><span class="v m">sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</span></div>
+      <div class="kv"><span class="k">Original authors</span><span class="v">Unknown</span></div>
+      <div class="kv"><span class="k">Change actor</span><span class="v">Recorded application actor · identity not independently verified</span></div>
+      <div class="kv"><span class="k">Source evidence</span><span class="v">Local source snapshot retained · external provenance unknown</span></div>
+      <div class="kv"><span class="k">Rights / review</span><span class="v">Unknown rights · no independent review or approval inferred</span></div>
+      <div class="note">These full-width example identities are synthetic. Actual records show their complete retained identities, dependencies and evidence, with wrapping and scrolling. Technical verification of content is separate from author identity, rights and engineering approval.</div>
+      <div class="acts"><button class="btn">Close details</button></div>
+    </div>
+  </div>
+  <p class="cell-cap">Enable format, record/save local content and adopt into the Project are separate deliberate actions. Technical local history remains available offline from retained exact content. Default local inspection does not publish, assert rights, mark Approved or add a formal Revision workbench. Narrow layouts stack the same cards and retain summary, full refusal and all action buttons.</p>
+</section>
+
 <!-- ======================================================== map -->
 <section class="fr" id="L-MAP">
   <div class="sec-label"><span class="n">MAP</span><span>Frame → clause / candidate mapping</span><span class="rule"></span></div>
@@ -409,6 +471,7 @@
     <tr><td class="n">#L-I</td><td>LIBRARY-VALIDATION</td><td>Relationships and revisions — update candidate paragraph</td><td>Placed-impact trigger (separate authority)</td><td>Target</td></tr>
     <tr><td class="n">#L-J</td><td>SHARED-MUTATION</td><td>Accessibility and visual frames</td><td>Narrow pool / kind / Navigator / Inspector access; refusal placement</td><td>Target</td></tr>
 <tr><td class="n">#L-K</td><td>LIBRARY-MANUAL-USE · LIBRARY-VALIDATION</td><td>One Component Properties form and pending footprint chooser; Reference/Value/Footprint, Apply/Cancel, exact identity and history</td><td>Routed-PCB physical replacement outside scope</td><td>Corrective target; runtime verification pending</td></tr>
+    <tr><td class="n">#L-L</td><td>LIBRARY-MANUAL-USE · LIBRARY-VALIDATION · SL-023–024</td><td>Shared library asset target — separate format baseline, exact local candidate save, reviewed canonical Project adoption</td><td>Publisher/rights, catalog budgets, general routed-board replacement remain separately governed</td><td>Independently reviewed local target; runtime proof pending</td></tr>
   </table>
   <p class="cap" style="margin-top:12px"><b>Conflicts shown, not resolved:</b> (1) the Library Authoring contract still lists seven DomainObjects with ModelAttachment
   as a kind and describes its map table as <code>logical_pin → footprint_pad</code>; these frames follow the Product contract — eight Pool kinds, models as

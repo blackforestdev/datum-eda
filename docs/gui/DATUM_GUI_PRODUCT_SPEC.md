@@ -993,3 +993,38 @@ are inspectable when needed; ordinary placement does not require governance
 ceremony. Personal usage/search telemetry is outside the asset model. New history
 or contribution layouts still require independently reviewed visual authority;
 this amendment changes no existing prototype, pixel acceptance or runtime claim.
+
+### Local revision controls — bounded implemented paths
+
+[Library study L-L](prototypes/library-surfaces-study.html#L-L) defines the local
+controls within `dat-library-local-revision-adoption-v6ya`: explicit forward-only
+format-2 empty baseline, honest source-baseline/candidate recording, authored
+change summary, exact revision/provenance details, and review followed by guarded
+Project adoption. Candidate save is separate from active materialization; cancelling
+an update retains any separately saved candidate. Stale/missing/unsupported impact
+refuses without a hidden retry. Long exact identities remain inspectable in the
+existing scrollable details. Ordinary local history does not require formal
+project document control or confer publication, rights or approval.
+
+The L-L visual/semantic target has independent review. Native local controls and
+focused real-data runtime proof now cover deliberate Footprint pad-position and
+Padstack width adoption into both existing users, preserving their identities,
+poses, copper and electrical meanings. Settled Undo/Redo, explicit Save and cold
+reopen retain the adopted state. A network-isolated cold run shows both users
+Current, persists a CheckRun and opens a subsequent Padstack draft/preview without
+reopening the Project; Cancel adds no authored change. That CheckRun reports
+three findings and supplies no clean-DRC or manufacturing acceptance.
+
+Separate current QA013 corrective proof shows ordinary R1 Properties with 10k,
+standard installed 0805 choice and explicit pin/pad confirmation, initial PCB
+transfer, whole-transfer Undo/Redo, Save and exact cold persistence. Double-click
+of the loaded Footprint result returns its pending choice to the same R1 form;
+Cancel preserves the project. Retained Place/picker/wire evidence keeps its own
+candidate scope. These agent-driven observations do not overwrite historical
+owner QA failures or constitute owner acceptance. QA013 remains not ready pending
+PM integration and readiness disposition.
+
+The existing L-H/L-K requirements and retained L-I general placed-update scope
+are unchanged. Full qualification, general routed-board ECO, public contribution
+and publishing, publisher/source-rights decisions and migration remain unfinished.
+Source review and static frames alone are not runtime delivery.

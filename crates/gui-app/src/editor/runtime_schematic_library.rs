@@ -41,6 +41,35 @@ fn restore_origin_layout(
 }
 
 impl Runtime {
+    pub(crate) fn resume_configured_component(&mut self) -> Result<(), String> {
+        let configuration = self
+            .workspace()
+            .library
+            .configuration
+            .as_ref()
+            .ok_or("Configured component unavailable")?;
+        let picker = configuration
+            .picker
+            .as_ref()
+            .ok_or("Captured component picker unavailable")?;
+        let component = configuration
+            .current_component
+            .as_ref()
+            .ok_or("Complete component unavailable")?;
+        let mut origin = self
+            .acquisition_placement_origin_for(picker)
+            .ok_or("Captured schematic unavailable")?;
+        if !origin_is_current(self.workspace(), &origin) {
+            return Err("The captured schematic changed; saved definitions remain in Library. Reopen Place Component".into());
+        }
+        origin.component = true;
+        let part = component.part.part;
+        self.session.workspace_mut().library.configuration = None;
+        self.session.workspace_mut().library.acquisition = None;
+        self.library_acquisition_work.cancel();
+        self.resume_library_placement(origin, Some(part));
+        Ok(())
+    }
     /// Placement reuses the saved Project definition, even if its original
     /// external source changed; the source read never silently updates it.
     pub(crate) fn preview_existing_project_symbol(&mut self) {

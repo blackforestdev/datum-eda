@@ -298,6 +298,7 @@ const WGPU_COPY_BYTES_PER_ROW_ALIGNMENT: u32 = 256;
 const ASSISTANT_ACTIVITY_COMMAND: &str =
     "datum-eda context session-activity --session \"$DATUM_SESSION_ID\" --limit 20";
 fn main() -> Result<()> {
+    eda_engine::api::native_write::library_assets::initialize_library_service_from_environment()?;
     install_gui_panic_hook();
     reset_gui_diagnostic_log();
     if let Some(result) = native_resize_repro::run_if_requested() {

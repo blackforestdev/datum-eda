@@ -62,6 +62,7 @@ fn main() {
 }
 
 fn run() -> Result<i32> {
+    eda_engine::api::native_write::library_assets::initialize_library_service_from_environment()?;
     let cli = Cli::parse();
     let (output, exit_code) = execute_with_exit_code(cli)?;
     if !output.is_empty() {

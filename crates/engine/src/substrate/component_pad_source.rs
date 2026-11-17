@@ -8,12 +8,19 @@ use crate::{
 };
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
+pub(in crate::substrate) mod pending;
+mod target;
+pub(crate) use target::{
+    PhysicalGeometryIntent, PhysicalPadContinuity, PhysicalPlacementIntent, PlannedPadSources,
+};
 mod pins;
 pub mod process;
 mod projection;
 #[cfg(test)]
 mod roundrect_tests;
 mod validation;
+pub(crate) use pins::hash_value;
+pub(crate) use pins::incarnation as source_incarnation;
 pub(crate) use pins::{capture_pad, capture_root, check_pin, continuity, source_value};
 pub(in crate::substrate) use projection::projection_with_metadata_basis;
 pub use projection::{ComponentPadProjection, component_pad_projection};

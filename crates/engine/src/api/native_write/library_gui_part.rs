@@ -14,6 +14,19 @@ pub(super) fn build(
     if !create {
         return edit::build(context, provenance, request);
     }
+    if let Some(configuration) = request.fields.get("component_configuration") {
+        if request.fields.len() != 1 {
+            return Err(refusal(
+                "Component configuration cannot contain unrelated Part fields",
+            ));
+        }
+        return super::component_configuration::build(
+            context,
+            provenance,
+            request.object_id,
+            serde_json::from_value(configuration.clone())?,
+        );
+    }
     const FIELDS: &[&str] = &[
         "name",
         "manufacturer",

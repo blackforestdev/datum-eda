@@ -2,6 +2,7 @@
 use super::*;
 
 pub(super) fn render(p: &mut Painter<'_>) {
+    super::revision_panel::actions(p);
     let state = p.state;
     let rect = p.rect;
     p.line("Project pool · source identity / revision remain separate");

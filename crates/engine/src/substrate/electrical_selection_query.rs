@@ -10,6 +10,8 @@ mod component_relations;
 mod origin_binding;
 #[path = "electrical_selection_query/related_parents.rs"]
 mod related_parents;
+#[path = "electrical_selection_query/source_frame.rs"]
+mod source_frame;
 use super::*;
 use crate::substrate::{
     DesignModel, ElectricalIdentity, ElectricalOccurrence, ModelRevision, NetCorrespondenceStatus,
@@ -79,6 +81,7 @@ pub struct ElectricalSelectionSnapshot {
     representations: BTreeSet<ElectricalOccurrence>,
     values: BTreeMap<Uuid, serde_json::Value>,
     source_basis: Vec<SelectionSourceBasis>,
+    pending_frame: Option<Arc<crate::substrate::journal_source_frame::VerifiedPendingSourceFrame>>,
 }
 
 impl ElectricalSelectionSnapshot {
@@ -92,17 +95,7 @@ impl ElectricalSelectionSnapshot {
         let mut values = BTreeMap::new();
         let mut source_basis = vec![];
         for shard in &model.source_shards {
-            if !matches!(
-                shard.kind,
-                SourceShardKind::SchematicRoot
-                    | SourceShardKind::SchematicSheet
-                    | SourceShardKind::SchematicDefinition
-                    | SourceShardKind::BoardRoot
-                    | SourceShardKind::Pool
-                    | SourceShardKind::ElectricalIdentity
-                    | SourceShardKind::ComponentInstance
-                    | SourceShardKind::ZoneFill
-            ) {
+            if !source_frame::needed(&shard.kind) {
                 continue;
             }
             let value = super::super::journal::capture_shard_value(&model, shard).map_err(|e| {
@@ -117,62 +110,37 @@ impl ElectricalSelectionSnapshot {
                 content_hash: shard.content_hash.clone(),
             });
         }
-        source_basis.sort_by_key(|v| v.shard_id);
-        let read = |shard: &super::super::SourceShardRef| {
-            values
-                .get(&shard.shard_id)
-                .cloned()
-                .ok_or_else(|| EngineError::Validation("missing captured electrical source".into()))
-        };
-        let failure = |e: EngineError| ElectricalQueryFailure::UnavailableBasis {
-            sources: source_basis.iter().map(|s| s.shard_id).collect(),
-            reason: e.to_string(),
-        };
-        let basis =
-            super::super::electrical_basis::ElectricalBasis::with_reader(&model, &[], &read)
-                .map_err(failure)?;
-        let (logical, physical, representations, schematic) = if model
+        source_frame::evaluate(model, values, source_basis, None)
+    }
+
+    pub(in crate::substrate) fn capture_pending(
+        frame: Arc<crate::substrate::journal_source_frame::VerifiedPendingSourceFrame>,
+    ) -> Result<Self, ElectricalQueryFailure> {
+        source_frame::pending(frame)
+    }
+    pub(in crate::substrate) fn validate_pending_electrical(
+        &self,
+    ) -> Result<(), ElectricalQueryFailure> {
+        source_frame::validate(self)
+    }
+
+    pub(in crate::substrate) fn required_pending_sources(model: &DesignModel) -> BTreeSet<Uuid> {
+        model
             .source_shards
             .iter()
-            .any(|s| s.kind == SourceShardKind::SchematicRoot)
-        {
-            let schematic =
-                super::super::electrical_topology_source::schematic_with_reader(&model, &[], &read)
-                    .map_err(failure)?;
-            let groups = crate::connectivity::partitions(&schematic).map_err(failure)?;
-            let logical = super::super::electrical_transaction::previous(&model, &groups)
-                .map_err(failure)?
-                .into_iter()
-                .map(|g| (g.net_id, g.members))
-                .collect();
-            (
-                logical,
-                crate::connectivity::physical_partitions(&schematic).map_err(failure)?,
-                crate::connectivity::representation_occurrences(&schematic).map_err(failure)?,
-                Some(schematic),
-            )
-        } else {
-            (BTreeMap::new(), vec![], BTreeSet::new(), None)
-        };
-        for shard in model
-            .source_shards
-            .iter()
-            .filter(|s| s.kind == SourceShardKind::BoardRoot)
-        {
-            // The basis owns the final projection after assignment qualification.
-            // Source queries borrow that same tree rather than retaining a copy.
-            values.remove(&shard.shard_id);
-        }
-        Ok(Self {
-            model,
-            basis,
-            logical,
-            physical,
-            schematic,
-            representations,
-            values,
-            source_basis,
-        })
+            .filter(|s| source_frame::needed(&s.kind) || s.kind == SourceShardKind::ProjectManifest)
+            .map(|s| s.shard_id)
+            .collect()
+    }
+    pub(in crate::substrate) fn pinned_library_definition(
+        &self,
+        expected: &ModelRevision,
+        id: Uuid,
+        kind: &str,
+        revision: crate::substrate::ObjectRevision,
+    ) -> Result<serde_json::Value, ElectricalQueryFailure> {
+        self.require_revision(expected)?;
+        source_frame::pinned(self, id, kind, revision)
     }
 
     /// Borrow the already captured source projection at this exact revision.

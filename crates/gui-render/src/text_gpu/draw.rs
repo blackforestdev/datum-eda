@@ -309,6 +309,35 @@ impl Draw {
         Ok(())
     }
 
+    /// Observe the pending glyph upload without advancing its comparison baseline.
+    pub(crate) fn trace_preparation(&self) {
+        if std::env::var_os("DATUM_TRACE_CLICKS").is_none() {
+            return;
+        }
+        let pending = self.pending_instances.as_deref().unwrap_or(&[]);
+        let changed: Vec<_> = pending
+            .iter()
+            .enumerate()
+            .filter(|(i, value)| {
+                self.snapshot.get(*i).map(bytemuck::bytes_of) != Some(bytemuck::bytes_of(*value))
+            })
+            .map(|(i, value)| (i, value.rect, value.tex, value.color))
+            .collect();
+        let mut sources = Vec::new();
+        let bytes = self.append_sources(&mut sources);
+        let ranges: Vec<_> = super::upload::plan::Uploads::sources(&sources)
+            .map(|upload| (upload.offset, upload.bytes.len()))
+            .collect();
+        eprintln!(
+            "[datum-overlay-instances] {:?} buffer={:?} snapshot={} pending={} upload_bytes={bytes} ranges={ranges:?} batches={:?} changed={changed:?}",
+            std::time::SystemTime::now(),
+            self.instances.as_ref().map(|buffer| &**buffer),
+            self.snapshot.len(),
+            pending.len(),
+            &*self.batches
+        );
+    }
+
     /// Share the screen-stream changed-range writer. Updates reach the queue
     /// only at the caller's successful frame submission boundary.
     pub fn has_pending_uploads(&self) -> bool {

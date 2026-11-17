@@ -15,9 +15,10 @@ use super::{
 mod declaration_history;
 pub(super) mod metadata_history;
 pub(super) use declaration_history::{assignment_origin, assignment_receipt};
+mod managed_placed_source;
 mod part_physical_source;
 mod placed_entity_source;
-mod placed_package_history;
+pub(in crate::substrate) mod placed_package_history;
 mod placed_symbol_source;
 pub(super) mod pool_history;
 

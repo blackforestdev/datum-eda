@@ -12,6 +12,10 @@ pub mod component_resolution;
 
 #[path = "library_acquisition.rs"]
 pub mod acquisition;
+#[path = "library_revision_view.rs"]
+mod revision_view;
+#[path = "library_revision_workflow.rs"]
+pub mod revision_workflow;
 #[path = "library_symbol_geometry.rs"]
 pub mod symbol_geometry;
 
@@ -28,6 +32,8 @@ pub const KINDS: [(&str, &str); 8] = [
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum LibraryControl {
+    Revision(revision_workflow::RevisionControl),
+    Configure(component_resolution::configuration::ConfigurationControl),
     Acquire,
     BrowseBundled,
     ProjectSymbols,
@@ -151,9 +157,15 @@ pub struct LibraryLink {
 
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct LibraryBrowser {
+    pub revision_workflow: Option<revision_workflow::LibraryRevisionWorkflow>,
+    pub configuration: Option<component_resolution::configuration::ComponentConfiguration>,
     pub resolution: Option<component_resolution::ComponentResolution>,
     pub entries: Vec<LibraryEntry>,
     pub basis: Option<Arc<DesignModel>>,
+    /// Same-service common records, bound to the exact project/revision/tip.
+    pub revision_inspection: Option<Value>,
+    /// Disposable view identity; never provenance or engine write authority.
+    pub revision_inspection_id: Uuid,
     pub kind: usize,
     pub search: String,
     pub search_focus: bool,
@@ -213,46 +225,13 @@ impl LibraryBrowser {
     /// Leaf metadata remains inspectable without squeezing entire JSON maps
     /// onto one row. Named records keep their authored names in the path.
     pub fn detail_lines(&self, entry: &LibraryEntry) -> Vec<String> {
-        fn flatten(path: &str, value: &Value, lines: &mut Vec<String>) {
-            match value {
-                Value::Object(fields) => {
-                    for (key, v) in fields {
-                        let name = v.get("name").and_then(Value::as_str).unwrap_or(key);
-                        flatten(
-                            &if path.is_empty() {
-                                name.into()
-                            } else {
-                                format!("{path}.{name}")
-                            },
-                            v,
-                            lines,
-                        );
-                    }
-                }
-                Value::Array(values) => {
-                    if values.is_empty() {
-                        lines.push(format!("{path}: empty"));
-                    } else {
-                        for (i, v) in values.iter().enumerate() {
-                            flatten(&format!("{path}[{i}]"), v, lines);
-                        }
-                    }
-                }
-                _ => lines.push(format!(
-                    "{path}: {}",
-                    value
-                        .as_str()
-                        .map(str::to_owned)
-                        .unwrap_or_else(|| value.to_string())
-                )),
-            }
-        }
-        let mut lines = Vec::new();
-        flatten("", &entry.raw, &mut lines);
+        let mut lines = self.common_revision_lines(entry);
+        revision_view::flatten_detail("", &entry.raw, &mut lines, "null");
         lines
     }
     pub fn capture(model: Arc<DesignModel>) -> Self {
         let mut browser = Self::default();
+        browser.revision_inspection_id = Uuid::new_v4();
         for shard in model
             .source_shards
             .iter()

@@ -13,6 +13,16 @@ pub(super) fn refuse_unjournaled(
     model: &DesignModel,
     batch: &OperationBatch,
 ) -> Result<(), EngineError> {
+    if model.project.schema_version == Some(2)
+        || batch
+            .operations
+            .iter()
+            .any(|op| matches!(op, Operation::LibraryAssets { .. }))
+    {
+        return Err(super::library_asset_operations::refusal(
+            "managed library edits require the canonical journaled transaction",
+        ));
+    }
     if batch
         .operations
         .iter()

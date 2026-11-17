@@ -22,6 +22,8 @@ mod entity_form;
 mod part_form;
 #[path = "library_pin_pad_map_form.rs"]
 mod pin_pad_map_form;
+#[path = "library_revision_panel.rs"]
+mod revision_panel;
 
 struct Painter<'a> {
     rect: RectPx,
@@ -39,16 +41,27 @@ pub(crate) fn render_component_picker(
     text: &mut Vec<TextRun>,
     hits: &mut Vec<HitRegion>,
 ) {
+    if state
+        .library
+        .configuration
+        .as_ref()
+        .is_some_and(|c| c.target.is_some() || c.footprint_chooser.is_some())
+    {
+        return acquisition_panel::component_picker::configuration::modal(
+            state, layout, quads, text, hits,
+        );
+    }
     acquisition_panel::component_picker::render(state, layout, quads, text, hits);
 }
 impl Painter<'_> {
     fn font_size(&self) -> f32 {
-        if self
-            .state
-            .library
-            .acquisition
-            .as_ref()
-            .is_some_and(|a| a.component_picker)
+        if self.state.library.configuration.is_some()
+            || self
+                .state
+                .library
+                .acquisition
+                .as_ref()
+                .is_some_and(|a| a.component_picker)
         {
             16.
         } else {
@@ -84,8 +97,8 @@ impl Painter<'_> {
         }
         self.y += height;
     }
-    fn button(&mut self, label: &str, control: C) {
-        let rect = RectPx {
+    fn button_rect(&self, label: &str) -> RectPx {
+        RectPx {
             x: self.rect.x + 6.,
             y: self.y,
             width: (self.rect.width - 12.).max(0.),
@@ -98,7 +111,10 @@ impl Painter<'_> {
             .unwrap_or(16.)
                 + 12.)
                 .max(if self.font_size() > 12. { 40. } else { 25. }),
-        };
+        }
+    }
+    fn button(&mut self, label: &str, control: C) {
+        let rect = self.button_rect(label);
         if self.unbounded || rect.y + rect.height <= self.rect.y + self.rect.height {
             self.quads
                 .push(Quad::from_rect(rect, design_tokens::chrome::SURFACE_02));
@@ -143,7 +159,10 @@ pub(crate) fn render(
         text,
         hits,
     };
-    if state.library.acquisition.is_some() {
+    if state.library.revision_workflow.is_some() {
+        revision_panel::render(&mut p);
+        return;
+    } else if state.library.acquisition.is_some() {
         acquisition_panel::render(&mut p);
     } else if let Some(d) = &state.library.draft {
         p.line(&format!(
@@ -311,13 +330,14 @@ pub(crate) fn render(
             );
         }
         p.y = (rect.y + rect.height - footer).max(p.y);
+        let commit_label = revision_panel::commit_label(&p, d, compact);
         if compact {
             let row = p.y;
             let mut bottom = row;
             let width = rect.width / 3.;
             for (i, (label, control)) in [
                 ("Preview", C::Preview),
-                ("Commit", C::Commit),
+                (commit_label, C::Commit),
                 ("Cancel", C::Cancel),
             ]
             .into_iter()
@@ -336,14 +356,7 @@ pub(crate) fn render(
             p.y = bottom;
         } else {
             p.button("Preview current fields", C::Preview);
-            p.button(
-                if d.preview.is_some() {
-                    "Commit to pool"
-                } else {
-                    "Commit unavailable · preview required"
-                },
-                C::Commit,
-            );
+            p.button(commit_label, C::Commit);
             p.button("Cancel · discard draft", C::Cancel);
         }
         if let Some(refusal) = d.refusal.as_ref().or(state.library.refusal.as_ref()) {
@@ -474,7 +487,7 @@ fn scroll_acquisition_content(
     } else {
         state.library.scroll_offset
     } as f32);
-    if !preview && state.library.reveal_focus
+    if state.library.reveal_focus && (!preview || state.library.configuration.is_some() && matches!(state.library.focus, Some(C::Field(_) | C::Configure(_))))
         && let Some(region) = p.hits[starts.2..].iter().find(|r| matches!(&r.target, HitTarget::Library(c) if Some(c) == state.library.focus.as_ref())) {
             scroll.reveal(region.rect.y - rect.y, region.rect.y + region.rect.height - rect.y);
         }

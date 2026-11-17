@@ -8,8 +8,31 @@ pub(in crate::substrate) fn apply_promoted_journal_object_diffs(
     journal: &[TransactionRecord],
 ) {
     let final_sources = objects.clone();
+    initialize_rules_epochs(objects, &final_sources, journal);
     for transaction in journal {
         for operation in &transaction.operations {
+            if let Operation::CreateProjectRule {
+                rules_root_id,
+                rule_id,
+                rule,
+            } = operation
+            {
+                if let Some(root) = objects
+                    .get(rules_root_id)
+                    .filter(|root| root.domain == "rules" && root.kind == "$")
+                {
+                    objects.insert(
+                        *rule_id,
+                        DomainObject {
+                            object_id: *rule_id,
+                            object_revision: super::super::object_revision_for(rule),
+                            source_shard_id: root.source_shard_id,
+                            domain: "rules".into(),
+                            kind: "rules".into(),
+                        },
+                    );
+                }
+            }
             if let Operation::CreateBoardGraphic {
                 board_id,
                 graphic_id,
@@ -121,6 +144,32 @@ pub(in crate::substrate) fn apply_promoted_journal_object_diffs(
                             _ => false,
                         })
                         .count() as u64
+                } else if object.domain == "project" && object.kind == "$" {
+                    transaction
+                        .operations
+                        .iter()
+                        .filter(|operation| match operation {
+                            Operation::LibraryAssets { operation } => {
+                                operation.owner_id() == *object_id
+                            }
+                            Operation::SetProjectName { project_id, .. }
+                            | Operation::InitializeProjectDisplayUnits { project_id, .. }
+                            | Operation::SetProjectDisplayUnits { project_id, .. }
+                            | Operation::RemoveProjectDisplayUnits { project_id, .. } => {
+                                project_id == object_id
+                            }
+                            Operation::Process { operation } => operation.owner_id() == *object_id,
+                            Operation::BumpObjectRevision { object_id: id } => id == object_id,
+                            _ => false,
+                        })
+                        .count() as u64
+                } else if object.domain == "rules" && matches!(object.kind.as_str(), "$" | "rules")
+                {
+                    transaction.operations.iter().filter(|op| {
+                        (object.kind=="$"&&rules_root(op)==Some(*object_id))
+                            ||(object.kind=="rules"&&matches!(op,Operation::SetProjectRule {rule_id,..} if rule_id==object_id))
+                            ||matches!(op,Operation::BumpObjectRevision {object_id:id} if id==object_id)
+                    }).count() as u64
                 } else if object.domain == "pool" {
                     transaction
                         .operations
@@ -186,6 +235,72 @@ pub(in crate::substrate) fn apply_promoted_journal_object_diffs(
                         super::super::electrical_identity_store::object(record, shard_id),
                     );
                 }
+            }
+        }
+    }
+}
+
+fn rules_root(operation: &Operation) -> Option<ObjectId> {
+    match operation {
+        Operation::SetProjectRules { rules_root_id, .. }
+        | Operation::CreateProjectRule { rules_root_id, .. }
+        | Operation::SetProjectRule { rules_root_id, .. }
+        | Operation::DeleteProjectRule { rules_root_id, .. } => Some(*rules_root_id),
+        _ => None,
+    }
+}
+
+/// Rules persist owning counters in the final source. Start compatibility replay
+/// at their witnessed pre-journal epochs, then apply actual operation advances.
+/// A declared creation supplies its own postimage; it must not inherit a future
+/// row's counter from final-source discovery. Other object families are unchanged.
+fn initialize_rules_epochs(
+    objects: &mut BTreeMap<ObjectId, DomainObject>,
+    final_sources: &BTreeMap<ObjectId, DomainObject>,
+    journal: &[TransactionRecord],
+) {
+    for source in final_sources
+        .values()
+        .filter(|source| source.domain == "rules" && matches!(source.kind.as_str(), "$" | "rules"))
+    {
+        let mut advances = 0u64;
+        let mut witness = None;
+        let mut created = false;
+        for op in journal.iter().flat_map(|tx| &tx.operations) {
+            if source.kind == "$" {
+                advances += u64::from(rules_root(op) == Some(source.object_id));
+            } else {
+                match op {
+                    Operation::CreateProjectRule { rule_id, .. }
+                        if *rule_id == source.object_id =>
+                    {
+                        created = true;
+                        break;
+                    }
+                    Operation::DeleteProjectRule { rule_id, rule, .. }
+                        if *rule_id == source.object_id =>
+                    {
+                        witness = Some(
+                            super::super::object_revision_for(rule)
+                                .0
+                                .checked_sub(advances),
+                        );
+                        break;
+                    }
+                    Operation::SetProjectRule { rule_id, .. } if *rule_id == source.object_id => {
+                        advances += 1
+                    }
+                    _ => {}
+                }
+            }
+        }
+        if created {
+            objects.remove(&source.object_id);
+        } else if let Some(epoch) =
+            witness.unwrap_or_else(|| source.object_revision.0.checked_sub(advances))
+        {
+            if let Some(object) = objects.get_mut(&source.object_id) {
+                object.object_revision = ObjectRevision(epoch);
             }
         }
     }

@@ -4,9 +4,11 @@ use super::{DesignModel, ElectricalOccurrence, EngineError, Operation, SourceSha
 use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
 mod class_index;
+mod pinned;
 use uuid::Uuid;
 
 pub(super) struct ElectricalBasis<'basis> {
+    pending_frame: Option<std::sync::Arc<super::journal_source_frame::VerifiedPendingSourceFrame>>,
     accepted_library_basis: Option<&'basis DesignModel>,
     pending_map_changes: BTreeSet<Uuid>,
     values: BTreeMap<Uuid, Value>,
@@ -22,6 +24,20 @@ pub(super) struct ElectricalBasis<'basis> {
     )>,
 }
 impl ElectricalBasis<'static> {
+    pub(super) fn with_pending_frame(
+        frame: std::sync::Arc<super::journal_source_frame::VerifiedPendingSourceFrame>,
+    ) -> Result<Self, EngineError> {
+        Self::capture(
+            frame.candidate(),
+            &[],
+            &|head| frame.value(head),
+            None,
+            None,
+            None,
+            Some(frame.clone()),
+        )
+    }
+
     pub(super) fn new(model: &DesignModel, operations: &[Operation]) -> Result<Self, EngineError> {
         Self::with_reader(model, operations, &|shard| {
             super::journal::materialized_shard_value(model, shard)
@@ -32,7 +48,7 @@ impl ElectricalBasis<'static> {
         operations: &[Operation],
         read: &impl Fn(&super::SourceShardRef) -> Result<Value, EngineError>,
     ) -> Result<Self, EngineError> {
-        Self::capture(model, operations, read, None, None, None)
+        Self::capture(model, operations, read, None, None, None, None)
     }
 }
 impl<'basis> ElectricalBasis<'basis> {
@@ -62,6 +78,7 @@ impl<'basis> ElectricalBasis<'basis> {
             None,
             package_basis,
             metadata_basis,
+            None,
         )
     }
     pub(super) fn with_part_basis(
@@ -76,6 +93,7 @@ impl<'basis> ElectricalBasis<'basis> {
             Some(part_basis),
             None,
             None,
+            None,
         )
     }
     fn capture(
@@ -85,6 +103,9 @@ impl<'basis> ElectricalBasis<'basis> {
         part_basis: Option<&'basis DesignModel>,
         package_basis: Option<&DesignModel>,
         metadata_basis: Option<super::component_instance::metadata_history::MetadataFrame<'_>>,
+        pending_frame: Option<
+            std::sync::Arc<super::journal_source_frame::VerifiedPendingSourceFrame>,
+        >,
     ) -> Result<Self, EngineError> {
         if let Some(accepted) = part_basis {
             super::component_pad_source::validate_library_basis(model, accepted, operations)?;
@@ -254,7 +275,9 @@ impl<'basis> ElectricalBasis<'basis> {
                 pending_map_changes.insert(id);
             }
             if shard.kind == SourceShardKind::BoardRoot {
-                let projection = if let Some(frame) = metadata_basis.as_ref() {
+                let projection = if let Some(frame) = &pending_frame {
+                    super::component_pad_source::pending::projection(frame, &value)?
+                } else if let Some(frame) = metadata_basis.as_ref() {
                     super::component_pad_source::projection_with_metadata_basis(
                         model, frame, &value, operations,
                     )?
@@ -285,6 +308,7 @@ impl<'basis> ElectricalBasis<'basis> {
             classes,
             query_pads,
             part_statuses,
+            pending_frame,
             accepted_library_basis: part_basis,
             pending_map_changes,
         };
@@ -538,53 +562,6 @@ impl<'basis> ElectricalBasis<'basis> {
                 && object.kind == class)
                 .then_some(value)
         })
-    }
-    /// Read the declared map from this captured frame through the shared
-    /// authenticated history reader. Held snapshots never reread live files.
-    pub(super) fn pinned_map(
-        &self,
-        model: &DesignModel,
-        reference: &super::RevisionedRef,
-    ) -> Result<Value, EngineError> {
-        if self.pending_map_changes.contains(&reference.object_id) {
-            return Err(invalid(
-                "declared Map revision is unavailable in a pending source-change frame",
-            ));
-        }
-        let basis = if let Some(accepted) = self.accepted_library_basis {
-            if !self
-                .part_statuses
-                .as_ref()
-                .is_some_and(|(project, revision, _)| {
-                    *project == model.project.project_id && *revision == model.model_revision
-                })
-                || model.objects.get(&reference.object_id)
-                    != accepted.objects.get(&reference.object_id)
-            {
-                return Err(invalid(
-                    "pinned Map differs from the qualified prospective source basis",
-                ));
-            }
-            accepted
-        } else {
-            model
-        };
-        basis.pool_object_revision_with_reader(
-            reference.object_id,
-            "pin_pad_maps",
-            reference.object_revision,
-            &|shard| {
-                if !model.source_shards.iter().any(|view| view == shard) {
-                    return Err(invalid(
-                        "pinned Map source shard differs from the captured basis",
-                    ));
-                }
-                self.values
-                    .get(&shard.shard_id)
-                    .cloned()
-                    .ok_or_else(|| invalid("pinned Map source is absent from the captured basis"))
-            },
-        )
     }
     pub(super) fn occurrence(
         &self,

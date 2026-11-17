@@ -32,6 +32,15 @@ pub(crate) fn source_value(
     model: &DesignModel,
     pin: &PinnedPadLibrarySource,
 ) -> Result<Value, EngineError> {
+    let context = PinFrame::Accepted(model);
+    source_value_in(&context, pin)
+}
+
+pub(super) fn source_value_in(
+    context: &PinFrame<'_>,
+    pin: &PinnedPadLibrarySource,
+) -> Result<Value, EngineError> {
+    let model = context.model();
     let shard = model
         .source_shards
         .iter()
@@ -41,7 +50,7 @@ pub(crate) fn source_value(
                 && s.relative_path == pin.relative_path
         })
         .ok_or_else(|| invalid("missing pinned pool shard"))?;
-    let value = model.materialized_source_shard_value_by_relative_path(&shard.relative_path)?;
+    let value = context.owner_value(&shard.relative_path)?;
     if value.get("uuid").and_then(Value::as_str) != Some(pin.owner_id.to_string().as_str()) {
         return Err(invalid("foreign pinned library owner"));
     }
@@ -54,12 +63,11 @@ pub(crate) fn source_value(
         }) {
             return Err(invalid("Definition pin has a foreign source owner or kind"));
         }
-        let historical =
-            model.materialized_pool_object_revision(pin.owner_id, kind, pin.object_revision)?;
+        let historical = context.definition(pin.owner_id, kind, pin.object_revision)?;
         let hash = hash_value(&historical)?;
         if hash != pin.owner_value_hash
             || hash != pin.record_hash
-            || incarnation(model, &pin.relative_path, pin.object_id) != pin.incarnation
+            || context.incarnation(&pin.relative_path, pin.object_id)? != pin.incarnation
         {
             return Err(invalid(
                 "Definition pin differs from authenticated historical source",
@@ -79,7 +87,7 @@ fn record(value: &Value, id: Uuid) -> Option<&Value> {
         .get(&id.to_string())
         .filter(|p| p.get("uuid").and_then(Value::as_str) == Some(id.to_string().as_str()))
 }
-fn incarnation(model: &DesignModel, path: &str, id: Uuid) -> Option<Uuid> {
+pub(crate) fn incarnation(model: &DesignModel, path: &str, id: Uuid) -> Option<Uuid> {
     let mut birth = None;
     for t in &model.journal {
         for op in &t.operations {
@@ -121,12 +129,21 @@ fn capture(
     path: &str,
     id: Uuid,
 ) -> Result<PinnedPadLibrarySource, EngineError> {
+    capture_in(&PinFrame::Accepted(model), path, id)
+}
+
+pub(super) fn capture_in(
+    context: &PinFrame<'_>,
+    path: &str,
+    id: Uuid,
+) -> Result<PinnedPadLibrarySource, EngineError> {
+    let model = context.model();
     let shard = model
         .source_shards
         .iter()
         .find(|s| s.kind == SourceShardKind::Pool && s.relative_path == path)
         .ok_or_else(|| invalid("missing library source shard"))?;
-    let value = model.materialized_source_shard_value_by_relative_path(path)?;
+    let value = context.owner_value(path)?;
     let owner_id = serde_json::from_value(
         value
             .get("uuid")
@@ -161,8 +178,8 @@ fn capture(
             }
         }
     }
-    if model
-        .objects
+    if context
+        .objects()
         .get(&id)
         .is_some_and(|o| o.domain == "pool" && o.source_shard_id != shard.shard_id)
     {
@@ -170,8 +187,8 @@ fn capture(
             "ambiguous library UUID belongs to another source owner",
         ));
     }
-    let object_revision = model
-        .objects
+    let object_revision = context
+        .objects()
         .get(&id)
         .filter(|o| o.domain == "pool" && o.source_shard_id == shard.shard_id)
         .map_or(ObjectRevision(historical_revision), |o| o.object_revision);
@@ -183,8 +200,8 @@ fn capture(
         object_revision,
         owner_value_hash: hash_value(&value)?,
         record_hash: hash_value(source)?,
-        incarnation: incarnation(model, path, id),
-        journal_tip: model.journal.last().map(|t| t.transaction_id),
+        incarnation: context.incarnation(path, id)?,
+        journal_tip: context.anchor_tip(),
     })
 }
 pub(crate) fn capture_root(
@@ -219,7 +236,15 @@ pub(crate) fn check_pin(
     model: &DesignModel,
     pin: &PinnedPadLibrarySource,
 ) -> Result<(), EngineError> {
-    let now = capture(model, &pin.relative_path, pin.object_id)?;
+    check_pin_in(&PinFrame::Accepted(model), pin)
+}
+
+pub(super) fn check_pin_in(
+    context: &PinFrame<'_>,
+    pin: &PinnedPadLibrarySource,
+) -> Result<(), EngineError> {
+    let model = context.model();
+    let now = capture_in(context, &pin.relative_path, pin.object_id)?;
     if historical_root_kind(model, pin).is_some() {
         if now.owner_id != pin.owner_id
             || now.source_shard_id != pin.source_shard_id
@@ -227,7 +252,7 @@ pub(crate) fn check_pin(
         {
             return Err(invalid("foreign or reused definition source pin"));
         }
-        source_value(model, pin)?;
+        source_value_in(context, pin)?;
         return Ok(());
     }
     if now.owner_id != pin.owner_id
@@ -239,7 +264,7 @@ pub(crate) fn check_pin(
         return Err(invalid("stale library source pin"));
     }
     if now.owner_value_hash != pin.owner_value_hash {
-        unchanged_package_pad_owner(model, pin)?;
+        unchanged_package_pad_owner_in(context, pin)?;
     }
     Ok(())
 }
@@ -250,6 +275,13 @@ fn unchanged_package_pad_owner(
     model: &DesignModel,
     pin: &PinnedPadLibrarySource,
 ) -> Result<(), EngineError> {
+    unchanged_package_pad_owner_in(&PinFrame::Accepted(model), pin)
+}
+fn unchanged_package_pad_owner_in(
+    context: &PinFrame<'_>,
+    pin: &PinnedPadLibrarySource,
+) -> Result<(), EngineError> {
+    let model = context.model();
     let owner = model
         .objects
         .get(&pin.owner_id)
@@ -290,17 +322,13 @@ fn unchanged_package_pad_owner(
             _ => {}
         }
     }
-    let mut historical = model.materialized_pool_object_revision(
-        pin.owner_id,
-        "packages",
-        ObjectRevision(revision),
-    )?;
+    let mut historical = context.definition(pin.owner_id, "packages", ObjectRevision(revision))?;
     if hash_value(&historical)? != pin.owner_value_hash {
         return Err(invalid(
             "Package pad owner differs from authenticated history",
         ));
     }
-    let mut current = model.materialized_source_shard_value_by_relative_path(&pin.relative_path)?;
+    let mut current = context.owner_value(&pin.relative_path)?;
     for key in ["name", "package_family", "package_code", "mounting_type"] {
         historical
             .as_object_mut()
@@ -401,8 +429,17 @@ pub(crate) fn continuity(
     old: &PinnedPadLibrarySource,
     new: &PinnedPadLibrarySource,
 ) -> Result<(), EngineError> {
+    continuity_in(&PinFrame::Accepted(model), old, new)
+}
+
+pub(super) fn continuity_in(
+    context: &PinFrame<'_>,
+    old: &PinnedPadLibrarySource,
+    new: &PinnedPadLibrarySource,
+) -> Result<(), EngineError> {
+    let model = context.model();
     recorded_pin(model, old)?;
-    check_pin(model, new)?;
+    check_pin_in(context, new)?;
     if old.object_id == new.object_id
         && (old.owner_id != new.owner_id || old.incarnation != new.incarnation)
     {
@@ -440,4 +477,105 @@ pub(crate) fn continuity(
         }
     }
     Ok(())
+}
+
+/// Read context is private to the source owner. Pending anchors must already
+/// exist in accepted history; a transaction ID is never predicted for a birth.
+pub(super) enum PinFrame<'a> {
+    Accepted(&'a DesignModel),
+    Pending(&'a crate::substrate::journal_source_frame::VerifiedPendingSourceFrame),
+    Planned(&'a super::target::PlannedPadSources<'a>),
+}
+impl PinFrame<'_> {
+    pub(super) fn model(&self) -> &DesignModel {
+        match self {
+            Self::Accepted(model) => model,
+            Self::Pending(frame) => frame.candidate(),
+            Self::Planned(target) => target.accepted(),
+        }
+    }
+    fn objects(&self) -> &std::collections::BTreeMap<Uuid, crate::substrate::DomainObject> {
+        match self {
+            Self::Planned(target) => target.objects(),
+            _ => &self.model().objects,
+        }
+    }
+    pub(super) fn owner_value(&self, path: &str) -> Result<Value, EngineError> {
+        match self {
+            Self::Accepted(model) => model.materialized_source_shard_value_by_relative_path(path),
+            Self::Planned(target) => target.value(path),
+            Self::Pending(frame) => {
+                let head = frame
+                    .candidate()
+                    .source_shards
+                    .iter()
+                    .find(|s| s.kind == SourceShardKind::Pool && s.relative_path == path)
+                    .ok_or_else(|| invalid("missing certified pending library owner"))?;
+                frame.value(head)
+            }
+        }
+    }
+    pub(super) fn definition(
+        &self,
+        id: Uuid,
+        kind: &str,
+        revision: ObjectRevision,
+    ) -> Result<Value, EngineError> {
+        match self {
+            Self::Accepted(model) => model.materialized_pool_object_revision(id, kind, revision),
+            Self::Pending(frame) => frame.pinned_definition(id, kind, revision),
+            Self::Planned(target) => target.definition(id, kind, revision),
+        }
+    }
+    fn incarnation(&self, path: &str, id: Uuid) -> Result<Option<Uuid>, EngineError> {
+        match self {
+            Self::Accepted(model) => Ok(incarnation(model, path, id)),
+            Self::Planned(target) => {
+                let accepted = target.accepted().objects.get(&id);
+                let planned = target.objects().get(&id);
+                if accepted.zip(planned).is_none_or(|(old, new)| {
+                    old.domain != "pool"
+                        || new.domain != "pool"
+                        || old.source_shard_id != new.source_shard_id
+                }) {
+                    return Err(invalid(
+                        "new or reborn planned source is not same-pad continuity",
+                    ));
+                }
+                Ok(incarnation(target.accepted(), path, id))
+            }
+            Self::Pending(frame) => {
+                let old = frame
+                    .accepted()
+                    .objects
+                    .get(&id)
+                    .filter(|o| o.domain == "pool");
+                let current = frame
+                    .candidate()
+                    .objects
+                    .get(&id)
+                    .filter(|o| o.domain == "pool");
+                if old.is_none()
+                    || old
+                        .zip(current)
+                        .is_none_or(|(a, b)| a.source_shard_id != b.source_shard_id)
+                    || incarnation(frame.accepted(), path, id)
+                        != incarnation(frame.candidate(), path, id)
+                {
+                    return Err(invalid(
+                        "new or reborn library pin requires committed acquisition before materialization",
+                    ));
+                }
+                Ok(incarnation(frame.accepted(), path, id))
+            }
+        }
+    }
+    fn anchor_tip(&self) -> Option<Uuid> {
+        let model = match self {
+            Self::Accepted(model) => *model,
+            Self::Pending(frame) => frame.accepted(),
+            Self::Planned(target) => target.accepted(),
+        };
+        model.journal.last().map(|t| t.transaction_id)
+    }
 }

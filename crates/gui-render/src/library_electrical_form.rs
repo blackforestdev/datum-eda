@@ -230,6 +230,8 @@ pub(super) fn review(p: &mut Painter<'_>, d: &LibraryDraft) {
     }
     p.line(if d.create {
         "Preview only · Commit creates one definition · Cancel discards the draft"
+    } else if revision_panel::reviews_local_revision(p, d) {
+        "Preview only · Next: review and save a local candidate. A separate reviewed update changes the active project. Cancel discards the draft."
     } else {
         "Preview only · Commit edits this source · Cancel discards the draft"
     });

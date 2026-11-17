@@ -14,6 +14,8 @@ mod actions;
 mod board_transfer;
 #[path = "runtime_native_edit/catalog.rs"]
 mod catalog;
+#[path = "runtime_native_edit/component_configuration.rs"]
+mod component_configuration;
 #[path = "runtime_schematic_alignment.rs"]
 mod schematic_alignment;
 use catalog::native_write_verb_ids;
@@ -50,123 +52,11 @@ fn finish_owned_edit<R>(
     wake();
 }
 
-pub(super) struct EditWork {
-    pub preview: Option<NativeMovePreview>,
-    previous_context_tool: Option<WorkspaceTool>,
-    preview_tip: Option<String>,
-    pending_position: Option<PointNm>,
-    exact_position: Option<PointNm>,
-    current_position: Option<PointNm>,
-    exact_cursor: Option<(f32, f32)>,
-    coordinate_escape_release: bool,
-    preview_awaiting_presentation: bool,
-    pending_move_base: Option<(bool, datum_gui_protocol::BoardReviewSceneV1)>,
-    pending: Option<mpsc::Receiver<Answer>>,
-    /// Startup verb catalog from the warmup describe, fed back through the wake
-    /// so native-edit menus reflect engine capability from cold open rather than
-    /// only after the first edit populates it.
-    catalog_pending: Option<mpsc::Receiver<catalog::CatalogReply>>,
-    client: Arc<Mutex<Option<NativeProjectClient>>>,
-    wake: winit::event_loop::EventLoopProxy<()>,
-    pub blocked: bool,
-}
-impl EditWork {
-    pub fn new(wake: winit::event_loop::EventLoopProxy<()>) -> Self {
-        Self {
-            preview: None,
-            previous_context_tool: None,
-            preview_tip: None,
-            pending_position: None,
-            exact_position: None,
-            current_position: None,
-            exact_cursor: None,
-            coordinate_escape_release: false,
-            preview_awaiting_presentation: false,
-            pending_move_base: None,
-            pending: None,
-            catalog_pending: None,
-            client: Arc::new(Mutex::new(None)),
-            wake,
-            blocked: false,
-        }
-    }
-    pub(super) fn reset_project(&mut self) {
-        debug_assert!(!self.pending());
-        self.preview = None;
-        self.previous_context_tool = None;
-        self.preview_tip = None;
-        self.pending_position = None;
-        self.exact_position = None;
-        self.current_position = None;
-        self.exact_cursor = None;
-        self.coordinate_escape_release = false;
-        self.preview_awaiting_presentation = false;
-        self.pending_move_base = None;
-        self.blocked = false;
-        self.catalog_pending = None;
-    }
-    pub fn pending(&self) -> bool {
-        self.pending.is_some()
-    }
-    fn reconcile_again(
-        &mut self,
-        mut answer: Answer,
-        inputs: native_edit_selection::Inputs,
-    ) -> Result<()> {
-        let (sender, receiver) = mpsc::sync_channel(1);
-        let client = self.client.clone();
-        let wake = self.wake.clone();
-        std::thread::Builder::new()
-            .name("datum-edit-selection".into())
-            .spawn(move || {
-                let result = (|| -> Result<()> {
-                    let next = answer.next.as_mut().context("Edit scene unavailable")?;
-                    // Read-only superseding projection. The committed mutation is
-                    // never resent when input selection changed during preparation.
-                    let prepared = answer
-                        .selection
-                        .take()
-                        .context("Qualified selection basis unavailable")?;
-                    let model = prepared.session.model.clone();
-                    answer.selection = Some(native_edit_selection::prepare_from_model(
-                        next,
-                        inputs,
-                        model,
-                        prepared.cache,
-                    )?);
-                    let owner = client
-                        .lock()
-                        .map_err(|_| anyhow::anyhow!("Native writer owner unavailable"))?;
-                    let current = owner
-                        .as_ref()
-                        .context("Native writer unavailable")?
-                        .describe(&answer.intent.project_root)?;
-                    anyhow::ensure!(
-                        current
-                            .get("model_revision")
-                            .and_then(serde_json::Value::as_str)
-                            == Some(next.scene.source_revision.as_str())
-                            && current
-                                .get("transaction_tip")
-                                .and_then(serde_json::Value::as_str)
-                                == next.supervision.journal.accepted_transaction_tip.as_deref(),
-                        "Project changed during selection preparation; reopen before editing"
-                    );
-                    Ok(())
-                })();
-                if let Err(error) = result {
-                    answer.next = None;
-                    answer.selection = None;
-                    answer.result = Err(format!("{error:#}"));
-                }
-                finish_owned_edit(client, sender, answer, || {
-                    let _ = wake.send_event(());
-                });
-            })?;
-        self.pending = Some(receiver);
-        Ok(())
-    }
-}
+#[path = "runtime_native_edit/work.rs"]
+mod work;
+pub(super) use work::EditWork;
+#[path = "runtime_native_edit/library_revisions.rs"]
+mod library_revisions;
 
 impl Runtime {
     pub(super) fn native_edit_available(&self) -> bool {
@@ -232,6 +122,7 @@ impl Runtime {
         }
         if !matches!(action, NativeEditAction::Schematic)
             && !(matches!(action, NativeEditAction::LibraryAcquire) && self.component_picker_open())
+            && !self.configuration_owns_intent(action)
             && (self.workspace().schematic_authoring.active()
                 || self.workspace().schematic_authoring.picker
                 || self.workspace().schematic_authoring.creation.is_some())
@@ -282,6 +173,7 @@ impl Runtime {
         );
         if !matches!(action, NativeEditAction::LibraryAcquire)
             && self.workspace().library.acquisition.is_some()
+            && !self.configuration_owns_intent(action)
         {
             self.log_console_refusal(
                 ConsoleFeedbackSource::Tool,
@@ -290,12 +182,10 @@ impl Runtime {
             return true;
         }
         if matches!(action, NativeEditAction::Proposal) {
-            let Some(review) = &self.workspace().schematic_authoring.delete_review else {
-                return false;
-            };
-            intent.proposal = review.pending.clone();
-            intent.expected_revision = review.revision.clone();
-            intent.expected_tip = review.tip;
+            if let Err(error) = self.prepare_component_proposal_intent(&mut intent) {
+                self.log_console_refusal(ConsoleFeedbackSource::Tool, error);
+                return true;
+            }
         }
         if matches!(
             action,
@@ -326,18 +216,10 @@ impl Runtime {
             intent.expected_tip = acquisition.tip;
         }
         if matches!(action, NativeEditAction::Library) {
-            let Some(draft) = &self.workspace().library.draft else {
-                return false;
-            };
-            match draft.request() {
-                Ok(request) => intent.library = Some((draft.create, request)),
-                Err(e) => {
-                    self.log_console_refusal(ConsoleFeedbackSource::Tool, e);
-                    return true;
-                }
+            if let Err(error) = self.prepare_component_library_intent(&mut intent) {
+                self.log_console_refusal(ConsoleFeedbackSource::Tool, error);
+                return true;
             }
-            intent.expected_revision = draft.revision.clone();
-            intent.expected_tip = draft.tip;
         }
         if let Some(preview) = &self.native_edit.preview {
             intent.instance_path = preview.instance_path();
@@ -405,6 +287,7 @@ impl Runtime {
             self.workspace().library.basis.clone(),
             self.workspace().checks.clone(),
         );
+        let request_id = intent.request_id;
         match self
             .native_edit
             .start(intent, backing.request, inputs, previous)
@@ -434,6 +317,7 @@ impl Runtime {
                 self.log_console_echo(ConsoleFeedbackSource::Tool, "Applying Project action");
             }
             Err(error) => {
+                self.reject_unqueued_library_revision(request_id);
                 self.release_board_authoring_pending();
                 if let Some(review) = &mut self
                     .session
@@ -451,6 +335,9 @@ impl Runtime {
         true
     }
     pub(super) fn poll_native_edit(&mut self) -> bool {
+        if self.poll_library_revision_preview() {
+            return true;
+        }
         let Some(receiver) = &self.native_edit.pending else {
             return false;
         };
@@ -461,14 +348,7 @@ impl Runtime {
                 self.native_edit.pending = None;
                 self.native_edit.blocked = true;
                 self.restore_pending_move_base();
-                if let Some(a) = &mut self.session.workspace_mut().library.acquisition {
-                    a.refusal =
-                        Some("Edit worker stopped; reopen the Project before editing".into());
-                }
-                self.log_console_refusal(
-                    ConsoleFeedbackSource::Tool,
-                    "Edit worker stopped; reopen the Project before editing",
-                );
+                self.component_edit_worker_stopped();
                 return true;
             }
         };
@@ -486,6 +366,7 @@ impl Runtime {
             if let Err(error) = self.native_edit.reconcile_again(answer, inputs) {
                 self.native_edit.blocked = true;
                 self.restore_pending_move_base();
+                self.fail_component_configuration(&error.to_string());
                 self.log_console_refusal(ConsoleFeedbackSource::Tool, error.to_string());
             }
             return true;
@@ -570,6 +451,11 @@ impl Runtime {
         }
         self.restore_board_authoring(board_authoring, &answer.intent, &answer.result);
         self.restore_board_transfer(transfer_review, &answer.result);
+        self.complete_component_configuration(
+            &answer.intent,
+            &answer.result,
+            answer.proposal.as_ref(),
+        );
         self.restore_delete_review(review, answer.proposal, &answer.result);
         if let (Err(reason), Some(mut acquisition)) = (&answer.result, refused_acquisition) {
             acquisition.refusal = Some(reason.clone());

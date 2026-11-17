@@ -11,8 +11,8 @@ pub(super) struct JournalHistoryTargets<'a> {
 impl JournalHistoryTargets<'_> {
     fn availability(&self) -> (bool, bool) {
         (
-            self.undo.is_some_and(|t| !t.inverse_operations.is_empty()),
-            self.redo.is_some_and(|t| !t.inverse_operations.is_empty()),
+            self.undo.is_some_and(can_compensate),
+            self.redo.is_some_and(can_compensate),
         )
     }
     pub(super) fn target(&self, kind: TransactionKind) -> Option<&TransactionRecord> {
@@ -22,6 +22,14 @@ impl JournalHistoryTargets<'_> {
             TransactionKind::Normal => None,
         }
     }
+}
+fn can_compensate(transaction: &TransactionRecord) -> bool {
+    !transaction.inverse_operations.is_empty()
+        && !transaction.operations.iter().chain(&transaction.inverse_operations).any(|op| matches!(op,
+            super::Operation::LibraryAssets { operation:
+                super::library_asset_operations::LibraryAssetOperation::AdoptProfile { .. }
+                | super::library_asset_operations::LibraryAssetOperation::RefuseProfileInverse { .. }
+            }))
 }
 impl DesignModel {
     pub fn journal_history_availability(&self) -> Result<(bool, bool), EngineError> {

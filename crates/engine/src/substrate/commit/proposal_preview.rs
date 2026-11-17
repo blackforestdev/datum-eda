@@ -9,7 +9,7 @@ impl DesignModel {
         &mut self,
         batch: OperationBatch,
     ) -> Result<CommitReport, EngineError> {
-        self.apply_in_memory_batch(batch, None)
+        self.apply_in_memory_batch(batch, None, None)
     }
 
     pub(in crate::substrate) fn preview_canonical_metadata_batch(
@@ -17,13 +17,27 @@ impl DesignModel {
         batch: OperationBatch,
         proof: &CanonicalMetadataPreview<'_>,
     ) -> Result<CommitReport, EngineError> {
-        self.apply_in_memory_batch(batch, Some(proof))
+        self.apply_in_memory_batch(batch, Some(proof), None)
+    }
+
+    /// This provisional model must remain local to the journal commit until
+    /// finish_evaluated certifies all final sources before publication.
+    pub(in crate::substrate) fn apply_library_candidate(
+        &mut self,
+        batch: OperationBatch,
+        admission: &crate::substrate::library_asset_journal_ops::admission::PreparedLibraryAdmission,
+    ) -> Result<CommitReport, EngineError> {
+        let permit = admission.evaluation_permit(self, &batch)?;
+        self.apply_in_memory_batch(batch, None, Some(&permit))
     }
 
     fn apply_in_memory_batch(
         &mut self,
         batch: OperationBatch,
         preview: Option<&CanonicalMetadataPreview<'_>>,
+        library: Option<
+            &crate::substrate::library_asset_journal_ops::admission::LibraryEvaluationPermit<'_>,
+        >,
     ) -> Result<CommitReport, EngineError> {
         if let Some(proof) = preview {
             proof.validate_input(self, &batch)?;
@@ -42,7 +56,14 @@ impl DesignModel {
 
         let before_model_revision = self.model_revision.clone();
         let mut diff = CommitDiff::default();
-        if let Some(proof) = preview {
+        if let Some(permit) = library {
+            operation_application_batch::apply_library_candidate(
+                self,
+                &batch.operations,
+                &mut diff,
+                permit,
+            )?;
+        } else if let Some(proof) = preview {
             operation_application_batch::apply_metadata_preview(
                 self,
                 &batch.operations,

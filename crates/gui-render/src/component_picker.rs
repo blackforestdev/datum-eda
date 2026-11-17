@@ -1,5 +1,7 @@
 //! One continuous result viewport beside the existing typed acquisition preview.
 use super::*;
+#[path = "component_configuration.rs"]
+pub(crate) mod configuration;
 use datum_gui_protocol::library_browser::acquisition::{
     COMPONENT_PICKER_ROW_HEIGHT, ComponentPickerResultKind,
 };
@@ -170,17 +172,8 @@ pub(crate) fn render(
         ..outer
     };
     p.y = footer_y;
-    if let Some(preview) = &a.preview
-        && a.picker_can_place(&state.library)
-    {
-        p.button(
-            &if preview.native_part.is_some() {
-                "Place Component".into()
-            } else {
-                format!("Place {} — schematic only", preview.name)
-            },
-            C::AcquireImport,
-        );
+    if a.preview.is_some() && a.picker_can_place(&state.library) {
+        p.button("Place Component", C::AcquireImport);
     }
 }
 
@@ -299,6 +292,13 @@ fn result_row(p: &mut Painter<'_>, index: usize) {
 }
 
 fn preview(p: &mut Painter<'_>, normal: bool) {
+    if p.state.library.configuration.is_some() {
+        let starts = (p.quads.len(), p.text.len(), p.hits.len());
+        p.unbounded = true;
+        configuration::form(p);
+        scroll_acquisition_content(p, starts, 0, true);
+        return;
+    }
     let a = p.state.library.acquisition.as_ref().unwrap();
     let source = a.sources.iter().find(|source| {
         Some(&source.path) == a.selected_source.as_ref()

@@ -55,6 +55,7 @@ impl NativeProjectClient {
             | Action::CreateDelete { .. }
             | Action::CreateDisposition { .. }
             | Action::CreateAssignment { .. }
+            | Action::CreateComponentProperties(_)
             | Action::CreateAnnotation { .. }
             | Action::CreateProjectAnnotation { .. }
             | Action::CreateFieldBatch { .. }

@@ -42,6 +42,15 @@ pub(super) fn stage_non_core_operation(
     fill_history: Option<&super::zone_fill_journal_ops::history::HistoricalFills<'_>>,
     staged: &mut Vec<StagedShardWrite>,
 ) -> Result<(), EngineError> {
+    if let Operation::LibraryAssets { operation } = operation {
+        super::library_asset_journal_ops::stage(
+            project_root,
+            batch,
+            operation,
+            super::library_asset_resolver::server_policy()?,
+            staged,
+        )?;
+    }
     if let Some(write) = super::electrical_identity_store::stage(project_root, batch, operation)? {
         staged.push(write);
     }
@@ -63,7 +72,12 @@ pub(super) fn stage_non_core_operation(
 pub(super) fn inverse_non_core_operation(
     operation: &Operation,
     inverse_operations: &mut Vec<Operation>,
-) {
+) -> Result<(), EngineError> {
+    if let Operation::LibraryAssets { operation } = operation {
+        inverse_operations.push(Operation::LibraryAssets {
+            operation: super::library_asset_operations::inverse(operation)?,
+        });
+    }
     super::electrical_identity_store::inverse(operation, inverse_operations);
     inverse_production_operation(operation, inverse_operations);
     inverse_relationship_operation(operation, inverse_operations);
@@ -74,6 +88,7 @@ pub(super) fn inverse_non_core_operation(
     inverse_zone_fill_operation(operation, inverse_operations);
     inverse_generated_evidence_operation(operation, inverse_operations);
     inverse_component_instance_operation(operation, inverse_operations);
+    Ok(())
 }
 
 pub(super) fn apply_non_core_shard_operation(
@@ -81,6 +96,9 @@ pub(super) fn apply_non_core_shard_operation(
     value: &mut serde_json::Value,
     operation: &Operation,
 ) -> Result<bool, EngineError> {
+    if let Operation::LibraryAssets { operation } = operation {
+        return super::library_asset_operations::apply_shard(shard_kind, value, operation);
+    }
     let mut changed = super::electrical_identity_store::apply_shard(shard_kind, value, operation)?;
     if matches!(
         shard_kind,

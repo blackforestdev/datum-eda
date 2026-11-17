@@ -1,6 +1,9 @@
 use super::*;
 use uuid::Uuid;
 
+#[path = "native_library_managed_update_tests.rs"]
+mod native_library_managed_update_tests;
+
 #[test]
 fn simple_kicad_schematic_projects_to_visible_review_scene() {
     let schematic = PathBuf::from(env!("CARGO_MANIFEST_DIR"))

@@ -1,6 +1,8 @@
 #[path = "journal_materialization.rs"]
 mod journal_materialization;
-pub(super) use journal_materialization::{capture_shard_value, materialized_shard_value};
+pub(super) use journal_materialization::{
+    capture_shard_value, capture_shard_value_from_bytes, materialized_shard_value,
+};
 use std::collections::BTreeSet;
 use std::path::{Path, PathBuf};
 
@@ -335,6 +337,9 @@ pub(super) fn update_staged_source_hashes(
     writes: &[StagedShardWrite],
 ) -> Result<(), EngineError> {
     for write in writes {
+        if write.kind == SourceShardKind::LibraryContent {
+            continue;
+        }
         if write.delete {
             shards.retain(|shard| shard.relative_path != write.relative_path);
             continue;
@@ -437,7 +442,7 @@ pub(super) fn inverse_operations_for_batch(
         }
     }
     for operation in &batch.operations {
-        inverse_non_core_operation(operation, &mut inverse_operations);
+        inverse_non_core_operation(operation, &mut inverse_operations)?;
     }
     inverse_operations.reverse();
     super::schematic_assignment_history::order_component_restoration(&mut inverse_operations);

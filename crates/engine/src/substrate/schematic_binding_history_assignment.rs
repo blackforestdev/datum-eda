@@ -98,6 +98,8 @@ pub(super) fn capture(
     target: &TransactionRecord,
     prior: &[TransactionRecord],
 ) -> Option<(BTreeSet<Uuid>, Uuid)> {
+    let derived =
+        crate::substrate::library_asset_journal_ops::binding_history::assignment_family(target);
     let ops = &target.inverse_operations;
     let shared = ops
         .iter()
@@ -168,6 +170,7 @@ pub(super) fn capture(
                 ..
             } if component.is_none() => component = Some(*component_instance_id),
             Operation::SetProposalMetadata { .. } => {}
+            Operation::LibraryAssets { .. } if derived => {}
             _ => return None,
         }
     }
@@ -199,6 +202,7 @@ pub(super) fn capture(
                 ..
             } if *component_instance_id == component => owners += 1,
             Operation::SetProposalMetadata { .. } => {}
+            Operation::LibraryAssets { .. } if derived => {}
             _ => return None,
         }
     }

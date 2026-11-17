@@ -254,8 +254,32 @@ impl DesignModel {
         }
 
         let batch = super::electrical_transaction::compose(self, batch, transaction_kind)?;
+        let batch = super::library_asset_journal_ops::composition::complete(
+            project_root,
+            lease,
+            self,
+            batch,
+            transaction_kind,
+        )?;
         super::electrical_history::validate(self, &batch.operations, transaction_kind)?;
         super::board_source_profile::validate_batch(self, project_root, &batch)?;
+        super::library_asset_journal_ops::validate_batch(self, project_root, &batch)?;
+        let library_admission = if self.project.schema_version == Some(2)
+            || batch
+                .operations
+                .iter()
+                .any(|op| matches!(op, Operation::LibraryAssets { .. }))
+        {
+            super::library_asset_journal_ops::admission::prepare_under_lease(
+                project_root,
+                lease,
+                self,
+                &batch,
+                super::library_asset_resolver::server_policy()?,
+            )?
+        } else {
+            None
+        };
         super::process_operations::validate_batch(self, project_root, &batch)?;
         super::component_pad_source::process::validate_update_policy(
             self,
@@ -310,7 +334,10 @@ impl DesignModel {
         // otherwise materialization replays old history onto current disk bytes.
         super::electrical_transaction::retain_preimage_hashes(self, &mut committed);
         sort_source_shards(&mut committed.source_shards);
-        let mut report = committed.commit_without_direct_policy(batch)?;
+        let mut report = match &library_admission {
+            Some(admission) => committed.apply_library_candidate(batch, admission)?,
+            None => committed.commit_without_direct_policy(batch)?,
+        };
         update_staged_source_hashes(&mut committed.source_shards, &staged_writes)?;
         report.transaction.transaction_kind = transaction_kind;
         report.transaction.undo_of = undo_of;
@@ -327,6 +354,14 @@ impl DesignModel {
             &mut report,
             after_model_revision_override,
         )?;
+        // Finish against actual canonical application and source hashes before
+        // publishing either journal or source postimages. Preflight alone
+        // cannot authorize publication of an unevaluated library candidate.
+        let _library_proof = library_admission
+            .map(|prepared| {
+                prepared.finish_evaluated(project_root, lease, self, &committed, &staged_writes)
+            })
+            .transpose()?;
         let authority_snapshot = finalize_revision_design_commit_plan(
             revision_plan,
             committed.project.project_id,
@@ -569,7 +604,7 @@ fn validate_non_empty_operation_batch(batch: &OperationBatch) -> Result<(), Engi
     Ok(())
 }
 
-fn validate_object_revision_guards(
+pub(super) fn validate_object_revision_guards(
     model: &DesignModel,
     operations: &[Operation],
 ) -> Result<(), EngineError> {
@@ -594,7 +629,7 @@ fn validate_object_revision_guards(
     Ok(())
 }
 
-fn batch_without_object_revision_guards(
+pub(super) fn batch_without_object_revision_guards(
     mut batch: OperationBatch,
 ) -> Result<OperationBatch, EngineError> {
     batch

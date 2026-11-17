@@ -5,6 +5,7 @@ use super::*;
 use serde_json::Value;
 #[path = "pool_history_at_transaction.rs"]
 mod at_transaction;
+mod projected;
 #[path = "pool_history_restore.rs"]
 mod restore;
 #[path = "pool_history_retained_revisions.rs"]
@@ -148,89 +149,9 @@ impl PoolHistoryBasis<'_> {
         revision: ObjectRevision,
         kind: &str,
     ) -> Result<bool, EngineError> {
-        let Some(current) = staged
-            .get(&id)
-            .filter(|o| o.domain == "pool" && o.kind == kind)
-        else {
-            return Ok(false);
-        };
-        let history = PoolHistory {
-            shards: &self.model.source_shards,
-            journal: &self.model.journal,
-        };
-        if history.has_ambiguous_epoch(id) || self.operations.iter().any(|op|matches!(op,Operation::DeletePoolLibraryObject {object_id,..} if *object_id==id)) {return Ok(false);}
-        let before = self.model.objects.get(&id).filter(|o| {
-            o.source_shard_id == current.source_shard_id && o.domain == "pool" && o.kind == kind
-        });
-        let pending_source_change = self.operations.iter().any(|op| match op {
-            Operation::SetPoolLibraryObject { object_id, .. }
-            | Operation::CreatePoolLibraryObject { object_id, .. }
-            | Operation::BumpObjectRevision { object_id } => *object_id == id,
-            _ => false,
-        });
-        if !pending_source_change
-            && !history.has_restored_epoch(id)
-            && before.is_some_and(|before| before.object_revision == revision)
-            && current.object_revision == revision
-        {
-            return Ok(true);
-        }
-        let (path, state, counter) = if let Some(before) = before {
-            let path = &self
-                .model
-                .source_shards
-                .iter()
-                .find(|s| s.shard_id == before.source_shard_id && s.kind == SourceShardKind::Pool)
-                .ok_or_else(|| invalid("accepted source shard is missing"))?
-                .relative_path;
-            let raw = self
-                .model
-                .materialized_source_shard_value_by_relative_path(path)?;
-            (path.as_str(), Some(raw), before.object_revision.0)
-        } else {
-            let path = self
-                .applied_operations
-                .iter()
-                .find_map(|op| match op {
-                    Operation::CreatePoolLibraryObject {
-                        object_id,
-                        relative_path,
-                        object_kind,
-                        ..
-                    } if *object_id == id && object_kind == kind => Some(relative_path.as_str()),
-                    _ => None,
-                })
-                .ok_or_else(|| invalid("new definition has no applied creation basis"))?;
-            let shard = Uuid::new_v5(
-                &Uuid::NAMESPACE_URL,
-                format!("datum-eda:source-shard:{path}").as_bytes(),
-            );
-            if shard != current.source_shard_id {
-                return Ok(false);
-            }
-            (path, None, 0)
-        };
-        let mut projection =
-            restore::RevisionProjection::new(id, path, kind, revision, state, counter)?;
-        if let Some(before) = before
-            && let Some(past) = history.payload(before, revision)?
-        {
-            capture(&mut projection.captured, &past)?;
-        }
-        for operation in self.applied_operations {
-            projection.apply(operation)?;
-        }
-        if projection.counter != current.object_revision.0 || projection.state.is_none() {
-            return Ok(false);
-        }
-        // Availability is established only by accepted history or operations
-        // already applied. Later pending operations can invalidate that match,
-        // never grant a forward reference.
-        let available = projection.captured.is_some();
-        for operation in &self.operations[self.applied_operations.len()..] {
-            projection.apply(operation)?;
-        }
-        Ok(available)
+        Ok(self
+            .projected_reference(staged, id, revision, kind, None)?
+            .available)
     }
 }
 

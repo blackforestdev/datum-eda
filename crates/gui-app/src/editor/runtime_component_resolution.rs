@@ -2,13 +2,368 @@
 use super::*;
 use datum_gui_protocol::{
     library_authoring::LibraryDraft,
-    library_browser::{
-        LibraryControl as C,
-        component_resolution::{ComponentResolution, ResolutionAction as A},
-    },
-    schematic_authoring::{assignment::AssignmentEvidence, selected},
+    library_browser::{LibraryControl as C, component_resolution::ResolutionAction as A},
+    schematic_authoring::assignment::AssignmentEvidence,
 };
+#[path = "runtime_component_configuration_pointer.rs"]
+mod configuration_pointer;
 impl Runtime {
+    pub(crate) fn trace_component_editor(&self, label: &str) {
+        if let Some(c) = &self.workspace().library.configuration {
+            self.trace_click(format!("component editor {label}; focus {:?}; field {:?}; phase {:?}; native_pending {}; value_bytes {}; search_bytes {}; legacy_picker {}; legacy_label {}",
+                self.application_focus(), self.workspace().library.focus, c.phase, self.native_edit.pending(), c.value.len(), self.workspace().library.acquisition.as_ref().map_or(0,|a|a.search.len()), self.workspace().schematic_authoring.picker, self.workspace().schematic_authoring.label.is_some()));
+        }
+    }
+
+    pub(crate) fn handle_component_configuration_key(
+        &mut self,
+        event: &winit::event::KeyEvent,
+    ) -> bool {
+        use datum_gui_protocol::library_browser::component_resolution::configuration::ConfigurationControl as F;
+        let Some(configuration) = self
+            .workspace()
+            .library
+            .configuration
+            .as_ref()
+            .filter(|c| c.target.is_some() || c.footprint_chooser.is_some())
+        else {
+            return false;
+        };
+        self.trace_component_editor(&format!("key {:?}", event.logical_key));
+        if configuration.footprint_chooser.is_some() {
+            return self.handle_library_key(event);
+        }
+        if event.state != ElementState::Pressed
+            || configuration.pending()
+            || self.native_edit.pending()
+        {
+            return true;
+        }
+        if self.handle_shared_editor_key(event) {
+            return true;
+        }
+        if event.repeat
+            || self.modifiers.control_key()
+            || self.modifiers.alt_key()
+            || self.modifiers.super_key()
+        {
+            return true;
+        }
+        let configuration = self.workspace().library.configuration.as_ref().unwrap();
+        let controls = configuration.controls();
+        match &event.logical_key {
+            Key::Named(NamedKey::Escape) => {
+                self.configuration_library_control(&C::Configure(F::Cancel));
+            }
+            Key::Named(NamedKey::Enter) if !self.modifiers.shift_key() => {
+                if controls.contains(&configuration.focus) {
+                    self.configuration_library_control(&C::Configure(configuration.focus));
+                }
+            }
+            Key::Named(NamedKey::Tab) if !controls.is_empty() => {
+                let index = controls.iter().position(|c| *c == configuration.focus);
+                let next = if self.modifiers.shift_key() {
+                    index.map_or(controls.len() - 1, |i| {
+                        (i + controls.len() - 1) % controls.len()
+                    })
+                } else {
+                    index.map_or(0, |i| (i + 1) % controls.len())
+                };
+                let control = controls[next];
+                let library = &mut self.session.workspace_mut().library;
+                library.configuration.as_mut().unwrap().focus = control;
+                library.focus = Some(match control {
+                    F::Reference => C::Field(0),
+                    F::Value => C::Field(1),
+                    other => C::Configure(other),
+                });
+                library.reveal_focus = true;
+                self.invalidate_frame();
+            }
+            _ => {}
+        }
+        true
+    }
+    pub(crate) fn library_configuration_input_available(&self) -> bool {
+        self.workspace().ui.layout.focused_content() == PaneContent::Library
+            || self.component_picker_open()
+            || self.workspace().library.configuration.is_some()
+    }
+
+    pub(crate) fn component_configuration_field_focused(&self) -> bool {
+        self.workspace()
+            .library
+            .configuration
+            .as_ref()
+            .is_some_and(|c| {
+                c.footprint_chooser.is_none()
+                    && matches!(self.workspace().library.focus, Some(C::Field(_)))
+            })
+    }
+
+    fn restore_component_configuration_focus(&mut self) {
+        use datum_gui_protocol::library_browser::component_resolution::configuration::ConfigurationControl as F;
+        let library = &mut self.session.workspace_mut().library;
+        let Some(configuration) = library.configuration.as_ref() else {
+            return;
+        };
+        library.focus = Some(match configuration.focus {
+            F::Reference => C::Field(0),
+            F::Value => C::Field(1),
+            other => C::Configure(other),
+        });
+        library.reveal_focus = true;
+    }
+
+    fn confirm_footprint_result(&mut self, index: usize) -> bool {
+        let library = &mut self.session.workspace_mut().library;
+        let (Some(configuration), Some(acquisition)) =
+            (&mut library.configuration, &library.acquisition)
+        else {
+            return false;
+        };
+        let Some(source) = acquisition.sources.get(index) else {
+            return false;
+        };
+        let now = std::time::Instant::now();
+        let repeated =
+            configuration
+                .footprint_last_result
+                .as_ref()
+                .is_some_and(|(path, name, at)| {
+                    path == &source.path
+                        && name == &source.name
+                        && now.duration_since(*at) < std::time::Duration::from_millis(500)
+                });
+        configuration.footprint_last_result = Some((source.path.clone(), source.name.clone(), now));
+        if !repeated
+            || acquisition.selected.as_ref() != Some(&source.name)
+            || acquisition.selected_source.as_ref() != Some(&source.path)
+        {
+            return false;
+        }
+        if acquisition.loading {
+            // Accept only this read's eventual preview, never a later selection.
+            configuration.footprint_accept_session = Some(acquisition.session);
+            return false;
+        }
+        acquisition.request().is_ok()
+            && acquisition
+                .preview
+                .as_ref()
+                .is_some_and(|p| p.footprint.is_some())
+    }
+
+    pub(crate) fn configuration_library_control(&mut self, control: &C) -> bool {
+        use datum_gui_protocol::library_browser::component_resolution::configuration::ConfigurationControl as F;
+        let Some(configuration) = self.workspace().library.configuration.as_ref() else {
+            return self.resolution_library_return(control);
+        };
+        let chooser = configuration.footprint_chooser.is_some();
+        let pending = configuration.pending();
+        let properties = configuration.target.is_some();
+        let action = match control {
+            C::AcquireResult(index) if chooser => {
+                if self.confirm_footprint_result(*index) {
+                    F::AcceptFootprint
+                } else {
+                    return false;
+                }
+            }
+            C::Configure(action) => *action,
+            C::Field(0) if !chooser => F::Reference,
+            C::Field(1) if !chooser => F::Value,
+            C::AcquireImport if chooser => F::AcceptFootprint,
+            C::Cancel if chooser || properties => F::Cancel,
+            C::Cancel => {
+                self.session.workspace_mut().library.configuration = None;
+                return false;
+            }
+            _ => return false,
+        };
+        if pending || self.native_edit.pending() || self.check_work.pending() {
+            return true;
+        }
+        let result = (|| -> Result<(), String> {
+            if action == F::Cancel {
+                if chooser {
+                    self.library_acquisition_work.cancel();
+                    let configuration = self
+                        .session
+                        .workspace_mut()
+                        .library
+                        .configuration
+                        .as_mut()
+                        .unwrap();
+                    configuration.footprint_chooser = None;
+                    let picker = configuration.picker.clone();
+                    let offset = configuration.return_scroll_offset;
+                    self.session.workspace_mut().library.acquisition = picker;
+                    self.session.workspace_mut().library.scroll_offset = offset;
+                    self.restore_component_configuration_focus();
+                } else {
+                    let return_to_transfer = self
+                        .workspace()
+                        .library
+                        .configuration
+                        .as_ref()
+                        .unwrap()
+                        .return_to_transfer;
+                    self.session.workspace_mut().library.configuration = None;
+                    if return_to_transfer {
+                        self.begin_board_transfer();
+                    }
+                }
+                return Ok(());
+            }
+            if !chooser {
+                self.verify_component_configuration_context()?;
+            }
+            match action {
+                F::Reference | F::Value => {
+                    self.session.workspace_mut().library.focus =
+                        Some(C::Field(usize::from(action == F::Value)));
+                    self.session
+                        .workspace_mut()
+                        .library
+                        .configuration
+                        .as_mut()
+                        .unwrap()
+                        .focus = action;
+                }
+                F::ChooseFootprint => {
+                    let offset = self.workspace().library.scroll_offset;
+                    let revision = self.workspace().scene.source_revision.clone();
+                    let tip = self
+                        .workspace()
+                        .supervision
+                        .journal
+                        .accepted_transaction_tip
+                        .as_ref()
+                        .and_then(|s| s.parse().ok());
+                    let configuration = self
+                        .session
+                        .workspace_mut()
+                        .library
+                        .configuration
+                        .as_mut()
+                        .unwrap();
+                    configuration.begin_footprint_choice(revision, tip)?;
+                    configuration.focus = F::ChooseFootprint;
+                    configuration.return_scroll_offset = offset;
+                    let acquisition = configuration.footprint_chooser.clone();
+                    self.session.workspace_mut().library.acquisition = acquisition;
+                    self.session.workspace_mut().library.scroll_offset = 0;
+                    self.session.workspace_mut().library.focus = Some(C::AcquireSearch);
+                    self.activate_library(C::AcquireLoad);
+                    self.session.workspace_mut().library.focus = Some(C::AcquireSearch);
+                }
+                F::AcceptFootprint => {
+                    let chosen = self
+                        .workspace()
+                        .library
+                        .acquisition
+                        .clone()
+                        .ok_or("Choose a footprint")?;
+                    let configuration = self
+                        .session
+                        .workspace_mut()
+                        .library
+                        .configuration
+                        .as_mut()
+                        .unwrap();
+                    configuration.footprint_chooser = Some(chosen);
+                    configuration.accept_footprint()?;
+                    let picker = configuration.picker.clone();
+                    let offset = configuration.return_scroll_offset;
+                    self.session.workspace_mut().library.acquisition = picker;
+                    self.session.workspace_mut().library.scroll_offset = offset;
+                    self.library_acquisition_work.cancel();
+                    let mut configuration = self
+                        .workspace()
+                        .library
+                        .configuration
+                        .as_ref()
+                        .unwrap()
+                        .clone();
+                    configuration.reuse_mapping(&self.workspace().library)?;
+                    configuration.focus = F::ChooseFootprint;
+                    self.session.workspace_mut().library.configuration = Some(configuration);
+                    self.restore_component_configuration_focus();
+                }
+                F::MappingPad(index) => {
+                    let configuration = self
+                        .session
+                        .workspace_mut()
+                        .library
+                        .configuration
+                        .as_mut()
+                        .unwrap();
+                    let mut pads: Vec<_> =
+                        configuration.footprint()?.pads.keys().copied().collect();
+                    pads.sort();
+                    configuration.selected_pad =
+                        Some(*pads.get(index).ok_or("Select an actual pad")?);
+                    configuration.focus = action;
+                }
+                F::MappingPin(index) => {
+                    let configuration = self
+                        .session
+                        .workspace_mut()
+                        .library
+                        .configuration
+                        .as_mut()
+                        .unwrap();
+                    let mut pins: Vec<_> = configuration.unit()?.pins.keys().copied().collect();
+                    pins.sort();
+                    configuration.map_pin(*pins.get(index).ok_or("Select an actual pin")?)?;
+                    configuration.focus = action;
+                }
+                F::ConfirmMapping => {
+                    let configuration = self
+                        .session
+                        .workspace_mut()
+                        .library
+                        .configuration
+                        .as_mut()
+                        .unwrap();
+                    configuration.mapping_confirmed = true;
+                    if let Err(reason) = configuration.request() {
+                        configuration.mapping_confirmed = false;
+                        return Err(reason);
+                    }
+                    configuration.refusal = None;
+                    configuration.focus = action;
+                }
+                F::Apply => self.apply_component_configuration()?,
+                F::Cancel => unreachable!(),
+            }
+            Ok(())
+        })();
+        if let Err(reason) = result
+            && let Some(configuration) = &mut self.session.workspace_mut().library.configuration
+        {
+            configuration.refusal = Some(reason);
+        }
+        self.invalidate_frame();
+        true
+    }
+
+    pub(crate) fn begin_component_properties(&mut self) -> bool {
+        let result = self.selected_schematic_idle().and_then(|()| {
+            datum_gui_protocol::library_browser::component_resolution::configuration::ComponentConfiguration::capture_properties(self.workspace())
+        });
+        match result {
+            Ok(configuration) => {
+                self.session.workspace_mut().library.configuration = Some(configuration);
+                self.session.workspace_mut().library.scroll_offset = 0;
+                self.session.workspace_mut().library.focus = Some(C::Field(0));
+            }
+            Err(reason) => self.log_console_refusal(ConsoleFeedbackSource::Tool, reason),
+        }
+        self.invalidate_frame();
+        true
+    }
     pub(crate) fn component_resolution_key(&mut self, event: &winit::event::KeyEvent) -> bool {
         let Some(context) = self
             .workspace()
@@ -61,31 +416,29 @@ impl Runtime {
         }
         true
     }
-    pub(crate) fn begin_empty_component_resolution(&mut self) -> Result<bool, String> {
-        let (_, target) = selected::target(self.workspace())?;
-        let evidence = AssignmentEvidence::capture_resolution(self.workspace(), &target)?;
-        if !evidence.options.choices.is_empty() {
-            return Ok(false);
-        }
-        self.begin_component_resolution(target, false)?;
-        Ok(true)
-    }
     pub(crate) fn begin_component_resolution(
         &mut self,
         target: datum_gui_protocol::AuthoredSelectionIdentity,
         transfer: bool,
     ) -> Result<(), String> {
-        let state = self.workspace();
-        if state.library.draft.is_some()
-            || state.library.acquisition.is_some()
-            || state.library.resolution.is_some()
+        self.selected_schematic_idle()?;
+        AssignmentEvidence::admit_target(self.workspace(), &target)?;
+        if !self
+            .ensure_selection_authority()
+            .map_err(|e| e.to_string())?
         {
-            return Err(
-                "Finish or cancel current Library work before resolving another component".into(),
-            );
+            return Err("Current component selection authority unavailable".into());
         }
-        let context = ComponentResolution::capture(state, &target, transfer)?;
-        self.session.workspace_mut().library.resolution = Some(context);
+        self.publish_native_acquisition(
+            [target].into_iter().collect(),
+            datum_gui_viewport::selection_acquisition::AcquisitionMode::Replace,
+            datum_gui_viewport::selection_acquisition::AcquisitionEntry::Individual,
+            None,
+        );
+        let mut configuration = datum_gui_protocol::library_browser::component_resolution::configuration::ComponentConfiguration::capture_properties(self.workspace())?;
+        configuration.return_to_transfer = transfer;
+        self.session.workspace_mut().library.configuration = Some(configuration);
+        self.session.workspace_mut().library.focus = Some(C::Field(0));
         self.session.workspace_mut().ui.board_transfer = None;
         Ok(())
     }

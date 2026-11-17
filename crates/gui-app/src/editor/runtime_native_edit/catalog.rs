@@ -25,6 +25,7 @@ pub(super) struct CatalogReply {
     project_id: String,
     generation: u64,
     result: Result<BTreeSet<String>, String>,
+    library: Option<serde_json::Value>,
 }
 
 impl CatalogReply {
@@ -50,6 +51,7 @@ impl EditWork {
             .name("datum-native-prepare".into())
             .spawn(move || {
                 let started = std::time::Instant::now();
+                let mut library = None;
                 let result = (|| -> Result<BTreeSet<String>> {
                     let mut owner = client
                         .lock()
@@ -65,6 +67,26 @@ impl EditWork {
                             == Some(project_id.as_str()),
                         "Capability discovery returned another Project"
                     );
+                    // A separate guarded read cannot disable the legacy verb
+                    // catalog. Its snapshot is requalified on UI publication.
+                    if let (Some(revision), Some(tip)) = (
+                        describe
+                            .get("model_revision")
+                            .and_then(serde_json::Value::as_str),
+                        describe.get("transaction_tip"),
+                    ) {
+                        let expected_tip = serde_json::from_value(tip.clone())?;
+                        library = owner
+                            .as_ref()
+                            .unwrap()
+                            .inspect_library_snapshot(
+                                &root,
+                                project_id.parse()?,
+                                revision,
+                                expected_tip,
+                            )
+                            .ok();
+                    }
                     Ok(native_write_verb_ids(&describe))
                 })()
                 .map_err(|error| format!("{error:#}"));
@@ -80,6 +102,7 @@ impl EditWork {
                     project_id,
                     generation,
                     result,
+                    library,
                 });
                 let _ = wake.send_event(());
             });
@@ -135,6 +158,12 @@ impl Runtime {
                 format!("Native editing capability discovery failed: {reason}"),
             ),
         }
+        let browser = &mut self.session.workspace_mut().library;
+        if let Some(description) = reply.library {
+            // A write or Undo/Redo may have superseded startup warmup while
+            // retaining the same Project identity and open generation.
+            let _ = browser.set_revision_inspection(description);
+        }
         self.invalidate_frame();
         true
     }
@@ -151,6 +180,7 @@ mod tests {
             project_id: "id-a".into(),
             generation: 7,
             result: Ok(BTreeSet::new()),
+            library: None,
         };
         assert!(reply.matches(Path::new("project-a"), "id-a", 7));
         assert!(!reply.matches(Path::new("copied-project-a"), "id-a", 7));

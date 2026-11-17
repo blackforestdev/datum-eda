@@ -167,12 +167,22 @@ pub(super) fn native_write_response(
     };
 
     let provenance = WriteProvenance::new(actor, source, reason);
-    let mut prepared = {
+    let (mut prepared, library_preview) = {
         let context = NativeWriteContext {
             model: &model,
             project_root: &params.project_root,
         };
-        match (verb.build)(&context, provenance, params.params) {
+        let built = if params.verb == "datum.library.edit" {
+            eda_engine::api::native_write::library_gui::build_edit_with_summary(
+                &context,
+                provenance,
+                params.params,
+            )
+            .map(|edit| (edit.prepared, edit.revision_summary))
+        } else {
+            (verb.build)(&context, provenance, params.params).map(|prepared| (prepared, None))
+        };
+        match built {
             Ok(prepared) => prepared,
             Err(err) => return error_response(request_id, -32060, &err.to_string()),
         }
@@ -196,17 +206,20 @@ pub(super) fn native_write_response(
             .iter()
             .map(operation_kind)
             .collect();
-        return success_response(
-            request_id,
-            json!({
-                "verb": params.verb,
-                "status": "dry_run",
-                "operation_kinds": operation_kinds,
-                "operation_count": prepared.batch.operations.len(),
-                "primary_object_id": prepared.primary_object_id,
-                "expected_model_revision": model.model_revision.0,
-            }),
-        );
+        let mut preview = json!({
+            "verb": params.verb,
+            "status": "dry_run",
+            "project_id":model.project.project_id,
+            "transaction_tip":eda_engine::revision::transaction_tip(&model.journal),
+            "operation_kinds": operation_kinds,
+            "operation_count": prepared.batch.operations.len(),
+            "primary_object_id": prepared.primary_object_id,
+            "expected_model_revision": model.model_revision.0,
+        });
+        if let Some(summary) = library_preview {
+            preview["library_preview"] = summary;
+        }
+        return success_response(request_id, preview);
     }
 
     if let Some(batch_id) = params.batch_id {

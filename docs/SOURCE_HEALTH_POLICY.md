@@ -608,3 +608,12 @@ inline-test ceiling1705 remains. Renderer root physical130→129 and measured
 HEAD expansion3505→3488 shrink; its prior recorded ceiling3560 ratchets to3488.
 Both debt entries remain, with no new exception or child registration. This
 structural evidence does not establish ordinary GUI delivery or full qualification.
+
+
+PM066 local asset integration co-locates source-partition types with their existing
+reader/validator in `substrate/source_shard.rs`, retaining the public reexports
+and serialization vocabulary. The extraction reduces `substrate/mod.rs` from
+704 to 621 physical lines before new registrations; the owning child is 494
+lines at that boundary. Neither file has a legacy debt entry, so no debt ceiling,
+exception or normal-budget change is created. Subsequent integration remains
+subject to ordinary measured source health and independent review.

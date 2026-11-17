@@ -105,13 +105,15 @@ class StartupQA(NativeReadinessCapture):
         return self.host_window
 
     def start_envelope(self, desktop=False, *, proto_log=False, output_size=(1344, 806),
-                       backend="wayland"):
+                       backend="wayland", renderer="gl"):
         validate_input_display(os.environ)
         if (not isinstance(output_size, tuple) or len(output_size) != 2
                 or any(type(dimension) is not int or dimension <= 0 for dimension in output_size)):
             raise ValueError("output_size must be a pair of positive integers")
         if backend not in ("wayland", "x11"):
             raise ValueError("backend must be 'wayland' or 'x11'")
+        if renderer not in ("gl", "pixman"):
+            raise ValueError("renderer must be 'gl' or 'pixman'")
         # The GUI backend governs whether datum-gui runs as a native Wayland client (default) or an
         # Xwayland/X11 client inside this same owned compositor. x11 implies an owned Xwayland server.
         self.backend = backend
@@ -122,7 +124,7 @@ class StartupQA(NativeReadinessCapture):
             settings = self.root / "weston.ini"
             settings.write_text("[shell]\nbinding-modifier=ctrl\npanel-position=none\n")
             config = "--config=" + str(settings)
-        args = ["weston", "--backend=x11", "--renderer=gl",
+        args = ["weston", "--backend=x11", f"--renderer={renderer}",
                 "--shell=" + ("desktop-shell.so" if desktop else "kiosk-shell.so"), config, "--debug", f"--width={output_size[0]}", f"--height={output_size[1]}", "--scale=1",
                 "--idle-time=0", "--socket=datum-startup-qa", "--log=" + str(self.root / "weston.log")]
         if self.file_actions or self.backend == "x11":

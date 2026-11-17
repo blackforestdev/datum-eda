@@ -58,6 +58,15 @@ impl EditWork {
                     }
                     let selection=native_edit_selection::prepare_from_model(&mut next,inputs,model,cache)?;
                     trace_startup_timing(format!("native edit complete workspace and selection {}ms",refreshed.elapsed().as_millis()));
+                    if let Ok(description) = client.inspect_library_snapshot(
+                        &intent.project_root, intent.project_id, &next.scene.source_revision,
+                        next.supervision.journal.accepted_transaction_tip.as_deref()
+                            .map(str::parse).transpose()?,
+                    ) {
+                        // Read failure leaves common records unavailable; it
+                        // cannot invalidate a committed write or invent history.
+                        let _ = next.library.set_revision_inspection(description);
+                    }
                     let after=client.describe(&intent.project_root)?;
                     // Capability discovery (truthful menu enablement): carry the engine's
                     // native-write verb catalog from native.describe into the refreshed

@@ -22,6 +22,9 @@ use std::path::PathBuf;
 use uuid::Uuid;
 #[path = "schematic_proposal_authority.rs"]
 mod authority;
+#[path = "schematic_component_properties.rs"]
+pub(super) mod component_properties;
+pub use component_properties::ComponentPropertiesRequest;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -102,6 +105,7 @@ pub enum NativeProposalAction {
         #[serde(default)]
         component: Option<super::schematic_library::part_placement::CompletePartSelection>,
     },
+    CreateComponentProperties(ComponentPropertiesRequest),
     CreateDisposition {
         proposal_id: Uuid,
         check_run_id: Uuid,
@@ -128,6 +132,7 @@ pub enum NativeProposalAction {
 impl NativeProposalAction {
     pub fn proposal_id(&self) -> Uuid {
         match self {
+            Self::CreateComponentProperties(request) => request.proposal_id,
             Self::CreateGatePlacement(request) => request.proposal_id,
             Self::CreateChildSheet(request) => request.proposal_id,
             Self::CreateInterfaceBinding(request) => request.proposal_id,
@@ -425,6 +430,9 @@ pub fn execute(
             )?;
         }
 
+        NativeProposalAction::CreateComponentProperties(properties) => {
+            component_properties::create(model, &request.project_root, properties)?;
+        }
         NativeProposalAction::CreateAssignment {
             symbol,
             instance_path,
@@ -433,29 +441,15 @@ pub fn execute(
             component,
             ..
         } => {
-            let provenance =
-                WriteProvenance::new("datum-gui", CommitSource::Manual, "Assign schematic Part");
-            let mut write = super::schematic_assignment::build_configured(
+            component_properties::create_assignment(
                 model,
-                provenance,
+                &request.project_root,
+                id,
                 *symbol,
                 instance_path,
                 *part,
                 *gate,
                 component.as_ref(),
-            )?;
-            write.batch.batch_id = id;
-            create_draft_proposal_from_batch(
-                model,
-                &request.project_root,
-                ProposalCreateRequest {
-                    proposal_id: Some(id),
-                    batch: write.batch,
-                    rationale: "Assign compatible Part and Gate to selected Symbol".into(),
-                    source: ProposalSource::Manual,
-                    checks_run: vec![],
-                    finding_fingerprints: vec![],
-                },
             )?;
         }
         NativeProposalAction::CreateDisposition {

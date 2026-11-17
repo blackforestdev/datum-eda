@@ -23,8 +23,45 @@ pub(super) fn report(
     project_root: &Path,
     batch: &OperationBatch,
 ) -> Result<CommitReport, EngineError> {
-    let batch =
-        super::electrical_transaction::compose(model, batch.clone(), TransactionKind::Normal)?;
+    // Managed previews use the same private lease-qualified composition as
+    // commit. The lease ends with this report, before the actual apply lease.
+    let managed = model.project.schema_version == Some(2)
+        || batch
+            .operations
+            .iter()
+            .any(|op| matches!(op, super::Operation::LibraryAssets { .. }));
+    let lease = managed
+        .then(|| crate::revision::ProjectWriteLease::acquire(project_root))
+        .transpose()?;
+    let input = if managed {
+        super::commit::validate_object_revision_guards(model, &batch.operations)?;
+        super::commit::batch_without_object_revision_guards(batch.clone())?
+    } else {
+        batch.clone()
+    };
+    let batch = super::electrical_transaction::compose(model, input, TransactionKind::Normal)?;
+    let batch = if let Some(lease) = lease.as_ref() {
+        super::library_asset_journal_ops::composition::complete(
+            project_root,
+            lease,
+            model,
+            batch,
+            TransactionKind::Normal,
+        )?
+    } else {
+        batch
+    };
+    let admission = if let Some(lease) = lease.as_ref() {
+        super::library_asset_journal_ops::admission::prepare_under_lease(
+            project_root,
+            lease,
+            model,
+            &batch,
+            super::library_asset_resolver::server_policy()?,
+        )?
+    } else {
+        None
+    };
     let proof = CanonicalMetadataPreview::capture(model, &batch)?;
     let staged = super::journal::stage_operation_shard_writes(project_root, model, &batch)?;
     let mut preview = model.clone();
@@ -33,12 +70,22 @@ pub(super) fn report(
     super::journal::sort_source_shards(&mut preview.source_shards);
     let result = if let Some(proof) = proof.as_ref() {
         preview.preview_canonical_metadata_batch(batch.clone(), proof)
+    } else if let Some(admission) = admission.as_ref() {
+        preview.apply_library_candidate(batch.clone(), admission)
     } else {
         preview.commit_without_direct_policy(batch.clone())
     }
     .and_then(|mut report| {
         super::journal::update_staged_source_hashes(&mut preview.source_shards, &staged)?;
+        if admission.is_some() {
+            let inverse = super::journal::inverse_operations_for_batch(model, &batch)?;
+            report.transaction.inverse_operations = inverse.clone();
+            preview.journal.last_mut().unwrap().inverse_operations = inverse;
+        }
         super::commit::refresh_journaled_report_revision(&mut preview, &mut report, None)?;
+        if let (Some(admission), Some(lease)) = (admission, lease.as_ref()) {
+            admission.finish_evaluated(project_root, lease, model, &preview, &staged)?;
+        }
         Ok(report)
     });
     // Existing private staged preview ownership, never published source.

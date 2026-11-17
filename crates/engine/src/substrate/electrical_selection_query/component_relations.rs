@@ -205,23 +205,43 @@ impl ElectricalSelectionSnapshot {
             return false;
         };
         let source = shard.component_instance;
+        if self.pending_frame.is_some()
+            && crate::substrate::component_instance::component_instance_from_persisted(&source)
+                != *owner
+        {
+            return false;
+        }
+        let definition = |id, kind: &str, revision| {
+            if self.pending_frame.is_some() {
+                super::source_frame::pinned(self, id, kind, revision).is_ok()
+            } else {
+                self.model
+                    .materialized_pool_object_revision(id, kind, revision)
+                    .is_ok()
+            }
+        };
         let current = |r: &crate::substrate::RevisionedRef| {
             self.model
                 .objects
                 .get(&r.object_id)
                 .is_some_and(|o| o.object_revision == r.object_revision)
         };
+        let package_current = |r: &crate::substrate::RevisionedRef| {
+            current(r)
+                || (source.placed_symbol_refs.len() == 1
+                    && source.placed_package_refs.len() == 1
+                    && super::source_frame::qualified_package_pose(self, r).is_ok())
+        };
         shard.schema_version == crate::substrate::COMPONENT_INSTANCE_SHARD_SCHEMA_VERSION
             && source.uuid == owner.id
             && source.object_revision == owner.object_revision
             && source.object_revision == object.object_revision
             && source.placed_symbol_refs.iter().all(current)
-            && source.placed_package_refs.iter().all(current)
-            && source.part_ref.as_ref().is_none_or(|r| {
-                self.model
-                    .materialized_pool_object_revision(r.object_id, "parts", r.object_revision)
-                    .is_ok()
-            })
+            && source.placed_package_refs.iter().all(package_current)
+            && source
+                .part_ref
+                .as_ref()
+                .is_none_or(|r| definition(r.object_id, "parts", r.object_revision))
             && source
                 .placed_symbol_refs
                 .iter()
@@ -253,9 +273,7 @@ impl ElectricalSelectionSnapshot {
                                 )
                                 .is_ok()
                         } else {
-                            self.model
-                                .materialized_pool_object_revision(id, kind, revision)
-                                .is_ok()
+                            definition(id, kind, revision)
                         }
                     };
                     matches(b.target_object_id, b.pinned_object_revision)

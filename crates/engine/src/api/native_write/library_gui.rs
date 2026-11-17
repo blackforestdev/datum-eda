@@ -11,6 +11,8 @@ use super::{
 };
 use crate::{error::EngineError, substrate::SourceShardKind};
 
+#[path = "library_component_configuration.rs"]
+pub mod component_configuration;
 #[path = "library_gui_electrical.rs"]
 mod electrical;
 #[path = "library_gui_entity.rs"]
@@ -68,12 +70,39 @@ fn edit(
     provenance: WriteProvenance,
     params: Value,
 ) -> Result<PreparedWrite, EngineError> {
+    build_edit_with_summary(context, provenance, params).map(|edit| edit.prepared)
+}
+
+/// The existing library edit verb shares one builder for preview and commit.
+/// Revision summaries are informational; only the guarded prepared batch writes.
+pub struct PreparedLibraryEdit {
+    pub prepared: PreparedWrite,
+    pub revision_summary: Option<Value>,
+}
+
+pub fn build_edit_with_summary(
+    context: &NativeWriteContext<'_>,
+    provenance: WriteProvenance,
+    params: Value,
+) -> Result<PreparedLibraryEdit, EngineError> {
+    if params.get("action").is_some() {
+        return super::library_assets::prepare_library_change(context, provenance, params).map(
+            |change| PreparedLibraryEdit {
+                prepared: change.prepared,
+                revision_summary: Some(change.summary),
+            },
+        );
+    }
     build_definition(
         context,
         provenance,
         parse_verb_params("datum.library.edit", params)?,
         false,
     )
+    .map(|prepared| PreparedLibraryEdit {
+        prepared,
+        revision_summary: None,
+    })
 }
 
 pub fn build_definition(

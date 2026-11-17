@@ -183,6 +183,31 @@ fn component_binding_context_keeps_physical_bidirectional_and_declared_stale_una
         part,
         crate::ir::geometry::Point::zero(),
     );
+    let anchor = raw(&model, ci)["component_instance"]["placed_package_refs"].clone();
+    for op in [
+        Operation::SetBoardPackagePosition {
+            package_id: package,
+            x: 7000000,
+            y: 3000000,
+        },
+        Operation::SetBoardPackageRotation {
+            package_id: package,
+            rotation: 90,
+        },
+    ] {
+        let write = BatchComposer::compose(&model, provenance())
+            .push_op(op)
+            .finish()
+            .unwrap();
+        commit_prepared(&mut model, &root, write).unwrap();
+    }
+    assert_eq!(
+        raw(&model, ci)["component_instance"]["placed_package_refs"],
+        anchor
+    );
+    assert!(
+        model.objects[&package].object_revision.0 > anchor[0]["object_revision"].as_u64().unwrap()
+    );
     model = ProjectResolver::new(&root).resolve().unwrap();
     for (class, id, other) in [("symbols", symbol, package), ("packages", package, symbol)] {
         let at = origin(class, id);
@@ -199,7 +224,21 @@ fn component_binding_context_keeps_physical_bidirectional_and_declared_stale_una
             other
         );
     }
-    // A declared package with an advanced source epoch is not "not declared".
+    let mut forged = ElectricalSelectionSnapshot::capture(&model).unwrap();
+    std::sync::Arc::make_mut(&mut forged.model)
+        .journal
+        .last_mut()
+        .unwrap()
+        .inverse_operations
+        .clear();
+    let bad = forged
+        .component_selection_context(
+            forged.revision(),
+            &BTreeSet::from([origin("symbols", symbol)]),
+        )
+        .unwrap();
+    assert!(bad.bindings.is_empty() && bad.relations.is_empty() && !bad.unavailable.is_empty());
+    // Non-pose source edits remain unavailable after the qualified pose bridge.
     let write = BatchComposer::compose(&model, provenance())
         .push_op(Operation::SetBoardPackageValue {
             package_id: package,

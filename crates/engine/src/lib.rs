@@ -15,6 +15,7 @@ pub mod error;
 pub mod export;
 pub mod import;
 pub mod ir;
+pub(crate) mod library_assets;
 pub mod ops;
 pub mod pool;
 pub mod preferences;

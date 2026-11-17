@@ -15,6 +15,10 @@ pub(super) fn apply_pre_match_operation(
     operation: &Operation,
     diff: &mut CommitDiff,
 ) -> Result<bool, EngineError> {
+    if let Operation::LibraryAssets { operation } = operation {
+        super::library_asset_operations::apply_model(model, operation, diff)?;
+        return Ok(true);
+    }
     if super::import_map_journal_ops::apply_model(model, operation)? {
         return Ok(true);
     }

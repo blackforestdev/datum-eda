@@ -29,6 +29,14 @@ impl DesignModel {
         gate: ObjectId,
         symbol: ObjectId,
     ) -> Result<Value, EngineError> {
+        let placement = super::managed_placed_source::qualify(self, placed, symbol)?;
+        let expected = [Some(entity), Some(gate), Some(symbol)];
+        if chain(&placement.raw)? != expected {
+            return Err(invalid("placed source chain differs"));
+        }
+        if let Some(definitions) = super::managed_placed_source::definitions(self, &placement)? {
+            return Ok(definitions.entity);
+        }
         self.materialized_placed_symbol_definition(placed, symbol)?
             .ok_or_else(|| invalid("authenticated placed Symbol basis is unavailable"))?;
         // Validate established compensation ordering, then identify which normal
@@ -44,38 +52,8 @@ impl DesignModel {
         if births > 1 {
             return Err(invalid("canonical placement birth is ambiguous"));
         }
-        let placed_owner = self
-            .objects
-            .get(&placed)
-            .ok_or_else(|| invalid("placed source is missing"))?;
-        let placed_shard = self
-            .source_shards
-            .iter()
-            .find(|s| s.shard_id == placed_owner.source_shard_id)
-            .ok_or_else(|| invalid("placed source shard is missing"))?;
-        let source =
-            self.materialized_source_shard_value_by_relative_path(&placed_shard.relative_path)?;
-        let key = placed.to_string();
-        let mut rows = Vec::new();
-        if let Some(raw) = source.get("symbols").and_then(|s| s.get(&key)) {
-            rows.push((source["uuid"].clone(), raw.clone()));
-        }
-        if let Some(sheets) = source.get("sheets").and_then(Value::as_object) {
-            rows.extend(sheets.values().filter_map(|s| {
-                s.get("symbols")
-                    .and_then(|m| m.get(&key))
-                    .map(|r| (s["uuid"].clone(), r.clone()))
-            }));
-        }
-        if rows.len() != 1 {
-            return Err(invalid("placed membership is ambiguous or unavailable"));
-        }
-        let (sheet, placed_raw) = rows.pop().unwrap();
-        let sheet: Uuid = serde_json::from_value(sheet)?;
-        let expected = [Some(entity), Some(gate), Some(symbol)];
-        if chain(&placed_raw)? != expected {
-            return Err(invalid("placed source chain differs"));
-        }
+        let sheet: Uuid = serde_json::from_value(placement.sheet)?;
+        let placed_raw = placement.raw;
         let mut placed_raw = Some(placed_raw);
         let owner = self
             .objects

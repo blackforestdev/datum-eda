@@ -206,14 +206,14 @@
     {
       "id": "electrical_source_shard_kinds",
       "kind": "rust_enum_variants",
-      "path": "crates/engine/src/substrate/mod.rs",
+      "path": "crates/engine/src/substrate/source_shard.rs",
       "enum": "SourceShardKind",
       "owner_spec": "specs/NATIVE_FORMAT_SPEC.md"
     },
     {
       "id": "electrical_source_shard_taxa",
       "kind": "rust_enum_variants",
-      "path": "crates/engine/src/substrate/mod.rs",
+      "path": "crates/engine/src/substrate/source_shard.rs",
       "enum": "SourceShardTaxon",
       "owner_spec": "specs/NATIVE_FORMAT_SPEC.md"
     },
@@ -295,7 +295,7 @@
         "LibraryReleaseManifestV1",
         "ProjectLibraryLockV1"
       ],
-      "notes": "Specification filename and planned semantic-shape registration only; not implemented Rust/API inventory. SL-016–024 define the target V1 byte and lock profile; support still requires interoperability and version-refusal proof."
+      "notes": "Specification filename and planned semantic-shape registration only; not a census of implemented Rust/API shapes or proof of complete interoperability. SL-016\u2013024 define the target V1 byte and lock profile. Bounded native local revision/adoption implementation and focused runtime proof are recorded in PROGRESS and the Library/GUI contracts; full exchange, contribution/publishing and migration qualification are not established by this inventory."
     }
   ]
 }

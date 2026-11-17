@@ -29,6 +29,7 @@ pub(super) struct Runtime {
     pub(super) selection_move: Option<runtime_selection_region::SelectionMoveDrag>,
     pub(super) selection_evaluation: Option<selection_region_evaluation::RegionEvaluation>,
     pub(super) selection_release_suppressed: bool,
+    pub(super) component_pointer_press: Option<(eda_engine::substrate::ObjectId, HitTarget)>,
     pub(super) selection_tick: Option<std::time::Instant>,
     pub(super) render_sources: datum_gui_render::render_input::SourceEpoch,
     /// Camera for the renderer's live board leaf. Pointer and focused commands

@@ -12,6 +12,8 @@ use crate::substrate::{
 use std::collections::{BTreeMap, BTreeSet};
 mod aperture;
 mod component_binding;
+mod geometry;
+pub(crate) use geometry::{GeometryPlan, plan_geometry};
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum PadLandPatternSource {
     Footprint(Uuid),
@@ -56,6 +58,15 @@ pub fn build_materialize_component_pad_sources(
     provenance: WriteProvenance,
     request: &ComponentPadMaterializationRequest,
 ) -> Result<PreparedWrite, EngineError> {
+    build_with_sources(model, provenance, request, None)
+}
+
+fn build_with_sources(
+    model: &DesignModel,
+    provenance: WriteProvenance,
+    request: &ComponentPadMaterializationRequest,
+    target: Option<&source::PlannedPadSources<'_>>,
+) -> Result<PreparedWrite, EngineError> {
     let board = model.materialized_source_shard_value(SourceShardKind::BoardRoot)?;
     if board["schema_version"].as_u64() != Some(4) {
         return Err(invalid("separate profile-4 adoption is required"));
@@ -69,8 +80,9 @@ pub fn build_materialize_component_pad_sources(
             "request differs from the guarded placement/Part preimage",
         ));
     }
-    let (mut pads, transition) = materialize(model, request, &board, None)?;
-    let binding_updates = component_binding::refresh(model, request, &board, &mut pads)?;
+    let (mut pads, transition) = materialize(model, request, &board, None, target)?;
+    let binding_updates =
+        component_binding::refresh_with_sources(model, request, &board, &mut pads, target)?;
     let mut previous = serde_json::Map::new();
     // Preserve the full historical materialization, including unaffected graphics.
     for (name, map) in board
@@ -180,7 +192,7 @@ pub fn prepare_component_pad_materialization(
     materialized: &serde_json::Value,
 ) -> Result<serde_json::Value, EngineError> {
     let board = model.materialized_source_shard_value(SourceShardKind::BoardRoot)?;
-    let (pads, transition) = materialize(model, request, &board, None)?;
+    let (pads, transition) = materialize(model, request, &board, None, None)?;
     let mut value = materialized
         .as_object()
         .cloned()
@@ -198,18 +210,26 @@ fn materialize(
     request: &ComponentPadMaterializationRequest,
     board: &serde_json::Value,
     initial_allocations: Option<&BTreeMap<Uuid, Uuid>>,
+    target: Option<&source::PlannedPadSources<'_>>,
 ) -> Result<(Vec<ComponentPadSource>, ComponentPadTransition), EngineError> {
     let placement = &request.placement;
     let board_id: Uuid = serde_json::from_value(board["uuid"].clone())?;
-    let part_pin = source::capture_root(model, placement.part, T::PoolPart)?;
-    let part: Part = serde_json::from_value(source::source_value(model, &part_pin)?)?;
-    let package_pin = source::capture_root(model, placement.package, T::PoolPackage)?;
-    let package: Package = serde_json::from_value(source::source_value(model, &package_pin)?)?;
+    let capture_root = |id, taxon| match target {
+        Some(target) => target.capture_root(id, taxon),
+        None => source::capture_root(model, id, taxon),
+    };
+    let read = |pin: &PinnedPadLibrarySource| match target {
+        Some(target) => target.source_value(pin),
+        None => source::source_value(model, pin),
+    };
+    let part_pin = capture_root(placement.part, T::PoolPart)?;
+    let part: Part = serde_json::from_value(read(&part_pin)?)?;
+    let package_pin = capture_root(placement.package, T::PoolPackage)?;
+    let package: Package = serde_json::from_value(read(&package_pin)?)?;
     let (owner, mut pads): (PinnedPadLibrarySource, Vec<Pad>) = match request.land_pattern {
         PadLandPatternSource::Footprint(id) => {
-            let owner = source::capture_root(model, id, T::PoolFootprint)?;
-            let footprint: Footprint =
-                serde_json::from_value(source::source_value(model, &owner)?)?;
+            let owner = capture_root(id, T::PoolFootprint)?;
+            let footprint: Footprint = serde_json::from_value(read(&owner)?)?;
             if footprint.package != placement.package {
                 return Err(invalid("selected Footprint belongs to another Package"));
             }
@@ -238,10 +258,10 @@ fn materialize(
         .transpose()?;
     let pin_pad_map = request
         .pin_pad_map
-        .map(|id| source::capture_root(model, id, T::PoolPinPadMap))
+        .map(|id| capture_root(id, T::PoolPinPadMap))
         .transpose()?;
     if let Some(map) = &pin_pad_map {
-        let map_value = source::source_value(model, map)?;
+        let map_value = read(map)?;
         let selected_footprint = match request.land_pattern {
             PadLandPatternSource::Footprint(id) => Some(id),
             PadLandPatternSource::LegacyPackage => None,
@@ -303,7 +323,11 @@ fn materialize(
         {
             return Err(invalid("foreign old source binding"));
         }
-        source::continuity(model, &binding.library_pad, &pair.target_library_pad)?;
+        if let Some(target) = target {
+            target.continuity(&binding.library_pad, &pair.target_library_pad)?;
+        } else {
+            source::continuity(model, &binding.library_pad, &pair.target_library_pad)?;
+        }
         if pair.target_library_pad.owner_id != owner.object_id
             || pair.target_library_pad.relative_path != owner.relative_path
             || supplied
@@ -351,7 +375,10 @@ fn materialize(
         if !library_ids.insert(pad.uuid) {
             return Err(invalid("duplicate library Pad"));
         }
-        let library_pad = source::capture_pad(model, &owner, pad.uuid)?;
+        let library_pad = match target {
+            Some(target) => target.capture_pad(&owner, pad.uuid)?,
+            None => source::capture_pad(model, &owner, pad.uuid)?,
+        };
         if let Some(pair) = request
             .correspondences
             .iter()
@@ -362,9 +389,8 @@ fn materialize(
                 "correspondence target source pin differs from the actual producer",
             ));
         }
-        let padstack_pin = source::capture_root(model, pad.padstack, T::PoolPadstack)?;
-        let padstack: Padstack =
-            serde_json::from_value(source::source_value(model, &padstack_pin)?)?;
+        let padstack_pin = capture_root(pad.padstack, T::PoolPadstack)?;
+        let padstack: Padstack = serde_json::from_value(read(&padstack_pin)?)?;
         let aperture = padstack
             .aperture
             .clone()
@@ -429,7 +455,10 @@ fn materialize(
             }),
         });
         let last = result.last_mut().expect("newly materialized Pad");
-        let snapshot = source::process::capture(model, board, last, placement)?;
+        let snapshot = match target {
+            Some(target) => source::process::capture_planned(target, board, last, placement)?,
+            None => source::process::capture(model, board, last, placement)?,
+        };
         last.source_binding.as_mut().unwrap().process_snapshot = snapshot;
     }
     if supplied.keys().any(|id| !library_ids.contains(id))
@@ -506,7 +535,7 @@ pub(crate) fn initial_materialization(
         adopt_existing: false,
     };
     let board = model.materialized_source_shard_value(SourceShardKind::BoardRoot)?;
-    let (mut pads, transition) = materialize(model, &request, &board, Some(allocations))?;
+    let (mut pads, transition) = materialize(model, &request, &board, Some(allocations), None)?;
     for pad in &mut pads {
         pad.source_binding
             .as_mut()

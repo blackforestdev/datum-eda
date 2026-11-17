@@ -126,6 +126,7 @@ impl Runtime {
             selection_move: None,
             selection_evaluation: None,
             selection_release_suppressed: false,
+            component_pointer_press: None,
             selection_tick: None,
             render_sources: Default::default(),
             camera,

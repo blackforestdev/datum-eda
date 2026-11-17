@@ -297,6 +297,15 @@ impl Renderer {
         } else {
             false
         };
+        if has_overlay_text && std::env::var_os("DATUM_TRACE_CLICKS").is_some() {
+            eprintln!(
+                "[datum-overlay-preparation] {:?} cache_revision={revision} atlas_generation={} reuse={reuse_overlay} retried={retried} indices={:?}",
+                std::time::SystemTime::now(),
+                self.atlas.generation,
+                &*overlay
+            );
+            self.menu_overlay_text_renderer.trace_preparation();
+        }
         self.text_preparation.prepared =
             signature.map(|signature| (revision, self.atlas.generation, signature));
         self.text_preparation.overlay_prepared =

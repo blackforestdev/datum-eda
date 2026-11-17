@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 from contextlib import ExitStack
 import cargo_cache_metadata as metadata
+import cargo_codegen_retention as codegen
 import cargo_qa_companions as companions
 import cargo_qa_retention as retention
 import json
@@ -224,7 +225,11 @@ def main() -> int:
     parser.add_argument("--remove", action="append", default=[], metavar="PATH")
     parser.add_argument("--apply", action="store_true", help="delete the explicitly selected disposable caches")
     parser.add_argument("--metadata-only", action="store_true", help="opt in to positive non-runnable compiler-metadata proof, only for exact target/{debug,release}/incremental; does not assert unknown processes are idle")
-    parser.add_argument("--qa-companions-manifest", type=Path, help="exact approved immutable QA companion hardlink-dedup manifest; preserves every path and byte")
+    manifests = parser.add_mutually_exclusive_group()
+    manifests.add_argument("--qa-companions-manifest", type=Path, help="exact approved immutable QA companion hardlink-dedup manifest; preserves every path and byte")
+    manifests.add_argument("--interrupted-codegen-manifest", type=Path, help="exact released interrupted non-runnable compiler-object manifest")
+    manifests.add_argument("--released-compiler-manifest", type=Path, help="exact released hashed compiler executable manifest; held writable ELF admission prevents execution")
+    manifests.add_argument("--released-compiler-archive-manifest", type=Path, help="exact released non-executable regular compiler .rlib archive manifest")
     parser.add_argument("--manifest-sha256", help="required exact reviewed QA manifest SHA256")
     parser.add_argument("--released-qa-build", action="append", default=[], metavar="target/qa/BUNDLE",
                         help="validate released rebuildable outputs; append --apply to retire binaries only")
@@ -239,11 +244,13 @@ def main() -> int:
     parser.add_argument("--result")
     parser.add_argument("--provenance")
     args = parser.parse_args()
+    manifest = (args.qa_companions_manifest or args.interrupted_codegen_manifest
+                or args.released_compiler_manifest or args.released_compiler_archive_manifest)
     proof_bundle = args.retain_proof_build or args.resolve_proof_build
     if not proof_bundle and any((args.owner, args.session, args.issue, args.reason,
                                  args.pending_proof, args.result, args.provenance)):
         parser.error("proof metadata requires a retain or resolve lifecycle command")
-    if proof_bundle and (args.remove or args.apply or args.metadata_only or args.qa_companions_manifest or args.released_qa_build):
+    if proof_bundle and (args.remove or args.apply or args.metadata_only or manifest or args.released_qa_build):
         parser.error("proof lifecycle commands cannot be mixed with other maintenance modes")
     if proof_bundle and (not args.owner or not args.session):
         parser.error("proof lifecycle requires --owner and --session")
@@ -251,15 +258,15 @@ def main() -> int:
         parser.error("retain requires --issue, --reason and --pending-proof")
     if args.resolve_proof_build and (not all((args.result, args.provenance)) or args.issue or args.reason or args.pending_proof):
         parser.error("resolve requires --result and --provenance")
-    if args.released_qa_build and (args.remove or args.metadata_only or args.qa_companions_manifest):
+    if args.released_qa_build and (args.remove or args.metadata_only or manifest):
         parser.error("released QA retirement cannot be mixed with other cleanup modes")
-    if bool(args.qa_companions_manifest) != bool(args.manifest_sha256):
-        parser.error("QA companion dedup requires both manifest and its exact SHA256")
-    if args.qa_companions_manifest and (args.remove or args.metadata_only):
+    if bool(manifest) != bool(args.manifest_sha256):
+        parser.error("manifest maintenance requires both manifest and its exact SHA256")
+    if manifest and (args.remove or args.metadata_only):
         parser.error("QA companion dedup cannot be mixed with cache removal")
     if args.metadata_only and not args.remove:
         parser.error("--metadata-only requires explicit --remove incremental paths")
-    if args.apply and not (args.remove or args.qa_companions_manifest or args.released_qa_build):
+    if args.apply and not (args.remove or manifest or args.released_qa_build):
         parser.error("--apply requires at least one --remove path")
     try:
         if proof_bundle:
@@ -270,6 +277,17 @@ def main() -> int:
                     owner=args.owner, session=args.session, issue=args.issue,
                     reason=args.reason, pending=args.pending_proof,
                     result=args.result, provenance=args.provenance)
+            except retention.Failure as exc:
+                print(json.dumps(exc.receipt, sort_keys=True))
+                raise
+            print(json.dumps(receipt, sort_keys=True))
+        elif args.interrupted_codegen_manifest or args.released_compiler_manifest or args.released_compiler_archive_manifest:
+            try:
+                receipt = codegen.retire(ROOT, manifest,
+                    args.manifest_sha256, guard.load_policy().lock_path,
+                    lambda: active_processes(builds_only=True), apply=args.apply,
+                    executable=bool(args.released_compiler_manifest),
+                    archive=bool(args.released_compiler_archive_manifest))
             except retention.Failure as exc:
                 print(json.dumps(exc.receipt, sort_keys=True))
                 raise

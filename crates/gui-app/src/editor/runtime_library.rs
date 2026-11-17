@@ -40,7 +40,7 @@ impl Runtime {
         self.invalidate_frame();
     }
     pub(super) fn activate_library_pointer(&mut self, control: C) -> bool {
-        let field = matches!(control, C::Field(_));
+        let field = matches!(control, C::Field(_) | C::Revision(datum_gui_protocol::library_browser::revision_workflow::RevisionControl::Purpose(_)));
         let pending = self.native_edit.pending();
         let handled = self.activate_library(control.clone());
         if field
@@ -60,7 +60,7 @@ impl Runtime {
         handled
     }
     pub(super) fn activate_library(&mut self, control: C) -> bool {
-        if self.native_edit.pending() || self.resolution_library_return(&control) {
+        if self.native_edit.pending() || self.configuration_library_control(&control) {
             return true;
         }
         self.session.workspace_mut().library.focus = Some(control.clone());
@@ -69,7 +69,9 @@ impl Runtime {
             return true;
         }
         match control {
-            C::Acquire
+            C::Revision(control) => return self.activate_library_revision(control),
+            C::Configure(_)
+            | C::Acquire
             | C::BrowseBundled
             | C::ProjectSymbols
             | C::AcquirePath
@@ -277,21 +279,7 @@ impl Runtime {
                 }
                 self.session.workspace_mut().library.draft = draft;
             }
-            C::Commit => {
-                if self
-                    .workspace()
-                    .library
-                    .draft
-                    .as_ref()
-                    .is_some_and(|d| d.preview.is_some())
-                {
-                    return self.queue_native_edit(
-                        datum_gui_protocol::native_edit_client::NativeEditAction::Library,
-                    );
-                }
-                self.session.workspace_mut().library.refusal =
-                    Some("Preview the current fields before committing".into());
-            }
+            C::Commit => return self.commit_library_draft(),
             C::Cancel => {
                 let origin = self.acquisition_placement_origin();
                 let b = &mut self.session.workspace_mut().library;
@@ -364,14 +352,14 @@ impl Runtime {
         true
     }
     pub(super) fn handle_library_key(&mut self, event: &winit::event::KeyEvent) -> bool {
-        if (self.workspace().ui.layout.focused_content() == PaneContent::Library
-            || self.component_picker_open())
+        if self.library_configuration_input_available()
             && matches!(
                 self.application_focus(),
                 datum_gui_protocol::ApplicationFocus::Editor(_)
             )
         {
-            if event.state == ElementState::Pressed {
+            if event.state == ElementState::Pressed && !self.component_configuration_field_focused()
+            {
                 let modifiers = self.modifiers;
                 if text_input::focus_acquisition_search(
                     &mut self.session.workspace_mut().library,
@@ -390,8 +378,7 @@ impl Runtime {
     }
     /// Shared logical-key consumer, also exercised by programmatic App proof.
     pub(super) fn handle_library_input(&mut self, key: &Key, state: ElementState) -> bool {
-        if (self.workspace().ui.layout.focused_content() != PaneContent::Library
-            && !self.component_picker_open())
+        if !self.library_configuration_input_available()
             || !matches!(
                 self.application_focus(),
                 datum_gui_protocol::ApplicationFocus::Editor(_)
@@ -409,6 +396,9 @@ impl Runtime {
             return true;
         }
         if self.handle_shared_editor_input(key, state) {
+            return true;
+        }
+        if self.handle_library_revision_navigation(key) {
             return true;
         }
         let focus = self.workspace().library.focus.clone();
@@ -507,6 +497,12 @@ impl Runtime {
                     }
                     controls.extend([C::Preview, C::Commit, C::Cancel]);
                 } else {
+                    controls.extend(
+                        s.library
+                            .revision_entry_controls(&s.selection)
+                            .into_iter()
+                            .map(|(_, control)| C::Revision(control)),
+                    );
                     controls.extend([C::BrowseBundled, C::Acquire]);
                     if s.library.resolution.is_some() {
                         controls.push(C::Cancel);

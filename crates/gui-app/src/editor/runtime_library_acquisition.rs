@@ -131,10 +131,33 @@ impl Runtime {
                 a.refusal = Some(reason);
             }
         }
+        let footprint_confirmed =
+            self.workspace()
+                .library
+                .configuration
+                .as_ref()
+                .is_some_and(|c| {
+                    c.footprint_chooser.is_some()
+                        && c.footprint_accept_session == Some(answer.session)
+                });
+        let a = self
+            .session
+            .workspace_mut()
+            .library
+            .acquisition
+            .as_mut()
+            .unwrap();
         let confirmed = a.take_placement_confirmation();
         let component = a.component_picker;
         let native_part = a.is_native_part();
         self.preview_existing_project_symbol();
+        self.sync_component_configuration();
+        if footprint_confirmed {
+            use datum_gui_protocol::library_browser::component_resolution::configuration::ConfigurationControl as F;
+            self.configuration_library_control(
+                &datum_gui_protocol::library_browser::LibraryControl::Configure(F::AcceptFootprint),
+            );
+        }
         if confirmed {
             if catalog_arrived {
                 self.confirm_acquisition_search();
@@ -329,6 +352,25 @@ impl Runtime {
                 }
             }
             C::AcquireImport => {
+                if self.component_picker_open() {
+                    self.sync_component_configuration();
+                    if self.workspace().library.configuration.is_none() {
+                        self.session.workspace_mut().library.acquisition.as_mut().unwrap().refusal=Some("Preview and configure a complete component with its value and footprint before Place".into());
+                        self.invalidate_frame();
+                        return true;
+                    }
+                    if let Err(reason) = self.apply_component_configuration() {
+                        self.session
+                            .workspace_mut()
+                            .library
+                            .configuration
+                            .as_mut()
+                            .unwrap()
+                            .refusal = Some(reason);
+                    }
+                    self.invalidate_frame();
+                    return true;
+                }
                 if self.component_picker_open()
                     && self
                         .workspace()

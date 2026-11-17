@@ -75,7 +75,63 @@ pub(super) fn build_configured(
     gate: Uuid,
     component: Option<&super::schematic_library::part_placement::CompletePartSelection>,
 ) -> Result<PreparedWrite, EngineError> {
+    build_with_fields(model, provenance, symbol, path, part, gate, component, None)
+}
+pub(super) fn build_properties(
+    model: &DesignModel,
+    provenance: WriteProvenance,
+    symbol: Uuid,
+    path: &[Uuid],
+    component: &super::schematic_library::part_placement::CompletePartSelection,
+    reference: &str,
+    value: &str,
+) -> Result<PreparedWrite, EngineError> {
+    super::schematic_selection_edit::validate_field_values(Some(reference), Some(value))?;
+    if component.value != value {
+        return Err(invalid(
+            "The component value differs from the confirmed configuration",
+        ));
+    }
+    let snapshot = crate::substrate::ElectricalSelectionSnapshot::capture(model)
+        .map_err(|e| invalid(format!("Component source unavailable: {e:?}")))?;
+    let source =
+        super::schematic_selected_source::SelectedSchematicSource::from_snapshot(&snapshot)?;
+    if source
+        .source
+        .sheets
+        .values()
+        .flat_map(|sheet| sheet.symbols.values())
+        .any(|other| other.uuid != symbol && other.reference == reference)
+    {
+        return Err(invalid("That reference is already in use"));
+    }
+    build_with_fields(
+        model,
+        provenance,
+        symbol,
+        path,
+        component.part.part,
+        component.part.gate,
+        Some(component),
+        Some((reference, value)),
+    )
+}
+fn build_with_fields(
+    model: &DesignModel,
+    provenance: WriteProvenance,
+    symbol: Uuid,
+    path: &[Uuid],
+    part: Uuid,
+    gate: Uuid,
+    component: Option<&super::schematic_library::part_placement::CompletePartSelection>,
+    fields: Option<(&str, &str)>,
+) -> Result<PreparedWrite, EngineError> {
     let options = options(model, symbol, path)?;
+    if fields.is_some() && options.members.len() != 1 {
+        return Err(invalid(
+            "Change a shared multi-gate component through its complete component review",
+        ));
+    }
     let choice = options
         .choices
         .iter()
@@ -104,6 +160,9 @@ pub(super) fn build_configured(
         && options.original.part == Some(part)
         && options.original.entity == Some(choice.entity)
         && options.original.gate == Some(gate)
+        && fields.is_none_or(|(reference, value)| {
+            options.original.reference == reference && options.original.value == value
+        })
     {
         return Err(invalid("Part assignment is unchanged"));
     }
@@ -114,6 +173,10 @@ pub(super) fn build_configured(
         value["part"] = json!(part);
         if let Some(component) = component {
             value["value"] = json!(component.value);
+        }
+        if let Some((reference, field_value)) = fields {
+            value["reference"] = json!(reference);
+            value["value"] = json!(field_value);
         }
         // Multi-Gate choices retain the complete existing Entity/Gate mapping.
         if options.members.len() == 1 {
@@ -270,6 +333,8 @@ pub(super) fn summary(
     proposal: &Proposal,
     current: bool,
 ) -> Result<AssignmentSummary, EngineError> {
+    let properties = proposal.batch.provenance.reason
+        == super::schematic_delete_proposal::component_properties::REASON;
     let RecordedAssignment {
         sheet,
         symbol,
@@ -301,46 +366,85 @@ pub(super) fn summary(
         {
             return Err(invalid("Design changed; prepare Part assignment again"));
         }
-        let rebuilt = build(
-            model,
-            WriteProvenance::new(
-                "datum-gui",
-                crate::substrate::CommitSource::Manual,
-                "Assign schematic Part",
-            ),
-            symbol,
-            path,
-            part,
-            gate,
-        )?;
-        if rebuilt.batch.operations != proposal.batch.operations {
-            let selected: Uuid = members
+        if properties {
+            let raw = members
                 .iter()
                 .find(|(id, _)| *id == symbol)
-                .and_then(|(_, raw)| raw["lib_id"].as_str())
-                .and_then(|id| id.parse().ok())
-                .ok_or_else(|| invalid("Component Symbol is unavailable"))?;
+                .map(|(_, raw)| raw)
+                .ok_or_else(|| invalid("Component Properties member is unavailable"))?;
+            let next: PlacedSymbol = serde_json::from_value(raw.clone())?;
+            let source_symbol = next
+                .lib_id
+                .as_deref()
+                .and_then(|s| s.parse().ok())
+                .ok_or_else(|| invalid("Component Properties Symbol is unavailable"))?;
             let component =
                 super::schematic_library::part_placement::CompletePartSelection::capture(
-                    model, part, gate, selected,
+                    model,
+                    part,
+                    gate,
+                    source_symbol,
                 )?;
-            let complete = build_configured(
+            let rebuilt = build_properties(
                 model,
                 WriteProvenance::new(
                     "datum-gui",
                     crate::substrate::CommitSource::Manual,
-                    "Assign complete component",
+                    super::schematic_delete_proposal::component_properties::REASON,
+                ),
+                symbol,
+                path,
+                &component,
+                &next.reference,
+                &next.value,
+            )?;
+            if rebuilt.batch.operations != proposal.batch.operations {
+                return Err(invalid(
+                    "Component Properties differs from its current source-qualified choice",
+                ));
+            }
+        } else {
+            let rebuilt = build(
+                model,
+                WriteProvenance::new(
+                    "datum-gui",
+                    crate::substrate::CommitSource::Manual,
+                    "Assign schematic Part",
                 ),
                 symbol,
                 path,
                 part,
                 gate,
-                Some(&component),
             )?;
-            if complete.batch.operations != proposal.batch.operations {
-                return Err(invalid(
-                    "Assignment proposal differs from current compatible component",
-                ));
+            if rebuilt.batch.operations != proposal.batch.operations {
+                let selected: Uuid = members
+                    .iter()
+                    .find(|(id, _)| *id == symbol)
+                    .and_then(|(_, raw)| raw["lib_id"].as_str())
+                    .and_then(|id| id.parse().ok())
+                    .ok_or_else(|| invalid("Component Symbol is unavailable"))?;
+                let component =
+                    super::schematic_library::part_placement::CompletePartSelection::capture(
+                        model, part, gate, selected,
+                    )?;
+                let complete = build_configured(
+                    model,
+                    WriteProvenance::new(
+                        "datum-gui",
+                        crate::substrate::CommitSource::Manual,
+                        "Assign complete component",
+                    ),
+                    symbol,
+                    path,
+                    part,
+                    gate,
+                    Some(&component),
+                )?;
+                if complete.batch.operations != proposal.batch.operations {
+                    return Err(invalid(
+                        "Assignment proposal differs from current compatible component",
+                    ));
+                }
             }
         }
     }
@@ -351,6 +455,13 @@ pub(super) fn summary(
         let previous = previous_symbol(model, proposal, sheet, *id, next)?;
         let old: PlacedSymbol = serde_json::from_value(previous.clone())?;
         let mut expected = previous;
+        if properties && *id == symbol {
+            super::schematic_selection_edit::validate_field_values(
+                next["reference"].as_str(),
+                next["value"].as_str(),
+            )?;
+            expected["reference"] = next["reference"].clone();
+        }
         expected["part"] = json!(part);
         if expected["value"] != next["value"] {
             let value = complete_value.as_ref().ok_or_else(|| {
@@ -385,7 +496,16 @@ pub(super) fn summary(
         sheet,
         instance_path: path.clone(),
         component_instance,
-        reference: old.reference,
+        reference: if properties {
+            members
+                .iter()
+                .find(|(id, _)| *id == symbol)
+                .and_then(|(_, next)| next["reference"].as_str())
+                .unwrap_or(&old.reference)
+                .to_owned()
+        } else {
+            old.reference
+        },
         symbols: members.iter().map(|(id, _)| *id).collect(),
         previous_part: old.part,
         choice: AssignmentChoice {
