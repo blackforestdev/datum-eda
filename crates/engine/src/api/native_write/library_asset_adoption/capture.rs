@@ -74,6 +74,17 @@ pub(super) fn capture_inventory(
             }
             (asset_id, None)
         }
+        CandidateChange::ReviseProvenance { base } => {
+            if request.provenance_override.is_none() {
+                return Err(refusal(
+                    "a declaration-only revision requires explicit provenance",
+                ));
+            }
+            if bases.get(&base.asset_id) != Some(&base) {
+                return Err(refusal("revision edit has a stale or foreign parent"));
+            }
+            (base.asset_id, None)
+        }
         CandidateChange::Revise { base, payload } => {
             if bases.get(&base.asset_id) != Some(&base) {
                 return Err(refusal("revision edit has a stale or foreign parent"));
@@ -259,14 +270,8 @@ impl Builder<'_> {
                     .verify_materialization(&value, policy)
                     .is_ok())
         {
-            read_owned(
-                self.context.project_root,
-                &format!(
-                    "library/blobs/sha256/{}",
-                    self.assets[base].revision().payload_ref.hex()
-                ),
-                self.limits.blob_bytes,
-            )?
+            // The resolver already bounded and fingerprint-verified these bytes.
+            self.assets[base].payload().raw_bytes().to_vec()
         } else {
             format!(
                 "{}\n",

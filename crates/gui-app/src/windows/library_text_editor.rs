@@ -2,15 +2,17 @@
 use super::editor::{Snapshot, Target};
 use super::*;
 use datum_gui_protocol::library_browser::LibraryControl as C;
+use datum_gui_protocol::library_browser::revision_workflow::{
+    RevisionControl as R,
+    provenance::{ProvenanceAction as P, ProvenanceField},
+};
 
 pub(super) fn pointer_target(runtime: &Runtime, control: &C) -> Option<Target> {
     match control {
         C::AcquirePath => Some(Target::LibraryPath),
         C::AcquireSearch => Some(Target::LibrarySearch),
         C::Field(index) => field_target(runtime, *index),
-        C::Revision(
-            datum_gui_protocol::library_browser::revision_workflow::RevisionControl::Purpose(_),
-        ) => target(runtime),
+        C::Revision(control) if control.is_text_field() => target(runtime),
         _ => None,
     }
 }
@@ -27,6 +29,27 @@ pub(super) fn target(runtime: &Runtime) -> Option<Target> {
             != datum_gui_protocol::ApplicationFocus::Editor(state.ui.layout.focused)
     {
         return None;
+    }
+    if let Some(C::Revision(
+        control @ R::Provenance {
+            action: P::Field(field),
+            ..
+        },
+    )) = state.library.focus
+    {
+        let review = state.library.revision_workflow.as_ref()?;
+        review.validate_review_control(control).ok()?;
+        if !review.provenance_edit_available(
+            &state.library,
+            &state.backing.as_ref()?.request.project_root,
+        ) {
+            return None;
+        }
+        return Some(Target::LibraryField(
+            field.row,
+            field.index,
+            "library_provenance_field",
+        ));
     }
     if let Some(C::Revision(
         datum_gui_protocol::library_browser::revision_workflow::RevisionControl::Purpose(session),
@@ -92,6 +115,26 @@ pub(super) fn snapshot(runtime: &Runtime, target: Target) -> Option<Snapshot> {
             }
         }
         Target::LibraryField(id, index, key) => {
+            if key == "library_provenance_field" {
+                let review = browser.revision_workflow.as_ref()?;
+                if !review.provenance_edit_available(
+                    browser,
+                    &runtime.workspace().backing.as_ref()?.request.project_root,
+                ) {
+                    return None;
+                }
+                let field = review.provenance_field(ProvenanceField { row: id, index })?;
+                return Some(Snapshot {
+                    text: field.text.clone(),
+                    editor: field.editor,
+                    editable: !review.is_submitted()
+                        && !runtime.native_edit.pending()
+                        && !runtime.native_edit.blocked
+                        && datum_gui_protocol::CheckProducerRequest::workspace_available(
+                            runtime.workspace(),
+                        ),
+                });
+            }
             if key == "library_revision_purpose" {
                 let review = browser
                     .revision_workflow
@@ -142,6 +185,24 @@ pub(super) fn snapshot(runtime: &Runtime, target: Target) -> Option<Snapshot> {
 }
 
 pub(super) fn store(runtime: &mut Runtime, target: Target, snapshot: Snapshot, changed: bool) {
+    if matches!(
+        target,
+        Target::LibraryField(_, _, "library_provenance_field")
+    ) && (runtime.native_edit.pending()
+        || runtime.native_edit.blocked
+        || !datum_gui_protocol::CheckProducerRequest::workspace_available(runtime.workspace())
+        || !runtime
+            .workspace()
+            .library
+            .revision_workflow
+            .as_ref()
+            .zip(runtime.workspace().backing.as_ref())
+            .is_some_and(|(r, b)| {
+                r.provenance_edit_available(&runtime.workspace().library, &b.request.project_root)
+            }))
+    {
+        return;
+    }
     let browser = &mut runtime.session.workspace_mut().library;
     match target {
         Target::LibraryPath | Target::LibrarySearch => {
@@ -166,6 +227,24 @@ pub(super) fn store(runtime: &mut Runtime, target: Target, snapshot: Snapshot, c
             }
         }
         Target::LibraryField(id, index, key) => {
+            if key == "library_provenance_field" {
+                if !matches!(browser.focus, Some(C::Revision(R::Provenance { action: P::Field(field), .. })) if field == (ProvenanceField { row: id, index }))
+                {
+                    return;
+                }
+                if let Some(review) = browser.revision_workflow.as_mut() {
+                    let target = ProvenanceField { row: id, index };
+                    match review.set_provenance_field(target, snapshot.text, snapshot.editor) {
+                        Ok(()) => {
+                            browser.focus =
+                                Some(C::Revision(review.provenance_control(P::Field(target))))
+                        }
+                        Err(error) => browser.refusal = Some(error),
+                    }
+                }
+                runtime.invalidate_frame();
+                return;
+            }
             if key == "library_revision_purpose" {
                 if let Some(review) = browser
                     .revision_workflow

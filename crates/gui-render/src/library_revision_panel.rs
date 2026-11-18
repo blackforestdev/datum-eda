@@ -1,6 +1,8 @@
 //! Reviewed local revision states inside the ordinary Library surface.
 use super::*;
 use datum_gui_protocol::library_browser::revision_workflow::RevisionControl as R;
+#[path = "library_provenance_form.rs"]
+mod provenance_form;
 
 pub(super) fn reviews_local_revision(p: &Painter<'_>, draft: &LibraryDraft) -> bool {
     !draft.create
@@ -40,6 +42,8 @@ pub(super) fn render(p: &mut Painter<'_>) {
         .into_iter()
         .filter_map(|control| {
             let label = match control {
+                R::Preview { .. } if review.provenance().is_some() => "Review declaration change",
+                R::Apply { .. } if review.provenance().is_some() => "Save local revision",
                 R::Preview { .. } => "Preview exact change",
                 R::Apply { .. } => "Apply reviewed change",
                 R::Cancel(_) => "Cancel review",
@@ -60,6 +64,7 @@ pub(super) fn render(p: &mut Painter<'_>) {
     p.rect.height = (rect.height - footer).max(0.);
     let starts = (p.quads.len(), p.text.len(), p.hits.len());
     let title = match review.action() {
+        "save_candidate" if review.provenance().is_some() => "Edit source and license",
         "adopt_profile" => "Review project library format",
         "save_candidate" => "Save a local library revision",
         "adopt" | "adopt_selection" => "Review exact project library update",
@@ -78,6 +83,7 @@ pub(super) fn render(p: &mut Painter<'_>) {
     if matches!(review.action(), "adopt" | "adopt_selection") {
         p.line("This update can include related parent definitions. Review every included revision and affected component below before applying.");
     }
+    provenance_form::render(p, review);
     p.line("Purpose of this change");
     acquisition_panel::field(
         p,

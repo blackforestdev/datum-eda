@@ -120,7 +120,7 @@ enum CandidateChange {
         base: AssetRevisionRef,
         /// Keep authored numeric tokens and duplicate keys observable until the
         /// existing exact-JSON owner qualifies the structured editor snapshot.
-        payload_json: String,
+        payload_json: Option<String>,
     },
 }
 
@@ -132,10 +132,12 @@ impl CandidateRequest {
         use super::library_asset_adoption::CandidateChange as CoreChange;
         let change = match self.change {
             CandidateChange::CaptureNative { asset_id } => CoreChange::CaptureNative { asset_id },
-            CandidateChange::Revise { base, payload_json } => CoreChange::Revise {
+            CandidateChange::Revise { base, payload_json } => CoreChange::revision(
                 base,
-                payload: edited_payload(&payload_json, limits.blob_bytes.min(limits.total_bytes))?,
-            },
+                payload_json,
+                self.provenance_override.is_some(),
+                limits.blob_bytes.min(limits.total_bytes),
+            )?,
         };
         Ok(super::library_asset_adoption::CandidateRequest {
             expected_catalog: self.expected_catalog,
@@ -146,7 +148,7 @@ impl CandidateRequest {
     }
 }
 
-fn edited_payload(raw: &str, limit: usize) -> Result<Value, EngineError> {
+pub(super) fn edited_payload(raw: &str, limit: usize) -> Result<Value, EngineError> {
     if raw.len() > limit {
         return Err(refusal("edited library payload exceeds the service limit"));
     }

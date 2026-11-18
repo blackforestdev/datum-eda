@@ -40,7 +40,8 @@ impl Runtime {
         self.invalidate_frame();
     }
     pub(super) fn activate_library_pointer(&mut self, control: C) -> bool {
-        let field = matches!(control, C::Field(_) | C::Revision(datum_gui_protocol::library_browser::revision_workflow::RevisionControl::Purpose(_)));
+        let field = matches!(control, C::Field(_))
+            || matches!(control, C::Revision(r) if r.is_text_field());
         let pending = self.native_edit.pending();
         let handled = self.activate_library(control.clone());
         if field

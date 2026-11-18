@@ -5,6 +5,8 @@ use serde_json::{Value, json};
 use std::path::{Path, PathBuf};
 use uuid::Uuid;
 
+#[path = "library_provenance_form.rs"]
+pub mod provenance;
 #[path = "library_revision_summary.rs"]
 mod summary_text;
 
@@ -12,6 +14,12 @@ mod summary_text;
 pub enum RevisionControl {
     AdoptProfile(RevisionEntryBasis),
     RecordSource(RevisionEntryBasis),
+    EditProvenance(RevisionEntryBasis),
+    Provenance {
+        session: Uuid,
+        generation: Uuid,
+        action: provenance::ProvenanceAction,
+    },
     SaveCandidate,
     SelectUpdate {
         basis: RevisionEntryBasis,
@@ -68,6 +76,7 @@ impl LibraryBrowser {
         let basis = match control {
             RevisionControl::AdoptProfile(basis)
             | RevisionControl::RecordSource(basis)
+            | RevisionControl::EditProvenance(basis)
             | RevisionControl::SelectUpdate { basis, .. } => basis,
             _ => return Ok(()),
         };
@@ -112,6 +121,16 @@ impl LibraryBrowser {
             .as_array()
             .unwrap();
         let mut controls = Vec::new();
+        if records.iter().any(|r| {
+            r["revision"]["asset_id"] == json!(entry.id)
+                && r["active"] == true
+                && r["active_source_path"] == json!(entry.source_path)
+        }) {
+            controls.push((
+                "Edit source and license".into(),
+                RevisionControl::EditProvenance(basis),
+            ));
+        }
         if !records
             .iter()
             .any(|record| record["revision"]["asset_id"] == json!(entry.id))
@@ -194,6 +213,7 @@ pub struct LibraryRevisionWorkflow {
     preview: Option<QualifiedLibraryPreview>,
     show_record_details: bool,
     submitted: bool,
+    provenance: Option<provenance::ProvenanceForm>,
 }
 
 impl LibraryRevisionWorkflow {
@@ -214,6 +234,19 @@ impl LibraryRevisionWorkflow {
             return vec![];
         }
         let mut controls = vec![self.purpose_control(), self.preview_control()];
+        if let Some(form) = &self.provenance {
+            let actions = if self.preview.is_some() {
+                vec![provenance::ProvenanceAction::EditFields]
+            } else {
+                form.actions()
+            };
+            controls.splice(
+                0..0,
+                actions
+                    .into_iter()
+                    .map(|action| self.provenance_control(action)),
+            );
+        }
         if self.preview.is_some() {
             if self.summary().is_some_and(|summary| {
                 summary["asset_changes"]
@@ -240,6 +273,22 @@ impl LibraryRevisionWorkflow {
 
     pub fn validate_review_control(&self, control: RevisionControl) -> Result<(), String> {
         let matches = match control {
+            RevisionControl::Provenance {
+                session,
+                generation,
+                action,
+            } => {
+                session == self.session_id
+                    && generation == self.request_id
+                    && !self.submitted
+                    && self.provenance.as_ref().is_some_and(|form| {
+                        if action == provenance::ProvenanceAction::EditFields {
+                            self.preview.is_some()
+                        } else {
+                            self.preview.is_none() && form.actions().contains(&action)
+                        }
+                    })
+            }
             RevisionControl::Purpose(session) | RevisionControl::Cancel(session) => {
                 session == self.session_id
             }
@@ -292,6 +341,7 @@ impl LibraryRevisionWorkflow {
             preview: None,
             show_record_details: false,
             submitted: false,
+            provenance: None,
         })
     }
 
@@ -482,6 +532,14 @@ impl LibraryRevisionWorkflow {
     }
 
     fn qualify(&self, browser: &LibraryBrowser, root: &Path) -> Result<(), String> {
+        self.qualify_source(browser, root)?;
+        if self.purpose.trim().is_empty() {
+            return Err("Record the purpose of this change".into());
+        }
+        Ok(())
+    }
+
+    fn qualify_source(&self, browser: &LibraryBrowser, root: &Path) -> Result<(), String> {
         let model = browser.basis.as_ref().ok_or("Library source unavailable")?;
         let description = browser
             .revision_inspection
@@ -503,9 +561,6 @@ impl LibraryRevisionWorkflow {
         if self.submitted {
             return Err("Reconcile the submitted change before continuing".into());
         }
-        if self.purpose.trim().is_empty() {
-            return Err("Record the purpose of this change".into());
-        }
         Ok(())
     }
 
@@ -524,7 +579,7 @@ impl LibraryRevisionWorkflow {
         );
         intent.request_id = self.request_id;
         intent.library = Some(NativeLibraryEdit::Revision {
-            request: self.request.clone(),
+            request: self.effective_request()?,
             reason: self.purpose.trim().into(),
         });
         Ok(intent)
@@ -543,7 +598,9 @@ impl LibraryRevisionWorkflow {
                 "This preview describes different inputs; preview this exact change".into(),
             );
         }
-        let original = &self.request;
+        self.verify_declaration_preview(&preview.summary)?;
+        let request = self.effective_request()?;
+        let original = &request;
         if preview.prepared_request != *original {
             let mut selected = preview.prepared_request.clone();
             let geometry = selected

@@ -67,8 +67,8 @@ impl Runtime {
             Key::Named(NamedKey::Enter) if !review.is_submitted() => {
                 let control = match self.workspace().library.focus {
                     Some(datum_gui_protocol::library_browser::LibraryControl::Revision(
-                        C::Purpose(_),
-                    )) => review.preview_control(),
+                        control,
+                    )) if control.is_text_field() => review.preview_control(),
                     Some(datum_gui_protocol::library_browser::LibraryControl::Revision(
                         control,
                     )) => control,
@@ -198,6 +198,7 @@ impl Runtime {
         if matches!(
             control,
             C::Purpose(_)
+                | C::Provenance { .. }
                 | C::Preview { .. }
                 | C::Apply { .. }
                 | C::RecordDetails { .. }
@@ -218,14 +219,43 @@ impl Runtime {
             .request
             .project_root
             .clone();
+        if matches!(control, C::EditProvenance(_) | C::Provenance { .. })
+            || (self
+                .workspace()
+                .library
+                .revision_workflow
+                .as_ref()
+                .is_some_and(|r| r.provenance().is_some())
+                && matches!(control, C::Preview { .. } | C::Apply { .. }))
+        {
+            if self.native_edit.blocked
+                || !self.native_edit_available()
+                || !datum_gui_protocol::CheckProducerRequest::workspace_available(self.workspace())
+            {
+                return Err("Project source is unavailable; declarations were not applied".into());
+            }
+            if matches!(control, C::Provenance { .. })
+                && !self
+                    .workspace()
+                    .library
+                    .revision_workflow
+                    .as_ref()
+                    .is_some_and(|r| r.provenance_basis_current(&self.workspace().library, &root))
+            {
+                return Err("Project or Library changed; reopen the current declarations".into());
+            }
+        }
         match control {
-            C::AdoptProfile(_) | C::RecordSource(_) | C::SaveCandidate | C::SelectUpdate { .. } => {
+            C::AdoptProfile(_) | C::RecordSource(_) | C::EditProvenance(_) | C::SaveCandidate | C::SelectUpdate { .. } => {
                 let state = self.workspace();
                 let browser = &state.library;
                 browser.validate_revision_entry(&state.selection, control)?;
                 if browser.revision_workflow.is_some() {
                     return Err("Finish or cancel the current revision review".into());
                 }
+                if matches!(control, C::EditProvenance(_)) && (browser.draft.is_some()
+                    || browser.configuration.is_some() || browser.resolution.is_some() || browser.acquisition.is_some())
+                { return Err("Finish or cancel the current Library edit first".into()); }
                 let workflow = if let C::SelectUpdate { index, .. } = control {
                     LibraryRevisionWorkflow::review_selection(browser, &root, index)?
                 } else if matches!(control, C::AdoptProfile(_)) {
@@ -239,7 +269,9 @@ impl Runtime {
                         .iter()
                         .position(|candidate| candidate == entry)
                         .ok_or("Selected definition changed")?;
-                    if matches!(control, C::RecordSource(_)) {
+                    if matches!(control, C::EditProvenance(_)) {
+                        LibraryRevisionWorkflow::edit_provenance(browser, &root, index)?
+                    } else if matches!(control, C::RecordSource(_)) {
                         LibraryRevisionWorkflow::record_local_source(browser, &root, index)?
                     } else {
                         let draft = browser
@@ -263,16 +295,26 @@ impl Runtime {
                         )?
                     }
                 };
-                let purpose = workflow.purpose_control();
+                let focus = workflow.initial_focus_control();
+                let reveal = workflow.provenance().is_some();
                 let browser = &mut self.session.workspace_mut().library;
                 browser.revision_workflow = Some(workflow);
                 browser.refusal = None;
                 browser.scroll_offset = 0;
-                browser.reveal_focus = false;
+                browser.reveal_focus = reveal;
                 browser.focus =
-                    Some(datum_gui_protocol::library_browser::LibraryControl::Revision(purpose));
+                    Some(datum_gui_protocol::library_browser::LibraryControl::Revision(focus));
             }
             C::Purpose(_) => {}
+            C::Provenance { action, .. } => {
+                if !matches!(action, datum_gui_protocol::library_browser::revision_workflow::provenance::ProvenanceAction::Field(_)) {
+                    let browser = &mut self.session.workspace_mut().library;
+                    let review = browser.revision_workflow.as_mut().ok_or("Declaration editor is closed")?;
+                    let focus = review.edit_provenance_list(control)?;
+                    browser.focus = Some(datum_gui_protocol::library_browser::LibraryControl::Revision(focus));
+                    browser.reveal_focus = true;
+                }
+            }
             C::RecordDetails { .. } => {
                 let browser = &mut self.session.workspace_mut().library;
                 browser

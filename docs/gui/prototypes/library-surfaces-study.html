@@ -212,6 +212,7 @@
   numerical conversion fidelity are different facts from manufacturer accuracy or standards / production qualification. Approval metadata is not
   uniform across today's kinds: <b>absence reads unavailable, never Approved</b>. Lifecycle is not approval. The warning-or-block behaviour for
   non-approved or unknown-basis content at placement is an owner choice and is not drawn.</p>
+  <p class="cap">Declared source and license content has its own ordinary <a class="lnk" href="#L-L7">Edit source and license</a> form. It records claims on one selected exact asset; it does not perform the guarded approval, review or lifecycle transition below. Missing authorship, rights and earlier evidence stay unknown or retained as recorded.</p>
   <div class="grid2">
     <table class="t" aria-label="Status dimensions, two objects compared">
       <tr><th>Dimension</th><th>Demo SOIC-8 land (authored here)</th><th>Demo Imported Regulator (imported)</th></tr>
@@ -450,6 +451,69 @@
       <div class="acts"><button class="btn">Close details</button></div>
     </div>
   </div>
+  <div class="grid2">
+    <div class="card" id="L-L7"><div class="phd0"><span>Edit source and license</span><span class="r">selected managed asset</span></div>
+      <div class="kv"><span class="k">Selected asset</span><span class="v">Demo local resistor footprint · current exact revision</span></div>
+      <div class="note">Declarations only. Redistribution authority and engineering approval remain separate. Existing authorship and other evidence are preserved.</div>
+      <div class="scrollbox" style="max-height:480px" tabindex="0" aria-label="Source and license declaration fields">
+        <div class="kv w"><label class="k" for="prov-license">License declaration · blank means unknown</label><input id="prov-license" class="fld" value="LicenseRef-Example-Internal"></div>
+        <div class="kv w"><span class="k">Attribution entries</span></div>
+        <div class="kv w"><label class="k" for="prov-credit1">Attribution 1</label><input id="prov-credit1" class="fld" value="Example author credit"></div>
+        <div class="acts"><button class="btn">Remove attribution 1</button></div>
+        <div class="kv w"><label class="k" for="prov-credit2">Attribution 2</label><input id="prov-credit2" class="fld" value="Example distributor credit"></div>
+        <div class="acts"><button class="btn">Remove attribution 2</button></div>
+        <div class="acts"><button class="btn">Add attribution</button></div>
+        <div class="kv w"><span class="k">Source citation 1</span></div>
+        <div class="kv w"><label class="k" for="prov-title">Title</label><input id="prov-title" class="fld" value="Example resistor source"></div>
+        <div class="kv w"><label class="k" for="prov-issuer">Issuer · optional</label><input id="prov-issuer" class="fld" value="Example community"></div>
+        <div class="kv w"><label class="k" for="prov-revision">Source revision · optional</label><input id="prov-revision" class="fld" value="Example source revision"></div>
+        <div class="kv w"><label class="k" for="prov-locator">Reference or location · optional</label><input id="prov-locator" class="fld" value="https://example.invalid/library-source"></div>
+        <div class="kv w"><label class="k" for="prov-note">Access or fingerprint note · optional</label><input id="prov-note" class="fld" value="Example recorded fingerprint; not independently verified"></div>
+        <div class="acts"><button class="btn">Remove citation 1</button><button class="btn">Add source citation</button></div>
+        <div class="kv w"><span class="k">Source citation 2 · existing retained source file</span></div>
+        <div class="kv w"><label class="k" for="prov-retained-title">Title</label><input id="prov-retained-title" class="fld" value="Existing local source snapshot"></div>
+        <div class="kv w"><label class="k" for="prov-retained-issuer">Issuer · optional</label><input id="prov-retained-issuer" class="fld" value=""></div>
+        <div class="kv w"><label class="k" for="prov-retained-revision">Source revision · optional</label><input id="prov-retained-revision" class="fld" value=""></div>
+        <div class="kv w"><label class="k" for="prov-retained-locator">Reference or location · optional</label><input id="prov-retained-locator" class="fld" value=""></div>
+        <div class="kv w"><label class="k" for="prov-retained-note">Access or fingerprint note · optional</label><input id="prov-retained-note" class="fld" value="Existing source snapshot reference retained"></div>
+        <div class="kv"><span class="k">Retained file</span><span class="v">Exact existing reference · read-only</span></div>
+        <div class="acts"><button class="btn na" disabled>Remove citation — retained file reference kept</button></div>
+        <div class="note">Each citation keeps its own fields and retained-file reference. Additional entries use the same fields; entries are never flattened into one string. This editor does not copy or remove source documents.</div>
+        <div class="kv w"><label class="k" for="prov-edit-purpose">Change purpose · required before review</label><input id="prov-edit-purpose" class="fld" value="Record the supplied source and license declarations"></div>
+      </div>
+      <div class="acts"><button class="btn">Cancel</button><button class="btn pri">Review declaration change</button></div>
+      <div class="note">Uses the existing Library form and its required change purpose. New rows receive text focus. Field, list or purpose edits invalidate an earlier preview; a pending submission makes the form read-only. Long content remains reachable by the same scrolling and text-editing controls.</div>
+    </div>
+    <div class="card" id="L-L8"><div class="phd0"><span>Review declaration change</span><span class="r">qualified exact candidate</span></div>
+      <div class="kv"><span class="k">Selected asset</span><span class="v">Demo local resistor footprint · exact before / after revisions in details</span></div>
+      <div class="kv"><span class="k">License</span><span class="v">Unknown → LicenseRef-Example-Internal · declared</span></div>
+      <div class="kv"><span class="k">Attribution 1</span><span class="v">Added: Example author credit</span></div>
+      <div class="kv"><span class="k">Attribution 2</span><span class="v">Added: Example distributor credit</span></div>
+      <div class="kv"><span class="k">Sources</span><span class="v">New citation plus existing retained source snapshot</span></div>
+      <div class="kv"><span class="k">Citation title</span><span class="v">Added: Example resistor source</span></div>
+      <div class="kv"><span class="k">Issuer</span><span class="v">Added: Example community</span></div>
+      <div class="kv"><span class="k">Source revision</span><span class="v">Added: Example source revision</span></div>
+      <div class="kv"><span class="k">Location</span><span class="v">Added: https://example.invalid/library-source</span></div>
+      <div class="kv"><span class="k">Note</span><span class="v">Added: Example recorded fingerprint; not independently verified</span></div>
+      <div class="kv"><span class="k">Engineering</span><span class="v">Selected payload and forward dependencies unchanged</span></div>
+      <div class="kv"><span class="k">Other assets</span><span class="v">Their declarations stay unchanged; parent updates record their own technical history</span></div>
+      <div class="kv"><span class="k">Earlier facts</span><span class="v">Authors, creation information, restrictions and other evidence preserved</span></div>
+      <div class="kv"><label class="k" for="prov-purpose">Change purpose</label><input id="prov-purpose" class="fld" value="Record the supplied source and license declarations"></div>
+      <div class="kv"><span class="k">Change actor</span><span class="v">Supported recorded application actor · not a verified original author</span></div>
+      <div class="note">These differences must come from the actual qualified service preview. Editing a field or list requires a new preview. No source rights or earlier approval are inferred from the new revision.</div>
+      <div class="acts"><button class="btn">Cancel review</button><button class="btn">Revision details</button><button class="btn pri">Save local revision</button></div>
+      <div class="note">Saving records the candidate only. Applying it to the Project is a separate existing update review. Cancelling that later review preserves the saved candidate and current bindings; canonical Undo/Redo, Save and cold reopening retain their normal meanings.</div>
+    </div>
+    <div class="card" id="L-L9"><div class="phd0"><span>Declaration needs correction</span><span class="r">no authored change</span></div>
+      <div class="kv w"><label class="k" for="prov-invalid-title">Source citation 1 · title</label><input id="prov-invalid-title" class="fld f" value="" aria-invalid="true"></div>
+      <div class="note"><span class="st err">Source citation 1 needs a title.</span> The fields remain available for correction. No candidate is saved and no success is reported.</div>
+      <div class="acts"><button class="btn">Cancel</button><button class="btn">Review declaration change</button></div>
+    </div>
+    <div class="card" id="L-L10"><div class="phd0"><span>Source changed</span><span class="r">preview unavailable</span></div>
+      <div class="note"><span class="st err">The Project or Library changed after this editor opened.</span> Open the current source record before reviewing another change. The stale preview cannot be applied and is not retried automatically.</div>
+      <div class="acts"><button class="btn">Close editor</button><button class="btn na" disabled>Save local revision — unavailable</button></div>
+    </div>
+  </div>
   <p class="cell-cap">Enable format, record/save local content and adopt into the Project are separate deliberate actions. Technical local history remains available offline from retained exact content. Default local inspection does not publish, assert rights, mark Approved or add a formal Revision workbench. Narrow layouts stack the same cards and retain summary, full refusal and all action buttons.</p>
 </section>
 
@@ -471,7 +535,7 @@
     <tr><td class="n">#L-I</td><td>LIBRARY-VALIDATION</td><td>Relationships and revisions — update candidate paragraph</td><td>Placed-impact trigger (separate authority)</td><td>Target</td></tr>
     <tr><td class="n">#L-J</td><td>SHARED-MUTATION</td><td>Accessibility and visual frames</td><td>Narrow pool / kind / Navigator / Inspector access; refusal placement</td><td>Target</td></tr>
 <tr><td class="n">#L-K</td><td>LIBRARY-MANUAL-USE · LIBRARY-VALIDATION</td><td>One Component Properties form and pending footprint chooser; Reference/Value/Footprint, Apply/Cancel, exact identity and history</td><td>Routed-PCB physical replacement outside scope</td><td>Corrective target; runtime verification pending</td></tr>
-    <tr><td class="n">#L-L</td><td>LIBRARY-MANUAL-USE · LIBRARY-VALIDATION · SL-023–024</td><td>Shared library asset target — separate format baseline, exact local candidate save, reviewed canonical Project adoption</td><td>Publisher/rights, catalog budgets, general routed-board replacement remain separately governed</td><td>Independently reviewed local target; runtime proof pending</td></tr>
+    <tr><td class="n">#L-L</td><td>LIBRARY-MANUAL-USE · LIBRARY-VALIDATION · SL-013 / SL-019 / SL-023–024</td><td>Shared library asset target — separate format baseline, selected source/rights declarations, exact local candidate save, reviewed canonical Project adoption</td><td>Publisher/rights, catalog budgets, general routed-board replacement remain separately governed</td><td>Prior local target reviewed; source declaration extension awaits independent review</td></tr>
   </table>
   <p class="cap" style="margin-top:12px"><b>Conflicts shown, not resolved:</b> (1) the Library Authoring contract still lists seven DomainObjects with ModelAttachment
   as a kind and describes its map table as <code>logical_pin → footprint_pad</code>; these frames follow the Product contract — eight Pool kinds, models as

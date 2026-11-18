@@ -44,6 +44,30 @@ pub(crate) enum CandidateChange {
         base: AssetRevisionRef,
         payload: Value,
     },
+    ReviseProvenance {
+        base: AssetRevisionRef,
+    },
+}
+
+impl CandidateChange {
+    /// A missing payload expresses an explicit declaration-only intent.
+    pub(super) fn revision(
+        base: AssetRevisionRef,
+        payload: Option<String>,
+        has_provenance: bool,
+        limit: usize,
+    ) -> Result<Self, EngineError> {
+        match payload {
+            Some(raw) => Ok(Self::Revise {
+                base,
+                payload: super::library_assets::edited_payload(&raw, limit)?,
+            }),
+            None if has_provenance => Ok(Self::ReviseProvenance { base }),
+            None => Err(refusal(
+                "a declaration-only revision requires explicit provenance",
+            )),
+        }
+    }
 }
 
 pub(crate) struct CandidateRequest {
@@ -139,5 +163,7 @@ fn actor(provenance: &WriteProvenance) -> Actor {
     }
 }
 
+#[cfg(test)]
+mod provenance_tests;
 #[cfg(test)]
 mod tests;

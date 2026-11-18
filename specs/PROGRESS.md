@@ -1937,6 +1937,21 @@ Bounded writer prerequisite history is retained; live selection and execution au
 
 ## Shared library asset specification target
 
+- [x] **Edit selected source and license declarations** — bounded PM059 task
+  `dat-library-provenance-authoring-4r1j` delivers the ordinary Library form for
+  one managed asset's declared license, separate attribution entries and source
+  citations through qualified preview, local candidate save and separate adoption.
+  Actual isolated offline native proof covers field focus, Add/Remove,
+  refusal/repair/Cancel, candidate Save52, adoption53, Undo54/Redo55, explicit Save
+  and cold reopening with all 468 canonical files and the complete 55-record
+  journal unchanged. Engineering payload bytes, forward dependencies, other
+  assets' declarations and hidden/retained evidence remain preserved. Distinct
+  QA session `01a1ed2c-59e6-7383-9a04-c6e710634357` reviewed the source, target and
+  actual native evidence within this bounded delivery. License and attribution
+  values are user-entered; no automatic assignment, engineering approval,
+  publication, owner-performed QA or broader qualification is claimed. This
+  neither selects a milestone nor completes shared publishing or migration.
+
 - [x] **Offline contribution candidate inspection** — bounded PM059 task
   `dat-library-offline-candidate-inspection-21ry` adds
   `query library-candidate DIRECTORY` through the public read-only engine query.

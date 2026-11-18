@@ -54,6 +54,27 @@ fn recorded_details_never_change_write_identity_or_survive_a_new_review() {
     std::fs::remove_dir_all(root).unwrap();
 }
 
+#[test]
+fn declaration_field_classification_keeps_actions_out_of_text_input() {
+    use super::provenance::{ProvenanceAction, ProvenanceField};
+    let session = Uuid::new_v4();
+    let control = |action| RevisionControl::Provenance {
+        session,
+        generation: Uuid::new_v4(),
+        action,
+    };
+    assert!(RevisionControl::Purpose(session).is_text_field());
+    assert!(
+        control(ProvenanceAction::Field(ProvenanceField {
+            row: Uuid::new_v4(),
+            index: 3
+        }))
+        .is_text_field()
+    );
+    assert!(!control(ProvenanceAction::AddCitation).is_text_field());
+    assert!(!control(ProvenanceAction::RemoveAttribution(Uuid::new_v4())).is_text_field());
+}
+
 fn fixture() -> (PathBuf, LibraryBrowser, LibraryRevisionWorkflow) {
     let root = std::env::temp_dir().join(format!("datum-revision-review-{}", Uuid::new_v4()));
     bootstrap_native_project(

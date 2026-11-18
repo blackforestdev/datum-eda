@@ -2044,6 +2044,38 @@ and contribution behavior. Existing local technical counters and optional symbol
 provenance are partial implementation, not completion of that common record.
 No existing tool surface gains a private Git/raw-file writer or automatic approval.
 
+The selected managed asset's declared license, attribution entries and source
+citations are ordinary editable content under SL-013/SL-019, using
+[Library study L-L7–L-L10](../gui/prototypes/library-surfaces-study.html#L-L7).
+Use the existing Library form and qualified local revision preview/save path;
+do not route these declarations through the guarded approval/review/lifecycle
+state transition in Tool 2. Each attribution and citation remains separate.
+Citation title, issuer, source revision, locator and access note are editable;
+retained-file references and unexposed provenance remain preserved. This bounded
+editor keeps retained-file citation removal unavailable and explains why, while
+unlinked citations can be added and removed. Blank license means unknown.
+The form opens on its first declaration field; adding an attribution or citation
+focuses and reveals the new entry. Existing required change purpose is entered
+before requesting the qualified preview. These controls use the same shared
+text-editing and revision-review services.
+Original authorship, creation information, origin, restrictions and other evidence
+are not inferred or reassigned. The new change purpose and supported change actor
+are recorded honestly, without claiming a verified human or original author.
+The actual qualified preview must show declaration differences and preserve the
+selected engineering payload and forward dependency references. Other assets do
+not inherit the selected license, attribution or source citations. Forward
+dependency provenance is unchanged. Required parent revisions may be repinned
+and record their own technical derivation, change actor and purpose.
+For a declaration-only revision, the engine reuses the exact already verified
+base payload; the GUI does not read or reserialize geometry. The existing revise
+request can omit its payload only when explicit provenance content is supplied.
+The ordinary geometry-edit path and adoption materialization checks remain intact.
+Cancel/refusal writes no authored state; save a candidate and adopt it into the
+Project remain separate actions. Source, license and attribution strings confer
+no clearance, approval or redistribution permission. This is the target
+for the bounded provenance editor; native implementation and real-data proof are
+required separately before delivery can be claimed.
+
 
 The bounded local integration uses
 [Library study L-L](../gui/prototypes/library-surfaces-study.html#L-L): separately
