@@ -1,6 +1,14 @@
 use super::*;
 
 impl Engine {
+    /// Inspect a local common-profile collection without opening or writing a project.
+    /// Content verification establishes neither release nor redistribution authority.
+    pub fn inspect_library_candidate(
+        directory: &std::path::Path,
+    ) -> Result<serde_json::Value, EngineError> {
+        crate::library_assets::contribution::inspect_candidate(directory)
+    }
+
     pub fn board(&self) -> Result<&Board, EngineError> {
         self.require_board()
     }

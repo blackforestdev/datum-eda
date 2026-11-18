@@ -5,13 +5,15 @@ use super::library_asset_operations::{CATALOG_RELATIVE_PATH, LibraryStateValues,
 use crate::{
     error::EngineError,
     library_assets::{
-        AssetDigest, AssetRevision, AssetRevisionRef, ClosureLimits, LocalCounters, VerifiedAsset,
-        decode_metadata, inspect_closure,
+        AssetDigest, AssetRevisionRef, ClosureLimits, LocalCounters, VerifiedAsset,
+        inspect_closure,
         lock::{LOCK_RELATIVE_PATH, ProjectLibraryLock},
-        manifest::{LibraryDiscovery, LibraryReleaseManifest, ObjectKind},
+        manifest::{LibraryDiscovery, LibraryReleaseManifest},
         review::AssetReview,
     },
 };
+
+pub(crate) mod release;
 
 /// Explicit service/transport limits; no hidden performance acceptance numbers.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -171,131 +173,18 @@ pub(crate) fn resolve_state(
         ));
     }
     let (lock, catalog) = state.decode(limits.metadata_bytes)?;
-    let bytes = read_charge(
-        root,
-        &object_path(&catalog.manifest_ref),
-        pending,
-        limits.metadata_bytes,
-        &mut used,
-        limits.total_bytes,
+    let active: Vec<_> = lock.assets.iter().map(|a| a.asset.clone()).collect();
+    let release::LibraryReleaseSnapshot {
+        manifest,
+        assets,
+        reviews,
+    } = release::load(
+        root, "library/", &catalog, pending, &active, limits, &mut used,
     )?;
-    let manifest: LibraryReleaseManifest = decode_metadata(&bytes, limits.metadata_bytes)?;
-    catalog.verify_manifest(&manifest)?;
-    if manifest.objects.len().saturating_add(manifest.blobs.len()) > limits.files
-        || lock.assets.len() > limits.files
-    {
-        return Err(refusal("library inventory exceeds declared file limit"));
-    }
-    let mut objects = BTreeMap::new();
-    let mut blobs = BTreeMap::new();
-    for entry in &manifest.objects {
-        objects.insert(
-            entry.digest.clone(),
-            read_charge(
-                root,
-                &object_path(&entry.digest),
-                pending,
-                limits.metadata_bytes,
-                &mut used,
-                limits.total_bytes,
-            )?,
-        );
-    }
-    for entry in &manifest.blobs {
-        blobs.insert(
-            entry.digest.clone(),
-            read_charge(
-                root,
-                &blob_path(&entry.digest),
-                pending,
-                limits.blob_bytes,
-                &mut used,
-                limits.total_bytes,
-            )?,
-        );
-    }
-    manifest.verify_inventory(&objects, &blobs, limits.metadata_bytes)?;
-    // These exact bytes were already loaded, charged and inventory-verified.
-    // Retaining their decoded claims adds no acquisition or review authority.
-    let reviews = manifest
-        .objects
-        .iter()
-        .filter(|entry| entry.kind == ObjectKind::Review)
-        .map(|entry| {
-            Ok((
-                entry.digest.clone(),
-                decode_metadata::<AssetReview>(&objects[&entry.digest], limits.metadata_bytes)?,
-            ))
-        })
-        .collect::<Result<BTreeMap<_, _>, EngineError>>()?;
-    let mut refs: Vec<_> = lock.assets.iter().map(|a| a.asset.clone()).collect();
-    for entry in manifest
-        .objects
-        .iter()
-        .filter(|o| o.kind == ObjectKind::AssetRevision)
-    {
-        let revision: AssetRevision =
-            decode_metadata(&objects[&entry.digest], limits.metadata_bytes)?;
-        refs.push(revision.reference()?);
-    }
-    let mut assets = BTreeMap::new();
-    for reference in refs {
-        if assets.contains_key(&reference) {
-            continue;
-        }
-        let record = read_charge(
-            root,
-            &object_path(&reference.revision_id),
-            pending,
-            limits.metadata_bytes,
-            &mut used,
-            limits.total_bytes,
-        )?;
-        let revision: AssetRevision = decode_metadata(&record, limits.metadata_bytes)?;
-        let provenance = read_charge(
-            root,
-            &object_path(&revision.provenance_ref),
-            pending,
-            limits.metadata_bytes,
-            &mut used,
-            limits.total_bytes,
-        )?;
-        let payload = read_charge(
-            root,
-            &blob_path(&revision.payload_ref),
-            pending,
-            limits.blob_bytes,
-            &mut used,
-            limits.total_bytes,
-        )?;
-        let asset = VerifiedAsset::read(
-            &reference,
-            &record,
-            &provenance,
-            &payload,
-            limits.metadata_bytes.max(limits.blob_bytes),
-            counter_policy(revision.kind, revision.payload_schema_version)?,
-        )?;
-        for field in ["models_3d", "behavioural_models"] {
-            if asset.payload().value().get(field).is_some_and(|value| {
-                !value.is_null()
-                    && !value.as_array().is_some_and(Vec::is_empty)
-                    && !value.as_object().is_some_and(serde_json::Map::is_empty)
-            }) {
-                return Err(refusal(format!(
-                    "unsupported owned model dependencies in {field}; offline closure cannot be verified",
-                )));
-            }
-        }
-        assets.insert(reference, asset);
-    }
     let bounds = ClosureLimits {
         max_nodes: limits.files,
         max_depth: limits.depth,
     };
-    let heads = inspect_closure(&manifest.roots, &assets, bounds)?;
-    manifest.verify_closure(&heads)?;
-    let active: Vec<_> = lock.assets.iter().map(|a| a.asset.clone()).collect();
     let closure = inspect_closure(&active, &assets, bounds)?;
     lock.verify_closure(&closure)?;
     if !closure.graph_report().valid {
@@ -313,9 +202,6 @@ pub(crate) fn resolve_state(
     })
 }
 
-pub(super) fn object_path(digest: &AssetDigest) -> String {
-    format!("library/objects/sha256/{}.json", digest.hex())
-}
 pub(super) fn blob_path(digest: &AssetDigest) -> String {
     format!("library/blobs/sha256/{}", digest.hex())
 }

@@ -30,6 +30,13 @@ pub(crate) fn execute_query_command(
     action: QueryCommands,
 ) -> Result<(String, i32)> {
     match action {
+        QueryCommands::LibraryCandidate { directory } => Ok((
+            render_output(
+                format,
+                &eda_engine::api::Engine::inspect_library_candidate(&directory)?,
+            ),
+            0,
+        )),
         QueryCommands::Summary(QueryPathArgs { path }) => {
             let report = query_native_project_summary(&path)?;
             let output = match format {

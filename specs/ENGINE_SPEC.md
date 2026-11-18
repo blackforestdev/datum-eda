@@ -1657,6 +1657,7 @@ explanations live on `CheckFinding`.
 
 | Method | Notes |
 |--------|-------|
+| `inspect_library_candidate` | Inspect a local common-profile candidate directory without opening a Project; report exact closure, declared provenance and review currency without adoption, approval or publication |
 | `board` | Borrow the open board |
 | `get_board_summary` | Board dimensions and counts |
 | `get_components` | All components in the open design |

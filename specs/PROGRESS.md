@@ -1937,6 +1937,22 @@ Bounded writer prerequisite history is retained; live selection and execution au
 
 ## Shared library asset specification target
 
+- [x] **Offline contribution candidate inspection** — bounded PM059 task
+  `dat-library-offline-candidate-inspection-21ry` adds
+  `query library-candidate DIRECTORY` through the public read-only engine query.
+  Project and standalone-directory inspection share inventory, integrity,
+  dependency, provenance, review-currency and explicit host-limit checks;
+  standalone inspection requires no Project or lock. Focused engine proof passed
+  62 tests. The normal release CLI inspected the retained real library offline
+  (five roots, twelve closure members) and refused a missing discovery file;
+  all 436 canonical project files and the complete 51-record journal were
+  unchanged. Redistribution authority remains unverified and engineering
+  approval unevaluated; promotion and publication authority are unavailable.
+  Independent source and actual-CLI review verified this bounded behavior.
+  This is headless inspection, not acquisition,
+  conversion, adoption, publishing, GUI qualification or completion of the
+  shared-library target.
+
 - [x] **Shared engineering library specification** — `dat-shared-library-spec-vvtz`,
   owner-directed specification work under PM066 and
   [SHARED_LIBRARY_ASSET_SPEC](SHARED_LIBRARY_ASSET_SPEC.md). Current: existing

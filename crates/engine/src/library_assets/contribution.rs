@@ -5,8 +5,8 @@ use std::collections::BTreeMap;
 use serde_json::{Value, json};
 
 use super::{
-    AssetDigest, AssetKind, AssetRevisionRef, ClosureLimits, VerifiedAsset, inspect_closure,
-    invalid, review::AssetReview,
+    AssetClosure, AssetDigest, AssetKind, AssetRevisionRef, ClosureLimits, VerifiedAsset,
+    inspect_closure, invalid, review::AssetReview,
 };
 use crate::error::EngineError;
 
@@ -45,6 +45,36 @@ pub(crate) fn inspect_part(
         ));
     }
     let closure = inspect_closure(std::slice::from_ref(subject), available, limits)?;
+    let members = inspect_members(&closure, available, reviews, limits)?;
+    let graph = closure.graph_report();
+    let diagnostics: Vec<_> = graph
+        .diagnostics
+        .iter()
+        .map(|finding| {
+            json!({
+        "severity":finding.severity,"code":finding.code,
+        "subject":finding.subject,"message":finding.message})
+        })
+        .collect();
+    Ok(
+        json!({"subject":subject,"closure":{"digest":closure.digest(),
+        "graph_valid":graph.valid,"diagnostics":diagnostics,"assets":members},
+        "redistribution_authority":"not_verified",
+        "engineering_approval":"not_evaluated","publication_policy":"unavailable"}),
+    )
+}
+
+#[cfg(test)]
+#[path = "contribution_tests.rs"]
+mod tests;
+
+/// All readers use the same declared provenance and revision-specific evidence.
+fn inspect_members(
+    closure: &AssetClosure<'_>,
+    available: &BTreeMap<AssetRevisionRef, VerifiedAsset>,
+    reviews: &BTreeMap<AssetDigest, AssetReview>,
+    limits: ClosureLimits,
+) -> Result<Vec<Value>, EngineError> {
     let mut members = Vec::new();
     for (reference, asset) in closure.assets() {
         let records: Vec<_> = reviews
@@ -77,24 +107,36 @@ pub(crate) fn inspect_part(
             "review_presence":if evidence.is_empty() {"missing"} else {"recorded"},
             "reviews":evidence}));
     }
+    Ok(members)
+}
+
+/// Read-only pre-promotion inspection, not acquisition or rights clearance.
+pub(crate) fn inspect_candidate(directory: &std::path::Path) -> Result<Value, EngineError> {
+    use crate::substrate::library_asset_resolver::{release, server_policy};
+    let limits = server_policy()?;
+    let bounds = ClosureLimits {
+        max_nodes: limits.files,
+        max_depth: limits.depth,
+    };
+    let (catalog, release) = release::read_candidate(directory)?;
+    let closure = inspect_closure(&release.manifest.roots, &release.assets, bounds)?;
     let graph = closure.graph_report();
-    let diagnostics: Vec<_> = graph
-        .diagnostics
-        .iter()
-        .map(|finding| {
-            json!({
-        "severity":finding.severity,"code":finding.code,
-        "subject":finding.subject,"message":finding.message})
-        })
-        .collect();
-    Ok(
-        json!({"subject":subject,"closure":{"digest":closure.digest(),
-        "graph_valid":graph.valid,"diagnostics":diagnostics,"assets":members},
-        "redistribution_authority":"not_verified",
-        "engineering_approval":"not_evaluated","publication_policy":"unavailable"}),
-    )
+    if !graph.valid {
+        return Err(invalid(format!(
+            "candidate dependency graph invalid: {:?}",
+            graph.diagnostics
+        )));
+    }
+    let members = inspect_members(&closure, &release.assets, &release.reviews, bounds)?;
+    Ok(json!({"inspection_status":"available", "discovery":catalog,
+        "release_manifest":release.manifest,
+        "closure":{"digest":closure.digest(),"graph_valid":graph.valid,"assets":members},
+        "scope":"candidate root closure; supported structural checks only; no project selection or adoption",
+        "retained_asset_count":release.assets.len(),
+        "redistribution_authority":"not_verified", "engineering_approval":"not_evaluated",
+        "promotion_authority":"unavailable", "publication_policy":"unavailable"}))
 }
 
 #[cfg(test)]
-#[path = "contribution_tests.rs"]
-mod tests;
+#[path = "candidate_tests.rs"]
+mod candidate_tests;

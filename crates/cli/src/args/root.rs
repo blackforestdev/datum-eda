@@ -202,6 +202,11 @@ pub(crate) enum Commands {
 
 #[derive(Subcommand)]
 pub(crate) enum QueryCommands {
+    /// Inspect an offline common-profile library candidate without adoption or publication
+    LibraryCandidate {
+        /// Collection directory containing library.json, objects and blobs
+        directory: PathBuf,
+    },
     /// Aggregated native project summary
     Summary(QueryPathArgs),
     /// Resolver-derived native project relationships
