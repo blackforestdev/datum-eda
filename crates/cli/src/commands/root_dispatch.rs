@@ -106,6 +106,13 @@ pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
             JournalCommands::Redo(args) => args.run(format),
         },
         Commands::Artifact { action } => match action {
+            ArtifactCommands::ExportLibraryCandidate { path, output_dir } => Ok((
+                render_output(
+                    format,
+                    &eda_engine::api::Engine::export_library_candidate(&path, &output_dir)?,
+                ),
+                0,
+            )),
             ArtifactCommands::Generate(args) => args.run(format),
             ArtifactCommands::StartOutputJobRun(args) => args.run(format),
             ArtifactCommands::CancelOutputJobRun(args) => args.run(format),

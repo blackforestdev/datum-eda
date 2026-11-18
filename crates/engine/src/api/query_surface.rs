@@ -1,6 +1,15 @@
 use super::*;
 
 impl Engine {
+    /// Export a verified managed candidate without opening or changing its project.
+    /// This copies declarations and evidence, without granting publication rights.
+    pub fn export_library_candidate(
+        project: &std::path::Path,
+        destination: &std::path::Path,
+    ) -> Result<serde_json::Value, EngineError> {
+        crate::substrate::library_asset_resolver::export::export_candidate(project, destination)
+    }
+
     /// Inspect a local common-profile collection without opening or writing a project.
     /// Content verification establishes neither release nor redistribution authority.
     pub fn inspect_library_candidate(

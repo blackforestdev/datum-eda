@@ -1937,6 +1937,20 @@ Bounded writer prerequisite history is retained; live selection and execution au
 
 ## Shared library asset specification target
 
+- [x] **Offline managed candidate export** — bounded task
+  `dat-library-offline-candidate-export-18nq` adds
+  `artifact export-library-candidate PROJECT --output-dir DIRECTORY` through the
+  shared engine verifier. A fresh local directory receives the exact discovery,
+  manifest and complete declared inventory; the existing `query library-candidate`
+  reads the result. Focused engine proof passed 69 tests and the normal CLI
+  release build succeeded. Actual isolated offline CLI proof produced two
+  identical 94-file/100226-byte exports, each reporting five roots, 12 closure
+  members and 38 retained revisions. All 468 source files and the complete
+  55-record journal remained unchanged. Existing-destination refusal and unsafe
+  output-path controls passed. Distinct QA session
+  `01a1ed2c-59e6-7383-9a04-c6e710634357` reviewed source and actual technical proof.
+  Shared candidate acquisition, publishing and migration remain unfinished.
+
 - [x] **Edit selected source and license declarations** — bounded PM059 task
   `dat-library-provenance-authoring-4r1j` delivers the ordinary Library form for
   one managed asset's declared license, separate attribution entries and source

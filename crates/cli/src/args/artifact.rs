@@ -2,6 +2,14 @@ use crate::*;
 
 #[derive(Subcommand)]
 pub(crate) enum ArtifactCommands {
+    /// Export the verified managed library candidate without changing its project
+    ExportLibraryCandidate {
+        /// Native source project root
+        path: PathBuf,
+        /// Fresh collection directory outside the source project; parent must exist
+        #[arg(long = "output-dir")]
+        output_dir: PathBuf,
+    },
     /// Generate derived production artifacts from include scopes
     Generate(ArtifactGenerateArgs),
     /// Persist a running OutputJobRun evidence record for one OutputJob

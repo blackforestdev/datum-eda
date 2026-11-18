@@ -13,6 +13,7 @@ use crate::{
     },
 };
 
+pub(crate) mod export;
 pub(crate) mod release;
 
 /// Explicit service/transport limits; no hidden performance acceptance numbers.
@@ -178,6 +179,7 @@ pub(crate) fn resolve_state(
         manifest,
         assets,
         reviews,
+        ..
     } = release::load(
         root, "library/", &catalog, pending, &active, limits, &mut used,
     )?;
