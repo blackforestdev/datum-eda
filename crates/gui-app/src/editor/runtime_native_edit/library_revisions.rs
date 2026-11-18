@@ -337,13 +337,20 @@ impl Runtime {
         let result = reply
             .result
             .and_then(|preview| review.accept_preview(&self.workspace().library, &root, preview));
+        let accepted = result.is_ok();
         let browser = &mut self.session.workspace_mut().library;
         browser.revision_workflow = Some(review);
-        if result.is_ok() {
+        if accepted {
             browser.scroll_offset = 0;
             browser.reveal_focus = false;
         }
         browser.refusal = result.err();
+        if accepted {
+            self.log_console_echo(
+                ConsoleFeedbackSource::Tool,
+                "Library revision preview ready; no changes applied",
+            );
+        }
         self.invalidate_frame();
         true
     }
