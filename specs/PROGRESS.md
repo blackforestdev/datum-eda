@@ -1982,7 +1982,25 @@ Bounded writer prerequisite history is retained; live selection and execution au
   conversion, adoption, publishing, GUI qualification or completion of the
   shared-library target.
 
-- [x] **Shared engineering library specification** — `dat-shared-library-spec-vvtz`,
+- [x] **Persistent native library database specification correction** —
+  `dat-library-database-architecture-study-t9fj`, directly owner-authorized
+  research and specification delivery, 2026-11-18. The reviewed target now stores
+  native engineering JSON, reusable definitions, exact revisions and relationships
+  in SQLite. [SHARED_LIBRARY_ASSET_SPEC](SHARED_LIBRARY_ASSET_SPEC.md) section 9
+  fixes typed shape/process/context/operation records, durable library writes,
+  project-retained snapshots and sole-journal adoption/recovery, explicit source
+  ownership, offline compatibility and full-catalog migration requirements.
+  PM066, PM008/008A, Native Format and Library Authoring are reconciled. Actual
+  independent semantic/implementer-determinacy review and workflow/migration audit
+  passed the frozen candidate; required governance integration is reviewed with
+  delivery. This is an implementation-ready specification, not implemented code,
+  measured performance or completed migration. Dependency/order: the specification
+  unblocks a later explicitly selected implementation assignment under these
+  contracts; product code, builds and migration remain paused. This routine
+  correction preserves the generated Frontier's explicit idle and selects no
+  implementation successor.
+
+- [x] **Historical shared engineering library specification** — `dat-shared-library-spec-vvtz`,
   owner-directed specification work under PM066 and
   [SHARED_LIBRARY_ASSET_SPEC](SHARED_LIBRARY_ASSET_SPEC.md). Current: existing
   reusable objects, journal and component work are partial foundations; the
@@ -1995,7 +2013,7 @@ Bounded writer prerequisite history is retained; live selection and execution au
   acceptance is selected by this entry. Existing generated Frontier, QA013 scope,
   component-first/Properties requirements and historical evidence remain intact.
 
-- [~] **Local library revision/adoption integration** — separately owner-authorized
+- [x] **Bounded local library revision/adoption integration** — separately owner-authorized
   routine `dat-library-local-revision-adoption-v6ya`, coordinated under PM059.
   Current: implemented native local revision/provenance, candidate recording,
   readable review, guarded adoption/refusal and canonical history controls.
@@ -2012,9 +2030,10 @@ Bounded writer prerequisite history is retained; live selection and execution au
   0805/confirmed mapping, initial PCB/two bound pads, whole-transfer Undo/Redo,
   Save/cold and footprint-row double-click return/Cancel. Retained Place and
   picker/wire proofs keep their own candidate scopes; historical owner failures
-  remain recorded. QA013 is not ready; PM integration/landing and readiness
-  disposition remain. No owner/HUMAN or broader-goal acceptance is claimed.
-  Dependency/order: scoped proof supports owned integration and required landing
-  checks; no repeated campaign is introduced for covered paths. No successor
+  remain recorded. The bounded v6ya and QA013 corrections landed in `bc990a90`
+  and their tasks are closed; earlier NOT_READY statements are historical.
+  No owner/HUMAN or broader-goal acceptance is claimed.
+  Dependency/order: scoped proof remains reusable for its recorded candidates;
+  no repeated campaign is introduced for covered paths. No successor
   milestone or change to the generated Frontier, QA013 bar, publication/rights
   authority or retained catalog budgets is inferred.

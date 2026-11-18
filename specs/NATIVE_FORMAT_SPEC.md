@@ -58,6 +58,12 @@ Deferred until needed:
 - Relative paths are preferred inside the project directory.
 - The same authored data must produce byte-identical file content on every run.
 
+For the owner-directed persistent library target, these determinism guarantees
+apply to canonical JSON/portable records and logical SQLite content, not physical
+SQLite file/page/WAL byte layout. Declared native library stores retain their
+authored engineering JSON inside SQLite under PM066 and SHARED_LIBRARY_ASSET_SPEC
+section 9; they are not derived caches of external library files.
+
 ---
 
 ## 4. Project Layout
@@ -197,9 +203,15 @@ unfilled evidence emit no copper.
 
 ### 5.3 Cross-File References
 
-- Cross-file references always use UUID identity.
+- Legacy cross-file references use UUID identity. The declared library V2/project
+  manifest-V3 target qualifies library identity by exact revision, owned feature
+  path and source/instance occurrence context under SHARED_LIBRARY_ASSET_SPEC
+  section 9.D/K/M. UUID-to-latest lookup is not a target resolution mechanism.
 - Human-readable names are attributes, not reference keys.
-- A file may reference objects stored in other files only by UUID.
+- Legacy JSON file references retain their UUID contracts. V3 database-backed
+  library sources use the declared LibrarySourceLocatorV2 and retained exact
+  dependency closure, with persisted project-local ObjectId mappings for native
+  projection. Portable IDs are not rewritten to hide revision conflicts.
 - A dangling cross-file reference is a validation error.
 - The product-facing native-project validation surface for these errors is
   `project validate <dir>`.
@@ -210,6 +222,12 @@ unfilled evidence emit no copper.
 
 Every native file must contain `"schema_version": <int>` at the document root.
 Schema-version compatibility is reported by `project validate <dir>`.
+
+This JSON-root rule applies to native JSON documents, not opaque models or the
+explicitly declared SQLite library store. The latter declares application_id,
+user_version and store_metadata schema/UUID/profile under section 9.A/B of the
+shared library specification; project manifest-V3 declares its typed store locator.
+Do not parse SQLite bytes as a JSON shard or infer schema from a filename.
 
 ### 6.1 `project.json`
 
@@ -899,6 +917,12 @@ Guarantee:
 - same authored data produces byte-identical file content on every save,
   every platform, every run
 
+This guarantee is for canonical authored JSON and exchange records. Physical
+SQLite allocation/WAL/backup bytes can differ while logical content and exact
+payload/record digests agree. Project backup separately hashes actual copied
+files and verifies retained logical content; physical database equality is not
+portable asset identity.
+
 ---
 
 ## 8. Versioning and Migration
@@ -998,6 +1022,8 @@ Conversion itself is not the same as source-format write-back.
 
 ## 10. Concurrency Model
 
+The following Version-1 assumptions are historical format scope, not a waiver
+of current canonical project leases or the new library store transaction contract.
 Version 1 assumes single-writer access to a project directory.
 
 Version 1 does not require:
@@ -1012,6 +1038,14 @@ Recommended workflow for multiple users:
 Atomic save expectations:
 - a save should not leave partially written JSON files on normal success
 - crash safety may use temp-file plus rename semantics
+
+For the persistent library/project-V3 target, SHARED_LIBRARY_ASSET_SPEC section
+9.F/G/L controls engine-owned writer serialization, SQL durability, canonical
+project leases and staged adoption recovery. Native SQL is host-local with
+verified foreign keys and DELETE/FULL durability on writable stores; no network-WAL or
+cross-SQL/files atomic transaction is assumed. A live SQLite main-file copy and
+file-level merge are not the backup or contribution protocol. Use the specified
+coherent leased backup/restore and versioned logical exchange.
 
 ---
 
@@ -1174,3 +1208,40 @@ not portable revision identity. Pool priority cannot override a pinned ref.
 Writers require version refusal, dependency closure, atomic lock/materialization,
 recovery, Undo/Redo and unknown-field preservation proof before support claims.
 This target does not authorize migration or reclassify historical native evidence.
+
+### Persistent SQL library target — project manifest V3
+
+Owner-directed PM066 correction, task `dat-library-database-architecture-study-t9fj`:
+SHARED_LIBRARY_ASSET_SPEC section 9 supersedes the earlier manifest-V2-only
+destination for newly adopted native database libraries. Project manifest schema
+version 3 adds required `library_store` with path `library/library.sqlite`, stable
+store UUID, store schema version 1, profile `datum-library-json-v2` and binding
+schema version 2. Its exact closed record is section 9.A4; ComponentInstance shard
+schema V2 and journal operation/locator contracts are section 9.M. These numbers
+are independent of existing BoardRoot profiles 1–4.
+
+The SQL store retains adopted exact revisions/content/receipts and the model
+resolves them through exact occurrence contexts. Active design adoption is
+committed only by the canonical project journal; prepared SQL rows are inert.
+Section 9.G/L defines pre-retention, durable publication, crash outcomes, undo,
+backup and restore. Portable raw payloads remain unchanged; native local-object
+projection is explicit and reversible, including coexisting revisions.
+
+V3 format adoption is separate, explicit and forward-only. Opening a legacy
+project does not migrate it; an accepted empty V3 baseline does not claim its
+legacy assets are migrated. Existing IDs, physical/process snapshots and historical
+operation meanings remain protected. Unsupported readers/capabilities refuse
+before writes/partial output. Same-change implementation proof must establish the
+actual readers, writer/recovery and interoperability before enabling the target;
+this specification amendment itself supplies no runtime support.
+
+Format-only adoption of an already managed V2 project retains its exact legacy
+library_lock declaration/content and read-only provider under section 9.A6. It
+does not invalidate users because the new SQL store starts empty. Context migration
+is a later explicit adoption with a validated V2 Part/physical-choice representation;
+untouched occurrences and undo/history keep their original provider. Section 9.M
+defines exact per-object active SourceLocatorV2/SourceChangeV2 ownership cutover,
+retained legacy preimages and inverse. Pool enumeration cannot register the same
+local ObjectId from both JSON and SQL or silently select by priority. Distinct
+local definition IDs are used when old users still need the legacy source, while
+portable asset and placed component/pad/wire identities remain intact.

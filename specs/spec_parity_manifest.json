@@ -293,9 +293,29 @@
         "AssetProvenanceV1",
         "AssetReviewV1",
         "LibraryReleaseManifestV1",
-        "ProjectLibraryLockV1"
+        "ProjectLibraryLockV1",
+        "AssetRevisionV2",
+        "DiscoveryV2",
+        "ManifestV2",
+        "GeometryPayloadV2",
+        "ProcessPayloadV2",
+        "PadstackPayloadV2",
+        "FootprintPayloadV2",
+        "PartPayloadV2",
+        "ContextV2",
+        "BindingV2",
+        "SnapshotV2",
+        "ReceiptV2",
+        "SourceLocatorV2",
+        "SourceChangeV2",
+        "AdoptionJournalLinkV2",
+        "WriteRequest",
+        "PrepareAdoption",
+        "AcceptAdoption",
+        "AdoptFormatV3",
+        "ApplyLibraryAdoptionV2"
       ],
-      "notes": "Specification filename and planned semantic-shape registration only; not a census of implemented Rust/API shapes or proof of complete interoperability. SL-016\u2013024 define the target V1 byte and lock profile. Bounded native local revision/adoption implementation and focused runtime proof are recorded in PROGRESS and the Library/GUI contracts; full exchange, contribution/publishing and migration qualification are not established by this inventory."
+      "notes": "Specification filename and planned semantic-shape registration only, not implemented Rust/API shapes or interoperability proof. SL-016\u2013024 retain the V1 exchange/manifest-V2 compatibility profile; section 9 defines the persistent SQLite/V2 exchange/project-manifest-V3 target. Existing bounded local deliveries retain their recorded candidate scopes; no database migration, new writer, multirevision resolver, performance or full qualification claim follows from this inventory."
     }
   ]
 }

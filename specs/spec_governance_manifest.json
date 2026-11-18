@@ -2674,12 +2674,12 @@
     },
     "docs/decisions/PRODUCT_MECHANICS_066_SHARED_ENGINEERING_LIBRARY.md": {
       "class": "governed",
-      "notes": "Owner-directed shared engineering library amendment; normative target, runtime implementation pending. PM066 resolves supersession; SL spec retains explicit mechanism/policy boundaries.",
+      "notes": "Owner-directed native persistent SQLite library target and composition/revision-context/editor/snapshot/recovery decision; SHARED_LIBRARY_ASSET_SPEC section 9 is normative. Specification delivery does not claim runtime implementation, migration or publication.",
       "progress_anchor": "Shared library asset specification target"
     },
     "specs/SHARED_LIBRARY_ASSET_SPEC.md": {
       "class": "governed",
-      "notes": "Common provenance and portable-revision semantic contract, shared contribution, exact dependencies, checking and migration. Target only; no runtime or migration authority.",
+      "notes": "Governed persistent native SQLite engineering library target: exact typed payload/revision/context/operation contracts, project-journal adoption authority, offline snapshots, recovery and full-catalog migration. V1/manifest-V2 remain compatibility profiles; section 9 defines V2 exchange/project-manifest-V3 target. No runtime or migration execution grant.",
       "progress_anchor": "Shared library asset specification target"
     }
   },

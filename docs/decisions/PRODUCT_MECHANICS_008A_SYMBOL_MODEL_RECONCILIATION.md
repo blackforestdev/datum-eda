@@ -3,8 +3,9 @@
 > **Status**: Proposed addendum to `PRODUCT_MECHANICS_008_LIBRARY_COMPONENT_SYSTEM`.
 > **Purpose**: Reconcile Datum's symbol/library model against (a) a professional
 > "minimum seriousness" capability baseline and (b) the current Rust pool types,
-> and record the precise deltas to close. Not a rebuild — Datum already meets or
-> exceeds most of the bar.
+> and record the precise deltas to close. This capability survey is historical
+> evidence, not a claim that the current storage meets the owner-directed native
+> SQLite library target in PM066/SHARED_LIBRARY_ASSET_SPEC section 9.
 > **Evidence base**: an adversarially-verified research pass (25/25 claims
 > confirmed, all primary sources). **Caveat**: evidence is Altium- and
 > KiCad-strong; Cadence is thin (one source) and Siemens/Zuken largely
@@ -42,8 +43,11 @@
 | 11 swap | `Pin.swap_group: u32` | ✅ (gate swap — confirm) |
 | 12 parametric/MPN/etc. | `Part.{mpn, manufacturer_jep106, parametric, base, orderable_mpns, supply_chain_offers, behavioural_models, thermal, packaging_options}` | ✅ **exceeds** |
 
-**Headline:** the model is professional-grade. The bar is largely met. The
-remaining work is narrow, targeted deltas — not a redesign.
+**Historical survey boundary:** these entries describe particular schemas and
+capabilities, not delivery of the persistent database architecture, complete native
+editors or full catalog migration. The owner-directed 2026-11-18 architecture
+amendment requires substantive persistence/resolver/composition work; this survey
+cannot constrain it to narrow deltas or establish readiness.
 
 ## C. Deltas to close
 
@@ -110,3 +114,11 @@ extend the target with common provenance and portable immutable asset revisions.
 Technical object/model counters remain local edit guards, not a substitute for
 portable content-qualified references. This does not change Symbol/Unit/Entity
 ownership or silently rebind existing component instances.
+
+The 2026-11-18 correction in section 9 adds declared V2 geometry/process records,
+persistent SQLite payload authority, exact occurrence-qualified revision contexts,
+native symbol/footprint editor semantics and project-retained snapshots. Unit/
+Symbol/Entity electrical ownership remains as described above. Existing UUID-only
+materialization, file-based history and supported shape enums are implementation
+inputs to adapt, not limits on the target. New profiles require explicit format
+adoption and reader refusal/recovery/undo proof; no current support is claimed.

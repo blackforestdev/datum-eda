@@ -1,6 +1,6 @@
 # Product Mechanics Decision 008: Library Component System
 
-Status: draft for owner review; implementation mechanisms woven 2026-06-18.
+Status: library/component doctrine with persistent database target reconciled by owner-directed PM066 on 2026-11-18; implementation evidence remains scoped.
 Date: 2026-06-18
 
 Driven by:
@@ -19,8 +19,9 @@ Define Datum's native library and component model.
 
 This decision covers reusable symbols, footprints, parts, packages, padstacks,
 pin/pad mapping, attached models, metadata, lifecycle data, standards basis,
-and provenance. It does not define the full library editor UI or final storage
-layout.
+and provenance. The current persistent storage/composition implementation target
+is PM066 and SHARED_LIBRARY_ASSET_SPEC section 9. Earlier schema concepts below
+are reconciled by that target; they do not prescribe a competing file authority.
 
 ## Product Intent
 
@@ -55,6 +56,24 @@ library content. A placed component must bind to a resolved library identity
 while retaining pinned revision, snapshot/provenance information, and any
 project-local override records required for reproducible builds, audit, BOM
 generation, standards-aware checking, and import review.
+
+The target native library persists engineering payloads and their revision graph
+inside SQLite. Geometry/process definitions can be independently reusable assets;
+footprint-local pad uses own identity/number/pose and reference exact padstack
+revisions. Unit owns electrical pins, Symbol owns drawing/anchors, Entity owns
+gates, Part owns selectable component/physical choices, Package owns body and
+terminals, and Footprint owns board land patterns. Legacy Package copper is not
+a second target land-pattern authority. Layer-specific copper, custom contours,
+holes, mask and paste retain distinct typed meanings. Standards basis supplies
+declared construction inputs, not universal inferred defaults.
+
+The new project revision-context model permits exact revisions to coexist across
+occurrences with disclosed project-local object bindings; portable IDs do not
+change to hide a conflict. Project-retained content and accepted exact engineering
+snapshots remain available offline. Viewport interaction consumes resident prepared
+geometry, not live library resolution on every redraw. Library mutation and
+accepted project adoption remain different engine-owned transactions with the
+explicit durable retention/project-journal recovery boundary in section 9.
 
 Library objects are `DomainObject`s in the unified `DesignModel`, not private
 library-file records. Each library object has a persisted `ObjectId = Uuid`,

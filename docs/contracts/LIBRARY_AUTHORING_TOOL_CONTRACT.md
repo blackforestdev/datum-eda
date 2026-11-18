@@ -23,6 +23,15 @@ not restate them (see Shared Surface).
 
 ## Purpose & Scope
 
+Owner-directed persistent database target (2026-11-18, PM066):
+SHARED_LIBRARY_ASSET_SPEC section 9 is the normative typed library data/store,
+editor request/result, transaction/recovery and project-adoption contract. Native
+symbol/footprint editors are thin personas of the shared editor backbone over
+engine-owned SQLite authoring operations. They are not direct SQL clients/private
+writers. Legacy schema/tool examples below retain their declared historical scope;
+new meaningful geometry/process kinds and exact occurrence contexts follow the
+new profile rather than the earlier fixed kind/materialized-file limits.
+
 Scope: native authoring and editing of every library `DomainObject` in
 the Decision 008 set — `Symbol`, `Footprint`, `Package`, `Padstack`,
 `Part`, `PinPadMap`, `ModelAttachment` — plus library provenance/approval
@@ -1531,6 +1540,16 @@ fields.
 
 ### Tool 1 — `library.author` (create/edit ALL library DomainObjects)
 
+For the persistent target, section 9.E/J/L defines closed geometry/process/asset
+payloads, guarded create/revise/derive/head intents, immutable input content and
+structured outcomes. Editor actions compile to these shared semantic intents;
+there is no new tool per shape or table. Local owned-feature editing, revising a
+shared definition and deriving an independent asset have distinct scope and
+where-used presentation. Geometry dimensions remain independent of footprint pad
+pose/terminal identity. Draft preview/Cancel changes no authored state; canonical
+commit seals the exact revision and records reversible head history. Source
+declarations remain expressible without becoming mandatory clearance UI.
+
 Covers `Symbol`, `Footprint`, `Package`, `Padstack`, `Part`,
 `PinPadMap`, `ModelAttachment` — the seven equal Decision 008
 DomainObjects, each with `ObjectId`/`object_revision`.
@@ -1696,6 +1715,14 @@ guardrail that a routine field edit lacks.
    chains; where-used release gating across multiple projects.
 
 ### Tool 3 — `library.bind` / `library.update_binding` (ComponentInstance join + ECO propagation)
+
+The persistent target uses exact source/instance-qualified revision contexts,
+project-local ID projections and retained engineering snapshots under section
+9.D/G/K/M. PrepareAdoption/AcceptAdoption binds an exact preview/request hash and
+complete ID plan. SQL retention precedes the sole canonical project-journal
+commit; it cannot independently apply a library update. Runtime camera redraw
+uses prepared resident geometry, not queries for latest library definitions.
+Legacy UUID/object-revision examples below cannot substitute for these new refs.
 
 The `ComponentInstance` electrical-to-physical join and proposal-first
 library update.
@@ -1906,7 +1933,11 @@ Library-specific use:
   and BOM consumption of library identity are artifact/query reads
   keyed by `ComponentInstance`.
 - Journal + Undo/Redo (`datum-eda journal`): library transactions appear in
-  the global journal; removal of a created object is undo of the
+  the engine-owned transaction context. For the persistent SQLite target,
+  workspace transactions and project adoption have distinct histories under
+  SHARED_LIBRARY_ASSET_SPEC section 9.F/G; a single cross-store physical/global
+  journal is not assumed. The shared UI routes Undo to its explicit editing
+  context; no editor-private undo writer is introduced. Removal of a created object is undo of the
   `CreateLibraryObject` transaction, not a per-domain delete/reversal
   verb.
 
