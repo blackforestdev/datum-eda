@@ -81,6 +81,73 @@ impl Runtime {
         true
     }
 
+    /// Field validation and its feedback share the Library edit lifecycle owner.
+    /// A stale control must not supersede another editor or uncertain write.
+    pub(crate) fn preview_library_draft(&mut self) {
+        let browser = &self.workspace().library;
+        if self.native_edit.pending()
+            || self.native_edit.blocked
+            || browser.revision_workflow.is_some()
+            || browser.configuration.is_some()
+            || browser.resolution.is_some()
+            || browser.acquisition.is_some()
+        {
+            return;
+        }
+        let Some(mut draft) = self.session.workspace_mut().library.draft.take() else {
+            return;
+        };
+        let result: Result<(), String> = (|| {
+            let state = self.workspace();
+            let root = state
+                .backing
+                .as_ref()
+                .filter(|_| {
+                    self.native_edit_available()
+                        && datum_gui_protocol::CheckProducerRequest::workspace_available(state)
+                })
+                .map(|backing| &backing.request.project_root)
+                .ok_or("Open a persistent native Project before previewing fields")?;
+            let model = state
+                .library
+                .basis
+                .as_ref()
+                .ok_or("Resolved project source unavailable")?;
+            if draft.revision != state.scene.source_revision
+                || draft.revision != model.model_revision.0
+                || state.scene.project_uuid != model.project.project_id.to_string()
+                || draft.tip != eda_engine::revision::transaction_tip(&model.journal)
+                || draft.tip.map(|tip| tip.to_string())
+                    != state.supervision.journal.accepted_transaction_tip
+            {
+                return Err("Project or Library changed; reopen the current definition".into());
+            }
+            draft.validate_preview(&state.library, root)?;
+            if draft.preview.is_none() {
+                return Err(
+                    "Field preview produced no definition; inspect the current fields".into(),
+                );
+            }
+            Ok(())
+        })();
+        if let Err(reason) = &result {
+            draft.preview = None;
+            draft.refusal = Some(reason.clone());
+        }
+        // Publish only after restoring a coherent draft and local status. The
+        // existing Console owner retains both refusal and success in history.
+        let browser = &mut self.session.workspace_mut().library;
+        browser.draft = Some(draft);
+        browser.refusal = result.as_ref().err().cloned();
+        match result {
+            Ok(()) => self.log_console_echo(
+                ConsoleFeedbackSource::Tool,
+                "Library fields preview ready; no changes applied",
+            ),
+            Err(reason) => self.log_console_refusal(ConsoleFeedbackSource::Tool, reason),
+        }
+    }
+
     pub(crate) fn commit_library_draft(&mut self) -> bool {
         if self
             .workspace()

@@ -266,21 +266,7 @@ impl Runtime {
                     d.offset = d.focused;
                 }
             }
-            C::Preview => {
-                let root = self
-                    .workspace()
-                    .backing
-                    .as_ref()
-                    .map(|b| b.request.project_root.clone());
-                let mut draft = self.session.workspace_mut().library.draft.take();
-                if let (Some(d), Some(root)) = (&mut draft, root)
-                    && let Err(e) = d.validate_preview(&self.workspace().library, &root)
-                {
-                    d.preview = None;
-                    d.refusal = Some(e);
-                }
-                self.session.workspace_mut().library.draft = draft;
-            }
+            C::Preview => self.preview_library_draft(),
             C::Commit => return self.commit_library_draft(),
             C::Cancel => {
                 let origin = self.acquisition_placement_origin();
