@@ -491,6 +491,20 @@ pub fn inspect_library_assets(
                 .iter()
                 .find(|a| a.asset == *reference);
             let local = active.and_then(|a| context.model.objects.get(&a.local_object_id));
+            let contribution = if verified.revision().kind == crate::library_assets::AssetKind::Part
+            {
+                Some(crate::library_assets::contribution::inspect_part_report(
+                    reference,
+                    snapshot.assets(),
+                    snapshot.reviews(),
+                    crate::library_assets::ClosureLimits {
+                        max_nodes: limits.files,
+                        max_depth: limits.depth,
+                    },
+                ))
+            } else {
+                None
+            };
             json!({"revision":reference,"kind":verified.revision().kind,
                 "name":verified.payload().value().get("name").and_then(Value::as_str),
                 "payload_ref":verified.revision().payload_ref,
@@ -500,7 +514,8 @@ pub fn inspect_library_assets(
                 "active":active.is_some(),
                 "catalog_root":snapshot.manifest().roots.contains(reference),
                 "active_source_path":active.map(|a| &a.source_path),
-                "local_object_revision":local.map(|o| o.object_revision.0)})
+                "local_object_revision":local.map(|o| o.object_revision.0),
+                "contribution":contribution})
         })
         .collect();
     Ok(

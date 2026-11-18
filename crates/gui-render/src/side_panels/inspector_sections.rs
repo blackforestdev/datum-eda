@@ -99,23 +99,26 @@ pub(super) fn rows<'a>(
             // rows (library package/part, component bindings) — is an aligned
             // key/value grid cell. `context.field_text` resolves a SelectionField
             // through the live view at full width (usize::MAX = no elision), so no
-            // identity UUID is truncated; the value wraps within the value column,
-            // its first line carrying the key and continuation lines indenting
-            // under the value column.
+            // identity UUID is truncated. Both columns wrap independently and
+            // retain their own continuation lines in the shared row inventory.
             let value = context.field_text(field, usize::MAX);
-            let lines =
+            let values =
                 crate::control_text::wrap_text_words_sized(&value, value_col, 11.0, TextFace::Ui)?;
-            for (index, line) in lines.into_iter().enumerate() {
+            let labels = crate::control_text::wrap_text_words_sized(
+                &field.label,
+                key_col,
+                11.0,
+                TextFace::Ui,
+            )?;
+            // Both columns own complete virtual rows. A long provenance key
+            // must not rely on the single painted line's clipped text layout.
+            for index in 0..labels.len().max(values.len()) {
                 rows.push(Row {
-                    label: if index == 0 {
-                        field.label.to_string()
-                    } else {
-                        String::new()
-                    },
+                    label: labels.get(index).cloned().unwrap_or_default(),
                     native_field: None,
                     target: None,
                     active: false,
-                    value: Some((line, key_col)),
+                    value: Some((values.get(index).cloned().unwrap_or_default(), key_col)),
                 });
             }
         }
@@ -339,4 +342,61 @@ pub(super) fn render_document(
         );
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use datum_gui_protocol::inspector_context::{InspectorField, InspectorSection};
+
+    #[test]
+    fn long_provenance_keys_and_revision_values_have_complete_separate_rows() {
+        let state = datum_gui_protocol::load_fixture_workspace_state();
+        let mut context = InspectorContext::capture(&state);
+        let key = "Dependency member 1 provenance / declared rights.license_expression";
+        let digest = "sha256:8ab8730f54d68766bff712cdf167efc87b07bbf53bc740e8b161fd9e306848da";
+        context.sections = vec![InspectorSection {
+            id: InspectorSectionId::Properties,
+            fields: vec![
+                InspectorField::text(key, "unknown"),
+                InspectorField::text("Revision", digest),
+            ],
+        }];
+        for width in [296.0, 444.0] {
+            let rows = rows(&context, &InspectorNavigation::default(), width).unwrap();
+            let revision = rows.iter().position(|row| row.label == "Revision").unwrap();
+            assert!(revision > 2, "the long key needs its own continuation rows");
+            let key_rows = &rows[1..revision];
+            assert_eq!(
+                key_rows
+                    .iter()
+                    .map(|row| row.label.as_str())
+                    .collect::<String>()
+                    .split_whitespace()
+                    .collect::<String>(),
+                key.split_whitespace().collect::<String>()
+            );
+            assert_eq!(key_rows[0].value.as_ref().unwrap().0, "unknown");
+            assert!(
+                key_rows[1..]
+                    .iter()
+                    .all(|row| row.value.as_ref().unwrap().0.is_empty())
+            );
+            for row in key_rows {
+                let column = row.value.as_ref().unwrap().1;
+                assert!(
+                    crate::control_text::measure_text_width(&row.label, 11.0, TextFace::Ui)
+                        .unwrap()
+                        <= column
+                );
+            }
+            assert_eq!(
+                rows[revision..]
+                    .iter()
+                    .map(|row| row.value.as_ref().unwrap().0.as_str())
+                    .collect::<String>(),
+                digest
+            );
+        }
+    }
 }

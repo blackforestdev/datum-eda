@@ -9,6 +9,7 @@ use crate::{
         decode_metadata, inspect_closure,
         lock::{LOCK_RELATIVE_PATH, ProjectLibraryLock},
         manifest::{LibraryDiscovery, LibraryReleaseManifest, ObjectKind},
+        review::AssetReview,
     },
 };
 
@@ -90,6 +91,7 @@ pub(crate) struct LibraryAssetSnapshot {
     catalog: LibraryDiscovery,
     manifest: LibraryReleaseManifest,
     assets: BTreeMap<AssetRevisionRef, VerifiedAsset>,
+    reviews: BTreeMap<AssetDigest, AssetReview>,
 }
 
 impl LibraryAssetSnapshot {
@@ -104,6 +106,9 @@ impl LibraryAssetSnapshot {
     }
     pub(crate) fn assets(&self) -> &BTreeMap<AssetRevisionRef, VerifiedAsset> {
         &self.assets
+    }
+    pub(crate) fn reviews(&self) -> &BTreeMap<AssetDigest, AssetReview> {
+        &self.reviews
     }
 }
 
@@ -210,6 +215,19 @@ pub(crate) fn resolve_state(
         );
     }
     manifest.verify_inventory(&objects, &blobs, limits.metadata_bytes)?;
+    // These exact bytes were already loaded, charged and inventory-verified.
+    // Retaining their decoded claims adds no acquisition or review authority.
+    let reviews = manifest
+        .objects
+        .iter()
+        .filter(|entry| entry.kind == ObjectKind::Review)
+        .map(|entry| {
+            Ok((
+                entry.digest.clone(),
+                decode_metadata::<AssetReview>(&objects[&entry.digest], limits.metadata_bytes)?,
+            ))
+        })
+        .collect::<Result<BTreeMap<_, _>, EngineError>>()?;
     let mut refs: Vec<_> = lock.assets.iter().map(|a| a.asset.clone()).collect();
     for entry in manifest
         .objects
@@ -291,6 +309,7 @@ pub(crate) fn resolve_state(
         catalog,
         manifest,
         assets,
+        reviews,
     })
 }
 

@@ -128,12 +128,14 @@ impl Runtime {
                 }
             }
             C::Kind(index) => {
-                let browser = &mut self.session.workspace_mut().library;
+                let state = self.session.workspace_mut();
+                let browser = &mut state.library;
                 if browser.draft.is_none() {
                     browser.kind = index.min(7);
                     browser.result_offset = 0;
                     browser.detail_offset = 0;
                     browser.search.clear();
+                    Self::reset_library_inspector_scroll(state);
                 }
             }
             C::Search => self.session.workspace_mut().library.search_focus = true,
@@ -144,6 +146,7 @@ impl Runtime {
                 {
                     state.selection = datum_gui_protocol::SelectionTarget::AuthoredObject(e.key());
                     state.library.detail_offset = 0;
+                    Self::reset_library_inspector_scroll(state);
                     state.library.preview_pad = 0;
                     state.library.scroll_offset = 0;
                 }
@@ -158,12 +161,11 @@ impl Runtime {
                 };
             }
             C::DetailPage(next) => {
-                let b = &mut self.session.workspace_mut().library;
-                b.detail_offset = if next {
-                    b.detail_offset + 1
-                } else {
-                    b.detail_offset.saturating_sub(1)
-                };
+                if datum_gui_protocol::inspector_context::selected_library_entry(self.workspace())
+                    .is_some()
+                {
+                    self.step_inspector_context_rows(if next { 1.0 } else { -1.0 });
+                }
             }
             C::New | C::Edit => {
                 if self.check_work.pending() {

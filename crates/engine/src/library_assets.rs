@@ -6,6 +6,7 @@
 pub(crate) mod change_review;
 mod closure;
 mod codec;
+pub(crate) mod contribution;
 mod digest;
 mod exact_json;
 pub(crate) mod lock;

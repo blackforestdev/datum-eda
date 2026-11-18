@@ -9,6 +9,8 @@ use uuid::Uuid;
 mod checks;
 mod components;
 pub mod finding;
+mod library;
+pub use library::{LibraryInspectorBasis, selected_library_entry};
 mod nets;
 mod persistence;
 pub use persistence::{InspectorActivity, materialization_state, saved_state};
@@ -65,6 +67,7 @@ pub struct InspectorActionBasis {
     pub project: Uuid,
     pub revision: String,
     pub root: std::path::PathBuf,
+    pub library: Option<LibraryInspectorBasis>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -112,6 +115,7 @@ impl InspectorActionBasis {
             project: model.project.project_id,
             revision: model.model_revision.0.clone(),
             root: state.backing.as_ref()?.request.project_root.clone(),
+            library: LibraryInspectorBasis::capture(state),
         })
     }
     pub fn is_current(&self, state: &ReviewWorkspaceState) -> bool {
@@ -200,6 +204,13 @@ impl<'a> InspectorContext<'a> {
             rerun_available,
             rerun_profile,
         };
+        if let Some(entry) = selected_library_entry(state) {
+            library::append(&mut context, state, entry);
+            context.document = None;
+            context.rerun_available = false;
+            context.rerun_profile = None;
+            return context;
+        }
         if let Some(view) = view {
             for field in view.fields() {
                 if field == "library_land_pattern_sources" {

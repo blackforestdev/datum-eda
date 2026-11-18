@@ -256,6 +256,58 @@ class CompilerCachePruneTests(unittest.TestCase):
             self.assertEqual(path.read_bytes(), data)
         self.assertEqual(self.alias.stat().st_ino, (self.root / "target/debug/datum-gui").stat().st_ino)
 
+    def missing_debug_gui_plan(self):
+        self.alias.unlink()
+        path = self.root / "target/debug/datum-gui"
+        path.unlink()
+        plan = self.plan()
+        self.assertEqual(plan["absent_normal_runtimes"], ["target/debug/datum-gui"])
+        return path, plan
+
+    def test_partial_runtime_installation_preserves_every_existing_normal_binary(self):
+        missing, plan = self.missing_debug_gui_plan()
+        before = {path: path.read_bytes() for profile in ("debug", "release")
+                  for path in (self.root / "target" / profile).iterdir() if path.is_file()}
+        result = self.apply(plan)
+        self.assertEqual(result["status"], "complete_current_runtime_and_evidence_retained")
+        self.assertFalse(missing.exists())
+        self.assertFalse(self.old.exists())
+        for path, data in before.items():
+            self.assertEqual(path.read_bytes(), data)
+
+    def test_new_runtime_after_plan_refuses_before_any_cleanup(self):
+        missing, plan = self.missing_debug_gui_plan()
+        shutil.copy2(sys.executable, missing)
+        with self.assertRaisesRegex(guard.ResourcePolicyError, "previously absent"):
+            self.apply(plan)
+        self.assertTrue(self.old.exists())
+
+    def test_runtime_appearing_during_admission_refuses_before_first_unlink(self):
+        missing, plan = self.missing_debug_gui_plan()
+        def appeared(*args, **kwargs):
+            shutil.copy2(sys.executable, missing)
+        with self.assertRaisesRegex(guard.ResourcePolicyError, "previously absent"):
+            self.apply(plan, appeared)
+        self.assertTrue(self.old.exists())
+
+    def test_explicitly_kept_missing_runtime_is_not_an_optional_normal_runtime(self):
+        self.missing_debug_gui_plan()
+        self.keep.append("target/debug/datum-gui")
+        with self.assertRaisesRegex(guard.ResourcePolicyError, "unsafe protected runtime"):
+            self.plan()
+
+    def test_absence_cannot_hide_a_protected_runtime_or_weaken_legacy_plans(self):
+        plan = self.plan()
+        plan["absent_normal_runtimes"] = ["target/debug/datum-gui"]
+        with self.assertRaisesRegex(guard.ResourcePolicyError, "invalid absent"):
+            self.apply(plan)
+        plan = self.plan()
+        plan.pop("absent_normal_runtimes")
+        plan["protected"].pop("target/debug/datum-gui")
+        with self.assertRaisesRegex(guard.ResourcePolicyError, "omits current normal"):
+            self.apply(plan)
+        self.assertTrue(self.old.exists())
+
     def test_changed_input_refuses_before_unlink(self):
         plan = self.plan()
         self.old.write_bytes(b"!<arch>\nchanged cache")

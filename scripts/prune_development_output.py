@@ -25,6 +25,7 @@ import cargo_cache_metadata as compiler_metadata
 
 ROOT = guard.ROOT
 BINS = ("datum-gui", "datum-eda", "eda-engine-daemon")
+NORMAL_RUNTIMES = tuple(f"target/{profile}/{name}" for profile in ("debug", "release") for name in BINS)
 COMPILER_ROOTS = tuple(f"target/{profile}/{name}" for profile in ("debug", "release")
                        for name in ("deps", "build", ".fingerprint", "incremental"))
 
@@ -239,11 +240,14 @@ def compiler_kind(fd: int, relative: str) -> str | None:
 
 def compiler_plan(root: Path, keep: list[str]) -> dict:
     root = root.resolve()
-    protected = {}
-    for relative in [f"target/{profile}/{name}" for profile in ("debug", "release") for name in BINS] + keep:
+    protected, absent = {}, []
+    for relative in [*NORMAL_RUNTIMES, *keep]:
         path = root / relative
         if Path(relative).is_absolute() or ".." in Path(relative).parts or not path.is_relative_to(root / "target"):
             raise guard.ResourcePolicyError("protected runtime must be inside target")
+        if relative in NORMAL_RUNTIMES and relative not in keep and not os.path.lexists(path):
+            absent.append(relative)
+            continue
         if path.is_symlink() or path.resolve() != path or not path.is_file():
             raise guard.ResourcePolicyError(f"unsafe protected runtime: {relative}")
         with path.open("rb") as source:
@@ -294,7 +298,8 @@ def compiler_plan(root: Path, keep: list[str]) -> dict:
         reclaimed = sum(x["allocated"] for key, x in unique.items() if links[key] == x["nlink"])
         before = guard.retained_cache_size(root, root / "target")
     return {"operation": "compiler_cache", "root": str(root), "roots": list(COMPILER_ROOTS),
-            "protected": protected, "preserved": preserved, "selected": selected,
+            "protected": protected, "absent_normal_runtimes": absent,
+            "preserved": preserved, "selected": selected,
             "expected_reclaimed_bytes": reclaimed, "retained_before_bytes": before,
             "expected_retained_after_bytes": before - reclaimed}
 
@@ -303,11 +308,15 @@ def apply_compiler_plan(root: Path, plan: dict) -> dict:
     root = root.resolve()
     if plan.get("operation") != "compiler_cache" or plan.get("root") != str(root) or plan.get("roots") != list(COMPILER_ROOTS):
         raise guard.ResourcePolicyError("not this repository's fixed compiler-cache plan")
+    absent = plan.get("absent_normal_runtimes", [])
     receipt = {"operation": "compiler_cache", "completed": [], "status": "preflight"}
     def verify(path, expected):
         if bound.info(path.lstat()) != {key: expected[key] for key in bound.FIELDS}:
             raise guard.ResourcePolicyError(f"compiler plan input changed: {path}")
     def protected():
+        for relative in absent:
+            if os.path.lexists(root / relative):
+                raise guard.ResourcePolicyError("previously absent normal runtime appeared")
         for relative, info in plan["protected"].items():
             path = root / relative
             if path.is_symlink() or path.resolve() != path:
@@ -324,8 +333,12 @@ def apply_compiler_plan(root: Path, plan: dict) -> dict:
             paths = [compiler_path(root, x["path"]) for x in selected]
             if len(set(paths)) != len(paths):
                 raise guard.ResourcePolicyError("duplicate compiler-cache selection")
-            required = {f"target/{profile}/{name}" for profile in ("debug", "release") for name in BINS}
-            if not required.issubset(plan["protected"]):
+            required = set(NORMAL_RUNTIMES)
+            if (not isinstance(absent, list) or any(not isinstance(path, str) for path in absent)
+                    or len(absent) != len(set(absent)) or not set(absent).issubset(required)
+                    or set(absent).intersection(plan["protected"])):
+                raise guard.ResourcePolicyError("invalid absent normal runtime inventory")
+            if not required.issubset(set(plan["protected"]) | set(absent)):
                 raise guard.ResourcePolicyError("plan omits current normal runtimes")
             kept_inodes = {(x["device"], x["inode"]) for x in [*plan["protected"].values(), *plan["preserved"]]}
             for path, info in zip(paths, selected):
@@ -356,6 +369,7 @@ def apply_compiler_plan(root: Path, plan: dict) -> dict:
                                admitted_fds=frozenset(record[4] for record in records))
             if cache.active_processes(builds_only=True):
                 raise guard.ResourcePolicyError("build appeared during compiler-cache preflight")
+            protected()
             for path, info, parent, chain, descriptor in records:
                 with ExitStack() as check:
                     _, current = bound.directory(root, path.relative_to(root).parts[:-1], check)

@@ -3,6 +3,9 @@ use super::{LibraryBrowser, LibraryEntry};
 use eda_engine::substrate::DesignModel;
 use serde_json::{Value, json};
 
+#[path = "library_contribution_view.rs"]
+mod contribution;
+
 pub(super) fn matches_model(description: &Value, model: &DesignModel) -> bool {
     let library = &description["library"];
     description.get("project_id") == Some(&json!(model.project.project_id))
@@ -18,6 +21,76 @@ pub(super) fn matches_model(description: &Value, model: &DesignModel) -> bool {
 }
 
 impl LibraryBrowser {
+    pub(crate) fn current_revision_inspection(&self) -> Option<&Value> {
+        self.revision_inspection.as_ref().filter(|description| {
+            self.basis
+                .as_ref()
+                .is_some_and(|model| matches_model(description, model))
+        })
+    }
+
+    pub(crate) fn common_revision_summary(&self, entry: &LibraryEntry) -> Vec<String> {
+        let Some(description) = self.current_revision_inspection() else {
+            return vec!["Common revision records: unavailable for this snapshot".into()];
+        };
+        let library = &description["library"];
+        if library["managed"] == false {
+            return vec!["Common revision history: not adopted; native metadata retained".into()];
+        }
+        let Some(kind) = record_kind(entry) else {
+            return Vec::new();
+        };
+        let records: Vec<_> = library["available_assets"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|record| {
+                record["revision"]["asset_id"] == json!(entry.id) && record["kind"] == kind
+            })
+            .collect();
+        if records.iter().any(|record| {
+            record["active"] == true && record["active_source_path"] != json!(entry.source_path)
+        }) {
+            return vec!["Common revision records: source owner differs; refresh required".into()];
+        }
+        let mut lines = Vec::new();
+        // These are explicit active and catalog-root facts, never a guessed
+        // newest revision or a change in asset search/ranking/adoption policy.
+        for (label, active) in [("Active source", true), ("Saved candidate", false)] {
+            for record in records.iter().filter(|record| {
+                if active {
+                    record["active"] == true
+                } else {
+                    record["active"] != true && record["catalog_root"] == true
+                }
+            }) {
+                lines.push(format!("{label}: {}", entry.name));
+                if entry.kind == "parts" && record["kind"] == "part" {
+                    lines.extend(contribution::overview(record));
+                } else {
+                    lines.push("Common records: recorded; full details below".into());
+                }
+                lines.push(format!(
+                    "{label} exact revision: {}",
+                    record["revision"]["revision_id"]
+                        .as_str()
+                        .unwrap_or("unavailable")
+                ));
+            }
+        }
+        if lines.is_empty() {
+            lines.push(
+                if records.is_empty() {
+                    "Common revision history: not recorded for this definition"
+                } else {
+                    "Common revision history: retained records; no active or catalog-root claim"
+                }
+                .into(),
+            );
+        }
+        lines
+    }
+
     /// Reject stale input without replacing a newer, still-qualified view.
     pub fn set_revision_inspection(&mut self, description: Value) -> Result<(), String> {
         let model = self.basis.as_ref().ok_or("Library source unavailable")?;
@@ -45,27 +118,15 @@ impl LibraryBrowser {
     }
 
     pub(super) fn common_revision_lines(&self, entry: &LibraryEntry) -> Vec<String> {
-        let Some(description) = self
-            .revision_inspection
-            .as_ref()
-            .filter(|d| self.basis.as_ref().is_some_and(|m| matches_model(d, m)))
-        else {
+        let Some(description) = self.current_revision_inspection() else {
             return vec!["Common revision records: unavailable for this snapshot".into()];
         };
         let library = &description["library"];
         if library["managed"] == false {
             return vec!["Common revision history: not adopted; native metadata retained".into()];
         }
-        let kind = match entry.kind.as_str() {
-            "units" => "unit",
-            "symbols" => "symbol",
-            "entities" => "entity",
-            "parts" => "part",
-            "packages" => "package",
-            "footprints" => "footprint",
-            "padstacks" => "padstack",
-            "pin_pad_maps" => "pin_pad_map",
-            _ => return vec![],
+        let Some(kind) = record_kind(entry) else {
+            return Vec::new();
         };
         let records: Vec<_> = library["available_assets"]
             .as_array()
@@ -108,9 +169,26 @@ impl LibraryBrowser {
             ] {
                 flatten_detail(label, &record[field], &mut lines, "unknown");
             }
+            if kind == "part" {
+                lines.extend(contribution::lines(record));
+            }
         }
         lines
     }
+}
+
+fn record_kind(entry: &LibraryEntry) -> Option<&'static str> {
+    Some(match entry.kind.as_str() {
+        "units" => "unit",
+        "symbols" => "symbol",
+        "entities" => "entity",
+        "parts" => "part",
+        "packages" => "package",
+        "footprints" => "footprint",
+        "padstacks" => "padstack",
+        "pin_pad_maps" => "pin_pad_map",
+        _ => return None,
+    })
 }
 
 pub(super) fn flatten_detail(path: &str, value: &Value, lines: &mut Vec<String>, null_text: &str) {

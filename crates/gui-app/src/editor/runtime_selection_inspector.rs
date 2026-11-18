@@ -182,6 +182,37 @@ impl Runtime {
         self.invalidate_frame();
         true
     }
+
+    /// Selecting a Library source must not move the Navigator-owned Inspector.
+    pub(super) fn reset_library_inspector_scroll(
+        state: &mut datum_gui_protocol::ReviewWorkspaceState,
+    ) {
+        if state.inspector_context.owner
+            == datum_gui_protocol::inspector_context::InspectorOwner::Selection
+        {
+            state.ui.selection_inspector.scroll_offset = 0;
+        }
+    }
+
+    /// Existing metadata buttons use the same qualified bounds and scroll owner.
+    pub(super) fn step_inspector_context_rows(&mut self, lines: f32) -> bool {
+        let current =
+            datum_gui_protocol::inspector_context::InspectorActionBasis::capture(self.workspace());
+        let bounds = self
+            .presented_hits
+            .regions()
+            .iter()
+            .find_map(|region| match &region.target {
+                HitTarget::InspectorContextScroll {
+                    total,
+                    visible,
+                    basis,
+                } if *visible > 0 && basis == &current => Some((*total, *visible)),
+                _ => None,
+            });
+        bounds.is_some_and(|(total, visible)| self.scroll_inspector_rows(total, visible, lines))
+    }
+
     pub(super) fn handle_selection_inspector_scroll(&mut self, lines: f32) -> Option<bool> {
         let (x, y) = self.last_cursor_pos?;
         let (total, visible) = self.presented_hits.regions().iter().find_map(|region| {
@@ -207,6 +238,10 @@ impl Runtime {
                 _ => None,
             }
         })?;
+        Some(self.scroll_inspector_rows(total, visible, lines))
+    }
+
+    fn scroll_inspector_rows(&mut self, total: usize, visible: usize, lines: f32) -> bool {
         let offset = &mut self
             .session
             .workspace_mut()
@@ -219,7 +254,7 @@ impl Runtime {
         if changed {
             self.invalidate_frame();
         }
-        Some(changed)
+        changed
     }
 
     pub(super) fn handle_inspector_navigation_key(
