@@ -4,7 +4,7 @@ use eda_engine::substrate::DesignModel;
 use serde_json::{Value, json};
 
 #[path = "library_contribution_view.rs"]
-mod contribution;
+pub(super) mod contribution;
 
 pub(super) fn matches_model(description: &Value, model: &DesignModel) -> bool {
     let library = &description["library"];

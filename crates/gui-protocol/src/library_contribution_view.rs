@@ -3,7 +3,7 @@ use serde_json::Value;
 
 use super::flatten_detail;
 
-pub(super) fn overview(record: &Value) -> Vec<String> {
+pub(in crate::library_browser) fn overview(record: &Value) -> Vec<String> {
     let report = &record["contribution"];
     if !record["revision"].is_object() || report["subject"] != record["revision"] {
         return vec!["Contribution evidence: unavailable for this exact revision".into()];
@@ -85,7 +85,7 @@ pub(super) fn overview(record: &Value) -> Vec<String> {
     lines
 }
 
-pub(super) fn lines(record: &Value) -> Vec<String> {
+pub(in crate::library_browser) fn lines(record: &Value) -> Vec<String> {
     let report = &record["contribution"];
     let mut lines = vec!["Contribution evidence: inspection only".into()];
     if !record["revision"].is_object() || report["subject"] != record["revision"] {

@@ -99,6 +99,26 @@ fn render_lines(summary: &Value, records: bool) -> Vec<String> {
             reference(&review["before"]),
             reference(&review["after"])
         ));
+        if summary["action"] == "save_candidate"
+            && let Some(candidate) = asset.get("candidate_contribution")
+        {
+            lines.push("Proposed Part contribution evidence".into());
+            if candidate["kind"] == "part"
+                && candidate["revision"].is_object()
+                && candidate["revision"] == review["after"]
+                && candidate["revision"]["asset_id"] == asset["asset_id"]
+            {
+                use super::revision_view::contribution;
+                lines.extend(if records {
+                    contribution::lines(candidate)
+                } else {
+                    contribution::overview(candidate)
+                });
+            } else {
+                lines
+                    .push("Contribution evidence: unavailable for this exact proposed Part".into());
+            }
+        }
         if review["comparison"] == "first_managed_record" {
             lines.push(
                 "First managed record: no prior managed revision is available for comparison."
@@ -285,6 +305,59 @@ fn reference(value: &Value) -> String {
 mod tests {
     use super::*;
     use serde_json::json;
+
+    #[test]
+    fn candidate_evidence_is_visible_before_save_only_for_the_exact_proposed_part() {
+        let reference = json!({"asset_id":"part", "revision_id":"proposed-exact-revision"});
+        let mut summary = json!({"action":"save_candidate", "active_lock_unchanged":true,
+            "asset_changes":[{"asset_id":"part", "name":"Part", "review":{
+                "before":{"asset_id":"part","revision_id":"active-revision"},
+                "after":reference}, "candidate_contribution":{"kind":"part",
+                "revision":reference, "contribution":{"subject":reference,
+                    "inspection_status":"available", "closure":{"graph_valid":true,
+                    "digest":"proposed-closure", "assets":[{"revision":reference,
+                        "review_presence":"recorded", "provenance":{"rights":{}},
+                        "reviews":[{"record_ref":"current-failed-evidence", "basis_status":"current",
+                            "record":{"result":"failed"}},
+                            {"record_ref":"stale-passed-evidence", "basis_status":"stale",
+                            "record":{"result":"passed"}}]}]}}}}]});
+        let compact = overview(&summary).join("\n");
+        for fact in [
+            "Proposed Part contribution evidence",
+            "Failed reviews: 1 current",
+            "Stale reviews: 1",
+            "Redistribution: not verified",
+            "Publication policy: unavailable",
+        ] {
+            assert!(compact.contains(fact), "{fact}");
+        }
+        let full = lines(&summary).join("\n");
+        for fact in [
+            "proposed-closure",
+            "current-failed-evidence",
+            "stale-passed-evidence",
+            "Review results and basis currency do not establish engineering approval",
+            "placed bindings remain unchanged",
+        ] {
+            assert!(full.contains(fact), "{fact}");
+        }
+        // A response qualified for another proposed revision must not donate
+        // rights or review facts to the current visible preview.
+        summary["asset_changes"][0]["review"]["after"]["revision_id"] = json!("other-proposal");
+        for rendered in [overview(&summary), lines(&summary)] {
+            let text = rendered.join("\n");
+            assert!(text.contains("unavailable for this exact proposed Part"));
+            assert!(
+                !text.contains("proposed-closure") && !text.contains("current-failed-evidence")
+            );
+        }
+        summary["action"] = json!("adopt_selection");
+        assert!(
+            !lines(&summary)
+                .join("\n")
+                .contains("Proposed Part contribution evidence")
+        );
+    }
 
     #[test]
     fn physical_update_overview_keeps_every_user_and_exact_pad_geometry() {

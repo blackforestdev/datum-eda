@@ -9,7 +9,7 @@ use super::{EngineError, PreparedWrite, refusal};
 use crate::{
     api::native_write::registry::NativeWriteContext,
     library_assets::{
-        AssetRevisionRef, ClosureLimits, VerifiedAsset,
+        AssetKind, AssetRevisionRef, ClosureLimits, VerifiedAsset,
         change_review::{self, ReviewInput},
         inspect_closure,
     },
@@ -72,6 +72,18 @@ pub(super) fn attach(
             .ok_or_else(|| refusal("review asset is unavailable"))?;
         let mut row = json!({"asset_id":id,
             "name":asset.payload().value().get("name"),"review":review});
+        if candidate
+            && let Some(proposed) = new_asset.filter(|a| a.revision().kind == AssetKind::Part)
+        {
+            // Inspect the proposed immutable bytes already resolved from this
+            // batch, never the active materialization or a saved predecessor.
+            let reference = new_ref.expect("proposed asset has an exact reference");
+            row["candidate_contribution"] = json!({"kind":proposed.revision().kind,
+            "revision":reference,"contribution":crate::library_assets::contribution::inspect_part_report(
+                reference, after.assets(), after.reviews(), ClosureLimits {
+                    max_nodes: limits.files, max_depth: limits.depth,
+                })});
+        }
         // A missing managed preimage says nothing about existing native content.
         // Read the captured model's real preimage, never fabricate an asset record.
         if old_asset.is_none() {
@@ -134,6 +146,10 @@ pub(super) fn attach(
     );
     Ok(())
 }
+
+#[cfg(test)]
+#[path = "library_asset_change_review_tests.rs"]
+mod tests;
 
 fn input(asset: &VerifiedAsset) -> ReviewInput<'_> {
     ReviewInput {
